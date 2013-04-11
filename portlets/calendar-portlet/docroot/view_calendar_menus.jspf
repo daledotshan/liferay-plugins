@@ -211,10 +211,12 @@
 			</c:if>
 
 			{
-				caption: '-'
+				caption: '-',
+				id: 'separator1'
 			},
 			{
-				caption: '<div class="calendar-portlet-color-picker"></div>'
+				caption: '<div class="calendar-portlet-color-picker"></div>',
+				id: 'colorPicker'
 			}
 		],
 		on: {
@@ -234,7 +236,9 @@
 						hiddenItems.push('hide');
 					}
 
-					if (permissions.DELETE === false) {
+					var defaultCalendar = calendar.get('defaultCalendar');
+
+					if ((permissions.DELETE === false) || (defaultCalendar === true)) {
 						hiddenItems.push('delete');
 					}
 
@@ -244,6 +248,8 @@
 
 					if (permissions.UPDATE === false) {
 						hiddenItems.push('settings');
+						hiddenItems.push('separator1');
+						hiddenItems.push('colorPicker');
 					}
 
 					instance.set('hiddenItems', hiddenItems);

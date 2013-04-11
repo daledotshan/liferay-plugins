@@ -43,8 +43,6 @@ import javax.portlet.PortletURL;
 public class CalendarBookingAssetRendererFactory
 	extends BaseAssetRendererFactory {
 
-	public static final String CLASS_NAME = CalendarBooking.class.getName();
-
 	public static final String TYPE = "calendar";
 
 	public AssetRenderer getAssetRenderer(long classPK, int type)
@@ -57,7 +55,7 @@ public class CalendarBookingAssetRendererFactory
 	}
 
 	public String getClassName() {
-		return CLASS_NAME;
+		return CalendarBooking.class.getName();
 	}
 
 	public String getType() {
@@ -77,6 +75,10 @@ public class CalendarBookingAssetRendererFactory
 		CalendarResource calendarResource =
 			CalendarResourceUtil.getGroupCalendarResource(
 				liferayPortletRequest, themeDisplay.getScopeGroupId());
+
+		if (calendarResource == null) {
+			return null;
+		}
 
 		Calendar calendar = calendarResource.getDefaultCalendar();
 
