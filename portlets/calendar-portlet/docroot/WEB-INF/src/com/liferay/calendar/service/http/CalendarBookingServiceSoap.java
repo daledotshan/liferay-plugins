@@ -26,13 +26,11 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * <p>
- * This class provides a SOAP utility for the
+ * Provides the SOAP utility for the
  * {@link com.liferay.calendar.service.CalendarBookingServiceUtil} service utility. The
  * static methods of this class calls the same methods of the service utility.
  * However, the signatures are different because it is difficult for SOAP to
  * support certain types.
- * </p>
  *
  * <p>
  * ServiceBuilder follows certain rules in translating the methods. For example,
@@ -61,10 +59,10 @@ import java.util.Map;
  * The SOAP utility is only generated for remote services.
  * </p>
  *
- * @author    Eduardo Lundgren
- * @see       CalendarBookingServiceHttp
- * @see       com.liferay.calendar.model.CalendarBookingSoap
- * @see       com.liferay.calendar.service.CalendarBookingServiceUtil
+ * @author Eduardo Lundgren
+ * @see CalendarBookingServiceHttp
+ * @see com.liferay.calendar.model.CalendarBookingSoap
+ * @see com.liferay.calendar.service.CalendarBookingServiceUtil
  * @generated
  */
 public class CalendarBookingServiceSoap {
@@ -237,6 +235,20 @@ public class CalendarBookingServiceSoap {
 		}
 	}
 
+	public static void invokeTransition(long calendarBookingId, int status,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			CalendarBookingServiceUtil.invokeTransition(calendarBookingId,
+				status, serviceContext);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static void invokeTransition(long calendarBookingId,
 		java.lang.String transitionName,
 		com.liferay.portal.service.ServiceContext serviceContext)
@@ -244,6 +256,30 @@ public class CalendarBookingServiceSoap {
 		try {
 			CalendarBookingServiceUtil.invokeTransition(calendarBookingId,
 				transitionName, serviceContext);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static void moveCalendarBookingToTrash(long calendarBookingId)
+		throws RemoteException {
+		try {
+			CalendarBookingServiceUtil.moveCalendarBookingToTrash(calendarBookingId);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static void restoreCalendarBookingFromTrash(long calendarBookingId)
+		throws RemoteException {
+		try {
+			CalendarBookingServiceUtil.restoreCalendarBookingFromTrash(calendarBookingId);
 		}
 		catch (Exception e) {
 			_log.error(e, e);
