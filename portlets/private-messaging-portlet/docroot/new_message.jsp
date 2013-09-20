@@ -78,15 +78,33 @@ to = sb.toString() + to;
 
 		<aui:input cssClass="message-subject" name="subject" value="<%= subject %>" />
 
-		<label class="aui-field-label">
+		<label class="field-label">
 			<liferay-ui:message key="message" />
 		</label>
 
 		<textarea class="message-body" id="<portlet:namespace />body" name="<portlet:namespace />body"></textarea>
 
-		<label class="aui-field-label">
+		<label class="field-label">
 			<liferay-ui:message key="attachments" />
 		</label>
+
+		<%
+		long fileMaxSize = PrefsPropsUtil.getLong(PropsKeys.DL_FILE_MAX_SIZE);
+
+		if (fileMaxSize == 0) {
+			fileMaxSize = PrefsPropsUtil.getLong(PropsKeys.UPLOAD_SERVLET_REQUEST_IMPL_MAX_SIZE);
+		}
+
+		fileMaxSize /= 1024;
+		%>
+
+		<aui:field-wrapper>
+			<c:if test="<%= fileMaxSize != 0 %>">
+				<div class="portlet-msg-info">
+					<%= LanguageUtil.format(pageContext, "upload-documents-no-larger-than-x-k", String.valueOf(fileMaxSize), false) %>
+				</div>
+			</c:if>
+		</aui:field-wrapper>
 
 		<aui:input label="" name="msgFile1" type="file" />
 
@@ -112,7 +130,7 @@ to = sb.toString() + to;
 	}
 </aui:script>
 
-<aui:script use="aui-button-item,aui-io-request,aui-loading-mask,autocomplete,json-parse,io-upload-iframe">
+<aui:script use="aui-io-request,aui-loading-mask,autocomplete,json-parse,io-upload-iframe">
 	var form = A.one('#<portlet:namespace />fm');
 
 	form.on(
@@ -150,9 +168,16 @@ to = sb.toString() + to;
 			A.io.request(
 				'<liferay-portlet:resourceURL id="checkData"><liferay-portlet:param name="redirect" value="<%= PortalUtil.getLayoutURL(themeDisplay) %>" /></liferay-portlet:resourceURL>',
 				{
-					after: {
-						success: function(event, id, obj) {
-							var responseData = this.get('responseData');
+					dataType: 'json',
+					form: {
+						id: form.getDOM(),
+						upload: true
+					},
+					on: {
+						complete: function(event, id, obj) {
+							var responseText = obj.responseText;
+
+							var responseData = A.JSON.parse(responseText);
 
 							if (responseData.success) {
 								submitForm(document.<portlet:namespace />fm);
@@ -168,10 +193,6 @@ to = sb.toString() + to;
 
 							loadingMask.hide();
 						}
-					},
-					dataType: 'json',
-					form: {
-						id: form.getDOM()
 					}
 				}
 			);
@@ -193,22 +214,8 @@ to = sb.toString() + to;
 
 	to.on(
 		'focus',
-		function () {
+		function() {
 			to.ac.sendRequest('');
 		}
 	);
-
-	var autocompleteButton = new A.ButtonItem(
-		{
-			cssClass: 'autocomplete-button',
-			icon: 'circle-triangle-b',
-			on: {
-				click: function() {
-					to.focus();
-				}
-			}
-		}
-	);
-
-	autocompleteButton.render(to.ancestor('.aui-field-element'));
 </aui:script>

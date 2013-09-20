@@ -39,10 +39,12 @@ import java.util.Map;
  */
 public class CalendarServiceImpl extends CalendarServiceBaseImpl {
 
+	@Override
 	public Calendar addCalendar(
 			long groupId, long calendarResourceId, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, int color,
-			boolean defaultCalendar, ServiceContext serviceContext)
+			boolean defaultCalendar, boolean enableComments,
+			boolean enableRatings, ServiceContext serviceContext)
 		throws PortalException, SystemException {
 
 		CalendarResourcePermission.check(
@@ -51,9 +53,11 @@ public class CalendarServiceImpl extends CalendarServiceBaseImpl {
 
 		return calendarLocalService.addCalendar(
 			getUserId(), groupId, calendarResourceId, nameMap, descriptionMap,
-			color, defaultCalendar, serviceContext);
+			color, defaultCalendar, enableComments, enableRatings,
+			serviceContext);
 	}
 
+	@Override
 	public Calendar deleteCalendar(long calendarId)
 		throws PortalException, SystemException {
 
@@ -63,6 +67,18 @@ public class CalendarServiceImpl extends CalendarServiceBaseImpl {
 		return calendarLocalService.deleteCalendar(calendarId);
 	}
 
+	@Override
+	public String exportCalendar(long calendarId, String type)
+		throws Exception {
+
+		CalendarPermission.check(
+			getPermissionChecker(), calendarId,
+			ActionKeys.VIEW_BOOKING_DETAILS);
+
+		return calendarLocalService.exportCalendar(calendarId, type);
+	}
+
+	@Override
 	public Calendar fetchCalendar(long calendarId)
 		throws PortalException, SystemException {
 
@@ -78,6 +94,7 @@ public class CalendarServiceImpl extends CalendarServiceBaseImpl {
 		return calendar;
 	}
 
+	@Override
 	public Calendar getCalendar(long calendarId)
 		throws PortalException, SystemException {
 
@@ -87,6 +104,17 @@ public class CalendarServiceImpl extends CalendarServiceBaseImpl {
 		return calendarLocalService.getCalendar(calendarId);
 	}
 
+	@Override
+	public void importCalendar(long calendarId, String data, String type)
+		throws Exception {
+
+		CalendarPermission.check(
+			getPermissionChecker(), calendarId, ActionKeys.UPDATE);
+
+		calendarLocalService.importCalendar(calendarId, data, type);
+	}
+
+	@Override
 	public List<Calendar> search(
 			long companyId, long[] groupIds, long[] calendarResourceIds,
 			String keywords, boolean andOperator, int start, int end,
@@ -98,6 +126,7 @@ public class CalendarServiceImpl extends CalendarServiceBaseImpl {
 			start, end, orderByComparator, ActionKeys.VIEW);
 	}
 
+	@Override
 	public List<Calendar> search(
 			long companyId, long[] groupIds, long[] calendarResourceIds,
 			String keywords, boolean andOperator, int start, int end,
@@ -111,6 +140,7 @@ public class CalendarServiceImpl extends CalendarServiceBaseImpl {
 		return filterCalendars(calendars, actionId);
 	}
 
+	@Override
 	public List<Calendar> search(
 			long companyId, long[] groupIds, long[] calendarResourceIds,
 			String name, String description, boolean andOperator, int start,
@@ -122,6 +152,7 @@ public class CalendarServiceImpl extends CalendarServiceBaseImpl {
 			andOperator, start, end, orderByComparator, ActionKeys.VIEW);
 	}
 
+	@Override
 	public List<Calendar> search(
 			long companyId, long[] groupIds, long[] calendarResourceIds,
 			String name, String description, boolean andOperator, int start,
@@ -135,6 +166,7 @@ public class CalendarServiceImpl extends CalendarServiceBaseImpl {
 		return filterCalendars(calendars, actionId);
 	}
 
+	@Override
 	public int searchCount(
 			long companyId, long[] groupIds, long[] calendarResourceIds,
 			String keywords, boolean andOperator)
@@ -145,6 +177,7 @@ public class CalendarServiceImpl extends CalendarServiceBaseImpl {
 			ActionKeys.VIEW);
 	}
 
+	@Override
 	public int searchCount(
 			long companyId, long[] groupIds, long[] calendarResourceIds,
 			String keywords, boolean andOperator, String actionId)
@@ -157,6 +190,7 @@ public class CalendarServiceImpl extends CalendarServiceBaseImpl {
 		return calendars.size();
 	}
 
+	@Override
 	public int searchCount(
 			long companyId, long[] groupIds, long[] calendarResourceIds,
 			String name, String description, boolean andOperator)
@@ -167,6 +201,7 @@ public class CalendarServiceImpl extends CalendarServiceBaseImpl {
 			andOperator, ActionKeys.VIEW);
 	}
 
+	@Override
 	public int searchCount(
 			long companyId, long[] groupIds, long[] calendarResourceIds,
 			String name, String description, boolean andOperator,
@@ -181,10 +216,12 @@ public class CalendarServiceImpl extends CalendarServiceBaseImpl {
 		return calendars.size();
 	}
 
+	@Override
 	public Calendar updateCalendar(
 			long calendarId, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, int color,
-			boolean defaultCalendar, ServiceContext serviceContext)
+			boolean defaultCalendar, boolean enableComments,
+			boolean enableRatings, ServiceContext serviceContext)
 		throws PortalException, SystemException {
 
 		CalendarPermission.check(
@@ -192,9 +229,10 @@ public class CalendarServiceImpl extends CalendarServiceBaseImpl {
 
 		return calendarLocalService.updateCalendar(
 			calendarId, nameMap, descriptionMap, color, defaultCalendar,
-			serviceContext);
+			enableComments, enableRatings, serviceContext);
 	}
 
+	@Override
 	public Calendar updateCalendar(
 			long calendarId, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, int color,
@@ -208,6 +246,7 @@ public class CalendarServiceImpl extends CalendarServiceBaseImpl {
 			calendarId, nameMap, descriptionMap, color, serviceContext);
 	}
 
+	@Override
 	public Calendar updateColor(
 			long calendarId, int color, ServiceContext serviceContext)
 		throws PortalException, SystemException {

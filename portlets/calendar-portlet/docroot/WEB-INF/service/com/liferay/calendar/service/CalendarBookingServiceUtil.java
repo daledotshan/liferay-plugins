@@ -19,11 +19,12 @@ import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.InvokableService;
 
 /**
- * The utility for the calendar booking remote service. This utility wraps {@link com.liferay.calendar.service.impl.CalendarBookingServiceImpl} and is the primary access point for service operations in application layer code running on a remote server.
- *
- * <p>
- * This is a remote service. Methods of this service are expected to have security checks based on the propagated JAAS credentials because this service can be accessed remotely.
- * </p>
+ * Provides the remote service utility for CalendarBooking. This utility wraps
+ * {@link com.liferay.calendar.service.impl.CalendarBookingServiceImpl} and is the
+ * primary access point for service operations in application layer code running
+ * on a remote server. Methods of this service are expected to have security
+ * checks based on the propagated JAAS credentials because this service can be
+ * accessed remotely.
  *
  * @author Eduardo Lundgren
  * @see CalendarBookingService
@@ -97,6 +98,12 @@ public class CalendarBookingServiceUtil {
 			allFollowing);
 	}
 
+	public static java.lang.String exportCalendarBooking(
+		long calendarBookingId, java.lang.String type)
+		throws java.lang.Exception {
+		return getService().exportCalendarBooking(calendarBookingId, type);
+	}
+
 	public static com.liferay.calendar.model.CalendarBooking fetchCalendarBooking(
 		long calendarBookingId)
 		throws com.liferay.portal.kernel.exception.PortalException,
@@ -160,13 +167,23 @@ public class CalendarBookingServiceUtil {
 				   .getChildCalendarBookings(parentCalendarBookingId, status);
 	}
 
-	public static void invokeTransition(long calendarBookingId,
-		java.lang.String transitionName,
+	public static void invokeTransition(long calendarBookingId, int status,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
-		getService()
-			.invokeTransition(calendarBookingId, transitionName, serviceContext);
+		getService().invokeTransition(calendarBookingId, status, serviceContext);
+	}
+
+	public static void moveCalendarBookingToTrash(long calendarBookingId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().moveCalendarBookingToTrash(calendarBookingId);
+	}
+
+	public static void restoreCalendarBookingFromTrash(long calendarBookingId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().restoreCalendarBookingFromTrash(calendarBookingId);
 	}
 
 	public static java.util.List<com.liferay.calendar.model.CalendarBooking> search(

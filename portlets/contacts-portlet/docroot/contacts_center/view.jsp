@@ -92,6 +92,11 @@ portletURL.setWindowState(WindowState.NORMAL);
 						<c:if test="<%= !userPublicPage %>">
 							<aui:select cssClass="contact-group-filter-select" inlineField="true" label="" name="filterBy">
 								<aui:option label="all" selected="<%= filterBy.equals(ContactsConstants.FILTER_BY_DEFAULT) %>" value="<%= ContactsConstants.FILTER_BY_DEFAULT %>" />
+
+								<c:if test="<%= showOnlySiteMembers %>">
+									<aui:option label="administrators" selected="<%= filterBy.equals(ContactsConstants.FILTER_BY_ADMINS) %>" value="<%= ContactsConstants.FILTER_BY_ADMINS %>" />
+								</c:if>
+
 								<aui:option label="connections" selected="<%= filterBy.equals(ContactsConstants.FILTER_BY_TYPE_BI_CONNECTION) %>" value="<%= ContactsConstants.FILTER_BY_TYPE_BI_CONNECTION %>" />
 								<aui:option label="following" selected="<%= filterBy.equals(ContactsConstants.FILTER_BY_TYPE_UNI_FOLLOWER) %>" value="<%= ContactsConstants.FILTER_BY_TYPE_UNI_FOLLOWER %>" />
 
@@ -124,9 +129,11 @@ portletURL.setWindowState(WindowState.NORMAL);
 				</div>
 
 				<c:if test="<%= !showOnlySiteMembers %>">
-					<div class="add-contact">
-						<aui:button value="add-contact" />
-					</div>
+					<button class="add-contact aui-buttonitem-content yui3-widget aui-component aui-buttonitem aui-state-default aui-buttonitem-icon-label" id="<portlet:namespace/>add-contact" type="button" value="add-contact">
+						<span class="aui-buttonitem-icon aui-icon aui-icon-add"></span>
+
+						<span class="aui-buttonitem-label"><liferay-ui:message key="add-contact" /></span>
+					</button>
 				</c:if>
 			</aui:layout>
 
@@ -368,6 +375,8 @@ portletURL.setWindowState(WindowState.NORMAL);
 
 			var contactsCenter = new Liferay.ContactsCenter(
 				{
+					baseActionURL: '<%= PortletURLFactoryUtil.create(request, portletDisplay.getId(), themeDisplay.getPlid(), PortletRequest.ACTION_PHASE) %>',
+					baseRenderURL: '<%= PortletURLFactoryUtil.create(request, portletDisplay.getId(), themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>',
 					contactsResult: '.contacts-portlet .contacts-result-content',
 					contactsResultContainer: '.contacts-portlet .contacts-result',
 					contactsResultURL: '<portlet:resourceURL id="getContacts"><portlet:param name="portletResource" value="<%= portletResource %>" /><portlet:param name="redirect" value="<%= currentURL %>" /></portlet:resourceURL>',
@@ -524,55 +533,75 @@ portletURL.setWindowState(WindowState.NORMAL);
 				var contactsCenterHome = A.one('.contacts-portlet .contacts-center-home');
 
 				<c:if test="<%= !showOnlySiteMembers %>">
-					A.one('.contacts-portlet .add-contact input').on(
-						'click',
-						function(event) {
-							contactsCenter.showPopup('<%= LanguageUtil.get(pageContext, "add-contact") %>', '<portlet:renderURL windowState="<%= LiferayWindowState.EXCLUSIVE.toString() %>"><portlet:param name="mvcPath" value="/contacts_center/edit_entry.jsp" /><portlet:param name="redirect" value="<%= currentURL %>" /></portlet:renderURL>');
-						}
-					);
+					var addContact = A.one('#<portlet:namespace/>add-contact');
 
-					contactsCenterHome.one('.contacts').on(
+					if (addContact) {
+						addContact.on(
+							'click',
+							function(event) {
+								contactsCenter.showPopup('<%= LanguageUtil.get(pageContext, "add-contact") %>', '<portlet:renderURL windowState="<%= LiferayWindowState.EXCLUSIVE.toString() %>"><portlet:param name="mvcPath" value="/contacts_center/edit_entry.jsp" /><portlet:param name="redirect" value="<%= currentURL %>" /></portlet:renderURL>');
+							}
+						);
+					}
+
+					var contacts = contactsCenterHome.one('.contacts');
+
+					if (contacts) {
+						contacts.on(
+							'click',
+							function(event) {
+								contactFilterSelect.set('value', '<%= ContactsConstants.FILTER_BY_TYPE_MY_CONTACTS %>');
+
+								contactsCenter.updateContacts(searchInput.get('value'), contactFilterSelect.get('value'));
+							},
+							'a'
+						);
+					}
+				</c:if>
+
+				var connections = contactsCenterHome.one('.connections');
+
+				if (connections) {
+					connections.on(
 						'click',
 						function(event) {
-							contactFilterSelect.set('value', '<%= ContactsConstants.FILTER_BY_TYPE_MY_CONTACTS %>');
+							contactFilterSelect.set('value', '<%= ContactsConstants.FILTER_BY_TYPE_BI_CONNECTION %>');
 
 							contactsCenter.updateContacts(searchInput.get('value'), contactFilterSelect.get('value'));
 						},
 						'a'
 					);
-				</c:if>
+				}
 
-				contactsCenterHome.one('.connections').on(
-					'click',
-					function(event) {
-						contactFilterSelect.set('value', '<%= ContactsConstants.FILTER_BY_TYPE_BI_CONNECTION %>');
+				var following = contactsCenterHome.one('.followings');
 
-						contactsCenter.updateContacts(searchInput.get('value'), contactFilterSelect.get('value'));
-					},
-					'a'
-				);
+				if (following) {
+					following.on(
+						'click',
+						function(event) {
+							contactFilterSelect.set('value', '<%= ContactsConstants.FILTER_BY_TYPE_UNI_FOLLOWER %>');
 
-				contactsCenterHome.one('.followings').on(
-					'click',
-					function(event) {
-						contactFilterSelect.set('value', '<%= ContactsConstants.FILTER_BY_TYPE_UNI_FOLLOWER %>');
+							contactsCenter.updateContacts(searchInput.get('value'), contactFilterSelect.get('value'));
+						},
+						'a'
+					);
+				}
 
-						contactsCenter.updateContacts(searchInput.get('value'), contactFilterSelect.get('value'));
-					},
-					'a'
-				);
+				var all = contactsCenterHome.one('.all');
 
-				contactsCenterHome.one('.all').on(
-					'click',
-					function(event) {
-						contactFilterSelect.set('value', '<%= ContactsConstants.FILTER_BY_DEFAULT %>');
+				if (all) {
+					all.on(
+						'click',
+						function(event) {
+							contactFilterSelect.set('value', '<%= ContactsConstants.FILTER_BY_DEFAULT %>');
 
-						searchInput.set('value', '');
+							searchInput.set('value', '');
 
-						contactsCenter.updateContacts(searchInput.get('value'), contactFilterSelect.get('value'));
-					},
-					'a'
-				);
+							contactsCenter.updateContacts(searchInput.get('value'), contactFilterSelect.get('value'));
+						},
+						'a'
+					);
+				}
 			</c:if>
 		</aui:script>
 	</c:otherwise>

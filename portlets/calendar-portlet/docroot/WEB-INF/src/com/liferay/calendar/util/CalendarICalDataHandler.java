@@ -23,6 +23,7 @@ import com.liferay.calendar.recurrence.Recurrence;
 import com.liferay.calendar.service.CalendarBookingLocalServiceUtil;
 import com.liferay.calendar.service.CalendarBookingServiceUtil;
 import com.liferay.calendar.service.CalendarLocalServiceUtil;
+import com.liferay.calendar.workflow.CalendarBookingWorkflowConstants;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -67,6 +68,7 @@ import net.fortuna.ical4j.model.parameter.CuType;
 import net.fortuna.ical4j.model.parameter.PartStat;
 import net.fortuna.ical4j.model.parameter.Role;
 import net.fortuna.ical4j.model.parameter.Rsvp;
+import net.fortuna.ical4j.model.parameter.XParameter;
 import net.fortuna.ical4j.model.property.Action;
 import net.fortuna.ical4j.model.property.Attendee;
 import net.fortuna.ical4j.model.property.CalScale;
@@ -83,15 +85,24 @@ import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Trigger;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.model.property.XProperty;
 
 /**
  * @author Marcellus Tavares
  */
 public class CalendarICalDataHandler implements CalendarDataHandler {
 
+	@Override
 	public String exportCalendar(long calendarId) throws Exception {
+		int[] statuses = {
+			CalendarBookingWorkflowConstants.STATUS_APPROVED,
+			CalendarBookingWorkflowConstants.STATUS_MAYBE,
+			CalendarBookingWorkflowConstants.STATUS_PENDING
+		};
+
 		List<CalendarBooking> calendarBookings =
-			CalendarBookingLocalServiceUtil.getCalendarBookings(calendarId);
+			CalendarBookingLocalServiceUtil.getCalendarBookings(
+				calendarId, statuses);
 
 		net.fortuna.ical4j.model.Calendar iCalCalendar = toICalCalendar(
 			calendarBookings);
@@ -99,6 +110,7 @@ public class CalendarICalDataHandler implements CalendarDataHandler {
 		return toString(iCalCalendar);
 	}
 
+	@Override
 	public String exportCalendarBooking(long calendarBookingId)
 		throws Exception {
 
@@ -117,6 +129,7 @@ public class CalendarICalDataHandler implements CalendarDataHandler {
 		return toString(iCalCalendar);
 	}
 
+	@Override
 	public void importCalendar(long calendarId, String data) throws Exception {
 		CalendarBuilder calendarBuilder = new CalendarBuilder();
 
@@ -625,6 +638,15 @@ public class CalendarICalDataHandler implements CalendarDataHandler {
 			calendarBooking.getDescription(user.getLocale()));
 
 		propertyList.add(description);
+
+		XProperty xProperty = new XProperty(
+			"X-ALT-DESC", calendarBooking.getDescription(user.getLocale()));
+
+		ParameterList parameters = xProperty.getParameters();
+
+		parameters.add(new XParameter("FMTTYPE", "text/html"));
+
+		propertyList.add(xProperty);
 
 		// Location
 

@@ -79,7 +79,7 @@ while (iterator.hasNext()) {
 		%>
 
 			<c:choose>
-				<c:when test="<%= portletId.equals(PortletKeys.ANNOUNCEMENTS) %>">
+				<c:when test="<%= portletId.equals(PortletKeys.ANNOUNCEMENTS) || portletId.equals(PortletKeys.SO_ANNOUNCEMENTS) %>">
 					<%@ include file="/notifications/view_announcement.jspf" %>
 				</c:when>
 				<c:when test="<%= portletId.equals(PortletKeys.SO_INVITE_MEMBERS) %>">
@@ -141,31 +141,6 @@ while (iterator.hasNext()) {
 				}
 			},
 			'.user-notification-event-content'
-		);
-
-		userNotificationsContainer.delegate(
-			'click',
-			function(event) {
-				event.preventDefault();
-
-				var row = event.currentTarget.ancestor('.user-notification-event-content');
-				var loadingRow = A.Node.create('<div class="loading-animation"></div>');
-
-				row.hide().placeAfter(loadingRow);
-
-				A.io.request(
-					event.currentTarget.attr('href'),
-					{
-						on: {
-							success: function() {
-								row.remove();
-								loadingRow.remove();
-							}
-						}
-					}
-				);
-			},
-			'a'
 		);
 
 		var dismissNotifications = userNotificationEvents.one('.dismiss-notifications');
