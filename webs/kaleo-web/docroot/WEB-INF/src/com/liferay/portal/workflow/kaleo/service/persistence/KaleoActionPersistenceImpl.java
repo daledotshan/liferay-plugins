@@ -111,6 +111,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the matching kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<KaleoAction> findByCompanyId(long companyId)
 		throws SystemException {
 		return findByCompanyId(companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
@@ -130,6 +131,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the range of matching kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<KaleoAction> findByCompanyId(long companyId, int start, int end)
 		throws SystemException {
 		return findByCompanyId(companyId, start, end, null);
@@ -149,6 +151,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the ordered range of matching kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<KaleoAction> findByCompanyId(long companyId, int start,
 		int end, OrderByComparator orderByComparator) throws SystemException {
 		boolean pagination = true;
@@ -255,6 +258,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @throws com.liferay.portal.workflow.kaleo.NoSuchActionException if a matching kaleo action could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction findByCompanyId_First(long companyId,
 		OrderByComparator orderByComparator)
 		throws NoSuchActionException, SystemException {
@@ -285,6 +289,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the first matching kaleo action, or <code>null</code> if a matching kaleo action could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction fetchByCompanyId_First(long companyId,
 		OrderByComparator orderByComparator) throws SystemException {
 		List<KaleoAction> list = findByCompanyId(companyId, 0, 1,
@@ -306,6 +311,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @throws com.liferay.portal.workflow.kaleo.NoSuchActionException if a matching kaleo action could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction findByCompanyId_Last(long companyId,
 		OrderByComparator orderByComparator)
 		throws NoSuchActionException, SystemException {
@@ -336,9 +342,14 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the last matching kaleo action, or <code>null</code> if a matching kaleo action could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction fetchByCompanyId_Last(long companyId,
 		OrderByComparator orderByComparator) throws SystemException {
 		int count = countByCompanyId(companyId);
+
+		if (count == 0) {
+			return null;
+		}
 
 		List<KaleoAction> list = findByCompanyId(companyId, count - 1, count,
 				orderByComparator);
@@ -360,6 +371,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @throws com.liferay.portal.workflow.kaleo.NoSuchActionException if a kaleo action with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction[] findByCompanyId_PrevAndNext(long kaleoActionId,
 		long companyId, OrderByComparator orderByComparator)
 		throws NoSuchActionException, SystemException {
@@ -501,6 +513,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @param companyId the company ID
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public void removeByCompanyId(long companyId) throws SystemException {
 		for (KaleoAction kaleoAction : findByCompanyId(companyId,
 				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
@@ -515,6 +528,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the number of matching kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public int countByCompanyId(long companyId) throws SystemException {
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_COMPANYID;
 
@@ -590,6 +604,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the matching kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<KaleoAction> findByKaleoDefinitionId(long kaleoDefinitionId)
 		throws SystemException {
 		return findByKaleoDefinitionId(kaleoDefinitionId, QueryUtil.ALL_POS,
@@ -609,6 +624,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the range of matching kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<KaleoAction> findByKaleoDefinitionId(long kaleoDefinitionId,
 		int start, int end) throws SystemException {
 		return findByKaleoDefinitionId(kaleoDefinitionId, start, end, null);
@@ -628,6 +644,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the ordered range of matching kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<KaleoAction> findByKaleoDefinitionId(long kaleoDefinitionId,
 		int start, int end, OrderByComparator orderByComparator)
 		throws SystemException {
@@ -739,6 +756,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @throws com.liferay.portal.workflow.kaleo.NoSuchActionException if a matching kaleo action could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction findByKaleoDefinitionId_First(long kaleoDefinitionId,
 		OrderByComparator orderByComparator)
 		throws NoSuchActionException, SystemException {
@@ -769,6 +787,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the first matching kaleo action, or <code>null</code> if a matching kaleo action could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction fetchByKaleoDefinitionId_First(long kaleoDefinitionId,
 		OrderByComparator orderByComparator) throws SystemException {
 		List<KaleoAction> list = findByKaleoDefinitionId(kaleoDefinitionId, 0,
@@ -790,6 +809,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @throws com.liferay.portal.workflow.kaleo.NoSuchActionException if a matching kaleo action could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction findByKaleoDefinitionId_Last(long kaleoDefinitionId,
 		OrderByComparator orderByComparator)
 		throws NoSuchActionException, SystemException {
@@ -820,9 +840,14 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the last matching kaleo action, or <code>null</code> if a matching kaleo action could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction fetchByKaleoDefinitionId_Last(long kaleoDefinitionId,
 		OrderByComparator orderByComparator) throws SystemException {
 		int count = countByKaleoDefinitionId(kaleoDefinitionId);
+
+		if (count == 0) {
+			return null;
+		}
 
 		List<KaleoAction> list = findByKaleoDefinitionId(kaleoDefinitionId,
 				count - 1, count, orderByComparator);
@@ -844,6 +869,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @throws com.liferay.portal.workflow.kaleo.NoSuchActionException if a kaleo action with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction[] findByKaleoDefinitionId_PrevAndNext(
 		long kaleoActionId, long kaleoDefinitionId,
 		OrderByComparator orderByComparator)
@@ -986,6 +1012,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @param kaleoDefinitionId the kaleo definition ID
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public void removeByKaleoDefinitionId(long kaleoDefinitionId)
 		throws SystemException {
 		for (KaleoAction kaleoAction : findByKaleoDefinitionId(
@@ -1001,6 +1028,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the number of matching kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public int countByKaleoDefinitionId(long kaleoDefinitionId)
 		throws SystemException {
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_KALEODEFINITIONID;
@@ -1079,6 +1107,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the matching kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<KaleoAction> findByKCN_KCPK(String kaleoClassName,
 		long kaleoClassPK) throws SystemException {
 		return findByKCN_KCPK(kaleoClassName, kaleoClassPK, QueryUtil.ALL_POS,
@@ -1099,6 +1128,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the range of matching kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<KaleoAction> findByKCN_KCPK(String kaleoClassName,
 		long kaleoClassPK, int start, int end) throws SystemException {
 		return findByKCN_KCPK(kaleoClassName, kaleoClassPK, start, end, null);
@@ -1119,6 +1149,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the ordered range of matching kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<KaleoAction> findByKCN_KCPK(String kaleoClassName,
 		long kaleoClassPK, int start, int end,
 		OrderByComparator orderByComparator) throws SystemException {
@@ -1251,6 +1282,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @throws com.liferay.portal.workflow.kaleo.NoSuchActionException if a matching kaleo action could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction findByKCN_KCPK_First(String kaleoClassName,
 		long kaleoClassPK, OrderByComparator orderByComparator)
 		throws NoSuchActionException, SystemException {
@@ -1285,6 +1317,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the first matching kaleo action, or <code>null</code> if a matching kaleo action could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction fetchByKCN_KCPK_First(String kaleoClassName,
 		long kaleoClassPK, OrderByComparator orderByComparator)
 		throws SystemException {
@@ -1308,6 +1341,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @throws com.liferay.portal.workflow.kaleo.NoSuchActionException if a matching kaleo action could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction findByKCN_KCPK_Last(String kaleoClassName,
 		long kaleoClassPK, OrderByComparator orderByComparator)
 		throws NoSuchActionException, SystemException {
@@ -1342,10 +1376,15 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the last matching kaleo action, or <code>null</code> if a matching kaleo action could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction fetchByKCN_KCPK_Last(String kaleoClassName,
 		long kaleoClassPK, OrderByComparator orderByComparator)
 		throws SystemException {
 		int count = countByKCN_KCPK(kaleoClassName, kaleoClassPK);
+
+		if (count == 0) {
+			return null;
+		}
 
 		List<KaleoAction> list = findByKCN_KCPK(kaleoClassName, kaleoClassPK,
 				count - 1, count, orderByComparator);
@@ -1368,6 +1407,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @throws com.liferay.portal.workflow.kaleo.NoSuchActionException if a kaleo action with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction[] findByKCN_KCPK_PrevAndNext(long kaleoActionId,
 		String kaleoClassName, long kaleoClassPK,
 		OrderByComparator orderByComparator)
@@ -1529,6 +1569,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @param kaleoClassPK the kaleo class p k
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public void removeByKCN_KCPK(String kaleoClassName, long kaleoClassPK)
 		throws SystemException {
 		for (KaleoAction kaleoAction : findByKCN_KCPK(kaleoClassName,
@@ -1545,6 +1586,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the number of matching kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public int countByKCN_KCPK(String kaleoClassName, long kaleoClassPK)
 		throws SystemException {
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_KCN_KCPK;
@@ -1653,6 +1695,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the matching kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<KaleoAction> findByKCN_KCPK_ET(String kaleoClassName,
 		long kaleoClassPK, String executionType) throws SystemException {
 		return findByKCN_KCPK_ET(kaleoClassName, kaleoClassPK, executionType,
@@ -1674,6 +1717,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the range of matching kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<KaleoAction> findByKCN_KCPK_ET(String kaleoClassName,
 		long kaleoClassPK, String executionType, int start, int end)
 		throws SystemException {
@@ -1697,6 +1741,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the ordered range of matching kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<KaleoAction> findByKCN_KCPK_ET(String kaleoClassName,
 		long kaleoClassPK, String executionType, int start, int end,
 		OrderByComparator orderByComparator) throws SystemException {
@@ -1852,6 +1897,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @throws com.liferay.portal.workflow.kaleo.NoSuchActionException if a matching kaleo action could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction findByKCN_KCPK_ET_First(String kaleoClassName,
 		long kaleoClassPK, String executionType,
 		OrderByComparator orderByComparator)
@@ -1891,6 +1937,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the first matching kaleo action, or <code>null</code> if a matching kaleo action could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction fetchByKCN_KCPK_ET_First(String kaleoClassName,
 		long kaleoClassPK, String executionType,
 		OrderByComparator orderByComparator) throws SystemException {
@@ -1915,6 +1962,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @throws com.liferay.portal.workflow.kaleo.NoSuchActionException if a matching kaleo action could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction findByKCN_KCPK_ET_Last(String kaleoClassName,
 		long kaleoClassPK, String executionType,
 		OrderByComparator orderByComparator)
@@ -1954,11 +2002,16 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the last matching kaleo action, or <code>null</code> if a matching kaleo action could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction fetchByKCN_KCPK_ET_Last(String kaleoClassName,
 		long kaleoClassPK, String executionType,
 		OrderByComparator orderByComparator) throws SystemException {
 		int count = countByKCN_KCPK_ET(kaleoClassName, kaleoClassPK,
 				executionType);
+
+		if (count == 0) {
+			return null;
+		}
 
 		List<KaleoAction> list = findByKCN_KCPK_ET(kaleoClassName,
 				kaleoClassPK, executionType, count - 1, count, orderByComparator);
@@ -1982,6 +2035,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @throws com.liferay.portal.workflow.kaleo.NoSuchActionException if a kaleo action with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction[] findByKCN_KCPK_ET_PrevAndNext(long kaleoActionId,
 		String kaleoClassName, long kaleoClassPK, String executionType,
 		OrderByComparator orderByComparator)
@@ -2165,6 +2219,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @param executionType the execution type
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public void removeByKCN_KCPK_ET(String kaleoClassName, long kaleoClassPK,
 		String executionType) throws SystemException {
 		for (KaleoAction kaleoAction : findByKCN_KCPK_ET(kaleoClassName,
@@ -2183,6 +2238,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the number of matching kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public int countByKCN_KCPK_ET(String kaleoClassName, long kaleoClassPK,
 		String executionType) throws SystemException {
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_KCN_KCPK_ET;
@@ -2275,11 +2331,16 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	private static final String _FINDER_COLUMN_KCN_KCPK_ET_EXECUTIONTYPE_2 = "kaleoAction.executionType = ?";
 	private static final String _FINDER_COLUMN_KCN_KCPK_ET_EXECUTIONTYPE_3 = "(kaleoAction.executionType IS NULL OR kaleoAction.executionType = '')";
 
+	public KaleoActionPersistenceImpl() {
+		setModelClass(KaleoAction.class);
+	}
+
 	/**
 	 * Caches the kaleo action in the entity cache if it is enabled.
 	 *
 	 * @param kaleoAction the kaleo action
 	 */
+	@Override
 	public void cacheResult(KaleoAction kaleoAction) {
 		EntityCacheUtil.putResult(KaleoActionModelImpl.ENTITY_CACHE_ENABLED,
 			KaleoActionImpl.class, kaleoAction.getPrimaryKey(), kaleoAction);
@@ -2292,6 +2353,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 *
 	 * @param kaleoActions the kaleo actions
 	 */
+	@Override
 	public void cacheResult(List<KaleoAction> kaleoActions) {
 		for (KaleoAction kaleoAction : kaleoActions) {
 			if (EntityCacheUtil.getResult(
@@ -2358,6 +2420,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @param kaleoActionId the primary key for the new kaleo action
 	 * @return the new kaleo action
 	 */
+	@Override
 	public KaleoAction create(long kaleoActionId) {
 		KaleoAction kaleoAction = new KaleoActionImpl();
 
@@ -2375,6 +2438,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @throws com.liferay.portal.workflow.kaleo.NoSuchActionException if a kaleo action with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction remove(long kaleoActionId)
 		throws NoSuchActionException, SystemException {
 		return remove((Serializable)kaleoActionId);
@@ -2648,6 +2712,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @throws com.liferay.portal.workflow.kaleo.NoSuchActionException if a kaleo action with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction findByPrimaryKey(long kaleoActionId)
 		throws NoSuchActionException, SystemException {
 		return findByPrimaryKey((Serializable)kaleoActionId);
@@ -2708,6 +2773,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the kaleo action, or <code>null</code> if a kaleo action with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public KaleoAction fetchByPrimaryKey(long kaleoActionId)
 		throws SystemException {
 		return fetchByPrimaryKey((Serializable)kaleoActionId);
@@ -2719,6 +2785,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<KaleoAction> findAll() throws SystemException {
 		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
@@ -2735,6 +2802,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the range of kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<KaleoAction> findAll(int start, int end)
 		throws SystemException {
 		return findAll(start, end, null);
@@ -2753,6 +2821,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the ordered range of kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<KaleoAction> findAll(int start, int end,
 		OrderByComparator orderByComparator) throws SystemException {
 		boolean pagination = true;
@@ -2838,6 +2907,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 *
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public void removeAll() throws SystemException {
 		for (KaleoAction kaleoAction : findAll()) {
 			remove(kaleoAction);
@@ -2850,6 +2920,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 	 * @return the number of kaleo actions
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public int countAll() throws SystemException {
 		Long count = (Long)FinderCacheUtil.getResult(FINDER_PATH_COUNT_ALL,
 				FINDER_ARGS_EMPTY, this);
@@ -2936,6 +3007,7 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 		};
 
 	private static CacheModel<KaleoAction> _nullKaleoActionCacheModel = new CacheModel<KaleoAction>() {
+			@Override
 			public KaleoAction toEntityModel() {
 				return _nullKaleoAction;
 			}

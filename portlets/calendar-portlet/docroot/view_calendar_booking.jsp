@@ -17,7 +17,11 @@
 <%@ include file="/init.jsp" %>
 
 <%
+String backURL = ParamUtil.getString(request, "backURL");
+
 CalendarBooking calendarBooking = (CalendarBooking)request.getAttribute(WebKeys.CALENDAR_BOOKING);
+
+Calendar calendar = calendarBooking.getCalendar();
 
 long startTime = BeanParamUtil.getLong(calendarBooking, request, "startTime");
 
@@ -33,6 +37,7 @@ AssetEntry layoutAssetEntry = AssetEntryLocalServiceUtil.getEntry(CalendarBookin
 %>
 
 <liferay-ui:header
+	backURL="<%= backURL %>"
 	title="<%= calendarBooking.getTitle(locale) %>"
 />
 
@@ -118,29 +123,70 @@ AssetEntry layoutAssetEntry = AssetEntryLocalServiceUtil.getEntry(CalendarBookin
 		/>
 	</div>
 
-	<div class="entry-ratings">
-		<liferay-ui:ratings
-			className="<%= CalendarBooking.class.getName() %>"
-			classPK="<%= calendarBooking.getCalendarBookingId() %>"
-		/>
-	</div>
-</aui:fieldset>
-
-<aui:fieldset>
-	<liferay-ui:panel-container extended="<%= false %>" id="calendarBookingPanelContainer" persistState="<%= true %>">
-		<liferay-ui:panel collapsible="<%= true %>" extended="<%= false %>" id="calendarBookingCommentsPanel" persistState="<%= true %>" title="comments">
-			<liferay-portlet:actionURL name="updateDiscussion" var="updateDiscussionURL" />
-
-			<liferay-ui:discussion
+	<c:if test="<%= calendar.isEnableRatings() %>">
+		<div class="entry-ratings">
+			<liferay-ui:ratings
 				className="<%= CalendarBooking.class.getName() %>"
 				classPK="<%= calendarBooking.getCalendarBookingId() %>"
-				formAction="<%= updateDiscussionURL %>"
-				formName="fm2"
-				ratingsEnabled="true"
-				redirect="<%= currentURL %>"
-				subject="<%= calendarBooking.getTitle(locale) %>"
-				userId="<%= calendarBooking.getUserId() %>"
 			/>
-		</liferay-ui:panel>
-	</liferay-ui:panel-container>
+		</div>
+	</c:if>
 </aui:fieldset>
+
+<c:if test="<%= calendar.isEnableComments() %>">
+	<aui:fieldset>
+		<liferay-ui:panel-container extended="<%= false %>" id="calendarBookingPanelContainer" persistState="<%= true %>">
+			<liferay-ui:panel collapsible="<%= true %>" extended="<%= false %>" id="calendarBookingCommentsPanel" persistState="<%= true %>" title="comments">
+				<liferay-portlet:actionURL name="updateDiscussion" var="updateDiscussionURL" />
+
+				<liferay-ui:discussion
+					className="<%= CalendarBooking.class.getName() %>"
+					classPK="<%= calendarBooking.getCalendarBookingId() %>"
+					formAction="<%= updateDiscussionURL %>"
+					formName="fm2"
+					ratingsEnabled="true"
+					redirect="<%= currentURL %>"
+					subject="<%= calendarBooking.getTitle(locale) %>"
+					userId="<%= calendarBooking.getUserId() %>"
+				/>
+			</liferay-ui:panel>
+		</liferay-ui:panel-container>
+	</aui:fieldset>
+</c:if>
+
+<portlet:actionURL name="invokeTransition" var="invokeTransitionURL" />
+
+<aui:form action="<%= invokeTransitionURL %>" method="post" name="fm">
+	<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
+	<aui:input name="calendarBookingId" type="hidden" value="<%= calendarBooking.getCalendarBookingId() %>" />
+	<aui:input name="status" type="hidden" />
+
+	<aui:fieldset>
+		<aui:button-row>
+
+			<%
+			boolean hasManageBookingsPermission = CalendarPermission.contains(permissionChecker, calendar, ActionKeys.MANAGE_BOOKINGS);
+			%>
+
+			<c:if test="<%= hasManageBookingsPermission && (calendarBooking.getStatus() != CalendarBookingWorkflowConstants.STATUS_APPROVED) %>">
+				<aui:button onClick='<%= renderResponse.getNamespace() + "invokeTransition(" + CalendarBookingWorkflowConstants.STATUS_APPROVED + ");" %>' value="accept" />
+			</c:if>
+
+			<c:if test="<%= hasManageBookingsPermission && (calendarBooking.getStatus() != CalendarBookingWorkflowConstants.STATUS_MAYBE) %>">
+				<aui:button onClick='<%= renderResponse.getNamespace() + "invokeTransition(" + CalendarBookingWorkflowConstants.STATUS_MAYBE + ");" %>' value="maybe" />
+			</c:if>
+
+			<c:if test="<%= hasManageBookingsPermission && (calendarBooking.getStatus() != CalendarBookingWorkflowConstants.STATUS_DENIED) %>">
+				<aui:button onClick='<%= renderResponse.getNamespace() + "invokeTransition(" + CalendarBookingWorkflowConstants.STATUS_DENIED + ");" %>' value="decline" />
+			</c:if>
+		</aui:button-row>
+	</aui:fieldset>
+</aui:form>
+
+<aui:script>
+	function <portlet:namespace />invokeTransition(status) {
+		document.<portlet:namespace />fm.<portlet:namespace />status.value = status;
+
+		submitForm(document.<portlet:namespace />fm);
+	}
+</aui:script>

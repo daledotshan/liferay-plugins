@@ -39,6 +39,9 @@ import java.io.InputStream;
 
 import java.net.URL;
 
+import java.util.Map;
+import java.util.Set;
+
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletException;
@@ -74,15 +77,7 @@ public class StorePortlet extends MVCPortlet {
 
 			FileUtil.write(tempFile, inputStream);
 
-			App app = AppLocalServiceUtil.fetchRemoteApp(remoteAppId);
-
-			if (app == null) {
-				app = AppServiceUtil.addApp(remoteAppId, version, tempFile);
-			}
-			else {
-				app = AppServiceUtil.updateApp(
-					app.getAppId(), version, tempFile);
-			}
+			App app = AppServiceUtil.updateApp(remoteAppId, version, tempFile);
 
 			JSONObject jsonObject = getAppJSONObject(app.getRemoteAppId());
 
@@ -107,6 +102,30 @@ public class StorePortlet extends MVCPortlet {
 		JSONObject jsonObject = getAppJSONObject(remoteAppId);
 
 		jsonObject.put("cmd", "getApp");
+		jsonObject.put("message", "success");
+
+		writeJSON(actionRequest, actionResponse, jsonObject);
+	}
+
+	public void getBundledApps(
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
+
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		Map<String, String> bundledApps = AppLocalServiceUtil.getBundledApps();
+
+		JSONObject bundledAppJsonObject = JSONFactoryUtil.createJSONObject();
+
+		Set<String> keys = bundledApps.keySet();
+
+		for (String key : keys) {
+			bundledAppJsonObject.put(key, bundledApps.get(key));
+		}
+
+		jsonObject.put("bundledApps", bundledAppJsonObject);
+
+		jsonObject.put("cmd", "getBundledApps");
 		jsonObject.put("message", "success");
 
 		writeJSON(actionRequest, actionResponse, jsonObject);
@@ -214,15 +233,7 @@ public class StorePortlet extends MVCPortlet {
 
 			FileUtil.write(tempFile, inputStream);
 
-			App app = AppLocalServiceUtil.fetchRemoteApp(remoteAppId);
-
-			if (app == null) {
-				app = AppServiceUtil.addApp(remoteAppId, version, tempFile);
-			}
-			else {
-				app = AppServiceUtil.updateApp(
-					app.getAppId(), version, tempFile);
-			}
+			AppServiceUtil.updateApp(remoteAppId, version, tempFile);
 
 			AppServiceUtil.installApp(remoteAppId);
 
@@ -270,8 +281,8 @@ public class StorePortlet extends MVCPortlet {
 		}
 
 		ExpandoValueLocalServiceUtil.addValue(
-			themeDisplay.getCompanyId(), User.class.getName(), "MP",
-			"client-id", themeDisplay.getUserId(), decodedClientId);
+			themeDisplay.getCompanyId(), User.class.getName(), "MP", "clientId",
+			themeDisplay.getUserId(), decodedClientId);
 
 		jsonObject.put("message", "success");
 
@@ -295,6 +306,9 @@ public class StorePortlet extends MVCPortlet {
 			}
 			else if (cmd.equals("getApp")) {
 				getApp(actionRequest, actionResponse);
+			}
+			else if (cmd.equals("getBundledApps")) {
+				getBundledApps(actionRequest, actionResponse);
 			}
 			else if (cmd.equals("getClientId")) {
 				getClientId(actionRequest, actionResponse);

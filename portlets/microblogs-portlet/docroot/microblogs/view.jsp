@@ -44,7 +44,7 @@ String tabs1Names = "timeline,mentions";
 if (!tabs1.equals("mentions") && !tabs1.equals("timeline")) {
 	tabs1Names += "," + tabs1;
 
-	assetTagName = tabs1;
+	assetTagName = StringUtil.toLowerCase(tabs1);
 }
 
 PortletURL portletURL = renderResponse.createRenderURL();
@@ -96,7 +96,7 @@ portletURL.setParameter("tabs1", tabs1);
 
 			assetTagName = taggedUser.getScreenName();
 		}
-		catch (NoSuchUserException nsue){
+		catch (NoSuchUserException nsue) {
 		}
 
 		results = MicroblogsEntryServiceUtil.getMicroblogsEntries(assetTagName, searchContainer.getStart(), searchContainer.getEnd());
@@ -147,7 +147,7 @@ portletURL.setParameter("tabs1", tabs1);
 	<liferay-ui:search-paginator searchContainer="<%= searchContainer %>" type="article" />
 </div>
 
-<aui:script use="aui-base,aui-io">
+<aui:script use="aui-base,aui-io-deprecated">
 	AUI().ready(
 		function() {
 			Liferay.Microblogs.init(

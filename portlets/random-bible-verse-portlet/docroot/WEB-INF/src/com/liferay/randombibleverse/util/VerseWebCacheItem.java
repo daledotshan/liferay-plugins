@@ -36,11 +36,12 @@ public class VerseWebCacheItem implements WebCacheItem {
 		_language = language;
 	}
 
+	@Override
 	public Object convert(String key) throws WebCacheException {
 		try {
 			Verse verse = null;
 
-			if (_language.equalsIgnoreCase("fi")) {
+			if (StringUtil.equalsIgnoreCase(_language, "fi")) {
 				verse = _getUskonkirjat(verse);
 			}
 			else {
@@ -55,6 +56,7 @@ public class VerseWebCacheItem implements WebCacheItem {
 		}
 	}
 
+	@Override
 	public long getRefreshTime() {
 		return _REFRESH_TIME;
 	}

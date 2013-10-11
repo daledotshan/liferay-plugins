@@ -54,9 +54,11 @@ import java.util.Map;
  * @author Eduardo Lundgren
  * @author Fabio Pezzutto
  * @author Bruno Basto
+ * @author Pier Paolo Ramon
  */
 public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 
+	@Override
 	public CalendarBooking addCalendarBooking(
 			long calendarId, long[] childCalendarIds,
 			long parentCalendarBookingId, Map<Locale, String> titleMap,
@@ -76,6 +78,7 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 			secondReminderType, serviceContext);
 	}
 
+	@Override
 	public CalendarBooking deleteCalendarBooking(long calendarBookingId)
 		throws PortalException, SystemException {
 
@@ -90,6 +93,7 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 			calendarBookingId);
 	}
 
+	@Override
 	public void deleteCalendarBookingInstance(
 			long calendarBookingId, long startTime, boolean allFollowing)
 		throws PortalException, SystemException {
@@ -105,6 +109,22 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 			calendarBookingId, startTime, allFollowing);
 	}
 
+	@Override
+	public String exportCalendarBooking(long calendarBookingId, String type)
+		throws Exception {
+
+		CalendarBooking calendarBooking =
+			calendarBookingPersistence.findByPrimaryKey(calendarBookingId);
+
+		CalendarPermission.check(
+			getPermissionChecker(), calendarBooking.getCalendar(),
+			ActionKeys.VIEW_BOOKING_DETAILS);
+
+		return calendarBookingLocalService.exportCalendarBooking(
+			calendarBookingId, type);
+	}
+
+	@Override
 	public CalendarBooking fetchCalendarBooking(long calendarBookingId)
 		throws PortalException, SystemException {
 
@@ -118,6 +138,7 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 		return filterCalendarBooking(calendarBooking);
 	}
 
+	@Override
 	public CalendarBooking getCalendarBooking(long calendarBookingId)
 		throws PortalException, SystemException {
 
@@ -127,6 +148,7 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 		return filterCalendarBooking(calendarBooking);
 	}
 
+	@Override
 	public CalendarBooking getCalendarBooking(
 			long calendarId, long parentCalendarBookingId)
 		throws PortalException, SystemException {
@@ -138,6 +160,7 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 			calendarId, parentCalendarBookingId);
 	}
 
+	@Override
 	public List<CalendarBooking> getCalendarBookings(
 			long calendarId, long startTime, long endTime)
 		throws PortalException, SystemException {
@@ -146,6 +169,7 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 			calendarId, startTime, endTime, QueryUtil.ALL_POS);
 	}
 
+	@Override
 	public List<CalendarBooking> getCalendarBookings(
 			long calendarId, long startTime, long endTime, int max)
 		throws PortalException, SystemException {
@@ -161,6 +185,7 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 		return calendarBookings;
 	}
 
+	@Override
 	public String getCalendarBookingsRSS(
 			long calendarId, long startTime, long endTime, int max, String type,
 			double version, String displayStyle, ThemeDisplay themeDisplay)
@@ -178,6 +203,7 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 			calendarBookings, themeDisplay);
 	}
 
+	@Override
 	public List<CalendarBooking> getChildCalendarBookings(
 			long parentCalendarBookingId)
 		throws PortalException, SystemException {
@@ -193,6 +219,7 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 		return calendarBookings;
 	}
 
+	@Override
 	public List<CalendarBooking> getChildCalendarBookings(
 			long parentCalendarBookingId, int status)
 		throws PortalException, SystemException {
@@ -208,9 +235,9 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 		return calendarBookings;
 	}
 
+	@Override
 	public void invokeTransition(
-			long calendarBookingId, String transitionName,
-			ServiceContext serviceContext)
+			long calendarBookingId, int status, ServiceContext serviceContext)
 		throws PortalException, SystemException {
 
 		CalendarBooking calendarBooking =
@@ -221,10 +248,41 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 			ActionKeys.MANAGE_BOOKINGS);
 
 		calendarBookingApprovalWorkflow.invokeTransition(
-			getUserId(), calendarBookingId, transitionName, serviceContext);
+			getUserId(), calendarBookingId, status, serviceContext);
+	}
+
+	@Override
+	public void moveCalendarBookingToTrash(long calendarBookingId)
+		throws PortalException, SystemException {
+
+		CalendarBooking calendarBooking =
+			calendarBookingPersistence.findByPrimaryKey(calendarBookingId);
+
+		CalendarPermission.check(
+			getPermissionChecker(), calendarBooking.getCalendarId(),
+			ActionKeys.MANAGE_BOOKINGS);
+
+		calendarBookingLocalService.moveCalendarBookingToTrash(
+			getUserId(), calendarBooking.getCalendarBookingId());
+	}
+
+	@Override
+	public void restoreCalendarBookingFromTrash(long calendarBookingId)
+		throws PortalException, SystemException {
+
+		CalendarBooking calendarBooking =
+			calendarBookingPersistence.findByPrimaryKey(calendarBookingId);
+
+		CalendarPermission.check(
+			getPermissionChecker(), calendarBooking.getCalendarId(),
+			ActionKeys.MANAGE_BOOKINGS);
+
+		calendarBookingLocalService.restoreCalendarBookingFromTrash(
+			getUserId(), calendarBooking.getCalendarBookingId());
 	}
 
 	@AccessControlled(guestAccessEnabled = true)
+	@Override
 	public List<CalendarBooking> search(
 			long companyId, long[] groupIds, long[] calendarIds,
 			long[] calendarResourceIds, long parentCalendarBookingId,
@@ -242,6 +300,7 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 		return filterCalendarBookings(calendarBookings, ActionKeys.VIEW);
 	}
 
+	@Override
 	public List<CalendarBooking> search(
 			long companyId, long[] groupIds, long[] calendarIds,
 			long[] calendarResourceIds, long parentCalendarBookingId,
@@ -262,6 +321,7 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 	}
 
 	@AccessControlled(guestAccessEnabled = true)
+	@Override
 	public int searchCount(
 			long companyId, long[] groupIds, long[] calendarIds,
 			long[] calendarResourceIds, long parentCalendarBookingId,
@@ -277,6 +337,7 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 		return calendarBookings.size();
 	}
 
+	@Override
 	public int searchCount(
 			long companyId, long[] groupIds, long[] calendarIds,
 			long[] calendarResourceIds, long parentCalendarBookingId,
@@ -294,6 +355,7 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 		return calendarBookings.size();
 	}
 
+	@Override
 	public CalendarBooking updateCalendarBooking(
 			long calendarBookingId, long calendarId, long[] childCalendarIds,
 			Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
@@ -313,6 +375,7 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 			secondReminderType, status, serviceContext);
 	}
 
+	@Override
 	public CalendarBooking updateCalendarBooking(
 			long calendarBookingId, long calendarId,
 			Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
@@ -332,6 +395,7 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 			secondReminderType, status, serviceContext);
 	}
 
+	@Override
 	public CalendarBooking updateCalendarBookingInstance(
 			long calendarBookingId, long calendarId, long[] childCalendarIds,
 			Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
@@ -352,6 +416,7 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 			secondReminder, secondReminderType, status, serviceContext);
 	}
 
+	@Override
 	public CalendarBooking updateCalendarBookingInstance(
 			long calendarBookingId, long calendarId,
 			Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,

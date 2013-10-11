@@ -16,9 +16,11 @@ package com.liferay.wsrp.admin.lar;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.lar.BasePortletDataHandler;
+import com.liferay.portal.kernel.lar.DataLevel;
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.lar.PortletDataHandlerBoolean;
 import com.liferay.portal.kernel.lar.PortletDataHandlerControl;
+import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.service.ServiceContext;
@@ -44,7 +46,11 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 	public static final String NAMESPACE = "wsrp";
 
 	public AdminPortletDataHandler() {
-		setAlwaysExportable(true);
+		setDataLevel(DataLevel.SITE);
+		setDeletionSystemEventStagedModelTypes(
+			new StagedModelType(WSRPConsumer.class),
+			new StagedModelType(WSRPConsumerPortlet.class),
+			new StagedModelType(WSRPProducer.class));
 		setExportControls(
 			new PortletDataHandlerBoolean(NAMESPACE, "wsrp-producers", false),
 			new PortletDataHandlerBoolean(
@@ -172,7 +178,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 			"wsrp-consumer");
 
 		portletDataContext.addClassedModel(
-			wsrpConsumerElement, path, wsrpConsumer, NAMESPACE);
+			wsrpConsumerElement, path, wsrpConsumer);
 
 		if (portletDataContext.getBooleanParameter(
 				NAMESPACE, "wsrp-consumer-portlets")) {
@@ -212,7 +218,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 			wsrpConsumerPortletsElement.addElement("wsrp-consumer-portlet");
 
 		portletDataContext.addClassedModel(
-			wsrpConsumerPortletElement, path, wsrpConsumerPortlet, NAMESPACE);
+			wsrpConsumerPortletElement, path, wsrpConsumerPortlet);
 	}
 
 	protected void exportWSRPProducer(
@@ -230,7 +236,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 			"wsrp-producer");
 
 		portletDataContext.addClassedModel(
-			wsrpProducerElement, path, wsrpProducer, NAMESPACE);
+			wsrpProducerElement, path, wsrpProducer);
 	}
 
 	protected String getWSRPConsumerPath(
@@ -300,7 +306,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 		catch (NoSuchConsumerException nsce) {
 			ServiceContext serviceContext =
 				portletDataContext.createServiceContext(
-					wsrpConsumerElement, wsrpConsumer, NAMESPACE);
+					wsrpConsumerElement, wsrpConsumer);
 
 			serviceContext.setUuid(wsrpConsumer.getUuid());
 
@@ -337,7 +343,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 		catch (NoSuchConsumerPortletException nscpe) {
 			ServiceContext serviceContext =
 				portletDataContext.createServiceContext(
-					wsrpConsumerPortletElement, wsrpConsumerPortlet, NAMESPACE);
+					wsrpConsumerPortletElement, wsrpConsumerPortlet);
 
 			serviceContext.setUuid(wsrpConsumerPortlet.getUuid());
 
@@ -431,7 +437,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 		catch (NoSuchProducerException nspe) {
 			ServiceContext serviceContext =
 				portletDataContext.createServiceContext(
-					wsrpProducerElement, wsrpProducer, NAMESPACE);
+					wsrpProducerElement, wsrpProducer);
 
 			serviceContext.setUuid(wsrpProducer.getUuid());
 

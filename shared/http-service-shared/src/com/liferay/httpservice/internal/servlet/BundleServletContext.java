@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.DocumentException;
@@ -57,8 +58,8 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -221,6 +222,7 @@ public class BundleServletContext extends LiferayServletContext {
 		return _bundle;
 	}
 
+	@Override
 	public ClassLoader getClassLoader() {
 		ClassLoader classLoader = (ClassLoader)_contextAttributes.get(
 			PluginContextListener.PLUGIN_CLASS_LOADER);
@@ -321,7 +323,7 @@ public class BundleServletContext extends LiferayServletContext {
 				path, false, path, this, bundleFilterChain);
 		}
 
-		String extension = FileUtil.getExtension(path).toLowerCase();
+		String extension = StringUtil.toLowerCase(FileUtil.getExtension(path));
 
 		boolean extensionMapping = false;
 
@@ -1094,14 +1096,6 @@ public class BundleServletContext extends LiferayServletContext {
 
 		@Override
 		public boolean equals(Object object) {
-			if (this == object) {
-				return true;
-			}
-
-			if (!(object instanceof FilterServiceRanking)) {
-				return false;
-			}
-
 			FilterServiceRanking filterServiceRanking =
 				(FilterServiceRanking)object;
 
@@ -1154,6 +1148,7 @@ public class BundleServletContext extends LiferayServletContext {
 	private class FilterServiceRankingComparator
 		implements Comparator<FilterServiceRanking> {
 
+		@Override
 		public int compare(
 			FilterServiceRanking filterServiceRanking1,
 			FilterServiceRanking filterServiceRanking2) {
