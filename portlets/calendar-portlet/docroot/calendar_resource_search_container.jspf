@@ -14,33 +14,27 @@
  */
 --%>
 
-<liferay-portlet:renderURL varImpl="iteratorURL">
-	<portlet:param name="mvcPath" value="/view_calendar_resources.jsp" />
-</liferay-portlet:renderURL>
-
 <liferay-ui:search-container searchContainer="<%= new CalendarResourceSearch(renderRequest, CalendarResourceSearch.DEFAULT_CUR_PARAM, iteratorURL) %>">
-	<liferay-ui:search-container-results>
 
-		<%
-		long[] groupIds = new long[] {themeDisplay.getScopeGroupId()};
-		long[] classNameIds = new long[] {PortalUtil.getClassNameId(CalendarResource.class.getName())};
+	<%
+	long[] groupIds = new long[] {themeDisplay.getScopeGroupId()};
+	long[] classNameIds = new long[] {PortalUtil.getClassNameId(CalendarResource.class.getName())};
 
-		CalendarResourceSearchTerms searchTerms = (CalendarResourceSearchTerms)searchContainer.getSearchTerms();
+	if (displayTerms.isAdvancedSearch()) {
+		total = CalendarResourceServiceUtil.searchCount(themeDisplay.getCompanyId(), groupIds, classNameIds, displayTerms.getCode(), displayTerms.getName(), displayTerms.getDescription(), displayTerms.isActive(), displayTerms.isAndOperator());
 
-		if (searchTerms.isAdvancedSearch()) {
-			results = CalendarResourceServiceUtil.search(themeDisplay.getCompanyId(), groupIds, classNameIds, searchTerms.getCode(), searchTerms.getName(), searchTerms.getDescription(), searchTerms.isActive(), searchTerms.isAndOperator(), searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
-			total = CalendarResourceServiceUtil.searchCount(themeDisplay.getCompanyId(), groupIds, classNameIds, searchTerms.getCode(), searchTerms.getName(), searchTerms.getDescription(), searchTerms.isActive(), searchTerms.isAndOperator());
-		}
-		else {
-			results = CalendarResourceServiceUtil.search(themeDisplay.getCompanyId(), groupIds, classNameIds, searchTerms.getKeywords(), true, searchTerms.isAndOperator(), searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator());
-			total = CalendarResourceServiceUtil.searchCount(themeDisplay.getCompanyId(), groupIds, classNameIds, searchTerms.getKeywords(), true);
-		}
+		searchContainer.setTotal(total);
 
-		pageContext.setAttribute("results", results);
-		pageContext.setAttribute("total", total);
-		%>
+		searchContainer.setResults(CalendarResourceServiceUtil.search(themeDisplay.getCompanyId(), groupIds, classNameIds, displayTerms.getCode(), displayTerms.getName(), displayTerms.getDescription(), displayTerms.isActive(), displayTerms.isAndOperator(), searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator()));
+	}
+	else {
+		total = CalendarResourceServiceUtil.searchCount(themeDisplay.getCompanyId(), groupIds, classNameIds, displayTerms.getKeywords(), true);
 
-	</liferay-ui:search-container-results>
+		searchContainer.setTotal(total);
+
+		searchContainer.setResults(CalendarResourceServiceUtil.search(themeDisplay.getCompanyId(), groupIds, classNameIds, displayTerms.getKeywords(), true, displayTerms.isAndOperator(), searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator()));
+	}
+	%>
 
 	<liferay-ui:search-container-row
 		className="com.liferay.calendar.model.CalendarResource"
@@ -50,7 +44,7 @@
 		<liferay-ui:search-container-column-text
 			name="name"
 			orderable="<%= true %>"
-			value="<%= resource.getName(locale) %>"
+			value="<%= HtmlUtil.escape(resource.getName(locale)) %>"
 		/>
 
 		<liferay-ui:search-container-column-text

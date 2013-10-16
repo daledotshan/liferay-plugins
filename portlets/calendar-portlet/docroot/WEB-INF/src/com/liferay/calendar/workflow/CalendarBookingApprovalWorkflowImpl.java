@@ -36,6 +36,7 @@ import java.util.Map;
 public class CalendarBookingApprovalWorkflowImpl
 	implements CalendarBookingApprovalWorkflow {
 
+	@Override
 	public Map<Long, List<String>> getActionNames(
 			PermissionChecker permissionChecker, long[] calendarBookingIds)
 		throws PortalException, SystemException {
@@ -69,12 +70,11 @@ public class CalendarBookingApprovalWorkflowImpl
 		return actionNames;
 	}
 
+	@Override
 	public void invokeTransition(
-			long userId, long calendarBookingId, String transitionName,
+			long userId, long calendarBookingId, int status,
 			ServiceContext serviceContext)
 		throws PortalException, SystemException {
-
-		int status = CalendarBookingWorkflowConstants.toStatus(transitionName);
 
 		if (status == CalendarBookingWorkflowConstants.STATUS_PENDING) {
 			CalendarBooking calendarBooking =
@@ -100,13 +100,14 @@ public class CalendarBookingApprovalWorkflowImpl
 		}
 	}
 
+	@Override
 	public void startWorkflow(
 			long userId, long calendarBookingId, ServiceContext serviceContext)
 		throws PortalException, SystemException {
 
 		invokeTransition(
 			userId, calendarBookingId,
-			CalendarBookingWorkflowConstants.LABEL_PENDING, serviceContext);
+			CalendarBookingWorkflowConstants.STATUS_PENDING, serviceContext);
 	}
 
 	protected boolean isAutoApproveCalendarBooking(

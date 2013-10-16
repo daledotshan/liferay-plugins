@@ -33,10 +33,10 @@
 			emptyResultsMessage="no-subscriptions-were-found"
 			iteratorURL="<%= iteratorURL %>"
 			rowChecker="<%= new RowChecker(renderResponse) %>"
+			total="<%= SubscriptionLocalServiceUtil.getUserSubscriptionsCount(user.getUserId()) %>"
 		>
 			<liferay-ui:search-container-results
 				results="<%= SubscriptionLocalServiceUtil.getUserSubscriptions(user.getUserId(), searchContainer.getStart(), searchContainer.getEnd(), new SubscriptionClassNameIdComparator(true)) %>"
-				total="<%= SubscriptionLocalServiceUtil.getUserSubscriptionsCount(user.getUserId()) %>"
 			/>
 
 			<%
@@ -89,10 +89,10 @@
 					value="<%= ResourceActionsUtil.getModelResource(locale, subscription.getClassName()) %>"
 				/>
 
-				<liferay-ui:search-container-column-text
+				<liferay-ui:search-container-column-date
 					href="<%= rowURL %>"
 					name="create-date"
-					value="<%= dateFormatDateTime.format(subscription.getCreateDate()) %>"
+					value="<%= subscription.getCreateDate() %>"
 				/>
 
 				<liferay-ui:search-container-column-jsp
@@ -117,27 +117,25 @@
 		window,
 		'<portlet:namespace />displayPopup',
 		function(url, title) {
-			var dialog = new A.Dialog(
+			var dialog = Liferay.Util.Window.getWindow(
 				{
-					align: {
-						node: null,
-						points: ['tc', 'tc']
+					dialog: {
+						align: {
+							node: null,
+							points: ['tc', 'tc']
+						},
+						constrain2view: true,
+						cssClass: 'portlet-my-subscription',
+						modal: true,
+						resizable: true,
+						width: 950
 					},
-					constrain2view: true,
-					cssClass: 'portlet-my-subscription',
-					modal: true,
-					resizable: false,
 					title: title,
-					width: 950
-				}
-			).plug(
-				A.Plugin.DialogIframe,
-				{
 					uri: url
 				}
-			).render();
+			)
 		},
-		['aui-dialog', 'aui-dialog-iframe']
+		['liferay-util-window']
 	);
 
 	Liferay.provide(

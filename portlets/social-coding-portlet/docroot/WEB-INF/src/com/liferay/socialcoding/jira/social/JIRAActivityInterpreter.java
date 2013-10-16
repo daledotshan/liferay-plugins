@@ -37,6 +37,7 @@ import com.liferay.socialcoding.service.JIRAIssueLocalServiceUtil;
  */
 public class JIRAActivityInterpreter extends BaseSocialActivityInterpreter {
 
+	@Override
 	public String[] getClassNames() {
 		return _CLASS_NAMES;
 	}
@@ -158,7 +159,7 @@ public class JIRAActivityInterpreter extends BaseSocialActivityInterpreter {
 		String field = jiraChangeItem.getString("field");
 
 		field = StringUtil.replace(
-			field.toLowerCase(), StringPool.SPACE, StringPool.DASH);
+			StringUtil.toLowerCase(field), StringPool.SPACE, StringPool.DASH);
 
 		String newString = jiraChangeItem.getString("newString");
 		String newValue = jiraChangeItem.getString("newValue");

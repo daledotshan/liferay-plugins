@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.asset.model.AssetRenderer;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
@@ -31,6 +32,7 @@ import com.liferay.portlet.social.model.SocialActivity;
 import com.liferay.portlet.social.model.SocialActivitySet;
 import com.liferay.portlet.social.service.SocialActivityLocalServiceUtil;
 import com.liferay.portlet.social.service.SocialActivitySetLocalServiceUtil;
+import com.liferay.so.activities.util.SocialActivityKeyConstants;
 
 /**
  * @author Evan Thibodeau
@@ -45,28 +47,30 @@ public class DLActivityInterpreter extends SOSocialActivityInterpreter {
 	@Override
 	protected long getActivitySetId(long activityId) {
 		try {
+			SocialActivitySet activitySet = null;
+
 			SocialActivity activity =
 				SocialActivityLocalServiceUtil.getActivity(activityId);
 
-			if (activity.getType() == _ACTIVITY_KEY_ADD_FILE_ENTRY) {
-				SocialActivitySet activitySet =
+			if (activity.getType() ==
+					SocialActivityKeyConstants.DL_ADD_FILE_ENTRY) {
+
+				activitySet =
 					SocialActivitySetLocalServiceUtil.getUserActivitySet(
 						activity.getGroupId(), activity.getUserId(),
-						activity.getType());
-
-				if ((activitySet != null) && !isExpired(activitySet)) {
-					return activitySet.getActivitySetId();
-				}
+						activity.getClassNameId(), activity.getType());
 			}
-			else if (activity.getType() == _ACTIVITY_KEY_UPDATE_FILE_ENTRY) {
-				SocialActivitySet activitySet =
+			else if (activity.getType() ==
+						SocialActivityKeyConstants.DL_UPDATE_FILE_ENTRY) {
+
+				activitySet =
 					SocialActivitySetLocalServiceUtil.getClassActivitySet(
 						activity.getUserId(), activity.getClassNameId(),
 						activity.getClassPK(), activity.getType());
+			}
 
-				if ((activitySet != null) && !isExpired(activitySet)) {
-					return activitySet.getActivitySetId();
-				}
+			if ((activitySet != null) && !isExpired(activitySet, false)) {
+				return activitySet.getActivitySetId();
 			}
 		}
 		catch (Exception e) {
@@ -80,13 +84,36 @@ public class DLActivityInterpreter extends SOSocialActivityInterpreter {
 			SocialActivity activity, ServiceContext serviceContext)
 		throws Exception {
 
+		return getBody(
+			activity.getClassName(), activity.getClassPK(), serviceContext);
+	}
+
+	@Override
+	protected String getBody(
+			SocialActivitySet activitySet, ServiceContext serviceContext)
+		throws Exception {
+
+		if (activitySet.getType() ==
+				SocialActivityKeyConstants.DL_UPDATE_FILE_ENTRY) {
+
+			return getBody(
+				activitySet.getClassName(), activitySet.getClassPK(),
+				serviceContext);
+		}
+
+		return super.getBody(activitySet, serviceContext);
+	}
+
+	protected String getBody(
+			String className, long classPK, ServiceContext serviceContext)
+		throws Exception {
+
 		StringBundler sb = new StringBundler(11);
 
 		sb.append("<div class=\"activity-body document\">");
 		sb.append("<span class=\"document-thumbnail\"><img src=\"");
 
-		FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(
-			activity.getClassPK());
+		FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(classPK);
 
 		FileVersion fileVersion = fileEntry.getFileVersion();
 
@@ -96,25 +123,46 @@ public class DLActivityInterpreter extends SOSocialActivityInterpreter {
 		sb.append(thumbnailSrc);
 		sb.append("\"></span>");
 		sb.append("<div class=\"document-container\"><div class=\"title\">");
-
-		AssetRenderer assetRenderer = getAssetRenderer(activity);
-
-		String pageTitle = wrapLink(
-			getLinkURL(activity, serviceContext),
-			HtmlUtil.escape(
-				assetRenderer.getTitle(serviceContext.getLocale())));
-
-		sb.append(pageTitle);
+		sb.append(getPageTitle(className, classPK, serviceContext));
 		sb.append("</div><div class=\"version\">");
 		sb.append(
 			serviceContext.translate("version-x", fileVersion.getVersion()));
 		sb.append("</div><div class=\"document-content\">");
+
+		AssetRenderer assetRenderer = getAssetRenderer(className, classPK);
+
 		sb.append(
 			StringUtil.shorten(
 				assetRenderer.getSummary(serviceContext.getLocale()), 200));
+
 		sb.append("</div></div></div>");
 
 		return sb.toString();
+	}
+
+	protected String getFolderLink(long classPK, ServiceContext serviceContext)
+		throws Exception {
+
+		FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(classPK);
+
+		if (fileEntry.getFolderId() <= 0) {
+			return null;
+		}
+
+		StringBundler sb = new StringBundler(6);
+
+		sb.append(serviceContext.getPortalURL());
+		sb.append(serviceContext.getPathMain());
+		sb.append("/document_library/find_folder?groupId=");
+		sb.append(fileEntry.getRepositoryId());
+		sb.append("&folderId=");
+		sb.append(fileEntry.getFolderId());
+
+		Folder folder = fileEntry.getFolder();
+
+		String folderName = HtmlUtil.escape(folder.getName());
+
+		return wrapLink(sb.toString(), folderName);
 	}
 
 	@Override
@@ -122,41 +170,26 @@ public class DLActivityInterpreter extends SOSocialActivityInterpreter {
 			SocialActivity activity, ServiceContext serviceContext)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(5);
+		StringBundler sb = new StringBundler(8);
 
-		sb.append("<span>");
-
-		String documentLink = wrapLink(
-			getLinkURL(activity, serviceContext),
-			serviceContext.translate("view-document"));
-
-		sb.append(documentLink);
-
-		sb.append("</span><span>");
-
-		StringBundler downloadLink = new StringBundler(8);
-
-		downloadLink.append(serviceContext.getPortalURL());
-		downloadLink.append(serviceContext.getPathMain());
-		downloadLink.append("/document_library/get_file?groupId=");
+		sb.append(serviceContext.getPortalURL());
+		sb.append(serviceContext.getPathMain());
+		sb.append("/document_library/get_file?groupId=");
 
 		FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(
 			activity.getClassPK());
 
-		downloadLink.append(fileEntry.getRepositoryId());
+		sb.append(fileEntry.getRepositoryId());
 
-		downloadLink.append("&folderId=");
-		downloadLink.append(fileEntry.getFolderId());
-		downloadLink.append("&title=");
-		downloadLink.append(HttpUtil.encodeURL(fileEntry.getTitle()));
+		sb.append("&folderId=");
+		sb.append(fileEntry.getFolderId());
+		sb.append("&title=");
+		sb.append(HttpUtil.encodeURL(fileEntry.getTitle()));
 
-		sb.append(
-			wrapLink(
-				downloadLink.toString(), serviceContext.translate("download")));
+		String downloadLink = wrapLink(
+			sb.toString(), serviceContext.translate("download"));
 
-		sb.append("</span>");
-
-		return sb.toString();
+		return "<span>" + downloadLink + "</span>";
 	}
 
 	@Override
@@ -165,29 +198,36 @@ public class DLActivityInterpreter extends SOSocialActivityInterpreter {
 			String title, ServiceContext serviceContext)
 		throws Exception {
 
-		FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(
-			activity.getClassPK());
+		String folderLink = getFolderLink(
+			activity.getClassPK(), serviceContext);
 
-		if (fileEntry.getFolderId() > 0) {
-			StringBundler sb = new StringBundler(6);
-
-			sb.append(serviceContext.getPortalURL());
-			sb.append(serviceContext.getPathMain());
-			sb.append("/document_library/find_folder?groupId=");
-			sb.append(fileEntry.getRepositoryId());
-			sb.append("&folderId=");
-			sb.append(fileEntry.getFolderId());
-
-			Folder folder = fileEntry.getFolder();
-
-			String folderName = HtmlUtil.escape(folder.getName());
-
-			String folderURL = wrapLink(sb.toString(), folderName);
-
-			return new Object[] {folderURL};
+		if (Validator.isNull(folderLink)) {
+			return null;
 		}
 
-		return null;
+		return new Object[] {folderLink};
+	}
+
+	@Override
+	protected Object[] getTitleArguments(
+			String groupName, SocialActivitySet activitySet, String link,
+			String title, ServiceContext serviceContext)
+		throws Exception {
+
+		int activityCount = activitySet.getActivityCount();
+
+		if (activitySet.getType() ==
+				SocialActivityKeyConstants.DL_UPDATE_FILE_ENTRY) {
+
+			String folderLink = getFolderLink(
+				activitySet.getClassPK(), serviceContext);
+
+			if (Validator.isNotNull(folderLink)) {
+				return new Object[] {activityCount, folderLink};
+			}
+		}
+
+		return new Object[] {activityCount};
 	}
 
 	@Override
@@ -196,10 +236,14 @@ public class DLActivityInterpreter extends SOSocialActivityInterpreter {
 
 		String titlePattern = StringPool.BLANK;
 
-		if (activity.getType() == _ACTIVITY_KEY_ADD_FILE_ENTRY) {
+		if (activity.getType() ==
+				SocialActivityKeyConstants.DL_ADD_FILE_ENTRY) {
+
 			titlePattern = "uploaded-a-new-document";
 		}
-		else if (activity.getType() == _ACTIVITY_KEY_UPDATE_FILE_ENTRY) {
+		else if (activity.getType() ==
+					SocialActivityKeyConstants.DL_UPDATE_FILE_ENTRY) {
+
 			titlePattern = "updated-a-document";
 		}
 		else {
@@ -216,17 +260,36 @@ public class DLActivityInterpreter extends SOSocialActivityInterpreter {
 		return titlePattern;
 	}
 
-	/**
-	 * {@link
-	 * com.liferay.portlet.documentlibrary.social.DLActivityKeys#ADD_FILE_ENTRY}
-	 */
-	private static final int _ACTIVITY_KEY_ADD_FILE_ENTRY = 1;
+	@Override
+	protected String getTitlePattern(
+			String groupName, SocialActivitySet activitySet)
+		throws Exception {
 
-	/**
-	 * {@link
-	 * com.liferay.portlet.documentlibrary.social.DLActivityKeys#UPDATE_FILE_ENTRY}
-	 */
-	private static final int _ACTIVITY_KEY_UPDATE_FILE_ENTRY = 2;
+		String titlePattern = StringPool.BLANK;
+
+		if (activitySet.getType() ==
+				SocialActivityKeyConstants.DL_ADD_FILE_ENTRY) {
+
+			titlePattern = "uploaded-x-new-documents";
+		}
+		else if (activitySet.getType() ==
+					SocialActivityKeyConstants.DL_UPDATE_FILE_ENTRY) {
+
+			titlePattern = "made-x-updates-to-a-document";
+
+			FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(
+				activitySet.getClassPK());
+
+			if (fileEntry.getFolderId() > 0) {
+				titlePattern = titlePattern.concat("-in-the-x-folder");
+			}
+		}
+		else {
+			return StringPool.BLANK;
+		}
+
+		return titlePattern;
+	}
 
 	private static final String[] _CLASS_NAMES = {DLFileEntry.class.getName()};
 

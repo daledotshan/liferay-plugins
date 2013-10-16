@@ -19,7 +19,9 @@ import com.liferay.opensocial.model.Gadget;
 import com.liferay.opensocial.service.GadgetLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.lar.BasePortletDataHandler;
+import com.liferay.portal.kernel.lar.DataLevel;
 import com.liferay.portal.kernel.lar.PortletDataContext;
+import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.service.ServiceContext;
@@ -33,9 +35,10 @@ import javax.portlet.PortletPreferences;
  */
 public class AdminPortletDataHandler extends BasePortletDataHandler {
 
-	public static final String NAMESPACE = "opensocial";
-
 	public AdminPortletDataHandler() {
+		setDataLevel(DataLevel.SITE);
+		setDeletionSystemEventStagedModelTypes(
+			new StagedModelType(Gadget.class));
 		setPublishToLiveByDefault(true);
 	}
 
@@ -116,8 +119,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 
 		Element gadgetElement = gadgetsElement.addElement("gadget");
 
-		portletDataContext.addClassedModel(
-			gadgetElement, path, gadget, NAMESPACE);
+		portletDataContext.addClassedModel(gadgetElement, path, gadget);
 	}
 
 	protected String getGadgetPath(
@@ -153,8 +155,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 		}
 		catch (NoSuchGadgetException nsge) {
 			ServiceContext serviceContext =
-				portletDataContext.createServiceContext(
-					gadgetElement, gadget, NAMESPACE);
+				portletDataContext.createServiceContext(gadgetElement, gadget);
 
 			serviceContext.setUuid(gadget.getUuid());
 

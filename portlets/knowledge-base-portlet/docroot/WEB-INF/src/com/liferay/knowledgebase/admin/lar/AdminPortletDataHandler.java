@@ -32,9 +32,10 @@ import com.liferay.knowledgebase.util.comparator.KBArticleModifiedDateComparator
 import com.liferay.knowledgebase.util.comparator.KBArticlePriorityComparator;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.lar.BasePortletDataHandler;
+import com.liferay.portal.kernel.lar.DataLevel;
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.lar.PortletDataHandlerBoolean;
-import com.liferay.portal.kernel.lar.PortletDataHandlerControl;
+import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -65,20 +66,16 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 	public static final String NAMESPACE = "knowledge_base";
 
 	public AdminPortletDataHandler() {
-		setAlwaysExportable(true);
+		setDataLevel(DataLevel.SITE);
+		setDeletionSystemEventStagedModelTypes(
+			new StagedModelType(KBArticle.class),
+			new StagedModelType(KBComment.class),
+			new StagedModelType(KBTemplate.class));
 		setExportControls(
 			new PortletDataHandlerBoolean(
 				NAMESPACE, "kb-articles", true, true),
 			new PortletDataHandlerBoolean(
 				NAMESPACE, "kb-templates-and-kb-comments", true, true));
-		setExportMetadataControls(
-			new PortletDataHandlerBoolean(
-				NAMESPACE, "kb-articles", true,
-				new PortletDataHandlerControl[] {
-					new PortletDataHandlerBoolean(NAMESPACE, "categories"),
-					new PortletDataHandlerBoolean(NAMESPACE, "ratings"),
-					new PortletDataHandlerBoolean(NAMESPACE, "tags")
-				}));
 	}
 
 	@Override
@@ -108,9 +105,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 			PortletPreferences portletPreferences)
 		throws Exception {
 
-		portletDataContext.addPermissions(
-			"com.liferay.knowledgebase.admin",
-			portletDataContext.getScopeGroupId());
+		portletDataContext.addPortletPermissions(RESOURCE_NAME);
 
 		Element rootElement = addExportDataRootElement(portletDataContext);
 
@@ -130,10 +125,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 			PortletPreferences portletPreferences, String data)
 		throws Exception {
 
-		portletDataContext.importPermissions(
-			"com.liferay.knowledgebase.admin",
-			portletDataContext.getSourceGroupId(),
-			portletDataContext.getScopeGroupId());
+		portletDataContext.importPortletPermissions(RESOURCE_NAME);
 
 		Element rootElement = portletDataContext.getImportDataRootElement();
 
@@ -158,8 +150,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 		exportKBArticleAttachments(
 			portletDataContext, kbArticleElement, kbArticle);
 
-		portletDataContext.addClassedModel(
-			kbArticleElement, path, kbArticle, NAMESPACE);
+		portletDataContext.addClassedModel(kbArticleElement, path, kbArticle);
 	}
 
 	protected void exportKBArticleAttachments(
@@ -254,8 +245,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 
 		Element kbCommentElement = rootElement.addElement("kb-comment");
 
-		portletDataContext.addClassedModel(
-			kbCommentElement, path, kbComment, NAMESPACE);
+		portletDataContext.addClassedModel(kbCommentElement, path, kbComment);
 	}
 
 	protected void exportKBComments(
@@ -291,8 +281,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 
 		Element kbTemplateElement = rootElement.addElement("kb-template");
 
-		portletDataContext.addClassedModel(
-			kbTemplateElement, path, kbTemplate, NAMESPACE);
+		portletDataContext.addClassedModel(kbTemplateElement, path, kbTemplate);
 	}
 
 	protected void exportKBTemplates(
@@ -382,7 +371,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 			dirNames, String.valueOf(kbArticle.getResourcePrimKey()));
 
 		ServiceContext serviceContext = portletDataContext.createServiceContext(
-			kbArticleElement, kbArticle, NAMESPACE);
+			kbArticleElement, kbArticle);
 
 		KBArticle importedKBArticle = null;
 
@@ -418,8 +407,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 				kbArticleElement);
 		}
 
-		portletDataContext.importClassedModel(
-			kbArticle, importedKBArticle, NAMESPACE);
+		portletDataContext.importClassedModel(kbArticle, importedKBArticle);
 
 		importKBArticleAttachments(
 			portletDataContext, CounterLocalServiceUtil.increment(), dirNames,
@@ -466,7 +454,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 				KBArticle.class.getName(), kbArticle.getClassPK(),
 				PortletKeys.KNOWLEDGE_BASE_ADMIN,
 				kbArticle.getAttachmentsFolderId(), inputStream, fileName,
-				mimeType);
+				mimeType, true);
 		}
 
 		dirNames.put(resourcePrimKey, dirName);
@@ -525,7 +513,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 
 			ServiceContext serviceContext =
 				portletDataContext.createServiceContext(
-					curKBArticleElement, curKBArticle, NAMESPACE);
+					curKBArticleElement, curKBArticle);
 
 			if (importedKBArticle == null) {
 				serviceContext.setUuid(uuid);
@@ -534,6 +522,10 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 					curUserId, parentResourcePrimKey, curKBArticle.getTitle(),
 					curKBArticle.getContent(), curKBArticle.getDescription(),
 					curSections, curDirName, serviceContext);
+
+				KBArticleLocalServiceUtil.updatePriority(
+					importedKBArticle.getResourcePrimKey(),
+					curKBArticle.getPriority());
 			}
 			else {
 				importedKBArticle = KBArticleLocalServiceUtil.updateKBArticle(
@@ -563,7 +555,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 		long classPK = MapUtil.getLong(classPKs, kbComment.getClassPK());
 
 		ServiceContext serviceContext = portletDataContext.createServiceContext(
-			kbCommentElement, kbComment, NAMESPACE);
+			kbCommentElement, kbComment);
 
 		if (portletDataContext.isDataStrategyMirror()) {
 			KBComment existingKBComment = KBCommentUtil.fetchByUUID_G(
@@ -619,7 +611,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 		long userId = portletDataContext.getUserId(kbTemplate.getUserUuid());
 
 		ServiceContext serviceContext = portletDataContext.createServiceContext(
-			kbTemplateElement, kbTemplate, NAMESPACE);
+			kbTemplateElement, kbTemplate);
 
 		KBTemplate importedKBTemplate = null;
 
@@ -648,8 +640,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 				serviceContext);
 		}
 
-		portletDataContext.importClassedModel(
-			kbTemplate, importedKBTemplate, NAMESPACE);
+		portletDataContext.importClassedModel(kbTemplate, importedKBTemplate);
 	}
 
 	protected void importKBTemplates(
@@ -669,5 +660,8 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 			importKBTemplate(portletDataContext, kbTemplateElement, kbTemplate);
 		}
 	}
+
+	protected static final String RESOURCE_NAME =
+		"com.liferay.knowledgebase.admin";
 
 }
