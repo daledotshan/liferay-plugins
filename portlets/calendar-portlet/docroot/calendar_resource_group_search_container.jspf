@@ -14,32 +14,26 @@
  */
 --%>
 
-<liferay-portlet:renderURL varImpl="iteratorURL">
-	<portlet:param name="mvcPath" value="/view_calendar_resources.jsp" />
-</liferay-portlet:renderURL>
-
 <liferay-ui:search-container id="sites" searchContainer='<%= new CalendarResourceSearch(renderRequest, CalendarResourceSearch.DEFAULT_CUR_PARAM + "Groups", iteratorURL) %>'>
-	<liferay-ui:search-container-results>
 
-		<%
-		CalendarResourceSearchTerms searchTerms = (CalendarResourceSearchTerms)searchContainer.getSearchTerms();
+	<%
+	String[] params = {"site:true:boolean"};
 
-		String[] params = {"site:true:boolean"};
+	if (displayTerms.isAdvancedSearch()) {
+		total = GroupServiceUtil.searchCount(themeDisplay.getCompanyId(), displayTerms.getName(), displayTerms.getDescription(), params);
 
-		if (searchTerms.isAdvancedSearch()) {
-			results = GroupServiceUtil.search(themeDisplay.getCompanyId(), searchTerms.getName(), searchTerms.getDescription(), params, searchContainer.getStart(), searchContainer.getEnd());
-			total = GroupServiceUtil.searchCount(themeDisplay.getCompanyId(), searchTerms.getName(), searchTerms.getDescription(), params);
-		}
-		else {
-			results = GroupServiceUtil.search(themeDisplay.getCompanyId(), searchTerms.getKeywords(), searchTerms.getKeywords(), params, searchContainer.getStart(), searchContainer.getEnd());
-			total = GroupServiceUtil.searchCount(themeDisplay.getCompanyId(), searchTerms.getKeywords(), searchTerms.getKeywords(), params);
-		}
+		searchContainer.setTotal(total);
 
-		pageContext.setAttribute("results", results);
-		pageContext.setAttribute("total", total);
-		%>
+		searchContainer.setResults(GroupServiceUtil.search(themeDisplay.getCompanyId(), displayTerms.getName(), displayTerms.getDescription(), params, searchContainer.getStart(), searchContainer.getEnd()));
+	}
+	else {
+		total = GroupServiceUtil.searchCount(themeDisplay.getCompanyId(), displayTerms.getKeywords(), displayTerms.getKeywords(), params);
 
-	</liferay-ui:search-container-results>
+		searchContainer.setTotal(total);
+
+		searchContainer.setResults(GroupServiceUtil.search(themeDisplay.getCompanyId(), displayTerms.getKeywords(), displayTerms.getKeywords(), params, searchContainer.getStart(), searchContainer.getEnd()));
+	}
+	%>
 
 	<liferay-ui:search-container-row
 		className="com.liferay.portal.model.Group"

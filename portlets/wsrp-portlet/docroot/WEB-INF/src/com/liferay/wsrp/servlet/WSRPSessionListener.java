@@ -34,9 +34,11 @@ import oasis.names.tc.wsrp.v2.types.SessionContext;
  */
 public class WSRPSessionListener implements HttpSessionListener {
 
+	@Override
 	public void sessionCreated(HttpSessionEvent httpSessionEvent) {
 	}
 
+	@Override
 	public void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
 		HttpSession session = httpSessionEvent.getSession();
 
@@ -86,7 +88,9 @@ public class WSRPSessionListener implements HttpSessionListener {
 			markupService.releaseSessions(releaseSessions);
 		}
 		catch (Exception e) {
-			_log.warn(e.getMessage());
+			if (_log.isWarnEnabled()) {
+				_log.warn(e.getMessage());
+			}
 		}
 	}
 

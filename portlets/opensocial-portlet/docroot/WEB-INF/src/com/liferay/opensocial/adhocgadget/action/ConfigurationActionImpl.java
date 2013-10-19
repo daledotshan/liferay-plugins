@@ -18,11 +18,10 @@ import com.liferay.opensocial.gadget.action.BaseConfigurationAction;
 import com.liferay.opensocial.model.Gadget;
 import com.liferay.opensocial.shindig.util.ShindigUtil;
 import com.liferay.opensocial.util.WebKeys;
-import com.liferay.portal.kernel.portlet.LiferayPortletConfig;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portlet.PortletPreferencesFactoryUtil;
+import com.liferay.portal.util.PortalUtil;
 
 import java.util.Map;
 
@@ -53,21 +52,18 @@ public class ConfigurationActionImpl extends BaseConfigurationAction {
 		if (tabs2.equals("manage-oauth")) {
 			ShindigUtil.updateOAuthConsumers(actionRequest, actionResponse);
 
-			LiferayPortletConfig liferayPortletConfig =
-				(LiferayPortletConfig)portletConfig;
-
 			String portletResource = ParamUtil.getString(
 				actionRequest, "portletResource");
 
 			SessionMessages.add(
 				actionRequest,
-				liferayPortletConfig.getPortletId() +
+				PortalUtil.getPortletId(actionRequest) +
 					SessionMessages.KEY_SUFFIX_REFRESH_PORTLET,
 				portletResource);
 
 			SessionMessages.add(
 				actionRequest,
-				liferayPortletConfig.getPortletId() +
+				PortalUtil.getPortletId(actionRequest) +
 					SessionMessages.KEY_SUFFIX_UPDATED_CONFIGURATION);
 		}
 		else if (tabs2.equals("preferences")) {
@@ -121,9 +117,7 @@ public class ConfigurationActionImpl extends BaseConfigurationAction {
 		String portletResource = ParamUtil.getString(
 			portletRequest, "portletResource");
 
-		PortletPreferences portletPreferences =
-			PortletPreferencesFactoryUtil.getPortletSetup(
-				portletRequest, portletResource);
+		PortletPreferences portletPreferences = portletRequest.getPreferences();
 
 		return ShindigUtil.getGadget(portletPreferences);
 	}

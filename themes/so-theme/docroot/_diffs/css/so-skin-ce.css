@@ -550,6 +550,10 @@ input[type=button], input[type=reset], input[type=submit], .aui-button button, .
 	padding: 0;
 }
 
+.aui-inputmoveboxes .aui-field-select {
+	display: inline-block;
+}
+
 .lfr-label {
 	color: #999;
 	font-size: 11px;
@@ -672,7 +676,11 @@ input[type=button], input[type=reset], input[type=submit], .aui-button button, .
 	direction: rtl;
 }
 
-/* ---------- Portal Tool Tips ---------- */
+.rtl .lfr-header-row .lfr-actions.show-arrow.direction-down .lfr-trigger strong a {
+	padding: 0 20px 0 4px;
+}
+
+/* ---------- Portal tool tips ---------- */
 
 .portal-tool-tip {
 	font-size: 1.2em;
@@ -752,7 +760,7 @@ input[type=button], input[type=reset], input[type=submit], .aui-button button, .
 	display: none;
 }
 
-/* ---------- Dynamic Uploader ---------- */
+/* ---------- Dynamic uploader ---------- */
 
 .lfr-upload-container .upload-error .error-message {
 	background-color: #FDD;
@@ -788,7 +796,7 @@ input[type=button], input[type=reset], input[type=submit], .aui-button button, .
 	font-weight: bold;
 }
 
-/* ---------- Search Iterator ---------- */
+/* ---------- Search iterator ---------- */
 
 .taglib-search-iterator {
 	 .result-title img {
@@ -828,6 +836,16 @@ input[type=button], input[type=reset], input[type=submit], .aui-button button, .
 
 /* ---------- Portlet ---------- */
 
+.so-announcements-portlet, .so-portlet-activities {
+	.portlet-title {
+		color: $red;
+		font-size: 1.55em;
+		font-weight: normal;
+		margin-top: .5em;
+		padding: 0 .25em .70em;
+	}
+}
+
 /* Dockbar */
 
 .dockbar {
@@ -857,31 +875,9 @@ input[type=button], input[type=reset], input[type=submit], .aui-button button, .
 /*  Activities Portlet  */
 
 .so-portlet-activities {
-	.portlet-title {
-		color: $red;
-		font-size: 1.55em;
-		font-weight: normal;
-		margin-top: .5em;
-		padding: 0 .25em .70em;
-	}
-
 	h3 {
 		font-weight: normal;
 		margin: 1em 0 0;
-	}
-
-	.activity-item {
-		border-bottom: 1px solid #E7E7E7;
-		padding: 1em;
-	}
-
-	.activity-body {
-		font-size: .95em;
-	}
-
-	.user-portrait .icon {
-		bottom: -4px;
-		left: -4px;
 	}
 
 	a.group {
@@ -916,12 +912,46 @@ input[type=button], input[type=reset], input[type=submit], .aui-button button, .
 		width: 110px;
 	}
 
-	.user-portrait {
-		left: 65px;
+	.activity-item {
+		margin: 0 55px;
+	}
+}
+
+/* Announcements */
+
+.so-announcements-portlet {
+	.entry-header .scope {
+		color: #8D071F;
 	}
 
-	.activity-data {
-		margin-left: 110px;
+	.entry-footer-toolbar {
+		background: #E7E7E7;
+	}
+
+	.unread-entries {
+		.entry .title {
+			background: #F4A425;
+			color: #FFF;
+
+			a {
+				color: #FFF;
+				text-decoration: underline;
+			}
+		}
+
+		.entry-body, .entry-footer {
+			border-color: #F4A425;
+		}
+
+		.important-entry {
+			.title {
+				background: #B20000;
+			}
+
+			.entry-body, .entry-footer {
+				border-color: #B20000;
+			}
+		}
 	}
 }
 
@@ -1050,9 +1080,8 @@ input[type=button], input[type=reset], input[type=submit], .aui-button button, .
 	}
 
 	.lfr-meta-actions {
-		margin-top: -36px;
+		margin-bottom: 1em;
 		padding: 4px;
-		position: absolute;
 		right: 0;
 		width: auto;
 
@@ -1426,7 +1455,7 @@ input[type=button], input[type=reset], input[type=submit], .aui-button button, .
 		}
 	}
 
-	.select-documents .aui-field-element{
+	.select-documents .aui-field-element {
 		padding: 5px 6px 6px;
 	}
 
@@ -1620,10 +1649,6 @@ input[type=button], input[type=reset], input[type=submit], .aui-button button, .
 /* Faceted Search */
 
 .portlet-search {
-	.portlet-topper {
-		display: none;
-	}
-
 	.aui-form fieldset.aui-fieldset {
 		border-bottom: 1px solid $gray-dark;
 	}
@@ -1739,12 +1764,6 @@ input[type=button], input[type=reset], input[type=submit], .aui-button button, .
 			border-bottom-width: 0;
 			padding: 1.75em 0 0;
 			position: relative;
-
-			.edit-controls {
-				position: absolute;
-				right: -5px;
-				top: 0;
-			}
 		}
 
 		.results-row {
@@ -1768,6 +1787,10 @@ input[type=button], input[type=reset], input[type=submit], .aui-button button, .
 		.thread-bottom {
 			.taglib-flags, .taglib-ratings.thumbs {
 				margin-top: 1.5em;
+			}
+
+			.edit-controls {
+				margin-right: 5px;
 			}
 		}
 	}
@@ -2358,7 +2381,11 @@ input[type=button], input[type=reset], input[type=submit], .aui-button button, .
 	}
 }
 
-/* ---------- Internet Explorer ---------- */
+.page-maximized .portlet-search .portlet-topper {
+	display: none;
+}
+
+/* ---------- Internet explorer ---------- */
 
 .ie7 {
 	#so-sidebar {
@@ -2527,7 +2554,7 @@ input[type=button], input[type=reset], input[type=submit], .aui-button button, .
 	}
 }
 
-/* ---------- Fluid Layout ---------- */
+/* ---------- Fluid layout ---------- */
 
 body.so-layout-fluid, body.so-layout-fluid-ad {
 	#banner #heading, #content, #footer {

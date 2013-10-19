@@ -113,6 +113,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the matching w s r p consumers
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<WSRPConsumer> findByUuid(String uuid) throws SystemException {
 		return findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
@@ -130,6 +131,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the range of matching w s r p consumers
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<WSRPConsumer> findByUuid(String uuid, int start, int end)
 		throws SystemException {
 		return findByUuid(uuid, start, end, null);
@@ -149,6 +151,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the ordered range of matching w s r p consumers
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<WSRPConsumer> findByUuid(String uuid, int start, int end,
 		OrderByComparator orderByComparator) throws SystemException {
 		boolean pagination = true;
@@ -269,6 +272,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @throws com.liferay.wsrp.NoSuchConsumerException if a matching w s r p consumer could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public WSRPConsumer findByUuid_First(String uuid,
 		OrderByComparator orderByComparator)
 		throws NoSuchConsumerException, SystemException {
@@ -298,6 +302,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the first matching w s r p consumer, or <code>null</code> if a matching w s r p consumer could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public WSRPConsumer fetchByUuid_First(String uuid,
 		OrderByComparator orderByComparator) throws SystemException {
 		List<WSRPConsumer> list = findByUuid(uuid, 0, 1, orderByComparator);
@@ -318,6 +323,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @throws com.liferay.wsrp.NoSuchConsumerException if a matching w s r p consumer could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public WSRPConsumer findByUuid_Last(String uuid,
 		OrderByComparator orderByComparator)
 		throws NoSuchConsumerException, SystemException {
@@ -347,9 +353,14 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the last matching w s r p consumer, or <code>null</code> if a matching w s r p consumer could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public WSRPConsumer fetchByUuid_Last(String uuid,
 		OrderByComparator orderByComparator) throws SystemException {
 		int count = countByUuid(uuid);
+
+		if (count == 0) {
+			return null;
+		}
 
 		List<WSRPConsumer> list = findByUuid(uuid, count - 1, count,
 				orderByComparator);
@@ -371,6 +382,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @throws com.liferay.wsrp.NoSuchConsumerException if a w s r p consumer with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public WSRPConsumer[] findByUuid_PrevAndNext(long wsrpConsumerId,
 		String uuid, OrderByComparator orderByComparator)
 		throws NoSuchConsumerException, SystemException {
@@ -526,6 +538,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @param uuid the uuid
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public void removeByUuid(String uuid) throws SystemException {
 		for (WSRPConsumer wsrpConsumer : findByUuid(uuid, QueryUtil.ALL_POS,
 				QueryUtil.ALL_POS, null)) {
@@ -540,6 +553,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the number of matching w s r p consumers
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public int countByUuid(String uuid) throws SystemException {
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID;
 
@@ -632,6 +646,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the matching w s r p consumers
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<WSRPConsumer> findByUuid_C(String uuid, long companyId)
 		throws SystemException {
 		return findByUuid_C(uuid, companyId, QueryUtil.ALL_POS,
@@ -652,6 +667,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the range of matching w s r p consumers
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<WSRPConsumer> findByUuid_C(String uuid, long companyId,
 		int start, int end) throws SystemException {
 		return findByUuid_C(uuid, companyId, start, end, null);
@@ -672,6 +688,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the ordered range of matching w s r p consumers
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<WSRPConsumer> findByUuid_C(String uuid, long companyId,
 		int start, int end, OrderByComparator orderByComparator)
 		throws SystemException {
@@ -803,6 +820,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @throws com.liferay.wsrp.NoSuchConsumerException if a matching w s r p consumer could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public WSRPConsumer findByUuid_C_First(String uuid, long companyId,
 		OrderByComparator orderByComparator)
 		throws NoSuchConsumerException, SystemException {
@@ -837,6 +855,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the first matching w s r p consumer, or <code>null</code> if a matching w s r p consumer could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public WSRPConsumer fetchByUuid_C_First(String uuid, long companyId,
 		OrderByComparator orderByComparator) throws SystemException {
 		List<WSRPConsumer> list = findByUuid_C(uuid, companyId, 0, 1,
@@ -859,6 +878,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @throws com.liferay.wsrp.NoSuchConsumerException if a matching w s r p consumer could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public WSRPConsumer findByUuid_C_Last(String uuid, long companyId,
 		OrderByComparator orderByComparator)
 		throws NoSuchConsumerException, SystemException {
@@ -893,9 +913,14 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the last matching w s r p consumer, or <code>null</code> if a matching w s r p consumer could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public WSRPConsumer fetchByUuid_C_Last(String uuid, long companyId,
 		OrderByComparator orderByComparator) throws SystemException {
 		int count = countByUuid_C(uuid, companyId);
+
+		if (count == 0) {
+			return null;
+		}
 
 		List<WSRPConsumer> list = findByUuid_C(uuid, companyId, count - 1,
 				count, orderByComparator);
@@ -918,6 +943,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @throws com.liferay.wsrp.NoSuchConsumerException if a w s r p consumer with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public WSRPConsumer[] findByUuid_C_PrevAndNext(long wsrpConsumerId,
 		String uuid, long companyId, OrderByComparator orderByComparator)
 		throws NoSuchConsumerException, SystemException {
@@ -1078,6 +1104,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @param companyId the company ID
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public void removeByUuid_C(String uuid, long companyId)
 		throws SystemException {
 		for (WSRPConsumer wsrpConsumer : findByUuid_C(uuid, companyId,
@@ -1094,6 +1121,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the number of matching w s r p consumers
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public int countByUuid_C(String uuid, long companyId)
 		throws SystemException {
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID_C;
@@ -1191,6 +1219,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the matching w s r p consumers
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<WSRPConsumer> findByCompanyId(long companyId)
 		throws SystemException {
 		return findByCompanyId(companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
@@ -1210,6 +1239,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the range of matching w s r p consumers
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<WSRPConsumer> findByCompanyId(long companyId, int start, int end)
 		throws SystemException {
 		return findByCompanyId(companyId, start, end, null);
@@ -1229,6 +1259,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the ordered range of matching w s r p consumers
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<WSRPConsumer> findByCompanyId(long companyId, int start,
 		int end, OrderByComparator orderByComparator) throws SystemException {
 		boolean pagination = true;
@@ -1335,6 +1366,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @throws com.liferay.wsrp.NoSuchConsumerException if a matching w s r p consumer could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public WSRPConsumer findByCompanyId_First(long companyId,
 		OrderByComparator orderByComparator)
 		throws NoSuchConsumerException, SystemException {
@@ -1365,6 +1397,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the first matching w s r p consumer, or <code>null</code> if a matching w s r p consumer could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public WSRPConsumer fetchByCompanyId_First(long companyId,
 		OrderByComparator orderByComparator) throws SystemException {
 		List<WSRPConsumer> list = findByCompanyId(companyId, 0, 1,
@@ -1386,6 +1419,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @throws com.liferay.wsrp.NoSuchConsumerException if a matching w s r p consumer could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public WSRPConsumer findByCompanyId_Last(long companyId,
 		OrderByComparator orderByComparator)
 		throws NoSuchConsumerException, SystemException {
@@ -1416,9 +1450,14 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the last matching w s r p consumer, or <code>null</code> if a matching w s r p consumer could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public WSRPConsumer fetchByCompanyId_Last(long companyId,
 		OrderByComparator orderByComparator) throws SystemException {
 		int count = countByCompanyId(companyId);
+
+		if (count == 0) {
+			return null;
+		}
 
 		List<WSRPConsumer> list = findByCompanyId(companyId, count - 1, count,
 				orderByComparator);
@@ -1440,6 +1479,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @throws com.liferay.wsrp.NoSuchConsumerException if a w s r p consumer with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public WSRPConsumer[] findByCompanyId_PrevAndNext(long wsrpConsumerId,
 		long companyId, OrderByComparator orderByComparator)
 		throws NoSuchConsumerException, SystemException {
@@ -1581,6 +1621,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @param companyId the company ID
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public void removeByCompanyId(long companyId) throws SystemException {
 		for (WSRPConsumer wsrpConsumer : findByCompanyId(companyId,
 				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
@@ -1595,6 +1636,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the number of matching w s r p consumers
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public int countByCompanyId(long companyId) throws SystemException {
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_COMPANYID;
 
@@ -1642,11 +1684,16 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 
 	private static final String _FINDER_COLUMN_COMPANYID_COMPANYID_2 = "wsrpConsumer.companyId = ?";
 
+	public WSRPConsumerPersistenceImpl() {
+		setModelClass(WSRPConsumer.class);
+	}
+
 	/**
 	 * Caches the w s r p consumer in the entity cache if it is enabled.
 	 *
 	 * @param wsrpConsumer the w s r p consumer
 	 */
+	@Override
 	public void cacheResult(WSRPConsumer wsrpConsumer) {
 		EntityCacheUtil.putResult(WSRPConsumerModelImpl.ENTITY_CACHE_ENABLED,
 			WSRPConsumerImpl.class, wsrpConsumer.getPrimaryKey(), wsrpConsumer);
@@ -1659,6 +1706,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 *
 	 * @param wsrpConsumers the w s r p consumers
 	 */
+	@Override
 	public void cacheResult(List<WSRPConsumer> wsrpConsumers) {
 		for (WSRPConsumer wsrpConsumer : wsrpConsumers) {
 			if (EntityCacheUtil.getResult(
@@ -1725,6 +1773,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @param wsrpConsumerId the primary key for the new w s r p consumer
 	 * @return the new w s r p consumer
 	 */
+	@Override
 	public WSRPConsumer create(long wsrpConsumerId) {
 		WSRPConsumer wsrpConsumer = new WSRPConsumerImpl();
 
@@ -1746,6 +1795,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @throws com.liferay.wsrp.NoSuchConsumerException if a w s r p consumer with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public WSRPConsumer remove(long wsrpConsumerId)
 		throws NoSuchConsumerException, SystemException {
 		return remove((Serializable)wsrpConsumerId);
@@ -1993,6 +2043,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @throws com.liferay.wsrp.NoSuchConsumerException if a w s r p consumer with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public WSRPConsumer findByPrimaryKey(long wsrpConsumerId)
 		throws NoSuchConsumerException, SystemException {
 		return findByPrimaryKey((Serializable)wsrpConsumerId);
@@ -2053,6 +2104,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the w s r p consumer, or <code>null</code> if a w s r p consumer with the primary key could not be found
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public WSRPConsumer fetchByPrimaryKey(long wsrpConsumerId)
 		throws SystemException {
 		return fetchByPrimaryKey((Serializable)wsrpConsumerId);
@@ -2064,6 +2116,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the w s r p consumers
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<WSRPConsumer> findAll() throws SystemException {
 		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
@@ -2080,6 +2133,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the range of w s r p consumers
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<WSRPConsumer> findAll(int start, int end)
 		throws SystemException {
 		return findAll(start, end, null);
@@ -2098,6 +2152,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the ordered range of w s r p consumers
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public List<WSRPConsumer> findAll(int start, int end,
 		OrderByComparator orderByComparator) throws SystemException {
 		boolean pagination = true;
@@ -2183,6 +2238,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 *
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public void removeAll() throws SystemException {
 		for (WSRPConsumer wsrpConsumer : findAll()) {
 			remove(wsrpConsumer);
@@ -2195,6 +2251,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 	 * @return the number of w s r p consumers
 	 * @throws SystemException if a system exception occurred
 	 */
+	@Override
 	public int countAll() throws SystemException {
 		Long count = (Long)FinderCacheUtil.getResult(FINDER_PATH_COUNT_ALL,
 				FINDER_ARGS_EMPTY, this);
@@ -2289,6 +2346,7 @@ public class WSRPConsumerPersistenceImpl extends BasePersistenceImpl<WSRPConsume
 		};
 
 	private static CacheModel<WSRPConsumer> _nullWSRPConsumerCacheModel = new CacheModel<WSRPConsumer>() {
+			@Override
 			public WSRPConsumer toEntityModel() {
 				return _nullWSRPConsumer;
 			}

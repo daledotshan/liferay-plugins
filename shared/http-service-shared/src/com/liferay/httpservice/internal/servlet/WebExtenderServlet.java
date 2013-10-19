@@ -75,6 +75,7 @@ public class WebExtenderServlet extends PortletServlet implements StrutsAction {
 		super.destroy();
 	}
 
+	@Override
 	public String execute(
 			HttpServletRequest request, HttpServletResponse response)
 		throws Exception {
@@ -84,6 +85,7 @@ public class WebExtenderServlet extends PortletServlet implements StrutsAction {
 		return null;
 	}
 
+	@Override
 	public String execute(
 			StrutsAction originalStrutsAction, HttpServletRequest request,
 			HttpServletResponse response)
@@ -165,7 +167,9 @@ public class WebExtenderServlet extends PortletServlet implements StrutsAction {
 				portlet = PortletLocalServiceUtil.getPortletById(rootPortletId);
 			}
 			catch (Exception e) {
-				_log.debug(e, e);
+				if (_log.isDebugEnabled()) {
+					_log.debug(e, e);
+				}
 			}
 		}
 

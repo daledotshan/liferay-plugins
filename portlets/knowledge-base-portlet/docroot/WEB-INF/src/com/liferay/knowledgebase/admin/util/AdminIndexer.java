@@ -65,10 +65,12 @@ public class AdminIndexer extends BaseIndexer {
 		setPermissionAware(true);
 	}
 
+	@Override
 	public String[] getClassNames() {
 		return CLASS_NAMES;
 	}
 
+	@Override
 	public String getPortletId() {
 		return PORTLET_ID;
 	}
@@ -89,7 +91,9 @@ public class AdminIndexer extends BaseIndexer {
 		throws Exception {
 
 		addSearchTerm(searchQuery, searchContext, Field.CONTENT, true);
+		addSearchTerm(searchQuery, searchContext, Field.DESCRIPTION, true);
 		addSearchTerm(searchQuery, searchContext, Field.TITLE, true);
+		addSearchTerm(searchQuery, searchContext, Field.USER_NAME, true);
 	}
 
 	@Override
@@ -208,8 +212,6 @@ public class AdminIndexer extends BaseIndexer {
 	}
 
 	protected void reindexKBArticles(long companyId) throws Exception {
-		final Collection<Document> documents = new ArrayList<Document>();
-
 		ActionableDynamicQuery actionableDynamicQuery =
 			new KBArticleActionableDynamicQuery() {
 
@@ -227,17 +229,15 @@ public class AdminIndexer extends BaseIndexer {
 
 				Document document = getDocument(kbArticle);
 
-				documents.add(document);
+				addDocument(document);
 			}
 
 		};
 
 		actionableDynamicQuery.setCompanyId(companyId);
+		actionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
 		actionableDynamicQuery.performActions();
-
-		SearchEngineUtil.updateDocuments(
-			getSearchEngineId(), companyId, documents);
 	}
 
 }

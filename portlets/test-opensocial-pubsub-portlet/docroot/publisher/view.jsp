@@ -16,16 +16,16 @@
 
 <%@ include file="/init.jsp" %>
 
-<div>
-	<input id="<portlet:namespace/>publish" type="button" value="Publish a Random Number" />
-</div>
+<aui:fieldset>
+	<aui:button name="publish" value="Publish a Random Number" />
+</aui:fieldset>
 
 <div id="<portlet:namespace />message"></div>
 
 <aui:script use="aui-base">
 	A.one('#<portlet:namespace />publish').on(
 		'click',
-		function () {
+		function() {
 			var message = Math.random();
 
 			Liferay.fire('gadget:org.apache.shindig.random-number', message);

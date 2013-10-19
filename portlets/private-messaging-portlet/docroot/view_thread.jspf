@@ -25,19 +25,21 @@ boolean hasExistingRecipients = false;
 
 <portlet:renderURL var="backURL" windowState="<%= WindowState.NORMAL.toString() %>" />
 
-<aui:layout cssClass="controls">
-	<liferay-portlet:actionURL name="markMessagesAsUnread" var="markAsUnreadURL">
-		<portlet:param name="mbThreadIds" value="<%= String.valueOf(mbThreadId) %>" />
-	</liferay-portlet:actionURL>
+<aui:nav-bar>
+	<aui:nav cssClass="controls">
+		<liferay-portlet:actionURL name="markMessagesAsUnread" var="markAsUnreadURL">
+			<portlet:param name="mbThreadIds" value="<%= String.valueOf(mbThreadId) %>" />
+		</liferay-portlet:actionURL>
 
-	<aui:button href="<%= markAsUnreadURL %>" name="markAsUnread" value="mark-as-unread" />
+		<aui:nav-item href="<%= markAsUnreadURL %>" id="markMessageAsUnread" label="mark-as-unread" />
 
-	<liferay-portlet:actionURL name="deleteMessages" var="deleteMessageURL">
-		<portlet:param name="mbThreadIds" value="<%= String.valueOf(mbThreadId) %>" />
-	</liferay-portlet:actionURL>
+		<liferay-portlet:actionURL name="deleteMessages" var="deleteMessageURL">
+			<portlet:param name="mbThreadIds" value="<%= String.valueOf(mbThreadId) %>" />
+		</liferay-portlet:actionURL>
 
-	<aui:button href="<%= deleteMessageURL %>" name="deleteMessage" value="delete" />
-</aui:layout>
+		<aui:nav-item href="<%= deleteMessageURL %>" id="deleteMessage" label="delete" />
+	</aui:nav>
+</aui:nav-bar>
 
 <%
 String subject = PrivateMessagingUtil.getThreadSubject(mbThreadId);
@@ -72,16 +74,16 @@ String subject = PrivateMessagingUtil.getThreadSubject(mbThreadId);
 					<portlet:param name="privateLayout" value="<%= Boolean.FALSE.toString() %>" />
 				</liferay-portlet:actionURL>
 
-				<a class="profile-link" href="<%= publicPagesURL %>"><%= curUser.getFullName() %></a>
+				<a class="profile-link" href="<%= publicPagesURL %>"><%= HtmlUtil.escape(curUser.getFullName()) %></a>
 			</c:when>
 			<c:otherwise>
 				<c:choose>
 					<c:when test="<%= curUser.isActive() %>">
-						<span class="profile-link"><%= curUser.getFullName() %></span>
+						<span class="profile-link"><%= HtmlUtil.escape(curUser.getFullName()) %></span>
 					</c:when>
 					<c:otherwise>
 						<liferay-ui:icon-help message="deleted-user">
-							<span class="profile-link line-through"><%= curUser.getFullName() %></span>
+							<span class="profile-link line-through"><%= HtmlUtil.escape(curUser.getFullName()) %></span>
 						</liferay-ui:icon-help>
 					</c:otherwise>
 				</c:choose>
@@ -114,21 +116,20 @@ String subject = PrivateMessagingUtil.getThreadSubject(mbThreadId);
 	</c:choose>
 </aui:layout>
 
+<%
+PortletURL iteratorURL = renderResponse.createRenderURL();
+
+iteratorURL.setParameter("mbThreadId", String.valueOf(mbThreadId));
+%>
+
 <liferay-ui:search-container
-	delta="25"
 	emptyResultsMessage="no-messages-found"
+	iteratorURL="<%= iteratorURL %>"
+	total="<%= PrivateMessagingUtil.getThreadMessagesCount(user.getUserId(), mbThreadId) %>"
 >
-	<liferay-ui:search-container-results>
-
-		<%
-		results = PrivateMessagingUtil.getThreadMessages(user.getUserId(), mbThreadId, searchContainer.getStart(), searchContainer.getEnd(), true);
-		total = PrivateMessagingUtil.getThreadMessagesCount(user.getUserId(), mbThreadId);
-
-		pageContext.setAttribute("results", results);
-		pageContext.setAttribute("total", total);
-		%>
-
-	</liferay-ui:search-container-results>
+	<liferay-ui:search-container-results
+		results="<%= PrivateMessagingUtil.getThreadMessages(user.getUserId(), mbThreadId, searchContainer.getStart(), searchContainer.getEnd(), true) %>"
+	/>
 
 	<liferay-ui:search-container-row
 		className="com.liferay.portlet.messageboards.model.MBMessage"

@@ -55,7 +55,8 @@ public class WSRPHTTPSender extends HTTPSender {
 
 	public WSRPHTTPSender(String forwardCookies, String forwardHeaders) {
 		if (Validator.isNotNull(forwardCookies)) {
-			_forwardCookies = StringUtil.split(forwardCookies.toLowerCase());
+			_forwardCookies = StringUtil.split(
+				StringUtil.toLowerCase(forwardCookies));
 		}
 
 		if (Validator.isNotNull(forwardHeaders)) {
@@ -106,7 +107,7 @@ public class WSRPHTTPSender extends HTTPSender {
 		for (String cookie : cookies) {
 			String name = cookie.substring(0, cookie.indexOf(StringPool.EQUAL));
 
-			cookiesMap.put(name.toLowerCase(), cookie);
+			cookiesMap.put(StringUtil.toLowerCase(name), cookie);
 		}
 
 		for (String forwardCookie : _forwardCookies) {
@@ -163,7 +164,9 @@ public class WSRPHTTPSender extends HTTPSender {
 				messageContext.getStrProp(HTTPConstants.HEADER_COOKIE));
 		}
 		catch (Throwable t) {
-			_log.warn(t, t);
+			if (_log.isWarnEnabled()) {
+				_log.warn(t, t);
+			}
 		}
 
 		_currentCookie.set(cookie);

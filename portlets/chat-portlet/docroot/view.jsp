@@ -23,11 +23,11 @@
 	%>
 
 	<liferay-util:html-top>
-		<link href="<%= PortalUtil.getStaticResourceURL(request, request.getContextPath() + "/css/main.css", portlet.getTimestamp()) %>" rel="stylesheet" type="text/css" />
+		<link href="<%= PortalUtil.getStaticResourceURL(request, PortalUtil.getPathContext(request) + "/css/main.css", portlet.getTimestamp()) %>" rel="stylesheet" type="text/css" />
 	</liferay-util:html-top>
 
 	<liferay-util:html-bottom>
-		<script defer="defer" src="<%= PortalUtil.getStaticResourceURL(request, request.getContextPath() + "/js/main.js", portlet.getTimestamp()) %>" type="text/javascript"></script>
+		<script defer="defer" src="<%= PortalUtil.getStaticResourceURL(request, PortalUtil.getPathContext(request) + "/js/main.js", portlet.getTimestamp()) %>" type="text/javascript"></script>
 	</liferay-util:html-bottom>
 
 	<%
@@ -80,7 +80,7 @@
 									<%= LanguageUtil.format(pageContext, "online-friends-x", "(" + buddiesCount + ")", false) %>
 								</div>
 
-								<aui:input cssClass="search-buddies" inputCssClass="search-buddies-field" label="" name="searchBuddies" />
+								<aui:input cssClass="search-buddies" label="" name="searchBuddies" placeholder="search" />
 
 								<div class="panel-content">
 									<ul class="lfr-component online-users">
@@ -154,7 +154,7 @@
 		<input id="activePanelIds" type="hidden" value="<%= HtmlUtil.escapeAttribute(status.getActivePanelIds()) %>" />
 		<input id="chatPortletId" type="hidden" value="<%= portletDisplay.getId() %>" />
 
-		<div class="chat-extensions aui-helper-hidden">
+		<div class="chat-extensions hide">
 
 			<%
 			Map<String, String> extensions = ChatExtensionsUtil.getExtensions();

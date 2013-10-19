@@ -27,7 +27,7 @@ TasksEntry tasksEntry = TasksEntryLocalServiceUtil.fetchTasksEntry(tasksEntryId)
 
 <c:choose>
 	<c:when test="<%= tasksEntry == null %>">
-		<span class="portlet-msg-error"><liferay-ui:message key="task-could-not-be-found" /></span>
+		<span class="alert alert-error"><liferay-ui:message key="task-could-not-be-found" /></span>
 	</c:when>
 	<c:otherwise>
 
@@ -153,10 +153,10 @@ TasksEntry tasksEntry = TasksEntryLocalServiceUtil.fetchTasksEntry(tasksEntryId)
 				<span class="task-action-spacer">
 					<input onClick="Liferay.Tasks.displayPopup('<portlet:renderURL windowState="<%= LiferayWindowState.EXCLUSIVE.toString() %>"><portlet:param name="mvcPath" value="/tasks/edit_task.jsp" /><portlet:param name="tasksEntryId" value="<%= String.valueOf(tasksEntry.getTasksEntryId()) %>" /></portlet:renderURL>', '<liferay-ui:message key="update-task" />');" type="button" value="<liferay-ui:message key="edit" />" />
 
-					<input onClick="if(confirm('<liferay-ui:message key="are-you-sure-you-want-to-delete-this-entry" />')){<portlet:namespace />deleteTask()}" type="button" value="<liferay-ui:message key="delete" />" />
+					<input onClick="if (confirm('<liferay-ui:message key="are-you-sure-you-want-to-delete-this-entry" />')){<portlet:namespace />deleteTask()}" type="button" value="<liferay-ui:message key="delete" />" />
 				</span>
 
-				<aui:script use="aui-io">
+				<aui:script use="aui-io-deprecated">
 					Liferay.provide(
 						window,
 						'<portlet:namespace />deleteTask',
@@ -172,7 +172,7 @@ TasksEntry tasksEntry = TasksEntryLocalServiceUtil.fetchTasksEntry(tasksEntryId)
 										}
 									},
 									data: {
-										tasksEntryId: <%= tasksEntry.getTasksEntryId() %>
+										<portlet:namespace />tasksEntryId: <%= tasksEntry.getTasksEntryId() %>
 									}
 								}
 							);
@@ -194,9 +194,9 @@ TasksEntry tasksEntry = TasksEntryLocalServiceUtil.fetchTasksEntry(tasksEntryId)
 										}
 									},
 									data: {
-										tasksEntryId: <%= tasksEntry.getTasksEntryId() %>,
-										resolverUserId: <%= user.getUserId() %>,
-										status: status
+										<portlet:namespace />tasksEntryId: <%= tasksEntry.getTasksEntryId() %>,
+										<portlet:namespace />resolverUserId: <%= user.getUserId() %>,
+										<portlet:namespace />status: status
 									}
 								}
 							);
@@ -212,6 +212,6 @@ TasksEntry tasksEntry = TasksEntryLocalServiceUtil.fetchTasksEntry(tasksEntryId)
 
 		<liferay-ui:tabs names="comments" />
 
-		<%@ include file="/tasks/view_comments.jsp" %>
+		<%@ include file="/tasks/view_comments.jspf" %>
 	</c:otherwise>
 </c:choose>

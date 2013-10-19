@@ -55,10 +55,10 @@
 
 					<c:choose>
 						<c:when test="<%= enableChangingTravelingMode %>">
-							<aui:select inlineField="<%= true %>" label="" name="travelingMode">
-								<aui:option label="<%= GoogleMapsConstants.DRIVING %>" />
-								<aui:option label="<%= GoogleMapsConstants.WALKING %>" />
-								<aui:option label="<%= GoogleMapsConstants.BICYCLING %>" />
+							<aui:select inlineField="<%= true %>" label="traveling-mode" name="travelingMode">
+								<aui:option label="driving" value="<%= GoogleMapsConstants.DRIVING %>" />
+								<aui:option label="walking" value="<%= GoogleMapsConstants.WALKING %>" />
+								<aui:option label="bicycling" value="<%= GoogleMapsConstants.BICYCLING %>" />
 							</aui:select>
 						</c:when>
 						<c:otherwise>
@@ -67,7 +67,7 @@
 					</c:choose>
 
 					<c:if test="<%= directionsInputEnabled || (mapInputEnabled && Validator.isNotNull(directionsAddress)) %>">
-						<aui:button name="getDirectionsButton" value="get-directions" />
+						<aui:button cssClass="get-directions" name="getDirectionsButton" value="get-directions" />
 					</c:if>
 				</aui:layout>
 

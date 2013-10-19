@@ -25,7 +25,7 @@ List<MicroblogsEntry> microblogsEntries = (List<MicroblogsEntry>)request.getAttr
 PortletURL microblogsEntriesURL = (PortletURL)request.getAttribute(WebKeys.MICROBLOGS_ENTRIES_URL);
 %>
 
-<c:if test="<%= (microblogsEntries == null) || microblogsEntries.isEmpty() %>">
+<c:if test="<%= microblogsEntries.isEmpty() %>">
 
 	<%
 	String message = LanguageUtil.get(pageContext, "there-are-no-microblog-entries");
@@ -44,7 +44,7 @@ PortletURL microblogsEntriesURL = (PortletURL)request.getAttribute(WebKeys.MICRO
 	}
 	%>
 
-	<div class="portlet-msg-info">
+	<div class="alert alert-info">
 		<%= message %>
 	</div>
 </c:if>
@@ -68,7 +68,7 @@ if (microblogsEntries != null) {
 		}
 %>
 
-		<div class="microblogs-entry" id="microblogsEntry<%= microblogsEntry.getMicroblogsEntryId() %>">
+		<div class="microblogs-entry" id="<portlet:namespace />microblogsEntry<%= microblogsEntry.getMicroblogsEntryId() %>">
 			<span class="thumbnail">
 				<a href="<%= userDisplayURL %>"><img alt="<%= userFullName %>" src="<%= userPortaitURL %>" /></a>
 			</span>
@@ -90,49 +90,7 @@ if (microblogsEntries != null) {
 				<div class="content">
 
 					<%
-					String content = HtmlUtil.escape(microblogsEntry.getContent());
-
-					Pattern pattern = Pattern.compile("\\#\\S*");
-
-					Matcher matcher = pattern.matcher(microblogsEntry.getContent());
-
-					while (matcher.find()) {
-						String result = matcher.group();
-
-						String assetTagName = result.substring(1);
-
-						PortletURL viewURL = renderResponse.createRenderURL();
-
-						viewURL.setWindowState(LiferayWindowState.NORMAL);
-
-						viewURL.setParameter("mvcPath", "/microblogs/view.jsp");
-						viewURL.setParameter("tabs1", assetTagName);
-						viewURL.setParameter("assetTagName", assetTagName);
-
-						content = StringUtil.replace(content, result, "<a href=\"" + viewURL + "\">" + assetTagName + "</a>");
-					}
-
-					pattern = Pattern.compile("\\[\\@\\S*\\]");
-
-					matcher = pattern.matcher(content);
-
-					while (matcher.find()) {
-						String result = matcher.group();
-
-						String assetTagName = result.replace("[@", StringPool.BLANK);
-
-						assetTagName = assetTagName.replace("]", StringPool.BLANK);
-
-						try {
-							User taggedUser = UserLocalServiceUtil.getUserByScreenName(microblogsEntry.getCompanyId(), assetTagName);
-
-							assetTagName = PortalUtil.getUserName(taggedUser.getUserId(), assetTagName);
-
-							content = StringUtil.replace(content, result, "<a href=\"" + taggedUser.getDisplayURL(themeDisplay) + "\">" + assetTagName + "</a>");
-						}
-						catch (NoSuchUserException nsue) {
-						}
-					}
+					String content = MicroblogsUtil.getTaggedContent(microblogsEntry, ServiceContextFactory.getInstance(request));
 					%>
 
 					<span>
@@ -204,7 +162,7 @@ if (microblogsEntries != null) {
 				</div>
 			</div>
 
-			<div class="comments-container reply" id="commentsContainer<%= microblogsEntry.getMicroblogsEntryId() %>"><!-- --></div>
+			<div class="comments-container reply" id="<portlet:namespace />commentsContainer<%= microblogsEntry.getMicroblogsEntryId() %>"><!-- --></div>
 		</div>
 
 <%
