@@ -26,13 +26,13 @@
 		width: 60px;
 	}
 
-	.message-container {
+	.thread .message-container {
 		margin: 0 10px;
+	}
 
-		.portlet-msg-error {
-			display: block;
-			margin-bottom: 10px;
-		}
+	.message-container .portlet-msg-error {
+		display: block;
+		margin-bottom: 10px;
 	}
 
 	.controls .check-all {
@@ -112,10 +112,6 @@
 		.body {
 			font-weight: normal;
 		}
-	}
-
-	.private-messaging-container .taglib-search-iterator .col-1 {
-		width: 10px;
 	}
 
 	/* Results */
