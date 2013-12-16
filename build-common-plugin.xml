@@ -282,7 +282,6 @@
 			<arg value="-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger" />
 			<arg value="service.input.file=${service.input.file}" />
 			<arg value="service.hbm.file=${basedir}/docroot/WEB-INF/src/META-INF/portlet-hbm.xml" />
-			<arg value="service.orm.file=${basedir}/docroot/WEB-INF/src/META-INF/portlet-orm.xml" />
 			<arg value="service.model.hints.file=${basedir}/docroot/WEB-INF/src/META-INF/portlet-model-hints.xml" />
 			<arg value="service.spring.file=${basedir}/docroot/WEB-INF/src/META-INF/portlet-spring.xml" />
 			<arg value="service.api.dir=${basedir}/docroot/WEB-INF/service" />
@@ -536,40 +535,45 @@
 
 	<target name="clean-portal-dependencies">
 		<if>
-			<available file="docroot/WEB-INF/lib" />
+			<equals arg1="${plugins.war.clean.portal.dependencies}" arg2="true" />
 			<then>
-				<delete>
-					<fileset dir="docroot/WEB-INF/lib" includes="${required.portal.jars}" />
-					<fileset dir="docroot/WEB-INF/lib" includes="${plugin.jars}" />
-				</delete>
-			</then>
-		</if>
+				<if>
+					<available file="docroot/WEB-INF/lib" />
+					<then>
+						<delete>
+							<fileset dir="docroot/WEB-INF/lib" includes="${required.portal.jars}" />
+							<fileset dir="docroot/WEB-INF/lib" includes="${plugin.jars}" />
+						</delete>
+					</then>
+				</if>
 
-		<if>
-			<available file="docroot/WEB-INF/tld" />
-			<then>
-				<delete>
-					<fileset dir="docroot/WEB-INF/tld" includes="${plugin.tlds}" />
-				</delete>
-			</then>
-		</if>
+				<if>
+					<available file="docroot/WEB-INF/tld" />
+					<then>
+						<delete>
+							<fileset dir="docroot/WEB-INF/tld" includes="${plugin.tlds}" />
+						</delete>
+					</then>
+				</if>
 
-		<if>
-			<available file="tmp/WEB-INF/lib" />
-			<then>
-				<delete>
-					<fileset dir="tmp/WEB-INF/lib" includes="${required.portal.jars}" />
-					<fileset dir="tmp/WEB-INF/lib" includes="${plugin.jars}" />
-				</delete>
-			</then>
-		</if>
+				<if>
+					<available file="tmp/WEB-INF/lib" />
+					<then>
+						<delete>
+							<fileset dir="tmp/WEB-INF/lib" includes="${required.portal.jars}" />
+							<fileset dir="tmp/WEB-INF/lib" includes="${plugin.jars}" />
+						</delete>
+					</then>
+				</if>
 
-		<if>
-			<available file="tmp/WEB-INF/tld" />
-			<then>
-				<delete>
-					<fileset dir="tmp/WEB-INF/tld" includes="${plugin.tlds}" />
-				</delete>
+				<if>
+					<available file="tmp/WEB-INF/tld" />
+					<then>
+						<delete>
+							<fileset dir="tmp/WEB-INF/tld" includes="${plugin.tlds}" />
+						</delete>
+					</then>
+				</if>
 			</then>
 		</if>
 	</target>
