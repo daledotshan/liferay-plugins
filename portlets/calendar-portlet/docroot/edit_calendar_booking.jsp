@@ -56,8 +56,9 @@ JSONArray maybeCalendarsJSONArray = JSONFactoryUtil.createJSONArray();
 JSONArray pendingCalendarsJSONArray = JSONFactoryUtil.createJSONArray();
 
 boolean invitable = true;
-boolean recurring = false;
 Recurrence recurrence = null;
+boolean recurring = false;
+boolean reschedulable = true;
 
 Calendar calendar = CalendarServiceUtil.fetchCalendar(calendarId);
 
@@ -76,6 +77,8 @@ if (calendarBooking != null) {
 	}
 
 	recurrence = calendarBooking.getRecurrenceObj();
+
+	reschedulable = calendarBooking.isMasterBooking();
 }
 else if (calendar != null) {
 	JSONObject calendarJSONObject = CalendarUtil.toCalendarJSONObject(themeDisplay, calendar);
@@ -93,8 +96,14 @@ List<Calendar> manageableCalendars = CalendarServiceUtil.search(themeDisplay.get
 
 <liferay-portlet:actionURL name="updateCalendarBooking" var="updateCalendarBookingURL" />
 
+<liferay-portlet:renderURL var="redirectURL">
+	<liferay-portlet:param name="mvcPath" value="/edit_calendar_booking.jsp" />
+	<liferay-portlet:param name="calendarBookingId" value="<%= String.valueOf(calendarBookingId) %>" />
+</liferay-portlet:renderURL>
+
 <aui:form action="<%= updateCalendarBookingURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "updateCalendarBooking();" %>'>
 	<aui:input name="mvcPath" type="hidden" value="/edit_calendar_booking.jsp" />
+	<aui:input name="redirect" type="hidden" value="<%= redirectURL %>" />
 	<aui:input name="calendarBookingId" type="hidden" value="<%= calendarBookingId %>" />
 	<aui:input name="childCalendarIds" type="hidden" />
 	<aui:input name="status" type="hidden" value ="<%= status %>" />
@@ -113,17 +122,17 @@ List<Calendar> manageableCalendars = CalendarServiceUtil.search(themeDisplay.get
 		<aui:input name="title" />
 
 		<div class="<%= allDay ? "allday-class-active" : "" %>" id="<portlet:namespace />startDateContainer">
-			<aui:input label="start-date" name="startTime" value="<%= startTimeJCalendar %>" />
+			<aui:input disabled="<%= !reschedulable %>" label="start-date" name="startTime" value="<%= startTimeJCalendar %>" />
 		</div>
 
 		<div class="<%= allDay ? "allday-class-active" : "" %>" id="<portlet:namespace />endDateContainer">
-			<aui:input label="end-date" name="endTime" value="<%= endTimeJCalendar %>" />
+			<aui:input disabled="<%= !reschedulable %>" label="end-date" name="endTime" value="<%= endTimeJCalendar %>" />
 		</div>
 
-		<aui:input checked="<%= allDay %>" name="allDay" />
+		<aui:input checked="<%= allDay %>" disabled="<%= !reschedulable %>" name="allDay" />
 
 		<aui:field-wrapper cssClass="calendar-portlet-recurrence-container" inlineField="<%= true %>" label="">
-			<aui:input checked="<%= recurring %>" name="repeat" type="checkbox" />
+			<aui:input checked="<%= recurring %>" disabled="<%= !reschedulable %>" name="repeat" type="checkbox" />
 
 			<a class="calendar-portlet-recurrence-summary" href="javascript:;" id="<portlet:namespace />summary"></a>
 		</aui:field-wrapper>

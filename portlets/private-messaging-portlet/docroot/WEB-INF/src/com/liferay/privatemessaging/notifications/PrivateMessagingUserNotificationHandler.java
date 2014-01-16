@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserNotificationEvent;
@@ -34,7 +35,11 @@ import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.PortletURLFactoryUtil;
 import com.liferay.portlet.messageboards.model.MBMessage;
+import com.liferay.portlet.messageboards.model.MBThread;
 import com.liferay.portlet.messageboards.service.MBMessageLocalServiceUtil;
+import com.liferay.portlet.messageboards.service.MBThreadLocalServiceUtil;
+import com.liferay.privatemessaging.model.UserThread;
+import com.liferay.privatemessaging.service.UserThreadLocalServiceUtil;
 import com.liferay.privatemessaging.util.PortletKeys;
 
 import javax.portlet.PortletRequest;
@@ -57,19 +62,43 @@ public class PrivateMessagingUserNotificationHandler
 			ServiceContext serviceContext)
 		throws Exception {
 
+		String body = null;
+		long userId = 0;
+
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
 			userNotificationEvent.getPayload());
 
-		long mbMessageId = jsonObject.getLong("classPK");
+		long classPK = jsonObject.getLong("classPK");
 
-		MBMessage mbMessage = MBMessageLocalServiceUtil.getMBMessage(
-			mbMessageId);
+		MBMessage mbMessage = MBMessageLocalServiceUtil.fetchMBMessage(classPK);
 
 		if (mbMessage == null) {
-			UserNotificationEventLocalServiceUtil.deleteUserNotificationEvent(
-				userNotificationEvent.getUserNotificationEventId());
+			body = jsonObject.getString("body");
 
-			return null;
+			if (Validator.isNull(body)) {
+				UserNotificationEventLocalServiceUtil.
+					deleteUserNotificationEvent(
+						userNotificationEvent.getUserNotificationEventId());
+
+				return null;
+			}
+
+			userId = jsonObject.getLong("userId");
+		}
+		else {
+			UserThread userThread = UserThreadLocalServiceUtil.fetchUserThread(
+				serviceContext.getUserId(), mbMessage.getThreadId());
+
+			if ((userThread == null) || userThread.isDeleted()) {
+				UserNotificationEventLocalServiceUtil.
+					deleteUserNotificationEvent(
+						userNotificationEvent.getUserNotificationEventId());
+
+				return null;
+			}
+
+			body = mbMessage.getBody();
+			userId = mbMessage.getUserId();
 		}
 
 		StringBundler sb = new StringBundler(5);
@@ -78,10 +107,10 @@ public class PrivateMessagingUserNotificationHandler
 		sb.append(
 			serviceContext.translate(
 				"x-sent-you-a-message",
-				PortalUtil.getUserName(
-					mbMessage.getUserId(), StringPool.BLANK)));
+				HtmlUtil.escape(
+					PortalUtil.getUserName(userId, StringPool.BLANK))));
 		sb.append("</div><div class=\"body\">");
-		sb.append(HtmlUtil.escape(StringUtil.shorten(mbMessage.getBody())));
+		sb.append(HtmlUtil.escape(StringUtil.shorten(body, 50)));
 		sb.append("</div>");
 
 		return sb.toString();
@@ -93,19 +122,30 @@ public class PrivateMessagingUserNotificationHandler
 			ServiceContext serviceContext)
 		throws Exception {
 
+		long mbThreadId = 0;
+
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
 			userNotificationEvent.getPayload());
 
-		long mbMessageId = jsonObject.getLong("classPK");
+		long classPK = jsonObject.getLong("classPK");
 
-		MBMessage mbMessage = MBMessageLocalServiceUtil.getMBMessage(
-			mbMessageId);
+		MBMessage mbMessage = MBMessageLocalServiceUtil.fetchMBMessage(classPK);
 
 		if (mbMessage == null) {
-			UserNotificationEventLocalServiceUtil.deleteUserNotificationEvent(
-				userNotificationEvent.getUserNotificationEventId());
+			MBThread mbThread = MBThreadLocalServiceUtil.fetchMBThread(classPK);
 
-			return null;
+			if (mbThread == null) {
+				UserNotificationEventLocalServiceUtil.
+					deleteUserNotificationEvent(
+						userNotificationEvent.getUserNotificationEventId());
+
+				return null;
+			}
+
+			mbThreadId = classPK;
+		}
+		else {
+			mbThreadId = mbMessage.getThreadId();
 		}
 
 		ThemeDisplay themeDisplay = serviceContext.getThemeDisplay();
@@ -125,8 +165,7 @@ public class PrivateMessagingUserNotificationHandler
 				PortletKeys.PRIVATE_MESSAGING, portletPlid,
 				PortletRequest.RENDER_PHASE);
 
-			portletURL.setParameter(
-				"mbThreadId", String.valueOf(mbMessage.getThreadId()));
+			portletURL.setParameter("mbThreadId", String.valueOf(mbThreadId));
 		}
 		else {
 			LiferayPortletResponse liferayPortletResponse =
@@ -136,8 +175,7 @@ public class PrivateMessagingUserNotificationHandler
 				PortletKeys.PRIVATE_MESSAGING);
 
 			portletURL.setParameter("mvcPath", "/view.jsp");
-			portletURL.setParameter(
-				"mbThreadId", String.valueOf(mbMessage.getThreadId()));
+			portletURL.setParameter("mbThreadId", String.valueOf(mbThreadId));
 			portletURL.setWindowState(WindowState.MAXIMIZED);
 		}
 
