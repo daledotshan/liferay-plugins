@@ -1139,10 +1139,12 @@ public class FolderPersistenceImpl extends BasePersistenceImpl<Folder>
 		}
 
 		EntityCacheUtil.putResult(FolderModelImpl.ENTITY_CACHE_ENABLED,
-			FolderImpl.class, folder.getPrimaryKey(), folder);
+			FolderImpl.class, folder.getPrimaryKey(), folder, false);
 
 		clearUniqueFindersCache(folder);
 		cacheUniqueFindersCache(folder);
+
+		folder.resetOriginalValues();
 
 		return folder;
 	}

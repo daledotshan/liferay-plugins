@@ -1618,10 +1618,12 @@ public class KaleoConditionPersistenceImpl extends BasePersistenceImpl<KaleoCond
 
 		EntityCacheUtil.putResult(KaleoConditionModelImpl.ENTITY_CACHE_ENABLED,
 			KaleoConditionImpl.class, kaleoCondition.getPrimaryKey(),
-			kaleoCondition);
+			kaleoCondition, false);
 
 		clearUniqueFindersCache(kaleoCondition);
 		cacheUniqueFindersCache(kaleoCondition);
+
+		kaleoCondition.resetOriginalValues();
 
 		return kaleoCondition;
 	}

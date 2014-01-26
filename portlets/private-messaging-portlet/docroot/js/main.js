@@ -70,16 +70,6 @@ AUI.add(
 						instance._sendRequest(instance._getActionURL('markMessagesAsUnread').toString(), mbThreadIds);
 					},
 
-					showMessage: function(message) {
-						var instance = this;
-
-						var messageContainer = A.one('#' + instance._namespace + 'messageContainer');
-
-						if (messageContainer) {
-							messageContainer.html(message);
-						}
-					},
-
 					_bindCheckAllMessages: function() {
 						var instance = this;
 
@@ -150,8 +140,10 @@ AUI.add(
 								deleteMessageNode.on(
 									STR_CLICK,
 									function(event) {
-										if (!confirm(Liferay.Language.get('are-your-sure-you-want-to-delete-the-message'))) {
-											event.preventDefault();
+										if (confirm(Liferay.Language.get('are-your-sure-you-want-to-delete-the-message'))) {
+											var currentTarget = event.currentTarget;
+
+											instance._sendRequest(currentTarget.getAttribute('data-delete-message-url'));
 										}
 									},
 									instance
@@ -240,8 +232,10 @@ AUI.add(
 								markMessageUnread.on(
 									STR_CLICK,
 									function(event) {
-										if (!confirm(Liferay.Language.get('are-your-sure-you-want-to-mark-the-message-as-unread'))) {
-											event.preventDefault();
+										if (confirm(Liferay.Language.get('are-your-sure-you-want-to-mark-the-message-as-unread'))) {
+											var currentTarget = event.currentTarget;
+
+											instance._sendRequest(currentTarget.getAttribute('data-mark-as-unread-url'));
 										}
 									},
 									instance

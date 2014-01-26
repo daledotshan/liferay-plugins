@@ -3692,10 +3692,12 @@ public class KBCommentPersistenceImpl extends BasePersistenceImpl<KBComment>
 		}
 
 		EntityCacheUtil.putResult(KBCommentModelImpl.ENTITY_CACHE_ENABLED,
-			KBCommentImpl.class, kbComment.getPrimaryKey(), kbComment);
+			KBCommentImpl.class, kbComment.getPrimaryKey(), kbComment, false);
 
 		clearUniqueFindersCache(kbComment);
 		cacheUniqueFindersCache(kbComment);
+
+		kbComment.resetOriginalValues();
 
 		return kbComment;
 	}

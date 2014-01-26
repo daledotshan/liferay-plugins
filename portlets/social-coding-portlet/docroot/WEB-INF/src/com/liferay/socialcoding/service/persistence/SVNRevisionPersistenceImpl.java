@@ -1988,7 +1988,10 @@ public class SVNRevisionPersistenceImpl extends BasePersistenceImpl<SVNRevision>
 		}
 
 		EntityCacheUtil.putResult(SVNRevisionModelImpl.ENTITY_CACHE_ENABLED,
-			SVNRevisionImpl.class, svnRevision.getPrimaryKey(), svnRevision);
+			SVNRevisionImpl.class, svnRevision.getPrimaryKey(), svnRevision,
+			false);
+
+		svnRevision.resetOriginalValues();
 
 		return svnRevision;
 	}

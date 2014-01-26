@@ -2762,10 +2762,12 @@ public class CalendarNotificationTemplatePersistenceImpl
 		EntityCacheUtil.putResult(CalendarNotificationTemplateModelImpl.ENTITY_CACHE_ENABLED,
 			CalendarNotificationTemplateImpl.class,
 			calendarNotificationTemplate.getPrimaryKey(),
-			calendarNotificationTemplate);
+			calendarNotificationTemplate, false);
 
 		clearUniqueFindersCache(calendarNotificationTemplate);
 		cacheUniqueFindersCache(calendarNotificationTemplate);
+
+		calendarNotificationTemplate.resetOriginalValues();
 
 		return calendarNotificationTemplate;
 	}

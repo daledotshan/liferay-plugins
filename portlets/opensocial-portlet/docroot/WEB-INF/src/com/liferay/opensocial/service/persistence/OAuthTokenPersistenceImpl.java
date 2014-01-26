@@ -1432,10 +1432,12 @@ public class OAuthTokenPersistenceImpl extends BasePersistenceImpl<OAuthToken>
 		}
 
 		EntityCacheUtil.putResult(OAuthTokenModelImpl.ENTITY_CACHE_ENABLED,
-			OAuthTokenImpl.class, oAuthToken.getPrimaryKey(), oAuthToken);
+			OAuthTokenImpl.class, oAuthToken.getPrimaryKey(), oAuthToken, false);
 
 		clearUniqueFindersCache(oAuthToken);
 		cacheUniqueFindersCache(oAuthToken);
+
+		oAuthToken.resetOriginalValues();
 
 		return oAuthToken;
 	}

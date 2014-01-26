@@ -1620,10 +1620,12 @@ public class MessagePersistenceImpl extends BasePersistenceImpl<Message>
 		}
 
 		EntityCacheUtil.putResult(MessageModelImpl.ENTITY_CACHE_ENABLED,
-			MessageImpl.class, message.getPrimaryKey(), message);
+			MessageImpl.class, message.getPrimaryKey(), message, false);
 
 		clearUniqueFindersCache(message);
 		cacheUniqueFindersCache(message);
+
+		message.resetOriginalValues();
 
 		return message;
 	}

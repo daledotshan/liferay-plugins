@@ -1116,10 +1116,13 @@ public class SyncDLObjectPersistenceImpl extends BasePersistenceImpl<SyncDLObjec
 		}
 
 		EntityCacheUtil.putResult(SyncDLObjectModelImpl.ENTITY_CACHE_ENABLED,
-			SyncDLObjectImpl.class, syncDLObject.getPrimaryKey(), syncDLObject);
+			SyncDLObjectImpl.class, syncDLObject.getPrimaryKey(), syncDLObject,
+			false);
 
 		clearUniqueFindersCache(syncDLObject);
 		cacheUniqueFindersCache(syncDLObject);
+
+		syncDLObject.resetOriginalValues();
 
 		return syncDLObject;
 	}

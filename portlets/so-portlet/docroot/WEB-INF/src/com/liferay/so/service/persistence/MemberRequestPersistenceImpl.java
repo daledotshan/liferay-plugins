@@ -2003,10 +2003,12 @@ public class MemberRequestPersistenceImpl extends BasePersistenceImpl<MemberRequ
 
 		EntityCacheUtil.putResult(MemberRequestModelImpl.ENTITY_CACHE_ENABLED,
 			MemberRequestImpl.class, memberRequest.getPrimaryKey(),
-			memberRequest);
+			memberRequest, false);
 
 		clearUniqueFindersCache(memberRequest);
 		cacheUniqueFindersCache(memberRequest);
+
+		memberRequest.resetOriginalValues();
 
 		return memberRequest;
 	}

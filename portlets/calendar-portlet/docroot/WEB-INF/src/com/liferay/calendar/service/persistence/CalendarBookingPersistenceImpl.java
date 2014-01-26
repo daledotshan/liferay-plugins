@@ -5590,10 +5590,12 @@ public class CalendarBookingPersistenceImpl extends BasePersistenceImpl<Calendar
 
 		EntityCacheUtil.putResult(CalendarBookingModelImpl.ENTITY_CACHE_ENABLED,
 			CalendarBookingImpl.class, calendarBooking.getPrimaryKey(),
-			calendarBooking);
+			calendarBooking, false);
 
 		clearUniqueFindersCache(calendarBooking);
 		cacheUniqueFindersCache(calendarBooking);
+
+		calendarBooking.resetOriginalValues();
 
 		return calendarBooking;
 	}

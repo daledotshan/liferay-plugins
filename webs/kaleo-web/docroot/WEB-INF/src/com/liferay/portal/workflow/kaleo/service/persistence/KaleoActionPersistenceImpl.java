@@ -2642,7 +2642,10 @@ public class KaleoActionPersistenceImpl extends BasePersistenceImpl<KaleoAction>
 		}
 
 		EntityCacheUtil.putResult(KaleoActionModelImpl.ENTITY_CACHE_ENABLED,
-			KaleoActionImpl.class, kaleoAction.getPrimaryKey(), kaleoAction);
+			KaleoActionImpl.class, kaleoAction.getPrimaryKey(), kaleoAction,
+			false);
+
+		kaleoAction.resetOriginalValues();
 
 		return kaleoAction;
 	}

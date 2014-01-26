@@ -2446,7 +2446,9 @@ public class KaleoTaskAssignmentInstancePersistenceImpl
 		EntityCacheUtil.putResult(KaleoTaskAssignmentInstanceModelImpl.ENTITY_CACHE_ENABLED,
 			KaleoTaskAssignmentInstanceImpl.class,
 			kaleoTaskAssignmentInstance.getPrimaryKey(),
-			kaleoTaskAssignmentInstance);
+			kaleoTaskAssignmentInstance, false);
+
+		kaleoTaskAssignmentInstance.resetOriginalValues();
 
 		return kaleoTaskAssignmentInstance;
 	}

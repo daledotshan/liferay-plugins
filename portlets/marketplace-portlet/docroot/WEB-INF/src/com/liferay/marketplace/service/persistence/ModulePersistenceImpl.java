@@ -2239,10 +2239,12 @@ public class ModulePersistenceImpl extends BasePersistenceImpl<Module>
 		}
 
 		EntityCacheUtil.putResult(ModuleModelImpl.ENTITY_CACHE_ENABLED,
-			ModuleImpl.class, module.getPrimaryKey(), module);
+			ModuleImpl.class, module.getPrimaryKey(), module, false);
 
 		clearUniqueFindersCache(module);
 		cacheUniqueFindersCache(module);
+
+		module.resetOriginalValues();
 
 		return module;
 	}

@@ -2660,7 +2660,9 @@ public class KaleoNotificationPersistenceImpl extends BasePersistenceImpl<KaleoN
 
 		EntityCacheUtil.putResult(KaleoNotificationModelImpl.ENTITY_CACHE_ENABLED,
 			KaleoNotificationImpl.class, kaleoNotification.getPrimaryKey(),
-			kaleoNotification);
+			kaleoNotification, false);
+
+		kaleoNotification.resetOriginalValues();
 
 		return kaleoNotification;
 	}

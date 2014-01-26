@@ -55,7 +55,7 @@ if ((microblogsEntry != null) && !edit) {
 
 	receiverUserId = microblogsEntry.getUserId();
 
-	receiverUserFullName = PortalUtil.getUserName(microblogsEntry);
+	receiverUserFullName = HtmlUtil.escape(PortalUtil.getUserName(microblogsEntry));
 
 	try {
 		User receiverUser = UserLocalServiceUtil.getUserById(microblogsEntry.getUserId());
@@ -149,7 +149,7 @@ if (comment) {
 	<c:if test="<%= !repost %>">
 		<c:if test="<%= comment %>">
 			<span class="thumbnail">
-				<a href="<%= user.getDisplayURL(themeDisplay) %>"><img alt="<%= user.getFullName() %>" src="<%= user.getPortraitURL(themeDisplay) %>" /></a>
+				<a href="<%= user.getDisplayURL(themeDisplay) %>"><img alt="<%= HtmlUtil.escape(user.getFullName()) %>" src="<%= user.getPortraitURL(themeDisplay) %>" /></a>
 			</span>
 		</c:if>
 
@@ -481,10 +481,10 @@ if (comment) {
 
 			var url = form.one('input[name="<portlet:namespace />redirect"]');
 
-			var updateContainer = A.one('.microblogs-portlet .portlet-body');
+			var updateContainer = A.one('#p_p_id<portlet:namespace /> .portlet-body');
 
 			<c:if test="<%= comment %>">
-				updateContainer = A.one('.microblogs-portlet #<portlet:namespace />commentsContainer<%= microblogsEntryId %>');
+				updateContainer = A.one('#<portlet:namespace />commentsContainer<%= microblogsEntryId %>');
 			</c:if>
 
 			Liferay.Microblogs.updateMicroblogs(form, url.get("value"), updateContainer);

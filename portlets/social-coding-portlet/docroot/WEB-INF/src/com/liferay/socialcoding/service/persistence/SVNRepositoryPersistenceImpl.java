@@ -607,10 +607,12 @@ public class SVNRepositoryPersistenceImpl extends BasePersistenceImpl<SVNReposit
 
 		EntityCacheUtil.putResult(SVNRepositoryModelImpl.ENTITY_CACHE_ENABLED,
 			SVNRepositoryImpl.class, svnRepository.getPrimaryKey(),
-			svnRepository);
+			svnRepository, false);
 
 		clearUniqueFindersCache(svnRepository);
 		cacheUniqueFindersCache(svnRepository);
+
+		svnRepository.resetOriginalValues();
 
 		return svnRepository;
 	}

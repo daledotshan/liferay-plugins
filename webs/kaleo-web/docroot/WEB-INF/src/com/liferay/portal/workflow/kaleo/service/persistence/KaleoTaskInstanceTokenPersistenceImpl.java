@@ -2202,10 +2202,13 @@ public class KaleoTaskInstanceTokenPersistenceImpl extends BasePersistenceImpl<K
 
 		EntityCacheUtil.putResult(KaleoTaskInstanceTokenModelImpl.ENTITY_CACHE_ENABLED,
 			KaleoTaskInstanceTokenImpl.class,
-			kaleoTaskInstanceToken.getPrimaryKey(), kaleoTaskInstanceToken);
+			kaleoTaskInstanceToken.getPrimaryKey(), kaleoTaskInstanceToken,
+			false);
 
 		clearUniqueFindersCache(kaleoTaskInstanceToken);
 		cacheUniqueFindersCache(kaleoTaskInstanceToken);
+
+		kaleoTaskInstanceToken.resetOriginalValues();
 
 		return kaleoTaskInstanceToken;
 	}

@@ -2352,10 +2352,12 @@ public class WSRPConsumerPortletPersistenceImpl extends BasePersistenceImpl<WSRP
 
 		EntityCacheUtil.putResult(WSRPConsumerPortletModelImpl.ENTITY_CACHE_ENABLED,
 			WSRPConsumerPortletImpl.class, wsrpConsumerPortlet.getPrimaryKey(),
-			wsrpConsumerPortlet);
+			wsrpConsumerPortlet, false);
 
 		clearUniqueFindersCache(wsrpConsumerPortlet);
 		cacheUniqueFindersCache(wsrpConsumerPortlet);
+
+		wsrpConsumerPortlet.resetOriginalValues();
 
 		return wsrpConsumerPortlet;
 	}
