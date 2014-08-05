@@ -16,12 +16,8 @@ package com.liferay.sync.engine.documentlibrary.event;
 
 import com.liferay.sync.engine.documentlibrary.handler.DownloadFileHandler;
 import com.liferay.sync.engine.documentlibrary.handler.Handler;
-import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
-import com.liferay.sync.engine.service.SyncAccountService;
 import com.liferay.sync.engine.service.SyncFileService;
-
-import java.net.URL;
 
 import java.util.Map;
 
@@ -37,7 +33,7 @@ public class DownloadFileEvent extends BaseEvent {
 	}
 
 	@Override
-	protected Handler<?> getHandler() {
+	protected Handler<Void> getHandler() {
 		return new DownloadFileHandler(this);
 	}
 
@@ -45,14 +41,14 @@ public class DownloadFileEvent extends BaseEvent {
 	protected void processRequest() throws Exception {
 		SyncFile syncFile = (SyncFile)getParameterValue("syncFile");
 
-		syncFile.setState(SyncFile.STATE_IN_PROGRESS);
+		syncFile.setState(SyncFile.STATE_IN_PROGRESS_DOWNLOADING);
 		syncFile.setUiEvent(SyncFile.UI_EVENT_DOWNLOADING);
 
 		SyncFileService.update(syncFile);
 
 		StringBuilder sb = new StringBuilder(9);
 
-		sb.append(replaceURLPath(getSyncAccountId()));
+		sb.append(_URL_PATH);
 		sb.append("/");
 		sb.append(syncFile.getRepositoryId());
 		sb.append("/");
@@ -69,18 +65,7 @@ public class DownloadFileEvent extends BaseEvent {
 			sb.append(syncFile.getVersion());
 		}
 
-		executeGet(sb.toString());
-	}
-
-	protected String replaceURLPath(long syncAccountId) throws Exception {
-		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
-			syncAccountId);
-
-		String url = syncAccount.getUrl();
-
-		URL urlObj = new URL(url);
-
-		return url.replace(urlObj.getPath(), _URL_PATH);
+		executeAsynchronousGet(sb.toString());
 	}
 
 	private static final String _URL_PATH = "/sync-web/download";

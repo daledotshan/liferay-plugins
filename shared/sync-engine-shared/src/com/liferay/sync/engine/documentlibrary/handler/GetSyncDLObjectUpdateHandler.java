@@ -43,7 +43,7 @@ import java.util.Map;
 /**
  * @author Shinn Lok
  */
-public class GetSyncDLObjectUpdateHandler extends BaseJSONHandler {
+public class GetSyncDLObjectUpdateHandler extends BaseSyncDLObjectHandler {
 
 	public GetSyncDLObjectUpdateHandler(Event event) {
 		super(event);
@@ -54,16 +54,11 @@ public class GetSyncDLObjectUpdateHandler extends BaseJSONHandler {
 
 		Path filePath = Paths.get(filePathName);
 
-		if (Files.exists(filePath)) {
-			if (syncFile.isFolder()) {
-				return;
-			}
+		if (Files.exists(filePath) &&
+			(syncFile.isFolder() ||
+			 !FileUtil.hasFileChanged(syncFile, filePath))) {
 
-			String checksum = FileUtil.getChecksum(filePath);
-
-			if (checksum.equals(syncFile.getChecksum())) {
-				return;
-			}
+			return;
 		}
 
 		syncFile.setFilePathName(filePathName);
@@ -80,7 +75,8 @@ public class GetSyncDLObjectUpdateHandler extends BaseJSONHandler {
 		else {
 			SyncFileService.update(syncFile);
 
-			downloadFile(syncFile, null, false);
+			downloadFile(
+				syncFile, null, false, SyncFile.UI_EVENT_DOWNLOADED_NEW);
 		}
 	}
 
@@ -102,8 +98,16 @@ public class GetSyncDLObjectUpdateHandler extends BaseJSONHandler {
 			sourceSyncFile.setUiEvent(SyncFile.UI_EVENT_DELETED_REMOTE);
 		}
 
+		SyncFileService.deleteSyncFile(sourceSyncFile);
+
+		Path sourceFilePath = Paths.get(sourceSyncFile.getFilePathName());
+
+		if (Files.notExists(sourceFilePath)) {
+			return;
+		}
+
 		Files.walkFileTree(
-			Paths.get(sourceSyncFile.getFilePathName()),
+			sourceFilePath,
 			new SimpleFileVisitor<Path>() {
 
 				@Override
@@ -111,7 +115,7 @@ public class GetSyncDLObjectUpdateHandler extends BaseJSONHandler {
 						Path filePath, IOException ioe)
 					throws IOException {
 
-					Files.delete(filePath);
+					Files.deleteIfExists(filePath);
 
 					return FileVisitResult.CONTINUE;
 				}
@@ -121,18 +125,16 @@ public class GetSyncDLObjectUpdateHandler extends BaseJSONHandler {
 						Path filePath, BasicFileAttributes basicFileAttributes)
 					throws IOException {
 
-					Files.delete(filePath);
+					Files.deleteIfExists(filePath);
 
 					return FileVisitResult.CONTINUE;
 				}
 
 			});
-
-		SyncFileService.deleteSyncFile(sourceSyncFile);
 	}
 
 	protected void downloadFile(
-		SyncFile syncFile, String sourceVersion, boolean patch) {
+		SyncFile syncFile, String sourceVersion, boolean patch, int uiEvent) {
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -140,7 +142,9 @@ public class GetSyncDLObjectUpdateHandler extends BaseJSONHandler {
 
 		String targetVersion = syncFile.getVersion();
 
-		if (patch && !sourceVersion.equals(targetVersion)) {
+		if (patch &&
+			(Double.valueOf(targetVersion) > Double.valueOf(sourceVersion))) {
+
 			parameters.put("patch", true);
 			parameters.put("sourceVersion", sourceVersion);
 			parameters.put("targetVersion", targetVersion);
@@ -148,6 +152,8 @@ public class GetSyncDLObjectUpdateHandler extends BaseJSONHandler {
 		else {
 			parameters.put("patch", false);
 		}
+
+		parameters.put("uiEvent", uiEvent);
 
 		DownloadFileEvent downloadFileEvent = new DownloadFileEvent(
 			getSyncAccountId(), parameters);
@@ -162,7 +168,15 @@ public class GetSyncDLObjectUpdateHandler extends BaseJSONHandler {
 			targetSyncFile.getRepositoryId(), getSyncAccountId(),
 			targetSyncFile.getTypePK());
 
+		if (sourceSyncFile == null) {
+			return;
+		}
+
 		Path sourceFilePath = Paths.get(sourceSyncFile.getFilePathName());
+
+		if (Files.notExists(sourceFilePath)) {
+			return;
+		}
 
 		Path targetFilePath = Paths.get(targetFilePathName);
 
@@ -188,12 +202,12 @@ public class GetSyncDLObjectUpdateHandler extends BaseJSONHandler {
 				syncFile.getRepositoryId(), getSyncAccountId(),
 				syncFile.getParentFolderId());
 
-			String filePathName = null;
-
-			if (parentSyncFile != null) {
-				filePathName = FilePathNameUtil.getFilePathName(
-					parentSyncFile.getFilePathName(), syncFile.getName());
+			if (parentSyncFile == null) {
+				continue;
 			}
+
+			String filePathName = FilePathNameUtil.getFilePathName(
+				parentSyncFile.getFilePathName(), syncFile.getName());
 
 			String event = syncFile.getEvent();
 
@@ -213,7 +227,7 @@ public class GetSyncDLObjectUpdateHandler extends BaseJSONHandler {
 				deleteFile(syncFile, true);
 			}
 			else if (event.equals(SyncFile.EVENT_UPDATE)) {
-				updateFile(syncFile);
+				updateFile(syncFile, filePathName);
 			}
 		}
 
@@ -225,27 +239,28 @@ public class GetSyncDLObjectUpdateHandler extends BaseJSONHandler {
 		SyncSiteService.update(syncSite);
 	}
 
-	protected void updateFile(SyncFile targetSyncFile) throws Exception {
+	protected void updateFile(SyncFile targetSyncFile, String filePathName)
+		throws Exception {
+
 		SyncFile sourceSyncFile = SyncFileService.fetchSyncFile(
 			targetSyncFile.getRepositoryId(), getSyncAccountId(),
 			targetSyncFile.getTypePK());
+
+		if (sourceSyncFile == null) {
+			addFile(targetSyncFile, filePathName);
+
+			return;
+		}
 
 		String sourceVersion = sourceSyncFile.getVersion();
 
 		Path sourceFilePath = Paths.get(sourceSyncFile.getFilePathName());
 
-		String sourceFileName = String.valueOf(sourceFilePath.getFileName());
-
-		if (!sourceFileName.equals(targetSyncFile.getName())) {
-			Path targetFilePath = sourceFilePath.resolveSibling(
-				targetSyncFile.getName());
-
-			Files.move(sourceFilePath, targetFilePath);
-
-			sourceSyncFile.setFilePathName(
-				FilePathNameUtil.getFilePathName(targetFilePath));
-			sourceSyncFile.setName(targetSyncFile.getName());
+		if (Files.notExists(sourceFilePath)) {
+			return;
 		}
+
+		processFilePathChange(sourceSyncFile, targetSyncFile);
 
 		sourceSyncFile.setChangeLog(targetSyncFile.getChangeLog());
 		sourceSyncFile.setChecksum(targetSyncFile.getChecksum());
@@ -263,16 +278,13 @@ public class GetSyncDLObjectUpdateHandler extends BaseJSONHandler {
 
 		SyncFileService.update(sourceSyncFile);
 
-		if (Files.exists(sourceFilePath) && !targetSyncFile.isFolder()) {
-			String checksum = FileUtil.getChecksum(sourceFilePath);
-
-			if (checksum.equals(targetSyncFile.getChecksum())) {
-				return;
-			}
+		if (Files.exists(sourceFilePath) && !targetSyncFile.isFolder() &&
+			FileUtil.hasFileChanged(targetSyncFile, sourceFilePath)) {
 
 			downloadFile(
 				sourceSyncFile, sourceVersion,
-				!IODeltaUtil.isIgnoredFilePatchingExtension(targetSyncFile));
+				!IODeltaUtil.isIgnoredFilePatchingExtension(targetSyncFile),
+				SyncFile.UI_EVENT_DOWNLOADED_UPDATE);
 		}
 	}
 

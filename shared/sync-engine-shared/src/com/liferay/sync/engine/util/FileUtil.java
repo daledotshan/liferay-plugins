@@ -14,6 +14,8 @@
 
 package com.liferay.sync.engine.util;
 
+import com.liferay.sync.engine.model.SyncFile;
+
 import java.io.InputStream;
 
 import java.nio.file.Files;
@@ -27,6 +29,9 @@ import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,9 +42,19 @@ import org.slf4j.LoggerFactory;
 public class FileUtil {
 
 	public static String getChecksum(Path filePath) {
+		if (!Files.exists(filePath)) {
+			return "";
+		}
+
 		InputStream fileInputStream = null;
 
 		try {
+			if (Files.size(filePath) >
+					PropsValues.SYNC_FILE_CHECKSUM_THRESHOLD_SIZE) {
+
+				return "";
+			}
+
 			fileInputStream = Files.newInputStream(filePath);
 
 			byte[] bytes = DigestUtils.sha1(fileInputStream);
@@ -49,7 +64,7 @@ public class FileUtil {
 		catch (Exception e) {
 			_logger.error(e.getMessage(), e);
 
-			return null;
+			return "";
 		}
 		finally {
 			StreamUtil.cleanUp(fileInputStream);
@@ -57,6 +72,10 @@ public class FileUtil {
 	}
 
 	public static String getFileKey(Path filePath) {
+		if (!Files.exists(filePath)) {
+			return "";
+		}
+
 		try {
 			BasicFileAttributes basicFileAttributes = Files.readAttributes(
 				filePath, BasicFileAttributes.class);
@@ -73,7 +92,7 @@ public class FileUtil {
 		catch (Exception e) {
 			_logger.error(e.getMessage(), e);
 
-			return null;
+			return "";
 		}
 	}
 
@@ -83,11 +102,37 @@ public class FileUtil {
 		return getFileKey(filePath);
 	}
 
+	public static boolean hasFileChanged(SyncFile syncFile) {
+		if (syncFile.getFilePathName() == null) {
+			return true;
+		}
+
+		Path filePath = Paths.get(syncFile.getFilePathName());
+
+		if (filePath == null) {
+			return true;
+		}
+
+		String checksum = getChecksum(filePath);
+
+		return !checksum.equals(syncFile.getChecksum());
+	}
+
+	public static boolean hasFileChanged(SyncFile syncFile, Path filePath) {
+		if (filePath == null) {
+			return true;
+		}
+
+		String checksum = getChecksum(filePath);
+
+		return !checksum.equals(syncFile.getChecksum());
+	}
+
 	public static boolean isIgnoredFilePath(Path filePath) throws Exception {
 		String fileName = String.valueOf(filePath.getFileName());
 
-		if (_syncIgnoreFileNames.contains(fileName) ||
-			(PropsValues.SYNC_IGNORE_HIDDEN_FILES &&
+		if (_syncFileIgnoreNames.contains(fileName) ||
+			(PropsValues.SYNC_FILE_IGNORE_HIDDEN &&
 			 Files.isHidden(filePath)) ||
 			Files.isSymbolicLink(filePath) || fileName.endsWith(".lnk")) {
 
@@ -97,9 +142,44 @@ public class FileUtil {
 		return false;
 	}
 
+	public static boolean isValidFileName(String fileName) {
+		if (StringUtils.isBlank(fileName)) {
+			return false;
+		}
+
+		for (String blacklistChar : PropsValues.SYNC_FILE_BLACKLIST_CHARS) {
+			if (fileName.contains(blacklistChar)) {
+				return false;
+			}
+		}
+
+		for (String blacklistLastChar :
+				PropsValues.SYNC_FILE_BLACKLIST_CHARS_LAST) {
+
+			if (blacklistLastChar.startsWith("\\u")) {
+				blacklistLastChar = StringEscapeUtils.unescapeJava(
+					blacklistLastChar);
+			}
+
+			if (fileName.endsWith(blacklistLastChar)) {
+				return false;
+			}
+		}
+
+		String nameWithoutExtension = FilenameUtils.removeExtension(fileName);
+
+		for (String blacklistName : PropsValues.SYNC_FILE_BLACKLIST_NAMES) {
+			if (nameWithoutExtension.equalsIgnoreCase(blacklistName)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	private static Logger _logger = LoggerFactory.getLogger(FileUtil.class);
 
-	private static Set<String> _syncIgnoreFileNames = new HashSet<String>(
-		Arrays.asList(PropsValues.SYNC_IGNORE_FILE_NAMES));
+	private static Set<String> _syncFileIgnoreNames = new HashSet<String>(
+		Arrays.asList(PropsValues.SYNC_FILE_IGNORE_NAMES));
 
 }

@@ -31,7 +31,7 @@ public class AddFolderEvent extends BaseEvent {
 	}
 
 	@Override
-	protected Handler<?> getHandler() {
+	protected Handler<Void> getHandler() {
 		return new AddFileFolderHandler(this);
 	}
 
@@ -39,7 +39,7 @@ public class AddFolderEvent extends BaseEvent {
 	protected void processRequest() throws Exception {
 		SyncFile syncFile = (SyncFile)getParameterValue("syncFile");
 
-		syncFile.setState(SyncFile.STATE_IN_PROGRESS);
+		syncFile.setState(SyncFile.STATE_IN_PROGRESS_UPLOADING);
 		syncFile.setUiEvent(SyncFile.UI_EVENT_UPLOADING);
 
 		SyncFileService.update(syncFile);

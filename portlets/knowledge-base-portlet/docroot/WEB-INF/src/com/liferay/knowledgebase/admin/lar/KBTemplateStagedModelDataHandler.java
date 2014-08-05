@@ -16,9 +16,7 @@ package com.liferay.knowledgebase.admin.lar;
 
 import com.liferay.knowledgebase.model.KBTemplate;
 import com.liferay.knowledgebase.service.KBTemplateLocalServiceUtil;
-import com.liferay.knowledgebase.service.persistence.KBTemplateUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
@@ -36,11 +34,9 @@ public class KBTemplateStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException, SystemException {
+		throws PortalException {
 
-		KBTemplate kbTemplate =
-			KBTemplateLocalServiceUtil.fetchKBTemplateByUuidAndGroupId(
-				uuid, groupId);
+		KBTemplate kbTemplate = fetchExistingStagedModel(uuid, groupId);
 
 		if (kbTemplate != null) {
 			KBTemplateLocalServiceUtil.deleteKBTemplate(kbTemplate);
@@ -71,6 +67,12 @@ public class KBTemplateStagedModelDataHandler
 	}
 
 	@Override
+	protected KBTemplate doFetchExistingStagedModel(String uuid, long groupId) {
+		return KBTemplateLocalServiceUtil.fetchKBTemplateByUuidAndGroupId(
+			uuid, groupId);
+	}
+
+	@Override
 	protected void doImportStagedModel(
 			PortletDataContext portletDataContext, KBTemplate kbTemplate)
 		throws Exception {
@@ -83,7 +85,7 @@ public class KBTemplateStagedModelDataHandler
 		KBTemplate importedKBTemplate = null;
 
 		if (portletDataContext.isDataStrategyMirror()) {
-			KBTemplate existingKBTemplate = KBTemplateUtil.fetchByUUID_G(
+			KBTemplate existingKBTemplate = fetchExistingStagedModel(
 				kbTemplate.getUuid(), portletDataContext.getScopeGroupId());
 
 			if (existingKBTemplate == null) {

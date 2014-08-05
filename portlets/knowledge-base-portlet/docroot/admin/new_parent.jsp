@@ -27,8 +27,8 @@ long parentResourcePrimKey = BeanParamUtil.getLong(kbArticle, request, "parentRe
 double priority = BeanParamUtil.getDouble(kbArticle, request, "priority");
 %>
 
-<div class="input-append kb-new-parent">
-	<liferay-ui:input-resource url='<%= parentResourcePrimKey != KBArticleConstants.DEFAULT_PARENT_RESOURCE_PRIM_KEY ? BeanPropertiesUtil.getString(KBArticleServiceUtil.getLatestKBArticle(parentResourcePrimKey, status), "title") : "(" + LanguageUtil.get(pageContext, "none") + ")" %>' />
+<div class="form-group kb-new-parent">
+	<aui:input label="" name="parentResource" type="resource" value='<%= parentResourcePrimKey != KBArticleConstants.DEFAULT_PARENT_RESOURCE_PRIM_KEY ? BeanPropertiesUtil.getString(KBArticleServiceUtil.getLatestKBArticle(parentResourcePrimKey, status), "title") : "(" + LanguageUtil.get(request, "none") + ")" %>' />
 
 	<aui:input cssClass="input-mini kb-priority" inlineField="<%= true %>" label="" name="priority" type="text" value="<%= BigDecimal.valueOf(priority).toPlainString() %>" />
 

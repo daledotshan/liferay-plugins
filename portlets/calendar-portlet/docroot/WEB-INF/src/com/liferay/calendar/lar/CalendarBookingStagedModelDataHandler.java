@@ -20,7 +20,6 @@ import com.liferay.calendar.model.CalendarBookingConstants;
 import com.liferay.calendar.service.CalendarBookingLocalServiceUtil;
 import com.liferay.calendar.workflow.CalendarBookingWorkflowConstants;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
@@ -45,11 +44,10 @@ public class CalendarBookingStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException, SystemException {
+		throws PortalException {
 
-		CalendarBooking calendarBooking =
-			CalendarBookingLocalServiceUtil.
-				fetchCalendarBookingByUuidAndGroupId(uuid, groupId);
+		CalendarBooking calendarBooking = fetchExistingStagedModel(
+			uuid, groupId);
 
 		if (calendarBooking != null) {
 			CalendarBookingLocalServiceUtil.deleteCalendarBooking(
@@ -99,6 +97,14 @@ public class CalendarBookingStagedModelDataHandler
 	}
 
 	@Override
+	protected CalendarBooking doFetchExistingStagedModel(
+		String uuid, long groupId) {
+
+		return CalendarBookingLocalServiceUtil.
+			fetchCalendarBookingByUuidAndGroupId(uuid, groupId);
+	}
+
+	@Override
 	protected void doImportStagedModel(
 			PortletDataContext portletDataContext,
 			CalendarBooking calendarBooking)
@@ -141,11 +147,9 @@ public class CalendarBookingStagedModelDataHandler
 		CalendarBooking importedCalendarBooking = null;
 
 		if (portletDataContext.isDataStrategyMirror()) {
-			CalendarBooking existingCalendarBooking =
-				CalendarBookingLocalServiceUtil.
-					fetchCalendarBookingByUuidAndGroupId(
-						calendarBooking.getUuid(),
-						portletDataContext.getScopeGroupId());
+			CalendarBooking existingCalendarBooking = fetchExistingStagedModel(
+				calendarBooking.getUuid(),
+				portletDataContext.getScopeGroupId());
 
 			if (existingCalendarBooking == null) {
 				serviceContext.setUuid(calendarBooking.getUuid());
@@ -213,10 +217,8 @@ public class CalendarBookingStagedModelDataHandler
 		long userId = portletDataContext.getUserId(
 			calendarBooking.getUserUuid());
 
-		CalendarBooking existingBooking =
-			CalendarBookingLocalServiceUtil.fetchCalendarBooking(
-				calendarBooking.getUuid(),
-				portletDataContext.getScopeGroupId());
+		CalendarBooking existingBooking = fetchExistingStagedModel(
+			calendarBooking.getUuid(), portletDataContext.getScopeGroupId());
 
 		if ((existingBooking == null) || !existingBooking.isInTrash()) {
 			return;

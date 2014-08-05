@@ -36,9 +36,7 @@ public class SyncEngineUtil {
 
 	public static final int SYNC_ENGINE_STATE_STOPPING = 4;
 
-	public static void addSyncEngineListener(SyncEngineListener listener) {
-		_syncEngineListeners.add(listener);
-	}
+	public static final int SYNC_ENGINE_UPDATE_AVAILABLE = 5;
 
 	public static void fireSyncEngineStateChanged(final int syncEngineState) {
 		for (final SyncEngineListener syncEngineListener :
@@ -56,6 +54,18 @@ public class SyncEngineUtil {
 				}
 			);
 		}
+	}
+
+	public static void registerSyncEngineListener(
+		SyncEngineListener syncEngineListener) {
+
+		_syncEngineListeners.add(syncEngineListener);
+	}
+
+	public static void unregisterSyncEngineListener(
+		SyncEngineListener syncEngineListener) {
+
+		_syncEngineListeners.remove(syncEngineListener);
 	}
 
 	private static ExecutorService _executorService =
