@@ -18,7 +18,6 @@ import com.liferay.io.delta.ByteChannelReader;
 import com.liferay.io.delta.ByteChannelWriter;
 import com.liferay.io.delta.DeltaUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.util.Digester;
@@ -55,18 +54,31 @@ import java.util.Date;
 public class SyncUtil {
 
 	public static String getChecksum(DLFileVersion dlFileVersion)
-		throws PortalException, SystemException {
+		throws PortalException {
 
-		return getChecksum(dlFileVersion.getContentStream(false));
+		if (dlFileVersion.getSize() >
+				PortletPropsValues.SYNC_FILE_CHECKSUM_THRESHOLD_SIZE) {
+
+			return StringPool.BLANK;
+		}
+
+		return DigesterUtil.digestBase64(
+			Digester.SHA_1, dlFileVersion.getContentStream(false));
 	}
 
 	public static String getChecksum(File file) throws PortalException {
+		if (file.length() >
+				PortletPropsValues.SYNC_FILE_CHECKSUM_THRESHOLD_SIZE) {
+
+			return StringPool.BLANK;
+		}
+
 		FileInputStream fileInputStream = null;
 
 		try {
 			fileInputStream = new FileInputStream(file);
 
-			return getChecksum(fileInputStream);
+			return DigesterUtil.digestBase64(Digester.SHA_1, fileInputStream);
 		}
 		catch (Exception e) {
 			throw new PortalException(e);
@@ -74,10 +86,6 @@ public class SyncUtil {
 		finally {
 			StreamUtil.cleanUp(fileInputStream);
 		}
-	}
-
-	public static String getChecksum(InputStream inputStream) {
-		return DigesterUtil.digestBase64(Digester.SHA_1, inputStream);
 	}
 
 	public static File getFileDelta(File sourceFile, File targetFile)
@@ -234,14 +242,14 @@ public class SyncUtil {
 
 	public static SyncDLObject toSyncDLObject(
 			DLFileEntry dlFileEntry, String event)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		return toSyncDLObject(dlFileEntry, event, false);
 	}
 
 	public static SyncDLObject toSyncDLObject(
 			DLFileEntry dlFileEntry, String event, boolean excludeWorkingCopy)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		DLFileVersion dlFileVersion = null;
 
@@ -325,7 +333,7 @@ public class SyncUtil {
 	}
 
 	public static SyncDLObject toSyncDLObject(FileEntry fileEntry, String event)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		if (fileEntry.getModel() instanceof DLFileEntry) {
 			DLFileEntry dlFileEntry = (DLFileEntry)fileEntry.getModel();
@@ -338,7 +346,7 @@ public class SyncUtil {
 	}
 
 	public static SyncDLObject toSyncDLObject(Folder folder, String event)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		if (folder.getModel() instanceof DLFolder) {
 			DLFolder dlFolder = (DLFolder)folder.getModel();

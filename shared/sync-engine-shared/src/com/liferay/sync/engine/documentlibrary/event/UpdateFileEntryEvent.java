@@ -33,7 +33,7 @@ public class UpdateFileEntryEvent extends BaseEvent {
 	}
 
 	@Override
-	protected Handler<?> getHandler() {
+	protected Handler<Void> getHandler() {
 		return new UpdateFileEntryHandler(this);
 	}
 
@@ -41,15 +41,17 @@ public class UpdateFileEntryEvent extends BaseEvent {
 	protected void processRequest() throws Exception {
 		SyncFile syncFile = (SyncFile)getParameterValue("syncFile");
 
-		syncFile.setState(SyncFile.STATE_IN_PROGRESS);
-
 		if (getParameterValue("filePath") != null) {
+			syncFile.setState(SyncFile.STATE_IN_PROGRESS_UPLOADING);
 			syncFile.setUiEvent(SyncFile.UI_EVENT_UPLOADING);
+		}
+		else {
+			syncFile.setState(SyncFile.STATE_IN_PROGRESS);
 		}
 
 		SyncFileService.update(syncFile);
 
-		super.processRequest();
+		super.processAsynchronousRequest();
 	}
 
 	private static final String _URL_PATH =

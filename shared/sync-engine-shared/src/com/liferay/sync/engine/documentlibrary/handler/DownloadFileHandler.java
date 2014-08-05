@@ -15,7 +15,9 @@
 package com.liferay.sync.engine.documentlibrary.handler;
 
 import com.liferay.sync.engine.documentlibrary.event.Event;
+import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.model.SyncFile;
+import com.liferay.sync.engine.service.SyncAccountService;
 import com.liferay.sync.engine.service.SyncFileService;
 import com.liferay.sync.engine.util.FileUtil;
 import com.liferay.sync.engine.util.IODeltaUtil;
@@ -30,6 +32,11 @@ import java.nio.file.StandardCopyOption;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpResponseException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Shinn Lok
@@ -38,6 +45,40 @@ public class DownloadFileHandler extends BaseHandler {
 
 	public DownloadFileHandler(Event event) {
 		super(event);
+	}
+
+	@Override
+	public void handleException(Exception e) {
+		_logger.error(e.getMessage(), e);
+
+		if (!(e instanceof HttpResponseException)) {
+			super.handleException(e);
+
+			return;
+		}
+
+		HttpResponseException hre = (HttpResponseException)e;
+
+		int statusCode = hre.getStatusCode();
+
+		if (statusCode != HttpStatus.SC_NOT_FOUND) {
+			super.handleException(e);
+
+			return;
+		}
+
+		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
+			getSyncAccountId());
+
+		if (syncAccount.getState() == SyncAccount.STATE_DISCONNECTED) {
+			super.handleException(e);
+
+			return;
+		}
+
+		SyncFile syncFile = (SyncFile)getParameterValue("syncFile");
+
+		SyncFileService.deleteSyncFile(syncFile, false);
 	}
 
 	@Override
@@ -56,38 +97,39 @@ public class DownloadFileHandler extends BaseHandler {
 			inputStream = httpEntity.getContent();
 
 			Path tempFilePath = Files.createTempFile(
-				String.valueOf(filePath.getFileName()), ".tmp");
+				String.valueOf(syncFile.getSyncFileId()), ".tmp");
 
 			if (Files.exists(filePath)) {
-				Files.copy(filePath, tempFilePath);
+				Files.copy(
+					filePath, tempFilePath,
+					StandardCopyOption.REPLACE_EXISTING);
 			}
 
 			if ((Boolean)getParameterValue("patch")) {
 				IODeltaUtil.patch(tempFilePath, inputStream);
-
-				Files.move(
-					tempFilePath, filePath, StandardCopyOption.ATOMIC_MOVE,
-					StandardCopyOption.REPLACE_EXISTING);
 			}
 			else {
 				Files.copy(
 					inputStream, tempFilePath,
 					StandardCopyOption.REPLACE_EXISTING);
-
-				Files.move(
-					tempFilePath, filePath, StandardCopyOption.ATOMIC_MOVE,
-					StandardCopyOption.REPLACE_EXISTING);
 			}
 
-			syncFile.setFileKey(FileUtil.getFileKey(filePath));
+			syncFile.setFileKey(FileUtil.getFileKey(tempFilePath));
 			syncFile.setState(SyncFile.STATE_SYNCED);
-			syncFile.setUiEvent(SyncFile.UI_EVENT_DOWNLOADED);
+			syncFile.setUiEvent((Integer)getParameterValue("uiEvent"));
 
 			SyncFileService.update(syncFile);
+
+			Files.move(
+				tempFilePath, filePath, StandardCopyOption.ATOMIC_MOVE,
+				StandardCopyOption.REPLACE_EXISTING);
 		}
 		finally {
 			StreamUtil.cleanUp(inputStream);
 		}
 	}
+
+	private static Logger _logger = LoggerFactory.getLogger(
+		DownloadFileHandler.class);
 
 }

@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.search.BaseIndexer;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
@@ -58,9 +57,9 @@ public class CalendarBookingIndexer extends BaseIndexer {
 
 	public CalendarBookingIndexer() {
 		setDefaultSelectedFieldNames(
-			new String[] {
-				Field.COMPANY_ID, Field.DESCRIPTION, Field.ENTRY_CLASS_NAME,
-				Field.ENTRY_CLASS_PK, Field.TITLE, Field.UID});
+			Field.COMPANY_ID, Field.ENTRY_CLASS_NAME, Field.ENTRY_CLASS_PK,
+			Field.UID);
+		setDefaultSelectedLocalizedFieldNames(Field.DESCRIPTION, Field.TITLE);
 	}
 
 	@Override
@@ -223,7 +222,7 @@ public class CalendarBookingIndexer extends BaseIndexer {
 	}
 
 	protected void reindexCalendarBookings(long companyId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		final Collection<Document> documents = new ArrayList<Document>();
 

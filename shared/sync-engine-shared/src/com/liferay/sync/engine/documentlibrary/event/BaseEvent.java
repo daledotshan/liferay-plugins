@@ -14,11 +14,17 @@
 
 package com.liferay.sync.engine.documentlibrary.event;
 
+import com.liferay.sync.engine.SyncEngine;
 import com.liferay.sync.engine.documentlibrary.handler.Handler;
+import com.liferay.sync.engine.model.SyncAccount;
+import com.liferay.sync.engine.service.SyncAccountService;
 import com.liferay.sync.engine.session.Session;
 import com.liferay.sync.engine.session.SessionManager;
 
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Shinn Lok
@@ -33,19 +39,50 @@ public abstract class BaseEvent implements Event {
 		_parameters = parameters;
 	}
 
-	public <T> T executeGet(String urlPath) throws Exception {
+	public void executeAsynchronousGet(String urlPath) throws Exception {
 		Session session = SessionManager.getSession(_syncAccountId);
 
-		return session.executeGet(urlPath, (Handler<? extends T>)_handler);
+		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
+			getSyncAccountId());
+
+		session.executeAsynchronousGet(
+			syncAccount.getUrl() + urlPath, _handler);
 	}
 
-	public <T> T executePost(String urlPath, Map<String, Object> parameters)
+	public void executeAsynchronousPost(
+			String urlPath, Map<String, Object> parameters)
 		throws Exception {
 
 		Session session = SessionManager.getSession(_syncAccountId);
 
-		return session.executePost(
-			urlPath, parameters, (Handler<? extends T>)_handler);
+		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
+			getSyncAccountId());
+
+		session.executeAsynchronousPost(
+			syncAccount.getUrl() + "/api/jsonws" + urlPath, parameters,
+			_handler);
+	}
+
+	public void executeGet(String urlPath) throws Exception {
+		Session session = SessionManager.getSession(_syncAccountId);
+
+		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
+			getSyncAccountId());
+
+		session.executeGet(syncAccount.getUrl() + urlPath, _handler);
+	}
+
+	public void executePost(String urlPath, Map<String, Object> parameters)
+		throws Exception {
+
+		Session session = SessionManager.getSession(_syncAccountId);
+
+		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
+			getSyncAccountId());
+
+		session.executePost(
+			syncAccount.getUrl() + "/api/jsonws" + urlPath, parameters,
+			_handler);
 	}
 
 	@Override
@@ -65,9 +102,19 @@ public abstract class BaseEvent implements Event {
 
 	@Override
 	public void run() {
+		if (!SyncEngine.isRunning()) {
+			return;
+		}
+
 		_handler = getHandler();
 
 		try {
+			if (_logger.isTraceEnabled()) {
+				Class<?> clazz = this.getClass();
+
+				_logger.trace("Processing {}", clazz.getSimpleName());
+			}
+
 			processRequest();
 		}
 		catch (Exception e) {
@@ -75,13 +122,19 @@ public abstract class BaseEvent implements Event {
 		}
 	}
 
-	protected abstract Handler<?> getHandler();
+	protected abstract Handler<Void> getHandler();
+
+	protected void processAsynchronousRequest() throws Exception {
+		executeAsynchronousPost(_urlPath, _parameters);
+	}
 
 	protected void processRequest() throws Exception {
 		executePost(_urlPath, _parameters);
 	}
 
-	private Handler<?> _handler;
+	private static Logger _logger = LoggerFactory.getLogger(BaseEvent.class);
+
+	private Handler<Void> _handler;
 	private Map<String, Object> _parameters;
 	private long _syncAccountId;
 	private String _urlPath;

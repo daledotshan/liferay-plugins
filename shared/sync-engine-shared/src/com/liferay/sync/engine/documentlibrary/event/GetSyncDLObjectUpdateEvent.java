@@ -40,7 +40,7 @@ public class GetSyncDLObjectUpdateEvent extends BaseEvent {
 	}
 
 	@Override
-	protected Handler<?> getHandler() {
+	protected Handler<Void> getHandler() {
 		return new GetSyncDLObjectUpdateHandler(this);
 	}
 
@@ -65,7 +65,7 @@ public class GetSyncDLObjectUpdateEvent extends BaseEvent {
 				SyncFileService.addSyncFile(
 					null, null, filePathName, FileUtil.getFileKey(filePathName),
 					filePathName, null, filePathName, 0, syncSite.getGroupId(),
-					syncSite.getSyncAccountId(), SyncFile.TYPE_FOLDER);
+					syncSite.getSyncAccountId(), SyncFile.TYPE_SYSTEM);
 			}
 		}
 

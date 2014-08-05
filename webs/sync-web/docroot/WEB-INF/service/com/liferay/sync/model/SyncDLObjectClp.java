@@ -15,13 +15,15 @@
 package com.liferay.sync.model;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.BaseModel;
+import com.liferay.portal.model.User;
 import com.liferay.portal.model.impl.BaseModelImpl;
-import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.service.UserLocalServiceUtil;
 
 import com.liferay.sync.service.ClpSerializer;
 import com.liferay.sync.service.SyncDLObjectLocalServiceUtil;
@@ -659,13 +661,19 @@ public class SyncDLObjectClp extends BaseModelImpl<SyncDLObject>
 	}
 
 	@Override
-	public String getLockUserUuid() throws SystemException {
-		return PortalUtil.getUserValue(getLockUserId(), "uuid", _lockUserUuid);
+	public String getLockUserUuid() {
+		try {
+			User user = UserLocalServiceUtil.getUserById(getLockUserId());
+
+			return user.getUuid();
+		}
+		catch (PortalException pe) {
+			return StringPool.BLANK;
+		}
 	}
 
 	@Override
 	public void setLockUserUuid(String lockUserUuid) {
-		_lockUserUuid = lockUserUuid;
 	}
 
 	@Override
@@ -842,7 +850,7 @@ public class SyncDLObjectClp extends BaseModelImpl<SyncDLObject>
 	}
 
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			SyncDLObjectLocalServiceUtil.addSyncDLObject(this);
 		}
@@ -956,6 +964,10 @@ public class SyncDLObjectClp extends BaseModelImpl<SyncDLObject>
 		else {
 			return false;
 		}
+	}
+
+	public Class<?> getClpSerializerClass() {
+		return _clpSerializerClass;
 	}
 
 	@Override
@@ -1146,12 +1158,12 @@ public class SyncDLObjectClp extends BaseModelImpl<SyncDLObject>
 	private String _event;
 	private Date _lockExpirationDate;
 	private long _lockUserId;
-	private String _lockUserUuid;
 	private String _lockUserName;
 	private String _type;
 	private long _typePK;
 	private String _typeUuid;
 	private BaseModel<?> _syncDLObjectRemoteModel;
+	private Class<?> _clpSerializerClass = com.liferay.sync.service.ClpSerializer.class;
 	private boolean _entityCacheEnabled;
 	private boolean _finderCacheEnabled;
 }

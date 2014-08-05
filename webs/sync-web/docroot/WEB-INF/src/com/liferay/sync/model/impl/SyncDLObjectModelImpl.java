@@ -16,7 +16,6 @@ package com.liferay.sync.model.impl;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
@@ -112,6 +111,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 	public static long REPOSITORYID_COLUMN_BITMASK = 4L;
 	public static long TYPE_COLUMN_BITMASK = 8L;
 	public static long TYPEPK_COLUMN_BITMASK = 16L;
+	public static long VERSION_COLUMN_BITMASK = 32L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -587,7 +587,17 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 
 	@Override
 	public void setVersion(String version) {
+		_columnBitmask |= VERSION_COLUMN_BITMASK;
+
+		if (_originalVersion == null) {
+			_originalVersion = _version;
+		}
+
 		_version = version;
+	}
+
+	public String getOriginalVersion() {
+		return GetterUtil.getString(_originalVersion);
 	}
 
 	@JSON
@@ -656,7 +666,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 	}
 
 	@Override
-	public String getLockUserUuid() throws SystemException {
+	public String getLockUserUuid() {
 		try {
 			User user = UserLocalServiceUtil.getUserById(getLockUserId());
 
@@ -912,6 +922,8 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 		syncDLObjectModelImpl._originalRepositoryId = syncDLObjectModelImpl._repositoryId;
 
 		syncDLObjectModelImpl._setOriginalRepositoryId = false;
+
+		syncDLObjectModelImpl._originalVersion = syncDLObjectModelImpl._version;
 
 		syncDLObjectModelImpl._originalType = syncDLObjectModelImpl._type;
 
@@ -1230,6 +1242,7 @@ public class SyncDLObjectModelImpl extends BaseModelImpl<SyncDLObject>
 	private String _changeLog;
 	private String _extraSettings;
 	private String _version;
+	private String _originalVersion;
 	private long _size;
 	private String _checksum;
 	private String _event;
