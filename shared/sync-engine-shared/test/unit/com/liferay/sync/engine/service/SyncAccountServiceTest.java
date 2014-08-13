@@ -16,6 +16,11 @@ package com.liferay.sync.engine.service;
 
 import com.liferay.sync.engine.BaseTestCase;
 import com.liferay.sync.engine.model.SyncAccount;
+import com.liferay.sync.engine.model.SyncFile;
+import com.liferay.sync.engine.model.SyncSite;
+import com.liferay.sync.engine.util.FileUtil;
+import com.liferay.sync.engine.util.SyncFileTestUtil;
+import com.liferay.sync.engine.util.SyncSiteTestUtil;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -37,13 +42,48 @@ public class SyncAccountServiceTest extends BaseTestCase {
 	@Test
 	public void testAddAccount() throws Exception {
 		SyncAccount syncAccount = SyncAccountService.addSyncAccount(
-			filePathName, 10, "test@liferay.com", "test", "test", false,
-			"http://localhost:8080/api/jsonws");
+			filePathName, "test@liferay.com", 1, "test", "test", 5, null, false,
+			"http://localhost:8080");
 
 		_syncAccount = SyncAccountService.fetchSyncAccount(
 			syncAccount.getSyncAccountId());
 
 		Assert.assertNotNull(_syncAccount);
+	}
+
+	@Test
+	public void testSetFilePathName() throws Exception {
+		_syncAccount = SyncAccountService.addSyncAccount(
+			filePathName, "test@liferay.com", 1, "test", "test", 5, null, false,
+			"http://localhost:8080");
+
+		SyncSite syncSite = SyncSiteTestUtil.addSyncSite(
+			10158, FileUtil.getFilePathName(filePathName, "test-site"), 10185,
+			_syncAccount.getSyncAccountId());
+
+		SyncFile syncFile = SyncFileTestUtil.addFileSyncFile(
+			FileUtil.getFilePathName(syncSite.getFilePathName(), "test.txt"), 0,
+			_syncAccount.getSyncAccountId());
+
+		String targetFilePathName =
+			FileUtil.getFilePathName(
+				System.getProperty("user.home"), "liferay-sync-test2");
+
+		SyncAccountService.setFilePathName(
+			_syncAccount.getSyncAccountId(), targetFilePathName);
+
+		syncSite = SyncSiteService.fetchSyncSite(syncSite.getSyncSiteId());
+
+		Assert.assertEquals(
+			FileUtil.getFilePathName(targetFilePathName + "test-site"),
+			syncSite.getFilePathName());
+
+		syncFile = SyncFileService.fetchSyncFile(syncFile.getSyncFileId());
+
+		Assert.assertEquals(
+			FileUtil.getFilePathName(
+				targetFilePathName, "test-site", "test.txt"),
+			syncFile.getFilePathName());
 	}
 
 	private SyncAccount _syncAccount;

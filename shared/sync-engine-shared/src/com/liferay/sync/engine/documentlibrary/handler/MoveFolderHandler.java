@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.liferay.sync.engine.documentlibrary.event.Event;
 import com.liferay.sync.engine.model.SyncFile;
 import com.liferay.sync.engine.service.SyncFileService;
-import com.liferay.sync.engine.util.FilePathNameUtil;
+import com.liferay.sync.engine.util.FileUtil;
 
 /**
  * @author Shinn Lok
@@ -33,26 +33,22 @@ public class MoveFolderHandler extends BaseJSONHandler {
 
 	@Override
 	protected void processResponse(String response) throws Exception {
+		SyncFile localSyncFile = (SyncFile)getParameterValue("syncFile");
+
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		SyncFile remoteSyncFile = objectMapper.readValue(
 			response, new TypeReference<SyncFile>() {});
 
 		SyncFile parentLocalSyncFile = SyncFileService.fetchSyncFile(
-			remoteSyncFile.getParentFolderId(),
-			remoteSyncFile.getRepositoryId(), getSyncAccountId());
+			remoteSyncFile.getRepositoryId(), getSyncAccountId(),
+			remoteSyncFile.getParentFolderId());
 
-		String filePathName = null;
-
-		if (parentLocalSyncFile != null) {
-			filePathName = FilePathNameUtil.getFilePathName(
+		localSyncFile.setFilePathName(
+			FileUtil.getFilePathName(
 				parentLocalSyncFile.getFilePathName(),
-				remoteSyncFile.getName());
-		}
+				remoteSyncFile.getName()));
 
-		SyncFile localSyncFile = (SyncFile)getParameterValue("syncFile");
-
-		localSyncFile.setFilePathName(filePathName);
 		localSyncFile.setModifiedTime(remoteSyncFile.getModifiedTime());
 
 		SyncFileService.update(localSyncFile);

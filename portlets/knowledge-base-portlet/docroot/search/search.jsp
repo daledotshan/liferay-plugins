@@ -33,7 +33,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 </liferay-portlet:renderURL>
 
 <liferay-ui:search-container
-	emptyResultsMessage='<%= LanguageUtil.format(pageContext, "no-articles-were-found-that-matched-the-keywords-x", "<strong>" + HtmlUtil.escape(keywords) + "</strong>", false) %>'
+	emptyResultsMessage='<%= LanguageUtil.format(request, "no-articles-were-found-that-matched-the-keywords-x", "<strong>" + HtmlUtil.escape(keywords) + "</strong>", false) %>'
 	iteratorURL="<%= iteratorURL %>"
 	orderByCol="<%= orderByCol %>"
 	orderByType="<%= orderByType %>"
@@ -90,7 +90,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 			href="<%= rowURL %>"
 			name="title"
 			orderable="<%= true %>"
-			value="<%= (String)tuple.getObject(1) %>"
+			value="<%= HtmlUtil.escape((String)tuple.getObject(1)) %>"
 		/>
 
 		<c:if test="<%= showKBArticleAuthorColumn %>">
@@ -99,7 +99,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 				name="author"
 				orderable="<%= true %>"
 				orderableProperty="user-name"
-				value="<%= (String)tuple.getObject(2) %>"
+				value="<%= HtmlUtil.escape((String)tuple.getObject(2)) %>"
 			/>
 		</c:if>
 
@@ -143,7 +143,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 
 				buffer.append(viewCount);
 				buffer.append(StringPool.SPACE);
-				buffer.append((viewCount == 1) ? LanguageUtil.get(pageContext, "view") : LanguageUtil.get(pageContext, "views"));
+				buffer.append((viewCount == 1) ? LanguageUtil.get(request, "view") : LanguageUtil.get(request, "views"));
 				%>
 
 			</liferay-ui:search-container-column-text>

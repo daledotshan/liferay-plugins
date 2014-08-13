@@ -19,7 +19,6 @@ import com.liferay.calendar.model.CalendarResource;
 import com.liferay.calendar.service.CalendarLocalServiceUtil;
 import com.liferay.calendar.service.CalendarResourceLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
@@ -53,11 +52,10 @@ public class CalendarResourceStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException, SystemException {
+		throws PortalException {
 
-		CalendarResource calendarResource =
-			CalendarResourceLocalServiceUtil.
-				fetchCalendarResourceByUuidAndGroupId(uuid, groupId);
+		CalendarResource calendarResource = fetchExistingStagedModel(
+			uuid, groupId);
 
 		if (calendarResource != null) {
 			CalendarResourceLocalServiceUtil.deleteCalendarResource(
@@ -122,6 +120,14 @@ public class CalendarResourceStagedModelDataHandler
 	}
 
 	@Override
+	protected CalendarResource doFetchExistingStagedModel(
+		String uuid, long groupId) {
+
+		return CalendarResourceLocalServiceUtil.
+			fetchCalendarResourceByUuidAndGroupId(uuid, groupId);
+	}
+
+	@Override
 	protected void doImportStagedModel(
 			PortletDataContext portletDataContext,
 			CalendarResource calendarResource)
@@ -144,10 +150,9 @@ public class CalendarResourceStagedModelDataHandler
 
 		if (portletDataContext.isDataStrategyMirror()) {
 			CalendarResource existingCalendarResource =
-				CalendarResourceLocalServiceUtil.
-					fetchCalendarResourceByUuidAndGroupId(
-						calendarResource.getUuid(),
-						portletDataContext.getScopeGroupId());
+				fetchExistingStagedModel(
+					calendarResource.getUuid(),
+					portletDataContext.getScopeGroupId());
 
 			if (existingCalendarResource == null) {
 				existingCalendarResource =
@@ -244,10 +249,9 @@ public class CalendarResourceStagedModelDataHandler
 	}
 
 	protected void updateCalendars(
-			PortletDataContext portletDataContext,
-			CalendarResource calendarResource,
-			CalendarResource importedCalendarResource)
-		throws SystemException {
+		PortletDataContext portletDataContext,
+		CalendarResource calendarResource,
+		CalendarResource importedCalendarResource) {
 
 		Map<Long, Long> calendarIds =
 			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(

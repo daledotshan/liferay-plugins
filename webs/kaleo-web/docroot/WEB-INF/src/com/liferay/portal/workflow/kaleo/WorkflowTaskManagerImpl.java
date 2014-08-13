@@ -16,7 +16,6 @@ package com.liferay.portal.workflow.kaleo;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PrimitiveLongSet;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -46,10 +45,12 @@ import com.liferay.portal.workflow.kaleo.service.KaleoTaskAssignmentLocalService
 import com.liferay.portal.workflow.kaleo.service.KaleoTaskInstanceTokenLocalServiceUtil;
 import com.liferay.portal.workflow.kaleo.util.WorkflowContextUtil;
 import com.liferay.portal.workflow.kaleo.util.WorkflowModelUtil;
+import com.liferay.portal.workflow.kaleo.util.comparators.KaleoTaskInstanceTokenOrderByComparator;
 
 import java.io.Serializable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -150,6 +151,10 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			KaleoTaskInstanceToken kaleoTaskInstanceToken =
 				KaleoTaskInstanceTokenLocalServiceUtil.
 					getKaleoTaskInstanceToken(workflowTaskInstanceId);
+
+			if (kaleoTaskInstanceToken.isCompleted()) {
+				return Collections.emptyList();
+			}
 
 			KaleoTask kaleoTask = kaleoTaskInstanceToken.getKaleoTask();
 			KaleoNode kaleoNode = kaleoTask.getKaleoNode();
@@ -386,7 +391,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 	@Override
 	public List<WorkflowTask> getWorkflowTasks(
 			long companyId, Boolean completed, int start, int end,
-			OrderByComparator orderByComparator)
+			OrderByComparator<WorkflowTask> orderByComparator)
 		throws WorkflowException {
 
 		try {
@@ -397,7 +402,9 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			List<KaleoTaskInstanceToken> kaleoTaskInstanceTokens =
 				KaleoTaskInstanceTokenLocalServiceUtil.
 					getKaleoTaskInstanceTokens(
-						completed, start, end, orderByComparator,
+						completed, start, end,
+						KaleoTaskInstanceTokenOrderByComparator.
+							getOrderByComparator(orderByComparator),
 						serviceContext);
 
 			return toWorkflowTasks(kaleoTaskInstanceTokens);
@@ -410,7 +417,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 	@Override
 	public List<WorkflowTask> getWorkflowTasksByRole(
 			long companyId, long roleId, Boolean completed, int start, int end,
-			OrderByComparator orderByComparator)
+			OrderByComparator<WorkflowTask> orderByComparator)
 		throws WorkflowException {
 
 		try {
@@ -422,7 +429,9 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 				KaleoTaskInstanceTokenLocalServiceUtil.
 					getKaleoTaskInstanceTokens(
 						Role.class.getName(), roleId, completed, start, end,
-						orderByComparator, serviceContext);
+						KaleoTaskInstanceTokenOrderByComparator.
+							getOrderByComparator(orderByComparator),
+						serviceContext);
 
 			return toWorkflowTasks(kaleoTaskInstanceTokens);
 		}
@@ -434,7 +443,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 	@Override
 	public List<WorkflowTask> getWorkflowTasksBySubmittingUser(
 			long companyId, long userId, Boolean completed, int start, int end,
-			OrderByComparator orderByComparator)
+			OrderByComparator<WorkflowTask> orderByComparator)
 		throws WorkflowException {
 
 		try {
@@ -445,7 +454,9 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			List<KaleoTaskInstanceToken> kaleoTaskInstanceTokens =
 				KaleoTaskInstanceTokenLocalServiceUtil.
 					getSubmittingUserKaleoTaskInstanceTokens(
-						userId, completed, start, end, orderByComparator,
+						userId, completed, start, end,
+						KaleoTaskInstanceTokenOrderByComparator.
+							getOrderByComparator(orderByComparator),
 						serviceContext);
 
 			return toWorkflowTasks(kaleoTaskInstanceTokens);
@@ -458,7 +469,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 	@Override
 	public List<WorkflowTask> getWorkflowTasksByUser(
 			long companyId, long userId, Boolean completed, int start, int end,
-			OrderByComparator orderByComparator)
+			OrderByComparator<WorkflowTask> orderByComparator)
 		throws WorkflowException {
 
 		try {
@@ -470,7 +481,9 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 				KaleoTaskInstanceTokenLocalServiceUtil.
 					getKaleoTaskInstanceTokens(
 						User.class.getName(), userId, completed, start, end,
-						orderByComparator, serviceContext);
+						KaleoTaskInstanceTokenOrderByComparator.
+							getOrderByComparator(orderByComparator),
+						serviceContext);
 
 			return toWorkflowTasks(kaleoTaskInstanceTokens);
 		}
@@ -482,7 +495,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 	@Override
 	public List<WorkflowTask> getWorkflowTasksByUserRoles(
 			long companyId, long userId, Boolean completed, int start, int end,
-			OrderByComparator orderByComparator)
+			OrderByComparator<WorkflowTask> orderByComparator)
 		throws WorkflowException {
 
 		try {
@@ -494,7 +507,9 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			List<KaleoTaskInstanceToken> kaleoTaskInstanceTokens =
 				KaleoTaskInstanceTokenLocalServiceUtil.search(
 					null, completed, Boolean.TRUE, start, end,
-					orderByComparator, serviceContext);
+					KaleoTaskInstanceTokenOrderByComparator.
+						getOrderByComparator(orderByComparator),
+					serviceContext);
 
 			return toWorkflowTasks(kaleoTaskInstanceTokens);
 		}
@@ -507,7 +522,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 	public List<WorkflowTask> getWorkflowTasksByWorkflowInstance(
 			long companyId, Long userId, long workflowInstanceId,
 			Boolean completed, int start, int end,
-			OrderByComparator orderByComparator)
+			OrderByComparator<WorkflowTask> orderByComparator)
 		throws WorkflowException {
 
 		try {
@@ -523,7 +538,9 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 				KaleoTaskInstanceTokenLocalServiceUtil.
 					getKaleoTaskInstanceTokens(
 						workflowInstanceId, completed, start, end,
-						orderByComparator, serviceContext);
+						KaleoTaskInstanceTokenOrderByComparator.
+							getOrderByComparator(orderByComparator),
+						serviceContext);
 
 			return toWorkflowTasks(kaleoTaskInstanceTokens);
 		}
@@ -536,7 +553,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 	public List<WorkflowTask> search(
 			long companyId, long userId, String keywords, Boolean completed,
 			Boolean searchByUserRoles, int start, int end,
-			OrderByComparator orderByComparator)
+			OrderByComparator<WorkflowTask> orderByComparator)
 		throws WorkflowException {
 
 		try {
@@ -548,7 +565,9 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			List<KaleoTaskInstanceToken> kaleoTaskInstanceTokens =
 				KaleoTaskInstanceTokenLocalServiceUtil.search(
 					keywords, completed, searchByUserRoles, start, end,
-					orderByComparator, serviceContext);
+					KaleoTaskInstanceTokenOrderByComparator.
+						getOrderByComparator(orderByComparator),
+					serviceContext);
 
 			return toWorkflowTasks(kaleoTaskInstanceTokens);
 		}
@@ -562,7 +581,8 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			long companyId, long userId, String taskName, String assetType,
 			Long[] assetPrimaryKey, Date dueDateGT, Date dueDateLT,
 			Boolean completed, Boolean searchByUserRoles, boolean andOperator,
-			int start, int end, OrderByComparator orderByComparator)
+			int start, int end,
+			OrderByComparator<WorkflowTask> orderByComparator)
 		throws WorkflowException {
 
 		try {
@@ -575,7 +595,9 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 				KaleoTaskInstanceTokenLocalServiceUtil.search(
 					taskName, assetType, assetPrimaryKey, dueDateGT, dueDateLT,
 					completed, searchByUserRoles, andOperator, start, end,
-					orderByComparator, serviceContext);
+					KaleoTaskInstanceTokenOrderByComparator.
+						getOrderByComparator(orderByComparator),
+					serviceContext);
 
 			return toWorkflowTasks(kaleoTaskInstanceTokens);
 		}
@@ -588,7 +610,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 	public List<WorkflowTask> search(
 			long companyId, long userId, String keywords, String[] assetTypes,
 			Boolean completed, Boolean searchByUserRoles, int start, int end,
-			OrderByComparator orderByComparator)
+			OrderByComparator<WorkflowTask> orderByComparator)
 		throws WorkflowException {
 
 		try {
@@ -600,7 +622,9 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			List<KaleoTaskInstanceToken> kaleoTaskInstanceTokens =
 				KaleoTaskInstanceTokenLocalServiceUtil.search(
 					keywords, assetTypes, completed, searchByUserRoles, start,
-					end, orderByComparator, serviceContext);
+					end, KaleoTaskInstanceTokenOrderByComparator.
+						getOrderByComparator(orderByComparator),
+					serviceContext);
 
 			return toWorkflowTasks(kaleoTaskInstanceTokens);
 		}
@@ -697,7 +721,7 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 
 	protected List<WorkflowTask> toWorkflowTasks(
 			List<KaleoTaskInstanceToken> kaleoTaskInstanceTokens)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		List<WorkflowTask> workflowTasks = new ArrayList<WorkflowTask>(
 			kaleoTaskInstanceTokens.size());

@@ -18,7 +18,6 @@ import com.liferay.calendar.model.Calendar;
 import com.liferay.calendar.model.CalendarResource;
 import com.liferay.calendar.service.CalendarLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
@@ -46,11 +45,9 @@ public class CalendarStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException, SystemException {
+		throws PortalException {
 
-		Calendar calendar =
-			CalendarLocalServiceUtil.fetchCalendarByUuidAndGroupId(
-				uuid, groupId);
+		Calendar calendar = fetchExistingStagedModel(uuid, groupId);
 
 		if (calendar != null) {
 			CalendarLocalServiceUtil.deleteCalendar(calendar);
@@ -85,6 +82,12 @@ public class CalendarStagedModelDataHandler
 	}
 
 	@Override
+	protected Calendar doFetchExistingStagedModel(String uuid, long groupId) {
+		return CalendarLocalServiceUtil.fetchCalendarByUuidAndGroupId(
+			uuid, groupId);
+	}
+
+	@Override
 	protected void doImportStagedModel(
 			PortletDataContext portletDataContext, Calendar calendar)
 		throws Exception {
@@ -111,9 +114,8 @@ public class CalendarStagedModelDataHandler
 		Calendar importedCalendar = null;
 
 		if (portletDataContext.isDataStrategyMirror()) {
-			Calendar existingCalendar =
-				CalendarLocalServiceUtil.fetchCalendarByUuidAndGroupId(
-					calendar.getUuid(), portletDataContext.getScopeGroupId());
+			Calendar existingCalendar = fetchExistingStagedModel(
+				calendar.getUuid(), portletDataContext.getScopeGroupId());
 
 			if (existingCalendar == null) {
 				serviceContext.setUuid(calendar.getUuid());

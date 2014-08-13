@@ -17,7 +17,7 @@ package com.liferay.sync.engine;
 import com.liferay.sync.engine.model.SyncAccount;
 import com.liferay.sync.engine.service.SyncAccountService;
 import com.liferay.sync.engine.upgrade.util.UpgradeUtil;
-import com.liferay.sync.engine.util.FilePathNameUtil;
+import com.liferay.sync.engine.util.FileUtil;
 import com.liferay.sync.engine.util.LoggerUtil;
 import com.liferay.sync.engine.util.PropsKeys;
 import com.liferay.sync.engine.util.PropsUtil;
@@ -45,12 +45,14 @@ import org.apache.http.util.EntityUtils;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.runner.RunWith;
 
 import org.mockito.Mockito;
 
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +61,8 @@ import org.slf4j.LoggerFactory;
  * @author Shinn Lok
  */
 @PowerMockIgnore("javax.crypto.*")
-@PrepareForTest({EntityUtils.class, HttpClientBuilder.class})
+@PrepareForTest({EntityUtils.class, HttpClientBuilder.class, SyncEngine.class})
+@RunWith(PowerMockRunner.class)
 public abstract class BaseTestCase {
 
 	@Before
@@ -72,17 +75,25 @@ public abstract class BaseTestCase {
 
 		UpgradeUtil.upgrade();
 
-		filePathName = FilePathNameUtil.fixFilePathName(
-			System.getProperty("user.home") + "/liferay-sync-test");
+		filePathName = FileUtil.getFilePathName(
+			System.getProperty("user.home"), "liferay-sync-test");
 
 		syncAccount = SyncAccountService.addSyncAccount(
-			filePathName, 10, "test@liferay.com", "test", "test", false,
-			"http://localhost:8080/api/jsonws");
+			filePathName, "test@liferay.com", 1, "test", "test", 5, null, false,
+			"http://localhost:8080");
 
 		syncAccount.setActive(true);
 		syncAccount.setState(SyncAccount.STATE_CONNECTED);
 
 		SyncAccountService.update(syncAccount);
+
+		PowerMockito.mockStatic(SyncEngine.class);
+
+		Mockito.when(
+			SyncEngine.isRunning()
+		).thenReturn(
+			true
+		);
 	}
 
 	@After
@@ -94,7 +105,7 @@ public abstract class BaseTestCase {
 		SyncAccountService.deleteSyncAccount(syncAccount.getSyncAccountId());
 	}
 
-	protected InputStream getInputStream(String fileName) {
+	protected final InputStream getInputStream(String fileName) {
 		Class<?> clazz = getClass();
 
 		return clazz.getResourceAsStream(fileName);

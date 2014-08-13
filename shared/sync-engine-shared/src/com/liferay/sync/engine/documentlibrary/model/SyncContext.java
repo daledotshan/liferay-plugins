@@ -15,12 +15,24 @@
 package com.liferay.sync.engine.documentlibrary.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.liferay.sync.engine.model.SyncSite;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Dennis Ju
  */
-@JsonIgnoreProperties("userSitesGroups")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SyncContext {
+
+	public static final String PREFERENCE_KEY_MAX_CONNECTIONS =
+		"sync.client.max.connections";
+
+	public static final String PREFERENCE_KEY_POLL_INTERVAL =
+		"sync.client.poll.interval";
 
 	public String getPluginVersion() {
 		return _pluginVersion;
@@ -30,8 +42,16 @@ public class SyncContext {
 		return _portalBuildNumber;
 	}
 
-	public long getUserId() {
-		return _userId;
+	public Map<String, String> getPortletPreferencesMap() {
+		return _portletPreferencesMap;
+	}
+
+	public List<SyncSite> getSyncSites() {
+		return _syncSites;
+	}
+
+	public SyncUser getSyncUser() {
+		return _syncUser;
 	}
 
 	public boolean isSocialOfficeInstalled() {
@@ -46,17 +66,33 @@ public class SyncContext {
 		_portalBuildNumber = portalBuildNumber;
 	}
 
+	public void setPortletPreferencesMap(
+		Map<String, String> portletPreferencesMap) {
+
+		_portletPreferencesMap = portletPreferencesMap;
+	}
+
 	public void setSocialOfficeInstalled(boolean socialOfficeInstalled) {
 		_socialOfficeInstalled = socialOfficeInstalled;
 	}
 
-	public void setUserId(long userId) {
-		_userId = userId;
+	public void setSyncSites(List<SyncSite> syncSites) {
+		_syncSites = syncSites;
+	}
+
+	public void setSyncUser(SyncUser syncUser) {
+		_syncUser = syncUser;
 	}
 
 	private String _pluginVersion;
 	private int _portalBuildNumber;
+	private Map<String, String> _portletPreferencesMap;
 	private boolean _socialOfficeInstalled;
-	private long _userId;
+
+	@JsonProperty("userSitesGroups")
+	private List<SyncSite> _syncSites;
+
+	@JsonProperty("user")
+	private SyncUser _syncUser;
 
 }

@@ -20,7 +20,6 @@ import com.liferay.sync.engine.model.SyncWatchEvent;
 import com.liferay.sync.engine.service.SyncAccountService;
 import com.liferay.sync.engine.service.SyncFileService;
 import com.liferay.sync.engine.service.SyncWatchEventService;
-import com.liferay.sync.engine.util.FilePathNameUtil;
 import com.liferay.sync.engine.util.FileUtil;
 
 import java.nio.file.Files;
@@ -52,7 +51,7 @@ public class SyncWatchEventProcessor implements Runnable {
 			SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
 				syncWatchEvent.getSyncAccountId());
 
-			if (syncAccount.getState() == SyncAccount.STATE_DISCONNECTED) {
+			if (syncAccount.getState() != SyncAccount.STATE_CONNECTED) {
 				continue;
 			}
 
@@ -108,7 +107,7 @@ public class SyncWatchEventProcessor implements Runnable {
 			syncAccount = SyncAccountService.fetchSyncAccount(
 				syncWatchEvent.getSyncAccountId());
 
-			if (syncAccount.getState() != SyncAccount.STATE_DISCONNECTED) {
+			if (syncAccount.getState() == SyncAccount.STATE_CONNECTED) {
 				SyncWatchEventService.deleteSyncWatchEvent(
 					syncWatchEvent.getSyncWatchEventId());
 			}
@@ -127,12 +126,16 @@ public class SyncWatchEventProcessor implements Runnable {
 		Path parentTargetFilePath = targetFilePath.getParent();
 
 		SyncFile parentSyncFile = SyncFileService.fetchSyncFile(
-			FilePathNameUtil.getFilePathName(parentTargetFilePath),
-			syncWatchEvent.getSyncAccountId());
+			parentTargetFilePath.toString(), syncWatchEvent.getSyncAccountId());
 
-		SyncFile syncFile = SyncFileService.fetchSyncFileByFileKey(
-			FileUtil.getFileKey(targetFilePath),
-			syncWatchEvent.getSyncAccountId());
+		SyncFile syncFile = SyncFileService.fetchSyncFile(
+			targetFilePath.toString(), syncWatchEvent.getSyncAccountId());
+
+		if (syncFile == null) {
+			syncFile = SyncFileService.fetchSyncFileByFileKey(
+				FileUtil.getFileKey(targetFilePath),
+				syncWatchEvent.getSyncAccountId());
+		}
 
 		if (syncFile == null) {
 			SyncFileService.addFileSyncFile(
@@ -143,38 +146,45 @@ public class SyncWatchEventProcessor implements Runnable {
 			return;
 		}
 
-		SyncWatchEvent relatedSyncWatchEvent =
-			SyncWatchEventService.fetchSyncWatchEvent(
-				SyncWatchEvent.EVENT_TYPE_DELETE, syncFile.getFilePathName(),
-				syncWatchEvent.getTimestamp());
-
-		Path sourceFilePath = null;
-
-		if (relatedSyncWatchEvent != null) {
-			sourceFilePath = Paths.get(relatedSyncWatchEvent.getFilePathName());
-		}
-		else {
-			sourceFilePath = Paths.get(syncFile.getFilePathName());
-		}
+		Path sourceFilePath = Paths.get(syncFile.getFilePathName());
 
 		if (parentTargetFilePath.equals(sourceFilePath.getParent())) {
+			if (!FileUtil.hasFileChanged(syncFile)) {
+				return;
+			}
+
 			SyncFileService.updateFileSyncFile(
-				targetFilePath, syncWatchEvent.getSyncAccountId(), syncFile);
+				targetFilePath, syncWatchEvent.getSyncAccountId(), syncFile,
+				false);
 		}
 		else {
 			SyncFileService.moveFileSyncFile(
 				targetFilePath, parentSyncFile.getTypePK(),
 				syncWatchEvent.getSyncAccountId(), syncFile);
+
+			Path sourceFileNameFilePath = sourceFilePath.getFileName();
+
+			if (!sourceFileNameFilePath.equals(targetFilePath.getFileName())) {
+				SyncFileService.updateFileSyncFile(
+					targetFilePath, syncWatchEvent.getSyncAccountId(), syncFile,
+					false);
+			}
 		}
 
 		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
 			syncWatchEvent.getSyncAccountId());
 
-		if ((relatedSyncWatchEvent != null) &&
-			(syncAccount.getState() != SyncAccount.STATE_DISCONNECTED)) {
+		if (syncAccount.getState() == SyncAccount.STATE_CONNECTED) {
+			SyncWatchEvent relatedSyncWatchEvent =
+				SyncWatchEventService.fetchSyncWatchEvent(
+					SyncWatchEvent.EVENT_TYPE_DELETE,
+					syncWatchEvent.getFilePathName(),
+					syncWatchEvent.getTimestamp());
 
-			_processedSyncWatchEventIds.add(
-				relatedSyncWatchEvent.getSyncWatchEventId());
+			if (relatedSyncWatchEvent != null) {
+				_processedSyncWatchEventIds.add(
+					relatedSyncWatchEvent.getSyncWatchEventId());
+			}
 		}
 	}
 
@@ -184,8 +194,7 @@ public class SyncWatchEventProcessor implements Runnable {
 		Path parentTargetFilePath = targetFilePath.getParent();
 
 		SyncFile parentSyncFile = SyncFileService.fetchSyncFile(
-			FilePathNameUtil.getFilePathName(parentTargetFilePath),
-			syncWatchEvent.getSyncAccountId());
+			parentTargetFilePath.toString(), syncWatchEvent.getSyncAccountId());
 
 		SyncFile syncFile = SyncFileService.fetchSyncFileByFileKey(
 			FileUtil.getFileKey(targetFilePath),
@@ -200,21 +209,13 @@ public class SyncWatchEventProcessor implements Runnable {
 			return;
 		}
 
-		SyncWatchEvent relatedSyncWatchEvent =
-			SyncWatchEventService.fetchSyncWatchEvent(
-				SyncWatchEvent.EVENT_TYPE_DELETE, syncFile.getFilePathName(),
-				syncWatchEvent.getTimestamp());
-
-		Path sourceFilePath = null;
-
-		if (relatedSyncWatchEvent != null) {
-			sourceFilePath = Paths.get(relatedSyncWatchEvent.getFilePathName());
-		}
-		else {
-			sourceFilePath = Paths.get(syncFile.getFilePathName());
-		}
+		Path sourceFilePath = Paths.get(syncFile.getFilePathName());
 
 		if (parentTargetFilePath.equals(sourceFilePath.getParent())) {
+			if (targetFilePath.equals(sourceFilePath)) {
+				return;
+			}
+
 			SyncFileService.updateFolderSyncFile(
 				targetFilePath, syncWatchEvent.getSyncAccountId(), syncFile);
 		}
@@ -222,16 +223,30 @@ public class SyncWatchEventProcessor implements Runnable {
 			SyncFileService.moveFolderSyncFile(
 				targetFilePath, parentSyncFile.getTypePK(),
 				syncWatchEvent.getSyncAccountId(), syncFile);
+
+			Path sourceFileNameFilePath = sourceFilePath.getFileName();
+
+			if (!sourceFileNameFilePath.equals(targetFilePath.getFileName())) {
+				SyncFileService.updateFolderSyncFile(
+					targetFilePath, syncWatchEvent.getSyncAccountId(),
+					syncFile);
+			}
 		}
 
 		SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
 			syncWatchEvent.getSyncAccountId());
 
-		if ((relatedSyncWatchEvent != null) &&
-			(syncAccount.getState() != SyncAccount.STATE_DISCONNECTED)) {
+		if (syncAccount.getState() == SyncAccount.STATE_CONNECTED) {
+			SyncWatchEvent relatedSyncWatchEvent =
+				SyncWatchEventService.fetchSyncWatchEvent(
+					SyncWatchEvent.EVENT_TYPE_DELETE,
+					syncWatchEvent.getFilePathName(),
+					syncWatchEvent.getTimestamp());
 
-			_processedSyncWatchEventIds.add(
-				relatedSyncWatchEvent.getSyncWatchEventId());
+			if (relatedSyncWatchEvent != null) {
+				_processedSyncWatchEventIds.add(
+					relatedSyncWatchEvent.getSyncWatchEventId());
+			}
 		}
 	}
 
@@ -239,8 +254,7 @@ public class SyncWatchEventProcessor implements Runnable {
 		Path filePath = Paths.get(syncWatchEvent.getFilePathName());
 
 		SyncFile syncFile = SyncFileService.fetchSyncFile(
-			FilePathNameUtil.getFilePathName(filePath),
-			syncWatchEvent.getSyncAccountId());
+			filePath.toString(), syncWatchEvent.getSyncAccountId());
 
 		if (syncFile == null) {
 			return;
@@ -256,8 +270,7 @@ public class SyncWatchEventProcessor implements Runnable {
 		Path filePath = Paths.get(syncWatchEvent.getFilePathName());
 
 		SyncFile syncFile = SyncFileService.fetchSyncFile(
-			FilePathNameUtil.getFilePathName(filePath),
-			syncWatchEvent.getSyncAccountId());
+			filePath.toString(), syncWatchEvent.getSyncAccountId());
 
 		if (syncFile == null) {
 			return;
@@ -273,18 +286,12 @@ public class SyncWatchEventProcessor implements Runnable {
 		SyncFile syncFile = SyncFileService.fetchSyncFileByFileKey(
 			FileUtil.getFileKey(filePath), syncWatchEvent.getSyncAccountId());
 
-		if (syncFile == null) {
-			return;
-		}
-
-		String checksum = syncFile.getChecksum();
-
-		if (checksum.equals(FileUtil.getChecksum(filePath))) {
+		if ((syncFile == null) || !FileUtil.hasFileChanged(syncFile)) {
 			return;
 		}
 
 		SyncFileService.updateFileSyncFile(
-			filePath, syncWatchEvent.getSyncAccountId(), syncFile);
+			filePath, syncWatchEvent.getSyncAccountId(), syncFile, false);
 	}
 
 	private static Logger _logger = LoggerFactory.getLogger(

@@ -39,7 +39,9 @@ public class SyncSiteTestUtil {
 
 		syncSite.setCompanyId(companyId);
 		syncSite.setFilePathName(filePathName);
+		syncSite.setFriendlyURL(filePathName);
 		syncSite.setGroupId(groupId);
+		syncSite.setName(filePathName);
 		syncSite.setSyncAccountId(syncAccountId);
 
 		SyncSitePersistence syncSitePersistence =
@@ -54,7 +56,7 @@ public class SyncSiteTestUtil {
 		SyncFileService.addSyncFile(
 			null, null, filePathName, FileUtil.getFileKey(filePathName),
 			filePathName, null, filePathName, 0, groupId,
-			syncSite.getSyncAccountId(), SyncFile.TYPE_FOLDER);
+			syncSite.getSyncAccountId(), SyncFile.TYPE_SYSTEM);
 
 		return syncSite;
 	}
