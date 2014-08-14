@@ -56,7 +56,7 @@ catch (NoSuchRoleException nsre) {
 			</liferay-portlet:actionURL>
 
 			<a class="so-logo" href="<%= dashboardURL %>">
-				<img alt="<liferay-ui:message key="social-office" /> <liferay-ui:message key="logo" />" height="32" src="<%= PortalUtil.getPathContext(request) + "/user_bar/images/so_logo.png" %>" width="32" />
+				<img alt="<liferay-ui:message escapeAttribute="<%= true %>" key="social-office" /> <liferay-ui:message escapeAttribute="<%= true %>" key="logo" />" height="32" src='<%= PortalUtil.getPathContext(request) + "/user_bar/images/so_logo.png" %>' width="32" />
 			</a>
 
 			<nav>
@@ -91,10 +91,6 @@ catch (NoSuchRoleException nsre) {
 
 <aui:script>
 	function <portlet:namespace />openWindow() {
-		<liferay-portlet:renderURL portletName="<%= PortletKeys.SO_SITES %>" var="viewSitesURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
-			<portlet:param name="mvcPath" value="/sites/view_sites.jsp" />
-		</liferay-portlet:renderURL>
-
 		Liferay.Util.openWindow(
 			{
 				dialog: {
@@ -108,7 +104,12 @@ catch (NoSuchRoleException nsre) {
 					resizable: false,
 					width: 650
 				},
-				title: '<%= UnicodeLanguageUtil.get(pageContext, "sites-directory") %>',
+				title: '<%= UnicodeLanguageUtil.get(request, "sites-directory") %>',
+
+				<liferay-portlet:renderURL portletName="<%= PortletKeys.SO_SITES %>" var="viewSitesURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+					<portlet:param name="mvcPath" value="/sites/view_sites.jsp" />
+				</liferay-portlet:renderURL>
+
 				uri: '<%= viewSitesURL %>'
 			}
 		);
@@ -144,21 +145,33 @@ catch (NoSuchRoleException nsre) {
 		}
 	}
 
-	var mySites = A.one('.portlet-dockbar .my-sites');
+	var navAccountControlsBtn = A.one('#<%= PortalUtil.getPortletNamespace(PortletKeys.DOCKBAR) %>navAccountControlsNavbarBtn');
 
-	if (mySites) {
-		mySites.delegate(
+	if (navAccountControlsBtn) {
+		navAccountControlsBtn.on(
 			'click',
 			function(event) {
-				var sitesDirectory = mySites.one('.sites-directory');
+				var sitesDirectory = A.one('.portlet-dockbar .sites-directory');
 
 				if (!sitesDirectory) {
-					var mySitesMenu = mySites.one('.my-sites-menu');
+					var mySitesMenu = A.one('.portlet-dockbar .my-sites .my-sites-menu');
 
-					mySitesMenu.insert('<li class="sites-directory last"><a href="javascript:;" onclick="<portlet:namespace />openWindow()"><i class="icon-reorder"></i><span class="site-name"> ' + Liferay.Language.get('sites-directory') + '</span></a></li>')
+					var sitesDirectoryString = '<li class="last sites-directory"><a href="javascript:;" onclick="<portlet:namespace />openWindow();"><i class="icon-reorder"></i><span class="site-name"> ' + Liferay.Language.get('sites-directory') + '</span></a></li>';
+
+					if (mySitesMenu) {
+						mySitesMenu.insert(sitesDirectoryString);
+					}
+					else {
+						var navAccountControls = A.one('.nav-account-controls');
+
+						var dividerVertical = navAccountControls.one('.divider-vertical ');
+
+						if (dividerVertical) {
+							navAccountControls.insertBefore(sitesDirectoryString, dividerVertical);
+						}
+					}
 				}
-			},
-			'.dropdown-toggle'
+			}
 		);
 	}
 </aui:script>

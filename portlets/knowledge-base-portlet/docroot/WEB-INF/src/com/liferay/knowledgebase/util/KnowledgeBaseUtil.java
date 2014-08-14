@@ -15,6 +15,9 @@
 package com.liferay.knowledgebase.util;
 
 import com.liferay.knowledgebase.model.KBArticle;
+import com.liferay.knowledgebase.model.KBComment;
+import com.liferay.knowledgebase.model.KBCommentConstants;
+import com.liferay.knowledgebase.model.KBTemplate;
 import com.liferay.knowledgebase.util.comparator.KBArticleCreateDateComparator;
 import com.liferay.knowledgebase.util.comparator.KBArticleModifiedDateComparator;
 import com.liferay.knowledgebase.util.comparator.KBArticlePriorityComparator;
@@ -23,6 +26,8 @@ import com.liferay.knowledgebase.util.comparator.KBArticleTitleComparator;
 import com.liferay.knowledgebase.util.comparator.KBArticleUserNameComparator;
 import com.liferay.knowledgebase.util.comparator.KBArticleVersionComparator;
 import com.liferay.knowledgebase.util.comparator.KBArticleViewCountComparator;
+import com.liferay.knowledgebase.util.comparator.KBCommentCreateDateComparator;
+import com.liferay.knowledgebase.util.comparator.KBCommentModifiedDateComparator;
 import com.liferay.knowledgebase.util.comparator.KBTemplateCreateDateComparator;
 import com.liferay.knowledgebase.util.comparator.KBTemplateModifiedDateComparator;
 import com.liferay.knowledgebase.util.comparator.KBTemplateTitleComparator;
@@ -33,6 +38,7 @@ import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.SortFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -42,16 +48,19 @@ import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.UniqueList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.model.ModelHintsUtil;
 import com.liferay.portal.util.PortalUtil;
 
 import java.io.InputStream;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * @author Peter Shin
@@ -59,7 +68,7 @@ import java.util.Map;
  */
 public class KnowledgeBaseUtil {
 
-	public static OrderByComparator getKBArticleOrderByComparator(
+	public static OrderByComparator<KBArticle> getKBArticleOrderByComparator(
 		String orderByCol, String orderByType) {
 
 		if (Validator.isNull(orderByCol) || Validator.isNull(orderByType)) {
@@ -191,7 +200,30 @@ public class KnowledgeBaseUtil {
 		return url;
 	}
 
-	public static OrderByComparator getKBTemplateOrderByComparator(
+	public static OrderByComparator<KBComment> getKBCommentOrderByComparator(
+		String orderByCol, String orderByType) {
+
+		if (Validator.isNull(orderByCol) || Validator.isNull(orderByType)) {
+			return null;
+		}
+
+		boolean ascending = false;
+
+		if (orderByType.equals("asc")) {
+			ascending = true;
+		}
+
+		if (orderByCol.equals("create-date")) {
+			return new KBCommentCreateDateComparator(ascending);
+		}
+		else if (orderByCol.equals("modified-date")) {
+			return new KBCommentModifiedDateComparator(ascending);
+		}
+
+		return null;
+	}
+
+	public static OrderByComparator<KBTemplate> getKBTemplateOrderByComparator(
 		String orderByCol, String orderByType) {
 
 		if (Validator.isNull(orderByCol) || Validator.isNull(orderByType)) {
@@ -231,6 +263,18 @@ public class KnowledgeBaseUtil {
 		}
 	}
 
+	public static final int getNextStatus(int status) {
+		if (status == KBCommentConstants.STATUS_IN_PROGRESS) {
+			return KBCommentConstants.STATUS_COMPLETED;
+		}
+		else if (status == KBCommentConstants.STATUS_NEW) {
+			return KBCommentConstants.STATUS_IN_PROGRESS;
+		}
+		else {
+			return KBCommentConstants.STATUS_NONE;
+		}
+	}
+
 	public static Long[][] getParams(Long[] params) {
 		if (ArrayUtil.isEmpty(params)) {
 			return null;
@@ -246,32 +290,69 @@ public class KnowledgeBaseUtil {
 		};
 	}
 
-	public static String[] parseKeywords(String values) {
-		List<String> keywords = new UniqueList<String>();
+	public static final int getPreviousStatus(int status) {
+		if (status == KBCommentConstants.STATUS_COMPLETED) {
+			return KBCommentConstants.STATUS_IN_PROGRESS;
+		}
+		else if (status == KBCommentConstants.STATUS_IN_PROGRESS) {
+			return KBCommentConstants.STATUS_NEW;
+		}
+		else {
+			return KBCommentConstants.STATUS_NONE;
+		}
+	}
 
-		StringBundler sb = new StringBundler();
+	public static final String getStatusLabel(int status) {
+		if (status == KBCommentConstants.STATUS_COMPLETED) {
+			return "resolved";
+		}
+		else if (status == KBCommentConstants.STATUS_IN_PROGRESS) {
+			return "in-progress";
+		}
+		else if (status == KBCommentConstants.STATUS_NEW) {
+			return "new";
+		}
+		else {
+			throw new IllegalArgumentException(
+				String.format("Invalid feedback status %s", status));
+		}
+	}
 
-		for (char c : values.toCharArray()) {
-			if (Character.isWhitespace(c)) {
-				if (sb.length() > 0) {
-					keywords.add(sb.toString());
+	public static final String getStatusTransitionLabel(int status) {
+		if (status == KBCommentConstants.STATUS_COMPLETED) {
+			return "resolve";
+		}
+		else if (status == KBCommentConstants.STATUS_IN_PROGRESS) {
+			return "move-to-in-progress";
+		}
+		else if (status == KBCommentConstants.STATUS_NEW) {
+			return "move-to-new";
+		}
+		else {
+			throw new IllegalArgumentException(
+				String.format("Invalid feedback status %s", status));
+		}
+	}
 
-					sb = new StringBundler();
-				}
-			}
-			else if (Character.isLetterOrDigit(c)) {
-				sb.append(c);
-			}
-			else {
-				return new String[] {values};
-			}
+	public static String getUrlTitle(long id, String title) {
+		if (title == null) {
+			return String.valueOf(id);
 		}
 
-		if (sb.length() > 0) {
-			keywords.add(sb.toString());
+		title = StringUtil.toLowerCase(title.trim());
+
+		if (Validator.isNull(title) || Validator.isNumber(title) ||
+			title.equals("rss")) {
+
+			title = String.valueOf(id);
+		}
+		else {
+			title = FriendlyURLNormalizerUtil.normalize(
+				title, _friendlyURLPattern);
 		}
 
-		return StringUtil.split(StringUtil.merge(keywords));
+		return ModelHintsUtil.trimString(
+			KBArticle.class.getName(), "urlTitle", title);
 	}
 
 	public static List<KBArticle> sort(
@@ -294,6 +375,34 @@ public class KnowledgeBaseUtil {
 		return kbArticles;
 	}
 
+	public static String[] splitKeywords(String keywords) {
+		Set<String> keywordsSet = new LinkedHashSet<String>();
+
+		StringBundler sb = new StringBundler();
+
+		for (char c : keywords.toCharArray()) {
+			if (Character.isWhitespace(c)) {
+				if (sb.length() > 0) {
+					keywordsSet.add(sb.toString());
+
+					sb = new StringBundler();
+				}
+			}
+			else if (Character.isLetterOrDigit(c)) {
+				sb.append(c);
+			}
+			else {
+				return new String[] {keywords};
+			}
+		}
+
+		if (sb.length() > 0) {
+			keywordsSet.add(sb.toString());
+		}
+
+		return StringUtil.split(StringUtil.merge(keywordsSet));
+	}
+
 	public static String trimLeadingSlash(String s) {
 		if (Validator.isNull(s)) {
 			return s;
@@ -314,5 +423,7 @@ public class KnowledgeBaseUtil {
 
 	private static final int _SQL_DATA_MAX_PARAMETERS = GetterUtil.getInteger(
 		PropsUtil.get(PropsKeys.SQL_DATA_MAX_PARAMETERS));
+
+	private static Pattern _friendlyURLPattern = Pattern.compile("[^a-z0-9_-]");
 
 }

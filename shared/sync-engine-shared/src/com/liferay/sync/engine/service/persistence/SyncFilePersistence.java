@@ -14,7 +14,9 @@
 
 package com.liferay.sync.engine.service.persistence;
 
+import com.j256.ormlite.dao.ReferenceObjectCache;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.Where;
 
 import com.liferay.sync.engine.model.SyncFile;
@@ -32,6 +34,18 @@ public class SyncFilePersistence extends BasePersistenceImpl<SyncFile, Long> {
 
 	public SyncFilePersistence() throws SQLException {
 		super(SyncFile.class);
+
+		setObjectCache(ReferenceObjectCache.makeSoftCache());
+	}
+
+	public long countByUIEvent(int uiEvent) throws SQLException {
+		QueryBuilder<SyncFile, Long> queryBuilder = queryBuilder();
+
+		Where<SyncFile, Long> where = queryBuilder.where();
+
+		where.eq("uiEvent", uiEvent);
+
+		return where.countOf();
 	}
 
 	public SyncFile fetchByFK_S(String fileKey, long syncAccountId)
@@ -59,7 +73,7 @@ public class SyncFilePersistence extends BasePersistenceImpl<SyncFile, Long> {
 		fieldValues.put("filePathName", filePathName);
 		fieldValues.put("syncAccountId", syncAccountId);
 
-		List<SyncFile> syncFiles = queryForFieldValues(fieldValues);
+		List<SyncFile> syncFiles = queryForFieldValuesArgs(fieldValues);
 
 		if ((syncFiles == null) || syncFiles.isEmpty()) {
 			return null;
@@ -98,12 +112,27 @@ public class SyncFilePersistence extends BasePersistenceImpl<SyncFile, Long> {
 		return queryForFieldValues(fieldValues);
 	}
 
-	public List<SyncFile> findByL_S(long localSyncTime, long syncAccountId)
+	public List<SyncFile> findByFilePathName(String filePathName)
+		throws SQLException {
+
+		Map<String, Object> fieldValues = new HashMap<String, Object>();
+
+		fieldValues.put("filePathName", filePathName);
+
+		return queryForFieldValuesArgs(fieldValues);
+	}
+
+	public List<SyncFile> findByF_L_S(
+			String filePathName, long localSyncTime, long syncAccountId)
 		throws SQLException {
 
 		QueryBuilder<SyncFile, Long> queryBuilder = queryBuilder();
 
 		Where<SyncFile, Long> where = queryBuilder.where();
+
+		where.like("filePathName", new SelectArg(filePathName + "%"));
+
+		where.and();
 
 		where.lt("localSyncTime", localSyncTime);
 
@@ -111,7 +140,26 @@ public class SyncFilePersistence extends BasePersistenceImpl<SyncFile, Long> {
 
 		where.eq("syncAccountId", syncAccountId);
 
+		where.and();
+
+		where.ne("type", SyncFile.TYPE_SYSTEM);
+
+		where.and();
+
+		where.ne("uiEvent", SyncFile.UI_EVENT_DOWNLOADING);
+
 		return query(queryBuilder.prepare());
+	}
+
+	public List<SyncFile> findByS_U(long syncAccountId, int uiEvent)
+		throws SQLException {
+
+		Map<String, Object> fieldValues = new HashMap<String, Object>();
+
+		fieldValues.put("syncAccountId", syncAccountId);
+		fieldValues.put("uiEvent", uiEvent);
+
+		return queryForFieldValues(fieldValues);
 	}
 
 	public List<SyncFile> findBySyncAccountId(long syncAccountId)

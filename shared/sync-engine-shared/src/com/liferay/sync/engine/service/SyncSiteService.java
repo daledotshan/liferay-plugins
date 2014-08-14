@@ -17,6 +17,7 @@ package com.liferay.sync.engine.service;
 import com.liferay.sync.engine.documentlibrary.event.GetUserSitesGroupsEvent;
 import com.liferay.sync.engine.model.ModelListener;
 import com.liferay.sync.engine.model.SyncSite;
+import com.liferay.sync.engine.model.SyncSiteModelListener;
 import com.liferay.sync.engine.service.persistence.SyncSitePersistence;
 
 import java.sql.SQLException;
@@ -35,6 +36,20 @@ import org.slf4j.LoggerFactory;
  * @author Shinn Lok
  */
 public class SyncSiteService {
+
+	public static SyncSite activateSyncSite(long syncAccountId, boolean reset) {
+		SyncSite syncSite = fetchSyncSite(syncAccountId);
+
+		syncSite.setActive(true);
+
+		if (reset) {
+			syncSite.setRemoteSyncTime(0);
+		}
+
+		update(syncSite);
+
+		return syncSite;
+	}
 
 	public static void deleteSyncSite(long syncSiteId) {
 		try {
@@ -138,6 +153,8 @@ public class SyncSiteService {
 				_logger.debug(sqle.getMessage(), sqle);
 			}
 		}
+
+		_syncSitePersistence.registerModelListener(new SyncSiteModelListener());
 
 		return _syncSitePersistence;
 	}

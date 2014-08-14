@@ -34,7 +34,9 @@
 
 			var DEFAULT_ALIGN_POINTS = [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.BL];
 
-			var TPL_SIMPLE_MENU_ITEM = '<li class="{cssClass}" data-id="{id}">{caption}</li>';
+			var TPL_ICON = '<i class="{iconClass}"></i>';
+
+			var TPL_SIMPLE_MENU_ITEM = '<li class="{cssClass}" data-id="{id}">{icon} {caption}</li>';
 
 			var getItemHandler = A.cached(
 				function(id, items) {
@@ -42,7 +44,7 @@
 
 					AArray.some(
 						items,
-						function(item, index, collection) {
+						function(item, index) {
 							if (item.id === id) {
 								found = item;
 
@@ -125,8 +127,6 @@
 						_onClickItems: function(event) {
 							var instance = this;
 
-							event.stopPropagation();
-
 							var items = instance.get('items');
 
 							var id = event.currentTarget.attr('data-id');
@@ -144,8 +144,8 @@
 							var Util = Liferay.Util;
 
 							var align = {
-								points: DEFAULT_ALIGN_POINTS,
-								node: instance.get('alignNode')
+								node: instance.get('alignNode'),
+								points: DEFAULT_ALIGN_POINTS
 							};
 
 							var centered = false;
@@ -179,7 +179,7 @@
 
 							AArray.each(
 								items,
-								function(item, index, collection) {
+								function(item, index) {
 									var caption = item.caption;
 
 									if (!owns(item, 'id')) {
@@ -207,10 +207,22 @@
 											TPL_SIMPLE_MENU_ITEM,
 											{
 												cssClass: cssClass,
+												icon: icon,
 												id: id
 											}
 										)
 									);
+
+									if (item.icon) {
+										var icon = Lang.sub(
+											TPL_ICON,
+											{
+												iconClass: item.icon
+											}
+										);
+
+										caption = [icon, caption].join(STR_SPACE);
+									}
 
 									li.setContent(caption);
 
@@ -226,7 +238,7 @@
 
 							if (instance.get('rendered')) {
 								instance.items.each(
-									function(item, index, collection) {
+									function(item, index) {
 										var id = item.attr('data-id');
 
 										item.toggleClass(CSS_SIMPLE_MENU_ITEM_HIDDEN, (AArray.indexOf(val, id) > -1));
@@ -291,7 +303,7 @@
 				'<tpl for="calendars">',
 					'<div class="', CSS_CALENDAR_LIST_ITEM, '">',
 						'<div class="', CSS_CALENDAR_LIST_ITEM_COLOR, '" {[ parent.calendars[$i].get("visible") ? ', '\'style="background-color:\'', STR_PLUS, 'parent.calendars[$i].get("color")', STR_PLUS, '";border-color:"', STR_PLUS, 'parent.calendars[$i].get("color")', STR_PLUS, '";\\""', ' : \'', STR_BLANK, '\' ]}></div>',
-							'<span class="', CSS_CALENDAR_LIST_ITEM_LABEL, '">{[ Liferay.Util.escapeHTML(parent.calendars[$i].getDisplayName()) ]}</span>',
+							'<span class="', CSS_CALENDAR_LIST_ITEM_LABEL, '">{[LString.escapeHTML(parent.calendars[$i].getDisplayName())]}</span>',
 						'<div class="', CSS_CALENDAR_LIST_ITEM_ARROW, '"><i class="', CSS_ICON_CARET_DOWN, '"></i></div>',
 					'</div>',
 				'</tpl>'
@@ -511,20 +523,6 @@
 							}
 						},
 
-						_onHoverOver: function(event) {
-							var instance = this;
-
-							var currentTarget = event.currentTarget;
-
-							var calendar = instance.getCalendarByNode(currentTarget);
-
-							currentTarget.addClass(CSS_CALENDAR_LIST_ITEM_HOVER);
-
-							if (!calendar.get('visible')) {
-								instance._setCalendarColor(calendar, calendar.get('color'));
-							}
-						},
-
 						_onHoverOut: function(event) {
 							var instance = this;
 
@@ -537,6 +535,20 @@
 							}
 
 							currentTarget.removeClass(CSS_CALENDAR_LIST_ITEM_HOVER);
+						},
+
+						_onHoverOver: function(event) {
+							var instance = this;
+
+							var currentTarget = event.currentTarget;
+
+							var calendar = instance.getCalendarByNode(currentTarget);
+
+							currentTarget.addClass(CSS_CALENDAR_LIST_ITEM_HOVER);
+
+							if (!calendar.get('visible')) {
+								instance._setCalendarColor(calendar, calendar.get('color'));
+							}
 						},
 
 						_onSimpleMenuVisibleChange: function(event) {
@@ -591,7 +603,7 @@
 
 							AArray.each(
 								val,
-								function(item, index, collection) {
+								function(item, index) {
 									var calendar = item;
 
 									if (!A.instanceOf(item, Liferay.SchedulerCalendar)) {
@@ -796,15 +808,16 @@
 
 						strings: {
 							value: {
-								email: Liferay.Language.get('email'),
-								minutes: Liferay.Language.get('minutes'),
-								hours: Liferay.Language.get('hours'),
 								days: Liferay.Language.get('days'),
+								email: Liferay.Language.get('email'),
+								hours: Liferay.Language.get('hours'),
+								minutes: Liferay.Language.get('minutes'),
 								weeks: Liferay.Language.get('weeks')
 							}
 						},
 
 						values: {
+							validator: Lang.isArray,
 							value: [
 								{
 									interval: 10,
@@ -814,8 +827,7 @@
 									interval: 60,
 									type: Liferay.CalendarUtil.NOTIFICATION_DEFAULT_TYPE
 								}
-							],
-							validator: Lang.isArray
+							]
 						}
 					},
 
@@ -903,39 +915,6 @@
 			var toInt = Lang.toInt;
 
 			Liferay.DatePickerUtil = {
-				linkToSchedulerEvent: function(datePickerContainer, schedulerEvent, dateAttr) {
-					var instance = this;
-
-					var selects = A.one(datePickerContainer).all('select');
-
-					selects.on(
-						'change',
-						function(event) {
-							var currentTarget = event.currentTarget;
-
-							var date = schedulerEvent.get(dateAttr);
-
-							var selectedSetter = selects.indexOf(currentTarget);
-
-							var setters = [date.setMonth, date.setDate, date.setFullYear, date.setHours, date.setMinutes, date.setHours];
-
-							var value = toInt(currentTarget.val());
-
-							if ((selectedSetter === 3) && (date.getHours() > 12)) {
-								value += 12;
-							}
-
-							if (selectedSetter === 5) {
-								value = date.getHours() + ((value === 1) ? 12 : -12);
-							}
-
-							setters[selectedSetter].call(date, value);
-
-							schedulerEvent.get('scheduler').syncEventsUI();
-						}
-					);
-				},
-
 				syncUI: function(form, fieldName, date) {
 					var instance = this;
 
@@ -968,6 +947,39 @@
 					amPmNode.val(amPm);
 					hourNode.val(hours);
 					minuteNode.val(minutes);
+				},
+
+				linkToSchedulerEvent: function(datePickerContainer, schedulerEvent, dateAttr) {
+					var instance = this;
+
+					var selects = A.one(datePickerContainer).all('select');
+
+					selects.on(
+						'change',
+						function(event) {
+							var currentTarget = event.currentTarget;
+
+							var date = schedulerEvent.get(dateAttr);
+
+							var selectedSetter = selects.indexOf(currentTarget);
+
+							var setters = [date.setMonth, date.setDate, date.setFullYear, date.setHours, date.setMinutes, date.setHours];
+
+							var value = toInt(currentTarget.val());
+
+							if ((selectedSetter === 3) && (date.getHours() > 12)) {
+								value += 12;
+							}
+
+							if (selectedSetter === 5) {
+								value = date.getHours() + ((value === 1) ? 12 : -12);
+							}
+
+							setters[selectedSetter].call(date, value);
+
+							schedulerEvent.get('scheduler').syncEventsUI();
+						}
+					);
 				}
 			};
 		},
@@ -983,15 +995,15 @@
 			Liferay.RecurrenceUtil = {
 				FREQUENCY: {
 					DAILY: 'DAILY',
-					WEEKLY: 'WEEKLY',
 					MONTHLY: 'MONTHLY',
+					WEEKLY: 'WEEKLY',
 					YEARLY: 'YEARLY'
 				},
 
 				INTERVAL_LABELS: {
 					DAILY: Liferay.Language.get('days'),
-					WEEKLY: Liferay.Language.get('weeks'),
 					MONTHLY: Liferay.Language.get('months'),
+					WEEKLY: Liferay.Language.get('weeks'),
 					YEARLY: Liferay.Language.get('years')
 				},
 
@@ -1079,16 +1091,16 @@
 
 					var getButtonConfig = function(label, callback) {
 						return {
+							label: label,
 							on: {
-								click: function(event, buttonItem)  {
+								click: function(event, buttonItem) {
 									if (callback) {
 										callback.apply(confirmationPanel, arguments);
 									}
 
 									confirmationPanel.hide();
 								}
-							},
-							label: Liferay.Language.get(label)
+							}
 						};
 					};
 
@@ -1102,10 +1114,10 @@
 								resizable: false,
 								toolbars: {
 									footer: [
-										getButtonConfig('only-this-instance', onlyThisInstanceFn),
-										getButtonConfig('all-following', allFollowingFn),
-										getButtonConfig('all-events-in-the-series', allEventsInFn),
-										getButtonConfig('cancel-this-change', cancelFn)
+										getButtonConfig(Liferay.Language.get('only-this-instance'), onlyThisInstanceFn),
+										getButtonConfig(Liferay.Language.get('all-following'), allFollowingFn),
+										getButtonConfig(Liferay.Language.get('all-events-in-the-series'), allEventsInFn),
+										getButtonConfig(Liferay.Language.get('cancel-this-change'), cancelFn)
 									]
 								},
 								width: 700
@@ -1134,16 +1146,16 @@
 
 					var getButtonConfig = function(label, callback) {
 						return {
+							label: label,
 							on: {
-								click: function(event, buttonItem)  {
+								click: function(event, buttonItem) {
 									if (callback) {
 										callback.apply(confirmationPanel, arguments);
 									}
 
 									confirmationPanel.hide();
 								}
-							},
-							label: Liferay.Language.get(label)
+							}
 						};
 					};
 
@@ -1167,12 +1179,24 @@
 					);
 
 					return confirmationPanel.render().show();
+				},
+
+				showAlert: function(container, message) {
+					new A.Alert(
+						{
+							animated: true,
+							bodyContent: message,
+							closeable: true,
+							cssClass: 'alert-success',
+							destroyOnHide: true,
+							duration: 1
+						}).render(container);
 				}
 			};
 		},
 		'',
 		{
-			requires: ['liferay-util-window']
+			requires: ['aui-alert', 'liferay-util-window']
 		}
 	);
 }());

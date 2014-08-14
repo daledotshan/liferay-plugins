@@ -126,7 +126,7 @@ if (recurrence != null) {
 						for (Weekday weekday : Weekday.values()) {
 						%>
 
-							<aui:input checked="<%= weekdays.contains(weekday) %>" data-weekday='<%= LanguageUtil.get(pageContext, "weekday." + weekday.getValue()) %>' label="<%= weekday.getValue() %>" name="<%= weekday.getValue() %>" type="checkbox" />
+							<aui:input checked="<%= weekdays.contains(weekday) %>" data-weekday='<%= LanguageUtil.get(request, "weekday." + weekday.getValue()) %>' label="<%= weekday.getValue() %>" name="<%= weekday.getValue() %>" type="checkbox" />
 
 						<%
 						}
@@ -158,7 +158,7 @@ if (recurrence != null) {
 						<label><liferay-ui:message key="occurrences" /></label>
 					</aui:field-wrapper>
 
-					<aui:field-wrapper cssClass="calendar-portlet-recurrence-limit calendar-portlet-field-date" label="">
+					<aui:field-wrapper cssClass="calendar-portlet-field-date calendar-portlet-recurrence-limit" label="">
 						<aui:input checked="<%= onChecked %>" label="<%= StringPool.BLANK %>" name="ends" type="radio" value="on" />
 
 						<div class="calendar-portlet-field-datepicker clearfix">
@@ -199,10 +199,10 @@ if (recurrence != null) {
 	var endsRadioNodes = A.all('[name=<portlet:namespace />ends]');
 	var frequencyNode = A.one('#<portlet:namespace />frequency');
 	var recurrenceContainerNode = A.one('#<portlet:namespace />recurrenceContainer');
-	var repeatCheckboxNode = A.one('#<portlet:namespace />repeatCheckbox');
+	var repeatCheckboxNode = A.one('#<portlet:namespace />repeat');
 	var summaryNode = A.one('#<portlet:namespace />summary');
 
-	var untilDateDatePicker = Liferay.component('<portlet:namespace />untilDateDatePicker');
+	var untilDateDatePicker = Liferay.component('<%= renderResponse.getNamespace() + HtmlUtil.getAUICompatibleId("untilDateDatePicker") %>');
 
 	window.<portlet:namespace />recurrenceDialog;
 

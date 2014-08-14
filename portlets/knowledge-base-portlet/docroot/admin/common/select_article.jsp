@@ -51,14 +51,15 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 			orderByCol="<%= orderByCol %>"
 			orderByComparator="<%= KnowledgeBaseUtil.getKBArticleOrderByComparator(orderByCol, orderByType) %>"
 			orderByType="<%= orderByType %>"
-			total="<%= KBArticleServiceUtil.getSiblingKBArticlesCount(scopeGroupId, parentResourcePrimKey, status) %>"
+			total="<%= KBArticleServiceUtil.getKBArticlesCount(scopeGroupId, parentResourcePrimKey, status) %>"
 		>
 			<liferay-ui:search-container-results
-				results="<%= KBArticleServiceUtil.getSiblingKBArticles(scopeGroupId, parentResourcePrimKey, status, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator()) %>"
+				results="<%= KBArticleServiceUtil.getKBArticles(scopeGroupId, parentResourcePrimKey, status, searchContainer.getStart(), searchContainer.getEnd(), searchContainer.getOrderByComparator()) %>"
 			/>
 
 			<liferay-ui:search-container-row
 				className="com.liferay.knowledgebase.model.KBArticle"
+				escapedModel="<%= true %>"
 				keyProperty="resourcePrimKey"
 				modelVar="curKBArticle"
 			>
@@ -71,7 +72,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 				</liferay-portlet:renderURL>
 
 				<%
-				if ((curKBArticle.getResourcePrimKey() == resourcePrimKey) || (KBArticleServiceUtil.getSiblingKBArticlesCount(scopeGroupId, curKBArticle.getResourcePrimKey(), status) == 0)) {
+				if ((curKBArticle.getResourcePrimKey() == resourcePrimKey) || (KBArticleServiceUtil.getKBArticlesCount(scopeGroupId, curKBArticle.getResourcePrimKey(), status) == 0)) {
 					rowURL = null;
 				}
 				%>
@@ -95,7 +96,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 					href="<%= rowURL %>"
 					name="status"
 					orderable="<%= true %>"
-					value='<%= curKBArticle.getStatus() + " (" + LanguageUtil.get(pageContext, WorkflowConstants.getStatusLabel(curKBArticle.getStatus())) + ")" %>'
+					value='<%= curKBArticle.getStatus() + " (" + LanguageUtil.get(request, WorkflowConstants.getStatusLabel(curKBArticle.getStatus())) + ")" %>'
 				/>
 
 				<liferay-ui:search-container-column-text
@@ -116,7 +117,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 			</liferay-ui:search-container-row>
 
 			<c:if test="<%= oldParentResourcePrimKey != KBArticleConstants.DEFAULT_PARENT_RESOURCE_PRIM_KEY %>">
-				<aui:button-row cssClass="input-append">
+				<aui:button-row cssClass="input-group">
 					<liferay-ui:input-resource url='<%= BeanPropertiesUtil.getString(KBArticleServiceUtil.getLatestKBArticle(oldParentResourcePrimKey, status), "title") %>' />
 
 					<liferay-util:buffer var="html">
