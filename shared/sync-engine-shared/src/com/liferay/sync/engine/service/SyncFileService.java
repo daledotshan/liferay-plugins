@@ -28,14 +28,13 @@ import com.liferay.sync.engine.documentlibrary.event.UpdateFileEntryEvent;
 import com.liferay.sync.engine.documentlibrary.event.UpdateFolderEvent;
 import com.liferay.sync.engine.model.ModelListener;
 import com.liferay.sync.engine.model.SyncFile;
+import com.liferay.sync.engine.model.SyncFileModelListener;
 import com.liferay.sync.engine.model.SyncSite;
 import com.liferay.sync.engine.service.persistence.SyncFilePersistence;
-import com.liferay.sync.engine.util.FilePathNameUtil;
 import com.liferay.sync.engine.util.FileUtil;
 import com.liferay.sync.engine.util.IODeltaUtil;
+import com.liferay.sync.engine.util.OSDetector;
 import com.liferay.sync.engine.util.PropsValues;
-
-import java.math.BigDecimal;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -71,17 +70,16 @@ public class SyncFileService {
 		String mimeType = Files.probeContentType(filePath);
 
 		SyncFile syncFile = addSyncFile(
-			_VERSION_DEFAULT, checksum, name, FileUtil.getFileKey(filePath),
-			FilePathNameUtil.getFilePathName(filePath), mimeType, name,
-			folderId, repositoryId, syncAccountId, SyncFile.TYPE_FILE);
+			"", checksum, name, filePath.toString(), mimeType, name, folderId,
+			repositoryId, syncAccountId, SyncFile.TYPE_FILE);
 
 		// Remote sync file
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
-		parameters.put("changeLog", _VERSION_DEFAULT);
+		parameters.put("changeLog", "");
 		parameters.put("checksum", checksum);
-		parameters.put("description", name);
+		parameters.put("description", "");
 		parameters.put("filePath", filePath);
 		parameters.put("folderId", folderId);
 		parameters.put("mimeType", mimeType);
@@ -98,6 +96,7 @@ public class SyncFileService {
 			parameters.put("serviceContext.addGuestPermissions", true);
 		}
 
+		parameters.put("serviceContext.attributes.overwrite", true);
 		parameters.put("sourceFileName", name);
 		parameters.put("syncFile", syncFile);
 		parameters.put("title", name);
@@ -117,11 +116,14 @@ public class SyncFileService {
 
 		// Local sync file
 
+		if (Files.notExists(filePath)) {
+			return null;
+		}
+
 		String name = String.valueOf(filePath.getFileName());
 
 		SyncFile syncFile = addSyncFile(
-			null, null, name, FileUtil.getFileKey(filePath),
-			FilePathNameUtil.getFilePathName(filePath),
+			null, null, name, filePath.toString(),
 			Files.probeContentType(filePath), name, parentFolderId,
 			repositoryId, syncAccountId, SyncFile.TYPE_FOLDER);
 
@@ -129,7 +131,7 @@ public class SyncFileService {
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
-		parameters.put("description", name);
+		parameters.put("description", "");
 		parameters.put("name", name);
 		parameters.put("parentFolderId", parentFolderId);
 		parameters.put("repositoryId", repositoryId);
@@ -145,6 +147,7 @@ public class SyncFileService {
 			parameters.put("serviceContext.addGuestPermissions", true);
 		}
 
+		parameters.put("serviceContext.attributes.overwrite", true);
 		parameters.put("syncFile", syncFile);
 
 		AddFolderEvent addFolderEvent = new AddFolderEvent(
@@ -157,7 +160,7 @@ public class SyncFileService {
 
 	public static SyncFile addSyncFile(
 			String changeLog, String checksum, String description,
-			String fileKey, String filePathName, String mimeType, String name,
+			String filePathName, String mimeType, String name,
 			long parentFolderId, long repositoryId, long syncAccountId,
 			String type)
 		throws Exception {
@@ -167,7 +170,6 @@ public class SyncFileService {
 		syncFile.setChangeLog(changeLog);
 		syncFile.setChecksum(checksum);
 		syncFile.setDescription(description);
-		syncFile.setFileKey(fileKey);
 		syncFile.setFilePathName(filePathName);
 		syncFile.setLocalSyncTime(System.currentTimeMillis());
 		syncFile.setMimeType(mimeType);
@@ -179,6 +181,8 @@ public class SyncFileService {
 		syncFile.setUiEvent(SyncFile.UI_EVENT_ADDED_LOCAL);
 
 		_syncFilePersistence.create(syncFile);
+
+		updateFileKeySyncFile(syncFile);
 
 		return syncFile;
 	}
@@ -222,7 +226,7 @@ public class SyncFileService {
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
-		parameters.put("changeLog", null);
+		parameters.put("changeLog", syncFile.getChangeLog());
 		parameters.put("fileEntryId", syncFile.getTypePK());
 		parameters.put("majorVersion", false);
 		parameters.put("syncFile", syncFile);
@@ -272,9 +276,14 @@ public class SyncFileService {
 
 		// Remote sync file
 
+		if (syncFile.getState() == SyncFile.STATE_ERROR) {
+			return syncFile;
+		}
+
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
 		parameters.put("fileEntryId", syncFile.getTypePK());
+		parameters.put("syncFile", syncFile);
 
 		MoveFileEntryToTrashEvent moveFileEntryToTrashEvent =
 			new MoveFileEntryToTrashEvent(syncAccountId, parameters);
@@ -296,9 +305,14 @@ public class SyncFileService {
 
 		// Remote sync file
 
+		if (syncFile.getState() == SyncFile.STATE_ERROR) {
+			return syncFile;
+		}
+
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
 		parameters.put("folderId", syncFile.getTypePK());
+		parameters.put("syncFile", syncFile);
 
 		MoveFolderToTrashEvent moveFolderToTrashEvent =
 			new MoveFolderToTrashEvent(syncAccountId, parameters);
@@ -309,11 +323,15 @@ public class SyncFileService {
 	}
 
 	public static void deleteSyncFile(SyncFile syncFile) {
+		deleteSyncFile(syncFile, true);
+	}
+
+	public static void deleteSyncFile(SyncFile syncFile, boolean notify) {
 		try {
 
 			// Sync file
 
-			_syncFilePersistence.delete(syncFile);
+			_syncFilePersistence.delete(syncFile, notify);
 
 			if (!syncFile.isFolder()) {
 				return;
@@ -337,6 +355,19 @@ public class SyncFileService {
 			if (_logger.isDebugEnabled()) {
 				_logger.debug(sqle.getMessage(), sqle);
 			}
+		}
+	}
+
+	public static SyncFile fetchSyncFile(long syncFileId) {
+		try {
+			return _syncFilePersistence.queryForId(syncFileId);
+		}
+		catch (SQLException sqle) {
+			if (_logger.isDebugEnabled()) {
+				_logger.debug(sqle.getMessage(), sqle);
+			}
+
+			return null;
 		}
 	}
 
@@ -375,6 +406,10 @@ public class SyncFileService {
 	public static SyncFile fetchSyncFileByFileKey(
 		String fileKey, long syncAccountId) {
 
+		if ((fileKey == null) || fileKey.equals("")) {
+			return null;
+		}
+
 		try {
 			return _syncFilePersistence.fetchByFK_S(fileKey, syncAccountId);
 		}
@@ -401,10 +436,23 @@ public class SyncFileService {
 	}
 
 	public static List<SyncFile> findSyncFiles(
-		long localSyncTime, long syncAccountId) {
+		long syncAccountId, int uiEvent) {
 
 		try {
-			return _syncFilePersistence.findByL_S(localSyncTime, syncAccountId);
+			return _syncFilePersistence.findByS_U(syncAccountId, uiEvent);
+		}
+		catch (SQLException sqle) {
+			if (_logger.isDebugEnabled()) {
+				_logger.debug(sqle.getMessage(), sqle);
+			}
+
+			return Collections.emptyList();
+		}
+	}
+
+	public static List<SyncFile> findSyncFiles(String filePathName) {
+		try {
+			return _syncFilePersistence.findByFilePathName(filePathName);
 		}
 		catch (SQLException sqle) {
 			if (_logger.isDebugEnabled()) {
@@ -430,6 +478,22 @@ public class SyncFileService {
 		}
 	}
 
+	public static List<SyncFile> findSyncFiles(
+		String filePathName, long localSyncTime, long syncAccountId) {
+
+		try {
+			return _syncFilePersistence.findByF_L_S(
+				filePathName, localSyncTime, syncAccountId);
+		}
+		catch (SQLException sqle) {
+			if (_logger.isDebugEnabled()) {
+				_logger.debug(sqle.getMessage(), sqle);
+			}
+
+			return Collections.emptyList();
+		}
+	}
+
 	public static SyncFilePersistence getSyncFilePersistence() {
 		if (_syncFilePersistence != null) {
 			return _syncFilePersistence;
@@ -444,7 +508,22 @@ public class SyncFileService {
 			}
 		}
 
+		_syncFilePersistence.registerModelListener(new SyncFileModelListener());
+
 		return _syncFilePersistence;
+	}
+
+	public static long getSyncFilesCount(int uiEvent) {
+		try {
+			return _syncFilePersistence.countByUIEvent(uiEvent);
+		}
+		catch (SQLException sqle) {
+			if (_logger.isDebugEnabled()) {
+				_logger.debug(sqle.getMessage(), sqle);
+			}
+
+			return 0;
+		}
 	}
 
 	public static SyncFile moveFileSyncFile(
@@ -453,13 +532,17 @@ public class SyncFileService {
 
 		// Local sync file
 
-		syncFile.setFilePathName(FilePathNameUtil.getFilePathName(filePath));
+		syncFile.setFilePathName(filePath.toString());
 		syncFile.setParentFolderId(folderId);
 		syncFile.setUiEvent(SyncFile.UI_EVENT_MOVED_LOCAL);
 
 		update(syncFile);
 
 		// Remote sync file
+
+		if (syncFile.getState() == SyncFile.STATE_ERROR) {
+			return syncFile;
+		}
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -489,6 +572,10 @@ public class SyncFileService {
 		updateSyncFile(filePath, parentFolderId, syncFile);
 
 		// Remote sync file
+
+		if (syncFile.getState() == SyncFile.STATE_ERROR) {
+			return syncFile;
+		}
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -533,15 +620,31 @@ public class SyncFileService {
 		}
 	}
 
+	public static SyncFile updateFileKeySyncFile(SyncFile syncFile) {
+		if (OSDetector.isWindows()) {
+			Path filePath = Paths.get(syncFile.getFilePathName());
+
+			FileUtil.writeFileKey(
+				filePath, String.valueOf(syncFile.getSyncFileId()));
+
+			syncFile.setFileKey(String.valueOf(syncFile.getSyncFileId()));
+		}
+		else {
+			syncFile.setFileKey(
+				FileUtil.getFileKey(syncFile.getFilePathName()));
+		}
+
+		return update(syncFile);
+	}
+
 	public static SyncFile updateFileSyncFile(
-			Path filePath, long syncAccountId, SyncFile syncFile)
+			Path filePath, long syncAccountId, SyncFile syncFile, boolean force)
 		throws Exception {
 
 		// Local sync file
 
 		Path deltaFilePath = null;
 
-		String changeLog = incrementChangeLog(syncFile.getVersion());
 		String name = String.valueOf(filePath.getFileName());
 		String sourceChecksum = syncFile.getChecksum();
 		String sourceFileName = syncFile.getName();
@@ -559,9 +662,8 @@ public class SyncFileService {
 				deltaFilePath);
 		}
 
-		syncFile.setChangeLog(changeLog);
 		syncFile.setChecksum(targetChecksum);
-		syncFile.setFilePathName(FilePathNameUtil.getFilePathName(filePath));
+		syncFile.setFilePathName(filePath.toString());
 		syncFile.setName(name);
 		syncFile.setUiEvent(SyncFile.UI_EVENT_UPDATED_LOCAL);
 
@@ -569,9 +671,13 @@ public class SyncFileService {
 
 		// Remote sync file
 
+		if (syncFile.getState() == SyncFile.STATE_ERROR) {
+			return syncFile;
+		}
+
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
-		parameters.put("changeLog", changeLog);
+		parameters.put("changeLog", syncFile.getChangeLog());
 		parameters.put("checksum", targetChecksum);
 		parameters.put("description", syncFile.getDescription());
 		parameters.put("fileEntryId", syncFile.getTypePK());
@@ -581,13 +687,13 @@ public class SyncFileService {
 		parameters.put("syncFile", syncFile);
 		parameters.put("title", name);
 
-		if (sourceChecksum.equals(targetChecksum)) {
+		if (sourceChecksum.equals(targetChecksum) && !force) {
 			parameters.put("-file", null);
 		}
 		else {
 			if ((deltaFilePath != null) &&
 				(Files.size(filePath) / Files.size(deltaFilePath)) >=
-					PropsValues.SYNC_FILE_PATCHING_SIZE_RATIO_THRESHOLD) {
+					PropsValues.SYNC_FILE_PATCHING_THRESHOLD_SIZE_RATIO) {
 
 				parameters.put("deltaFilePath", deltaFilePath);
 				parameters.put("sourceFileName", sourceFileName);
@@ -622,8 +728,13 @@ public class SyncFileService {
 
 		// Remote sync file
 
+		if (syncFile.getState() == SyncFile.STATE_ERROR) {
+			return syncFile;
+		}
+
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
+		parameters.put("-description", null);
 		parameters.put("folderId", syncFile.getTypePK());
 		parameters.put("name", filePath.getFileName());
 		parameters.put("syncFile", syncFile);
@@ -648,8 +759,7 @@ public class SyncFileService {
 			}
 
 			String sourceFilePathName = syncFile.getFilePathName();
-			String targetFilePathName = FilePathNameUtil.getFilePathName(
-				filePath);
+			String targetFilePathName = filePath.toString();
 
 			syncFile.setFilePathName(targetFilePathName);
 			syncFile.setLocalSyncTime(System.currentTimeMillis());
@@ -691,19 +801,6 @@ public class SyncFileService {
 			return null;
 		}
 	}
-
-	protected static String incrementChangeLog(String versionString) {
-		BigDecimal versionBigDecimal = new BigDecimal(versionString);
-
-		versionBigDecimal = versionBigDecimal.add(_CHANGE_LOG_INCREMENT);
-
-		return versionBigDecimal.toString();
-	}
-
-	private static final BigDecimal _CHANGE_LOG_INCREMENT = new BigDecimal(
-		".1");
-
-	private static final String _VERSION_DEFAULT = "1.0";
 
 	private static Logger _logger = LoggerFactory.getLogger(
 		SyncFileService.class);

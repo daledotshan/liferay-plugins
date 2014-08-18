@@ -15,7 +15,6 @@
 package com.liferay.wsrp.admin.lar;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
@@ -44,19 +43,25 @@ public class WSRPConsumerPortletStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		Group group = GroupLocalServiceUtil.getGroup(groupId);
 
 		WSRPConsumerPortlet wsrpConsumerPortlet =
-			WSRPConsumerPortletLocalServiceUtil.
-				fetchWSRPConsumerPortletByUuidAndCompanyId(
-					uuid, group.getCompanyId());
+			fetchStagedModelByUuidAndCompanyId(uuid, group.getCompanyId());
 
 		if (wsrpConsumerPortlet != null) {
 			WSRPConsumerPortletLocalServiceUtil.deleteWSRPConsumerPortlet(
 				wsrpConsumerPortlet);
 		}
+	}
+
+	@Override
+	public WSRPConsumerPortlet fetchStagedModelByUuidAndCompanyId(
+		String uuid, long companyId) {
+
+		return WSRPConsumerPortletLocalServiceUtil.
+			fetchWSRPConsumerPortletByUuidAndCompanyId(uuid, companyId);
 	}
 
 	@Override
@@ -117,10 +122,9 @@ public class WSRPConsumerPortletStagedModelDataHandler
 
 		if (portletDataContext.isDataStrategyMirror()) {
 			WSRPConsumerPortlet existingWSRPConsumerPortlet =
-				WSRPConsumerPortletLocalServiceUtil.
-					fetchWSRPConsumerPortletByUuidAndCompanyId(
-						wsrpConsumerPortlet.getUuid(),
-						portletDataContext.getCompanyId());
+				fetchStagedModelByUuidAndCompanyId(
+					wsrpConsumerPortlet.getUuid(),
+					portletDataContext.getCompanyId());
 
 			if (existingWSRPConsumerPortlet == null) {
 				serviceContext.setUuid(wsrpConsumerPortlet.getUuid());
@@ -151,22 +155,6 @@ public class WSRPConsumerPortletStagedModelDataHandler
 
 		portletDataContext.importClassedModel(
 			wsrpConsumerPortlet, importedWSRPConsumerPortlet);
-	}
-
-	@Override
-	protected boolean validateMissingReference(
-			String uuid, long companyId, long groupId)
-		throws Exception {
-
-		WSRPConsumerPortlet wsrpConsumerPortlet =
-			WSRPConsumerPortletLocalServiceUtil.
-				fetchWSRPConsumerPortletByUuidAndCompanyId(uuid, companyId);
-
-		if (wsrpConsumerPortlet == null) {
-			return false;
-		}
-
-		return true;
 	}
 
 }

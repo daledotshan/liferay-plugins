@@ -52,6 +52,8 @@ public class SyncFile extends StateAwareModel {
 
 	public static final String TYPE_FOLDER = "folder";
 
+	public static final String TYPE_SYSTEM = "system";
+
 	public static final int UI_EVENT_ADDED_LOCAL = 1;
 
 	public static final int UI_EVENT_ADDED_REMOTE = 2;
@@ -60,25 +62,37 @@ public class SyncFile extends StateAwareModel {
 
 	public static final int UI_EVENT_DELETED_REMOTE = 4;
 
-	public static final int UI_EVENT_DOWNLOADED = 5;
+	public static final int UI_EVENT_DOWNLOADED_NEW = 5;
 
-	public static final int UI_EVENT_DOWNLOADING = 6;
+	public static final int UI_EVENT_DOWNLOADED_UPDATE = 6;
 
-	public static final int UI_EVENT_MOVED_LOCAL = 7;
+	public static final int UI_EVENT_DOWNLOADING = 7;
 
-	public static final int UI_EVENT_MOVED_REMOTE = 8;
+	public static final int UI_EVENT_DUPLICATE_LOCK = 8;
 
-	public static final int UI_EVENT_TRASHED_LOCAL = 9;
+	public static final int UI_EVENT_EXCEEDED_SIZE_LIMIT = 9;
 
-	public static final int UI_EVENT_TRASHED_REMOTE = 10;
+	public static final int UI_EVENT_FILE_NAME_TOO_LONG = 10;
 
-	public static final int UI_EVENT_UPDATED_LOCAL = 11;
+	public static final int UI_EVENT_INVALID_FILE_NAME = 11;
 
-	public static final int UI_EVENT_UPDATED_REMOTE = 12;
+	public static final int UI_EVENT_INVALID_PERMISSIONS = 12;
 
-	public static final int UI_EVENT_UPLOADED = 13;
+	public static final int UI_EVENT_MOVED_LOCAL = 13;
 
-	public static final int UI_EVENT_UPLOADING = 14;
+	public static final int UI_EVENT_MOVED_REMOTE = 14;
+
+	public static final int UI_EVENT_TRASHED_LOCAL = 15;
+
+	public static final int UI_EVENT_TRASHED_REMOTE = 16;
+
+	public static final int UI_EVENT_UPDATED_LOCAL = 17;
+
+	public static final int UI_EVENT_UPDATED_REMOTE = 18;
+
+	public static final int UI_EVENT_UPLOADED = 19;
+
+	public static final int UI_EVENT_UPLOADING = 20;
 
 	public String getChangeLog() {
 		return changeLog;
@@ -184,8 +198,16 @@ public class SyncFile extends StateAwareModel {
 		return version;
 	}
 
+	public boolean isFile() {
+		return type.equals(TYPE_FILE);
+	}
+
 	public boolean isFolder() {
 		return type.equals(TYPE_FOLDER);
+	}
+
+	public boolean isSystem() {
+		return type.equals(TYPE_SYSTEM);
 	}
 
 	public void setChangeLog(String changeLog) {
@@ -312,10 +334,10 @@ public class SyncFile extends StateAwareModel {
 	@DatabaseField(useGetSet = true, width = 16777216)
 	protected String extraSettings;
 
-	@DatabaseField(useGetSet = true)
+	@DatabaseField(index = true, useGetSet = true)
 	protected String fileKey;
 
-	@DatabaseField(useGetSet = true, width = 16777216)
+	@DatabaseField(index = true, useGetSet = true, width = 16777216)
 	protected String filePathName;
 
 	@DatabaseField(useGetSet = true)
@@ -357,7 +379,7 @@ public class SyncFile extends StateAwareModel {
 	@DatabaseField(useGetSet = true)
 	protected String type;
 
-	@DatabaseField(useGetSet = true)
+	@DatabaseField(index = true, useGetSet = true)
 	protected long typePK;
 
 	@DatabaseField(useGetSet = true)

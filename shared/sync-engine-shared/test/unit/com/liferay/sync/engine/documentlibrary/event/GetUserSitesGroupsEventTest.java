@@ -25,14 +25,10 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * @author Shinn Lok
  */
-@RunWith(PowerMockRunner.class)
 public class GetUserSitesGroupsEventTest extends BaseTestCase {
 
 	@After
@@ -52,8 +48,9 @@ public class GetUserSitesGroupsEventTest extends BaseTestCase {
 		setResponse("dependencies/get_user_sites_groups.json");
 
 		GetUserSitesGroupsEvent getUserSitesGroupsEvent =
-			new GetUserSitesGroupsEvent(syncAccount.getSyncAccountId(),
-			Collections.<String, Object>emptyMap());
+			new GetUserSitesGroupsEvent(
+				syncAccount.getSyncAccountId(),
+				Collections.<String, Object>emptyMap());
 
 		getUserSitesGroupsEvent.run();
 

@@ -22,8 +22,6 @@ import com.liferay.sync.engine.service.SyncAccountService;
 import com.liferay.sync.engine.service.SyncFileService;
 import com.liferay.sync.engine.service.SyncSiteService;
 import com.liferay.sync.engine.service.SyncWatchEventService;
-import com.liferay.sync.engine.util.FilePathNameUtil;
-import com.liferay.sync.engine.util.FileUtil;
 
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -50,16 +48,11 @@ public class SyncSiteWatchEventListener extends BaseWatchEventListener {
 
 	protected void addSyncWatchEvent(String eventType, Path filePath) {
 		try {
-			if (eventType.equals(SyncWatchEvent.EVENT_TYPE_CREATE) &&
-				FileUtil.isIgnoredFilePath(filePath)) {
+			String filePathName = filePath.toString();
 
-				return;
-			}
+			Path parentFilePath = filePath.getParent();
 
-			String parentFilePathName = FilePathNameUtil.getFilePathName(
-				filePath.getParent());
-
-			String filePathName = FilePathNameUtil.getFilePathName(filePath);
+			String parentFilePathName = parentFilePath.toString();
 
 			SyncAccount syncAccount = SyncAccountService.fetchSyncAccount(
 				getSyncAccountId());
@@ -70,19 +63,14 @@ public class SyncSiteWatchEventListener extends BaseWatchEventListener {
 				return;
 			}
 
-			SyncFile parentSyncFile = SyncFileService.fetchSyncFile(
-				parentFilePathName, getSyncAccountId());
+			long repositoryId = getRepositoryId(filePath);
 
-			if (parentSyncFile == null) {
-				Thread.sleep(1000);
-
-				addSyncWatchEvent(eventType, filePath);
-
+			if (repositoryId <= 0) {
 				return;
 			}
 
 			SyncSite syncSite = SyncSiteService.fetchSyncSite(
-				parentSyncFile.getRepositoryId(), getSyncAccountId());
+				repositoryId, getSyncAccountId());
 
 			Set<Long> activeSyncSiteIds = SyncSiteService.getActiveSyncSiteIds(
 				getSyncAccountId());
@@ -103,7 +91,7 @@ public class SyncSiteWatchEventListener extends BaseWatchEventListener {
 	protected String getFileType(String eventType, Path filePath) {
 		if (eventType.equals(SyncWatchEvent.EVENT_TYPE_DELETE)) {
 			SyncFile syncFile = SyncFileService.fetchSyncFile(
-				FilePathNameUtil.getFilePathName(filePath), getSyncAccountId());
+				filePath.toString(), getSyncAccountId());
 
 			if (syncFile != null) {
 				return syncFile.getType();
@@ -115,6 +103,23 @@ public class SyncSiteWatchEventListener extends BaseWatchEventListener {
 		}
 
 		return SyncFile.TYPE_FILE;
+	}
+
+	protected long getRepositoryId(Path filePath) {
+		while (true) {
+			filePath = filePath.getParent();
+
+			if (filePath == null) {
+				return 0;
+			}
+
+			SyncFile syncFile = SyncFileService.fetchSyncFile(
+				filePath.toString(), getSyncAccountId());
+
+			if (syncFile != null) {
+				return syncFile.getRepositoryId();
+			}
+		}
 	}
 
 	private static Logger _logger = LoggerFactory.getLogger(
