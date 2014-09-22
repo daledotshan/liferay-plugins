@@ -14,8 +14,9 @@
 
 package com.liferay.knowledgebase.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.ResourcedModel;
@@ -42,6 +43,7 @@ import java.util.Date;
  * @see com.liferay.knowledgebase.model.impl.KBArticleModelImpl
  * @generated
  */
+@ProviderType
 public interface KBArticleModel extends BaseModel<KBArticle>, ResourcedModel,
 	StagedGroupedModel, WorkflowedModel {
 	/*
@@ -166,10 +168,9 @@ public interface KBArticleModel extends BaseModel<KBArticle>, ResourcedModel,
 	 * Returns the user uuid of this k b article.
 	 *
 	 * @return the user uuid of this k b article
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid() throws SystemException;
+	public String getUserUuid();
 
 	/**
 	 * Sets the user uuid of this k b article.
@@ -284,6 +285,21 @@ public interface KBArticleModel extends BaseModel<KBArticle>, ResourcedModel,
 	 * @param title the title of this k b article
 	 */
 	public void setTitle(String title);
+
+	/**
+	 * Returns the url title of this k b article.
+	 *
+	 * @return the url title of this k b article
+	 */
+	@AutoEscape
+	public String getUrlTitle();
+
+	/**
+	 * Sets the url title of this k b article.
+	 *
+	 * @param urlTitle the url title of this k b article
+	 */
+	public void setUrlTitle(String urlTitle);
 
 	/**
 	 * Returns the content of this k b article.
@@ -401,6 +417,21 @@ public interface KBArticleModel extends BaseModel<KBArticle>, ResourcedModel,
 	public void setMain(boolean main);
 
 	/**
+	 * Returns the source u r l of this k b article.
+	 *
+	 * @return the source u r l of this k b article
+	 */
+	@AutoEscape
+	public String getSourceURL();
+
+	/**
+	 * Sets the source u r l of this k b article.
+	 *
+	 * @param sourceURL the source u r l of this k b article
+	 */
+	public void setSourceURL(String sourceURL);
+
+	/**
 	 * Returns the status of this k b article.
 	 *
 	 * @return the status of this k b article
@@ -436,10 +467,9 @@ public interface KBArticleModel extends BaseModel<KBArticle>, ResourcedModel,
 	 * Returns the status by user uuid of this k b article.
 	 *
 	 * @return the status by user uuid of this k b article
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getStatusByUserUuid() throws SystemException;
+	public String getStatusByUserUuid();
 
 	/**
 	 * Sets the status by user uuid of this k b article.

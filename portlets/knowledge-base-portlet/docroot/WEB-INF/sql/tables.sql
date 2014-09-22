@@ -12,6 +12,7 @@ create table KBArticle (
 	parentResourcePrimKey LONG,
 	version INTEGER,
 	title STRING null,
+	urlTitle VARCHAR(75) null,
 	content TEXT null,
 	description STRING null,
 	priority DOUBLE,
@@ -19,6 +20,7 @@ create table KBArticle (
 	viewCount INTEGER,
 	latest BOOLEAN,
 	main BOOLEAN,
+	sourceURL STRING null,
 	status INTEGER,
 	statusByUserId LONG,
 	statusByUserName VARCHAR(75) null,
@@ -37,7 +39,8 @@ create table KBComment (
 	classNameId LONG,
 	classPK LONG,
 	content STRING null,
-	helpful BOOLEAN
+	helpful BOOLEAN,
+	status INTEGER
 );
 
 create table KBTemplate (

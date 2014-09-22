@@ -14,6 +14,8 @@
 
 package com.liferay.knowledgebase.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import java.util.List;
  * @see com.liferay.knowledgebase.service.http.KBArticleServiceSoap
  * @generated
  */
+@ProviderType
 public class KBArticleSoap implements Serializable {
 	public static KBArticleSoap toSoapModel(KBArticle model) {
 		KBArticleSoap soapModel = new KBArticleSoap();
@@ -44,6 +47,7 @@ public class KBArticleSoap implements Serializable {
 		soapModel.setParentResourcePrimKey(model.getParentResourcePrimKey());
 		soapModel.setVersion(model.getVersion());
 		soapModel.setTitle(model.getTitle());
+		soapModel.setUrlTitle(model.getUrlTitle());
 		soapModel.setContent(model.getContent());
 		soapModel.setDescription(model.getDescription());
 		soapModel.setPriority(model.getPriority());
@@ -51,6 +55,7 @@ public class KBArticleSoap implements Serializable {
 		soapModel.setViewCount(model.getViewCount());
 		soapModel.setLatest(model.getLatest());
 		soapModel.setMain(model.getMain());
+		soapModel.setSourceURL(model.getSourceURL());
 		soapModel.setStatus(model.getStatus());
 		soapModel.setStatusByUserId(model.getStatusByUserId());
 		soapModel.setStatusByUserName(model.getStatusByUserName());
@@ -211,6 +216,14 @@ public class KBArticleSoap implements Serializable {
 		_title = title;
 	}
 
+	public String getUrlTitle() {
+		return _urlTitle;
+	}
+
+	public void setUrlTitle(String urlTitle) {
+		_urlTitle = urlTitle;
+	}
+
 	public String getContent() {
 		return _content;
 	}
@@ -275,6 +288,14 @@ public class KBArticleSoap implements Serializable {
 		_main = main;
 	}
 
+	public String getSourceURL() {
+		return _sourceURL;
+	}
+
+	public void setSourceURL(String sourceURL) {
+		_sourceURL = sourceURL;
+	}
+
 	public int getStatus() {
 		return _status;
 	}
@@ -320,6 +341,7 @@ public class KBArticleSoap implements Serializable {
 	private long _parentResourcePrimKey;
 	private int _version;
 	private String _title;
+	private String _urlTitle;
 	private String _content;
 	private String _description;
 	private double _priority;
@@ -327,6 +349,7 @@ public class KBArticleSoap implements Serializable {
 	private int _viewCount;
 	private boolean _latest;
 	private boolean _main;
+	private String _sourceURL;
 	private int _status;
 	private long _statusByUserId;
 	private String _statusByUserName;
