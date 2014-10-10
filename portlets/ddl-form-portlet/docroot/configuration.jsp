@@ -181,14 +181,14 @@ catch (NoSuchRecordSetException nsrse) {
 			var A = AUI();
 
 			document.<portlet:namespace />fm.<portlet:namespace />recordSetId.value = recordSetId;
-			document.<portlet:namespace />fm.<portlet:namespace />formDDMTemplateId.value = "";
+			document.<portlet:namespace />fm.<portlet:namespace />formDDMTemplateId.value = '';
 
 			A.one('.displaying-record-set-id-holder').show();
 			A.one('.displaying-help-message-holder').hide();
 
 			var displayRecordSetId = A.one('.displaying-record-set-id');
 
-			displayRecordSetId.set('innerHTML', recordSetName + ' (<%= LanguageUtil.get(pageContext, "modified") %>)');
+			displayRecordSetId.set('innerHTML', recordSetName + ' (<%= LanguageUtil.get(request, "modified") %>)');
 			displayRecordSetId.addClass('modified');
 		},
 		['aui-base']

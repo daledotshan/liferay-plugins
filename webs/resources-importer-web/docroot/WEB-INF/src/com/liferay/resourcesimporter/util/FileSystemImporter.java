@@ -15,7 +15,6 @@
 package com.liferay.resourcesimporter.util;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -25,6 +24,7 @@ import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
@@ -120,7 +120,7 @@ public class FileSystemImporter extends BaseImporter {
 
 	protected void addApplicationDisplayTemplate(
 			String script, File file, long classNameId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		String fileName = FileUtil.stripExtension(file.getName());
 
@@ -739,6 +739,8 @@ public class FileSystemImporter extends BaseImporter {
 			titleMap.put(LocaleUtil.getDefault(), title);
 		}
 
+		String type = GetterUtil.getString(
+			layoutJSONObject.getString("type"), LayoutConstants.TYPE_PORTLET);
 		String typeSettings = layoutJSONObject.getString("typeSettings");
 
 		boolean hidden = layoutJSONObject.getBoolean("hidden");
@@ -757,8 +759,8 @@ public class FileSystemImporter extends BaseImporter {
 
 		Layout layout = LayoutLocalServiceUtil.addLayout(
 			userId, groupId, privateLayout, parentLayoutId, nameMap, titleMap,
-			null, null, null, LayoutConstants.TYPE_PORTLET, typeSettings,
-			hidden, friendlyURLMap, serviceContext);
+			null, null, null, type, typeSettings, hidden, friendlyURLMap,
+			serviceContext);
 
 		LayoutTypePortlet layoutTypePortlet =
 			(LayoutTypePortlet)layout.getLayoutType();

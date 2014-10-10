@@ -17,9 +17,9 @@
 <%@ include file="/admin/init.jsp" %>
 
 <%
-int status = (Integer)request.getAttribute(WebKeys.KNOWLEDGE_BASE_STATUS);
-
 KBArticle kbArticle = (KBArticle)request.getAttribute(WebKeys.KNOWLEDGE_BASE_KB_ARTICLE);
+
+int status = (Integer)request.getAttribute(WebKeys.KNOWLEDGE_BASE_STATUS);
 
 int sourceVersion = ParamUtil.getInteger(request, "sourceVersion", kbArticle.getVersion() - 1);
 int targetVersion = ParamUtil.getInteger(request, "targetVersion", kbArticle.getVersion());
@@ -40,11 +40,6 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 	<aui:input name="targetVersion" type="hidden" value="<%= targetVersion %>" />
 
 	<aui:fieldset>
-		<liferay-portlet:renderURL varImpl="iteratorURL">
-			<portlet:param name="mvcPath" value='<%= templatePath + "history.jsp" %>' />
-			<portlet:param name="resourcePrimKey" value="<%= String.valueOf(kbArticle.getResourcePrimKey()) %>" />
-			<portlet:param name="status" value="<%= String.valueOf(status) %>" />
-		</liferay-portlet:renderURL>
 
 		<%
 		RowChecker rowChecker = new RowChecker(renderResponse);
@@ -53,6 +48,12 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 
 		int selStatus = KBArticlePermission.contains(permissionChecker, kbArticle, ActionKeys.UPDATE) ? WorkflowConstants.STATUS_ANY : status;
 		%>
+
+		<liferay-portlet:renderURL varImpl="iteratorURL">
+			<portlet:param name="mvcPath" value='<%= templatePath + "history.jsp" %>' />
+			<portlet:param name="resourcePrimKey" value="<%= String.valueOf(kbArticle.getResourcePrimKey()) %>" />
+			<portlet:param name="status" value="<%= String.valueOf(status) %>" />
+		</liferay-portlet:renderURL>
 
 		<liferay-ui:search-container
 			emptyResultsMessage="no-articles-were-found"
@@ -69,6 +70,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 
 			<liferay-ui:search-container-row
 				className="com.liferay.knowledgebase.model.KBArticle"
+				escapedModel="<%= true %>"
 				keyProperty="version"
 				modelVar="curKBArticle"
 			>
@@ -124,7 +126,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 						href="<%= rowURL %>"
 						name="status"
 						orderable="<%= true %>"
-						value='<%= curKBArticle.getStatus() + " (" + LanguageUtil.get(pageContext, WorkflowConstants.getStatusLabel(curKBArticle.getStatus())) + ")" %>'
+						value='<%= curKBArticle.getStatus() + " (" + LanguageUtil.get(request, WorkflowConstants.getStatusLabel(curKBArticle.getStatus())) + ")" %>'
 					/>
 				</c:if>
 
@@ -147,6 +149,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 							<portlet:param name="resourcePrimKey" value="<%= String.valueOf(kbArticle.getResourcePrimKey()) %>" />
 							<portlet:param name="status" value="<%= String.valueOf(status) %>" />
 							<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.UPDATE %>" />
+							<portlet:param name="parentResourceClassNameId" value="<%= String.valueOf(kbArticle.getParentResourceClassNameId()) %>" />
 							<portlet:param name="parentResourcePrimKey" value="<%= String.valueOf(kbArticle.getParentResourcePrimKey()) %>" />
 							<portlet:param name="title" value="<%= curKBArticle.getTitle() %>" />
 							<portlet:param name="content" value="<%= curKBArticle.getContent() %>" />
@@ -159,7 +162,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 						%>
 
 						<liferay-ui:icon
-							image="undo"
+							iconCssClass="icon-undo"
 							label="<%= true %>"
 							message="revert"
 							url="<%= revertURL.toString() %>"
@@ -170,7 +173,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 
 			<div class="float-container kb-entity-header">
 				<div class="kb-title">
-					<%= AdminUtil.getKBArticleDiff(kbArticle.getResourcePrimKey(), sourceVersion, targetVersion, "title") %>
+					<%= HtmlUtil.escape(AdminUtil.getKBArticleDiff(kbArticle.getResourcePrimKey(), sourceVersion, targetVersion, "title")) %>
 				</div>
 
 				<div class="kb-tools">
@@ -180,10 +183,9 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 					</liferay-portlet:renderURL>
 
 					<liferay-ui:icon
-						image="../common/page"
+						iconCssClass="icon-file-alt"
 						label="<%= true %>"
 						message="latest-version"
-						method="get"
 						url="<%= viewKBArticleURL %>"
 					/>
 				</div>

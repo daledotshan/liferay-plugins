@@ -19,7 +19,6 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.service.CompanyLocalService;
 import com.liferay.portal.service.CompanyLocalServiceWrapper;
-import com.liferay.portal.workflow.kaleo.manager.PortalKaleoManager;
 import com.liferay.portal.workflow.kaleo.manager.PortalKaleoManagerUtil;
 
 /**
@@ -35,15 +34,12 @@ public class KaleoCompanyLocalServiceImpl extends CompanyLocalServiceWrapper {
 
 	@Override
 	public Company checkCompany(String webId, String mx, String shardName)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		Company company = super.checkCompany(webId, mx, shardName);
 
 		try {
-			PortalKaleoManager portalKaleoManager =
-				PortalKaleoManagerUtil.getPortalKaleoManager();
-
-			portalKaleoManager.deployKaleoDefaults(company);
+			PortalKaleoManagerUtil.deployKaleoDefaults(company.getCompanyId());
 		}
 		catch (PortalException pe) {
 			throw pe;

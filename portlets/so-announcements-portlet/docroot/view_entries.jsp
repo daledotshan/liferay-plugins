@@ -22,7 +22,7 @@
 <%
 boolean readEntries = ParamUtil.getBoolean(request, "readEntries", true);
 
-int flagValue = AnnouncementsFlagConstants.NOT_HIDDEN;;
+int flagValue = AnnouncementsFlagConstants.NOT_HIDDEN;
 
 if (readEntries) {
 	flagValue = AnnouncementsFlagConstants.HIDDEN;
@@ -80,7 +80,7 @@ List<AnnouncementsEntry> results = AnnouncementsEntryLocalServiceUtil.getEntries
 		<c:when test="<%= readEntries %>">
 			<c:if test="<%= themeDisplay.isSignedIn() && !results.isEmpty() %>">
 				<div class="header">
-					<span><%= LanguageUtil.get(pageContext, "read-entries") %></span>
+					<span><%= LanguageUtil.get(request, "read-entries") %></span>
 				</div>
 
 				<%
