@@ -23,7 +23,6 @@ import com.liferay.calendar.model.CalendarResource;
 import com.liferay.calendar.service.base.CalendarResourceLocalServiceBaseImpl;
 import com.liferay.calendar.util.PortletPropsValues;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.ExportImportThreadLocal;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.CharPool;
@@ -32,6 +31,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.model.Group;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.SystemEventConstants;
 import com.liferay.portal.model.User;
@@ -58,11 +58,27 @@ public class CalendarResourceLocalServiceImpl
 			String classUuid, String code, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, boolean active,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		// Calendar resource
 
-		User user = userPersistence.findByPrimaryKey(userId);
+		User user = userPersistence.fetchByPrimaryKey(userId);
+
+		if (user == null) {
+			user = userPersistence.fetchByPrimaryKey(
+				serviceContext.getUserId());
+		}
+
+		if (user == null) {
+			Group group = groupPersistence.fetchByPrimaryKey(groupId);
+
+			if (group == null)
+				return null;
+
+			else {
+				user = userLocalService.getDefaultUser(group.getCompanyId());
+			}
+		}
 
 		long calendarResourceId = counterLocalService.increment();
 
@@ -140,7 +156,7 @@ public class CalendarResourceLocalServiceImpl
 		type = SystemEventConstants.TYPE_DELETE)
 	public CalendarResource deleteCalendarResource(
 			CalendarResource calendarResource)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		// Calendar resource
 
@@ -182,7 +198,7 @@ public class CalendarResourceLocalServiceImpl
 
 	@Override
 	public CalendarResource deleteCalendarResource(long calendarResourceId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		CalendarResource calendarResource =
 			calendarResourcePersistence.findByPrimaryKey(calendarResourceId);
@@ -192,9 +208,7 @@ public class CalendarResourceLocalServiceImpl
 	}
 
 	@Override
-	public void deleteCalendarResources(long groupId)
-		throws PortalException, SystemException {
-
+	public void deleteCalendarResources(long groupId) throws PortalException {
 		List<CalendarResource> calendarResources =
 			calendarResourcePersistence.findByGroupId(groupId);
 
@@ -206,33 +220,29 @@ public class CalendarResourceLocalServiceImpl
 
 	@Override
 	public CalendarResource fetchCalendarResource(
-			long classNameId, long classPK)
-		throws SystemException {
+		long classNameId, long classPK) {
 
 		return calendarResourcePersistence.fetchByC_C(classNameId, classPK);
 	}
 
 	@Override
 	public CalendarResource getCalendarResource(long calendarResourceId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		return calendarResourcePersistence.findByPrimaryKey(calendarResourceId);
 	}
 
 	@Override
-	public List<CalendarResource> getCalendarResources(long groupId)
-		throws SystemException {
-
+	public List<CalendarResource> getCalendarResources(long groupId) {
 		return calendarResourcePersistence.findByGroupId(groupId);
 	}
 
 	@Override
 	public List<CalendarResource> search(
-			long companyId, long[] groupIds, long[] classNameIds, String code,
-			String name, String description, boolean active,
-			boolean andOperator, int start, int end,
-			OrderByComparator orderByComparator)
-		throws SystemException {
+		long companyId, long[] groupIds, long[] classNameIds, String code,
+		String name, String description, boolean active, boolean andOperator,
+		int start, int end,
+		OrderByComparator<CalendarResource> orderByComparator) {
 
 		return calendarResourceFinder.findByC_G_C_C_N_D_A(
 			companyId, groupIds, classNameIds, code, name, description, active,
@@ -241,10 +251,9 @@ public class CalendarResourceLocalServiceImpl
 
 	@Override
 	public List<CalendarResource> searchByKeywords(
-			long companyId, long[] groupIds, long[] classNameIds,
-			String keywords, boolean active, boolean andOperator, int start,
-			int end, OrderByComparator orderByComparator)
-		throws SystemException {
+		long companyId, long[] groupIds, long[] classNameIds, String keywords,
+		boolean active, boolean andOperator, int start, int end,
+		OrderByComparator<CalendarResource> orderByComparator) {
 
 		return calendarResourceFinder.findByKeywords(
 			companyId, groupIds, classNameIds, keywords, active, start, end,
@@ -253,9 +262,8 @@ public class CalendarResourceLocalServiceImpl
 
 	@Override
 	public int searchCount(
-			long companyId, long[] groupIds, long[] classNameIds,
-			String keywords, boolean active)
-		throws SystemException {
+		long companyId, long[] groupIds, long[] classNameIds, String keywords,
+		boolean active) {
 
 		return calendarResourceFinder.countByKeywords(
 			companyId, groupIds, classNameIds, keywords, active);
@@ -263,10 +271,8 @@ public class CalendarResourceLocalServiceImpl
 
 	@Override
 	public int searchCount(
-			long companyId, long[] groupIds, long[] classNameIds, String code,
-			String name, String description, boolean active,
-			boolean andOperator)
-		throws SystemException {
+		long companyId, long[] groupIds, long[] classNameIds, String code,
+		String name, String description, boolean active, boolean andOperator) {
 
 		return calendarResourceFinder.countByC_G_C_C_N_D_A(
 			companyId, groupIds, classNameIds, code, name, description, active,
@@ -277,7 +283,7 @@ public class CalendarResourceLocalServiceImpl
 	public void updateAsset(
 			long userId, CalendarResource calendarResource,
 			long[] assetCategoryIds, String[] assetTagNames)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		assetEntryLocalService.updateEntry(
 			userId, calendarResource.getGroupId(),
@@ -296,7 +302,7 @@ public class CalendarResourceLocalServiceImpl
 			long calendarResourceId, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, boolean active,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		// Calendar resource
 
@@ -325,7 +331,7 @@ public class CalendarResourceLocalServiceImpl
 	protected void validate(
 			long groupId, long classNameId, long classPK, String code,
 			Map<Locale, String> nameMap)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		validate(nameMap);
 
