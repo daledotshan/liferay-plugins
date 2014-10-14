@@ -17,16 +17,14 @@
 
 package com.liferay.so.hook.service.impl;
 
+import com.liferay.portal.kernel.dao.shard.ShardUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
-import com.liferay.portal.kernel.notifications.NotificationEvent;
-import com.liferay.portal.kernel.notifications.NotificationEventFactoryUtil;
 import com.liferay.portal.kernel.notifications.UserNotificationManagerUtil;
 import com.liferay.portal.kernel.process.ProcessCallable;
 import com.liferay.portal.kernel.process.ProcessException;
@@ -49,6 +47,7 @@ import com.liferay.portal.service.OrganizationLocalServiceUtil;
 import com.liferay.portal.service.RoleLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.service.UserNotificationEventLocalServiceUtil;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.announcements.model.AnnouncementsEntry;
 import com.liferay.portlet.announcements.service.AnnouncementsEntryLocalService;
 import com.liferay.portlet.announcements.service.AnnouncementsEntryLocalServiceWrapper;
@@ -83,7 +82,7 @@ public class SOAnnouncementsEntryLocalServiceImpl
 			int expirationDateMonth, int expirationDateDay,
 			int expirationDateYear, int expirationDateHour,
 			int expirationDateMinute, int priority, boolean alert)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		AnnouncementsEntry announcementEntry = super.addEntry(
 			userId, classNameId, classPK, title, content, url, type,
@@ -104,15 +103,13 @@ public class SOAnnouncementsEntryLocalServiceImpl
 	}
 
 	@Override
-	public void checkEntries() throws PortalException, SystemException {
+	public void checkEntries() throws PortalException {
 		super.checkEntries();
 
 		sendNotificationEvent();
 	}
 
-	protected void sendNotificationEvent()
-		throws PortalException, SystemException {
-
+	protected void sendNotificationEvent() throws PortalException {
 		Date now = new Date();
 
 		if (_previousCheckDate == null) {
@@ -120,19 +117,36 @@ public class SOAnnouncementsEntryLocalServiceImpl
 				now.getTime() - _ANNOUNCEMENTS_ENTRY_CHECK_INTERVAL);
 		}
 
-		List<AnnouncementsEntry> announcementEntries =
-			AnnouncementsEntryFinderUtil.findByDisplayDate(
-				now, _previousCheckDate);
+		long[] companyIds = PortalUtil.getCompanyIds();
 
-		if (_log.isDebugEnabled()) {
-			_log.debug("Processing " + announcementEntries.size() + " entries");
-		}
+		for (long companyId : companyIds) {
+			ShardUtil.pushCompanyService(companyId);
 
-		for (AnnouncementsEntry announcementEntry : announcementEntries) {
-			Date displayDate = announcementEntry.getDisplayDate();
+			try {
+				List<AnnouncementsEntry> announcementEntries =
+					AnnouncementsEntryFinderUtil.findByDisplayDate(
+						now, _previousCheckDate, companyId);
 
-			if (displayDate.after(announcementEntry.getCreateDate())) {
-				sendNotificationEvent(announcementEntry);
+				if (_log.isDebugEnabled()) {
+					_log.debug("Processing " + announcementEntries.size() +
+						" entries");
+				}
+
+				for (AnnouncementsEntry announcementEntry :
+						announcementEntries) {
+
+					Date displayDate = announcementEntry.getDisplayDate();
+
+					if (displayDate.after(announcementEntry.getCreateDate())) {
+						sendNotificationEvent(announcementEntry);
+					}
+				}
+			}
+			catch (Exception e) {
+				_log.error(e, e);
+			}
+			finally {
+				ShardUtil.popCompanyService();
 			}
 		}
 
@@ -140,7 +154,7 @@ public class SOAnnouncementsEntryLocalServiceImpl
 	}
 
 	protected void sendNotificationEvent(AnnouncementsEntry announcementEntry)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		JSONObject notificationEventJSONObject =
 			JSONFactoryUtil.createJSONObject();
@@ -193,7 +207,7 @@ public class SOAnnouncementsEntryLocalServiceImpl
 		protected void sendUserNotifications(
 				AnnouncementsEntry announcementEntry,
 				JSONObject notificationEventJSONObject)
-			throws PortalException, SystemException {
+			throws PortalException {
 
 			int count = 0;
 			long teamId = 0;
@@ -290,18 +304,11 @@ public class SOAnnouncementsEntryLocalServiceImpl
 							0,
 							UserNotificationDeliveryConstants.TYPE_WEBSITE)) {
 
-						NotificationEvent notificationEvent =
-							NotificationEventFactoryUtil.
-								createNotificationEvent(
-									System.currentTimeMillis(),
-									PortletKeys.SO_ANNOUNCEMENTS,
-									notificationEventJSONObject);
-
-						notificationEvent.setDeliveryRequired(0);
-
 						UserNotificationEventLocalServiceUtil.
-							addUserNotificationEvent(
-								user.getUserId(), notificationEvent);
+							sendUserNotificationEvents(
+								user.getUserId(), PortletKeys.SO_ANNOUNCEMENTS,
+								UserNotificationDeliveryConstants.TYPE_WEBSITE,
+								notificationEventJSONObject);
 					}
 				}
 			}

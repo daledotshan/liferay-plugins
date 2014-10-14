@@ -108,7 +108,7 @@ public class MenuItem implements Serializable {
 		List<MenuItem> menuItems = new LinkedList<MenuItem>();
 
 		for (WikiPage wikiPage : wikiPages) {
-			if ((wikiPage.getParentPage() != null) && (curDepth == 1)) {
+			if ((wikiPage.fetchParentPage() != null) && (curDepth == 1)) {
 				continue;
 			}
 
