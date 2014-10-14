@@ -20,7 +20,6 @@ import com.liferay.microblogs.service.MicroblogsEntryLocalServiceUtil;
 import com.liferay.microblogs.service.permission.MicroblogsEntryPermission;
 import com.liferay.microblogs.util.MicroblogsUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -47,9 +46,7 @@ public class MicroblogsActivityInterpreter extends SOSocialActivityInterpreter {
 	}
 
 	@Override
-	public void updateActivitySet(long activityId)
-		throws PortalException, SystemException {
-
+	public void updateActivitySet(long activityId) throws PortalException {
 		SocialActivity activity =
 			SocialActivityLocalServiceUtil.fetchSocialActivity(activityId);
 
@@ -154,7 +151,7 @@ public class MicroblogsActivityInterpreter extends SOSocialActivityInterpreter {
 		sb.append("\"><img alt=\"");
 
 		if (user != null) {
-			sb.append(HtmlUtil.escape(user.getFullName()));
+			sb.append(HtmlUtil.escapeAttribute(user.getFullName()));
 		}
 
 		sb.append("\" src=");
@@ -165,7 +162,8 @@ public class MicroblogsActivityInterpreter extends SOSocialActivityInterpreter {
 
 		sb.append("\"/></a></span></div><span class=\"microblog-content\">");
 		sb.append(
-			MicroblogsUtil.getTaggedContent(microblogsEntry, serviceContext));
+			MicroblogsUtil.getProcessedContent(
+				microblogsEntry, serviceContext));
 		sb.append("</span></div></div>");
 
 		return sb.toString();
@@ -240,7 +238,7 @@ public class MicroblogsActivityInterpreter extends SOSocialActivityInterpreter {
 					SocialActivityKeyConstants.MICROBLOGS_ADD_ENTRY) {
 
 				sb.append(
-					MicroblogsUtil.getTaggedContent(
+					MicroblogsUtil.getProcessedContent(
 						microblogsEntry, serviceContext));
 			}
 			else if (activityType ==
