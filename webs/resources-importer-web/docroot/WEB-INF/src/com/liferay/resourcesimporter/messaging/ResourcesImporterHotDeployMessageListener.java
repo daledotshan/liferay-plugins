@@ -15,6 +15,7 @@
 package com.liferay.resourcesimporter.messaging;
 
 import com.liferay.portal.kernel.deploy.DeployManagerUtil;
+import com.liferay.portal.kernel.lar.ExportImportThreadLocal;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.HotDeployMessageListener;
@@ -109,14 +110,18 @@ public class ResourcesImporterHotDeployMessageListener
 		ServletContext servletContext = ServletContextPool.get(
 			servletContextName);
 
+		Properties pluginPackageProperties = getPluginPackageProperties(
+			servletContext);
+
+		String resourcesDir = pluginPackageProperties.getProperty(
+			"resources-importer-external-dir");
+
 		if ((servletContext.getResource(_RESOURCES_DIR) == null) &&
-			(servletContext.getResource(_TEMPLATES_DIR) == null)) {
+			(servletContext.getResource(_TEMPLATES_DIR) == null) &&
+			Validator.isNull(resourcesDir)) {
 
 			return;
 		}
-
-		Properties pluginPackageProperties = getPluginPackageProperties(
-			servletContext);
 
 		String targetClassName = pluginPackageProperties.getProperty(
 			"resources-importer-target-class-name",
@@ -142,6 +147,9 @@ public class ResourcesImporterHotDeployMessageListener
 
 		for (Company company : companies) {
 			long companyId = CompanyThreadLocal.getCompanyId();
+
+			ExportImportThreadLocal.setLayoutImportInProcess(true);
+			ExportImportThreadLocal.setPortletImportInProcess(true);
 
 			try {
 				CompanyThreadLocal.setCompanyId(company.getCompanyId());
@@ -186,15 +194,10 @@ public class ResourcesImporterHotDeployMessageListener
 					importer.setGroupId(group.getGroupId());
 					importer.setResourcesDir(_TEMPLATES_DIR);
 				}
-				else {
-					String resourcesDir = pluginPackageProperties.getProperty(
-						"resources-importer-external-dir");
+				else if (Validator.isNotNull(resourcesDir)) {
+					importer = getFileSystemImporter();
 
-					if (Validator.isNotNull(resourcesDir)) {
-						importer = getFileSystemImporter();
-
-						importer.setResourcesDir(resourcesDir);
-					}
+					importer.setResourcesDir(resourcesDir);
 				}
 
 				if (importer == null) {
@@ -227,6 +230,12 @@ public class ResourcesImporterHotDeployMessageListener
 						"resources-importer-developer-mode-enabled"));
 
 				importer.setDeveloperModeEnabled(developerModeEnabled);
+
+				boolean updateModeEnabled = GetterUtil.getBoolean(
+					pluginPackageProperties.getProperty(
+						"resources-importer-update-mode-enabled"));
+
+				importer.setUpdateModeEnabled(updateModeEnabled);
 
 				importer.afterPropertiesSet();
 
@@ -294,6 +303,9 @@ public class ResourcesImporterHotDeployMessageListener
 			}
 			finally {
 				CompanyThreadLocal.setCompanyId(companyId);
+
+				ExportImportThreadLocal.setLayoutImportInProcess(false);
+				ExportImportThreadLocal.setPortletImportInProcess(false);
 			}
 		}
 	}
