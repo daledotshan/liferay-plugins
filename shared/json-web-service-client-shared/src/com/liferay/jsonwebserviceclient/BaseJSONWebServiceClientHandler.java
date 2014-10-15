@@ -14,8 +14,9 @@
 
 package com.liferay.jsonwebserviceclient;
 
-import com.liferay.portal.kernel.json.JSONDeserializer;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import java.io.IOException;
 
@@ -51,20 +52,22 @@ public abstract class BaseJSONWebServiceClientHandler {
 
 		String json = doGet(url, parametersArray);
 
-		if ((json == null) || json.equals("{}") || json.equals("[]")) {
+		if ((json == null) || json.equals("") || json.equals("{}") ||
+			json.equals("[]")) {
+
 			return Collections.emptyList();
 		}
 
-		if (json.contains("exception")) {
+		if (json.contains("exception\":\"")) {
 			throw new Exception(getExceptionMessage(json));
 		}
 
-		JSONDeserializer<List<T>> jsonDeserializer =
-			JSONFactoryUtil.createJSONDeserializer();
+		TypeFactory typeFactory = _objectMapper.getTypeFactory();
 
-		jsonDeserializer.use("values", clazz);
+		JavaType javaType = typeFactory.constructCollectionType(
+			List.class, clazz);
 
-		return jsonDeserializer.deserialize(json);
+		return _objectMapper.readValue(json, javaType);
 	}
 
 	protected <T> T doGetToObject(
@@ -73,26 +76,15 @@ public abstract class BaseJSONWebServiceClientHandler {
 
 		String json = doGet(url, parametersArray);
 
-		if (json.contains("exception")) {
+		if ((json == null) || json.equals("")) {
+			return null;
+		}
+
+		if (json.contains("exception\":\"")) {
 			throw new Exception(getExceptionMessage(json));
 		}
 
-		return JSONFactoryUtil.looseDeserialize(json, clazz);
-	}
-
-	protected <T> T doGetToObject(String url, String... parametersArray)
-		throws Exception {
-
-		String json = doGet(url, parametersArray);
-
-		if (json.contains("exception")) {
-			throw new Exception(getExceptionMessage(json));
-		}
-
-		JSONDeserializer<T> jsonDeserializer =
-			JSONFactoryUtil.createJSONDeserializer();
-
-		return jsonDeserializer.deserialize(json);
+		return _objectMapper.readValue(json, clazz);
 	}
 
 	protected void doPost(String url, String... parametersArray)
@@ -107,6 +99,14 @@ public abstract class BaseJSONWebServiceClientHandler {
 		getJSONWebServiceClient().doPost(url, parameters);
 	}
 
+	protected void doPostAsJSON(String url, Object object)
+		throws CredentialException, IOException {
+
+		String json = _objectMapper.writeValueAsString(object);
+
+		getJSONWebServiceClient().doPostAsJSON(url, json);
+	}
+
 	protected String getExceptionMessage(String json) {
 		int exceptionMessageStart = json.indexOf("exception\":\"") + 12;
 
@@ -114,5 +114,7 @@ public abstract class BaseJSONWebServiceClientHandler {
 
 		return json.substring(exceptionMessageStart, exceptionMessageEnd);
 	}
+
+	private ObjectMapper _objectMapper = new ObjectMapper();
 
 }
