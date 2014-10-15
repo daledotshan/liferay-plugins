@@ -14,8 +14,9 @@
 
 package com.liferay.calendar.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.StagedGroupedModel;
@@ -40,6 +41,7 @@ import java.util.Date;
  * @see com.liferay.calendar.model.impl.CalendarNotificationTemplateModelImpl
  * @generated
  */
+@ProviderType
 public interface CalendarNotificationTemplateModel extends BaseModel<CalendarNotificationTemplate>,
 	StagedGroupedModel {
 	/*
@@ -146,10 +148,9 @@ public interface CalendarNotificationTemplateModel extends BaseModel<CalendarNot
 	 * Returns the user uuid of this calendar notification template.
 	 *
 	 * @return the user uuid of this calendar notification template
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid() throws SystemException;
+	public String getUserUuid();
 
 	/**
 	 * Sets the user uuid of this calendar notification template.
