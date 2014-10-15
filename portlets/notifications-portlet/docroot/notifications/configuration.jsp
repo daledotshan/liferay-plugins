@@ -18,26 +18,28 @@
 
 <div class="manage-notifications">
 	<div class="title">
-		<div class="notification-delivery">
-			<span><liferay-ui:message key="notification-delivery" /></span>
-		</div>
-
 		<div class="receive-notification">
-			<span><liferay-ui:message key="receive-a-notification-when-someone" /></span>
+			<c:choose>
+				<c:when test="<%= UserNotificationDeliveryLocalServiceUtil.getUserNotificationDeliveriesCount() > 0 %>">
+					<span><liferay-ui:message key="receive-a-notification-when-someone" /></span>
+				</c:when>
+				<c:otherwise>
+					<span><liferay-ui:message key="there-are-no-available-options-to-configure" /></span>
+				</c:otherwise>
+			</c:choose>
 		</div>
 	</div>
 
 	<%
-	Map<String, List<UserNotificationDefinition>> userNotificationDefinitionsMap = UserNotificationManagerUtil.getUserNotificationDefinitions();
+	Map<String, List<UserNotificationDefinition>> userNotificationDefinitionsMap = new TreeMap<String, List<UserNotificationDefinition>>(new PortletIdComparator(locale));
+
+	userNotificationDefinitionsMap.putAll(UserNotificationManagerUtil.getUserNotificationDefinitions());
 
 	for (Map.Entry<String, List<UserNotificationDefinition>> entry : userNotificationDefinitionsMap.entrySet()) {
-		String portletId = entry.getKey();
-
-		Portlet portlet = PortletLocalServiceUtil.getPortletById(portletId);
 	%>
 
 		<table class="notification-deliveries table table-condensed">
-			<caption><%= portlet.getDisplayName() %></caption>
+			<caption><%= PortalUtil.getPortletTitle(entry.getKey(), locale) %></caption>
 			<tbody>
 
 			<%
@@ -57,11 +59,11 @@
 					for (Map.Entry<Integer, UserNotificationDeliveryType> userNotificationDeliveryTypeEntry : userNotificationDeliveryTypesMap.entrySet()) {
 						UserNotificationDeliveryType userNotificationDeliveryType = userNotificationDeliveryTypeEntry.getValue();
 
-						UserNotificationDelivery userNotificationDelivery = UserNotificationDeliveryLocalServiceUtil.getUserNotificationDelivery(themeDisplay.getUserId(), portletId, userNotificationDefinition.getClassNameId(), userNotificationDefinition.getNotificationType(), userNotificationDeliveryType.getType(), userNotificationDeliveryType.isDefault());
+						UserNotificationDelivery userNotificationDelivery = UserNotificationDeliveryLocalServiceUtil.getUserNotificationDelivery(themeDisplay.getUserId(), entry.getKey(), userNotificationDefinition.getClassNameId(), userNotificationDefinition.getNotificationType(), userNotificationDeliveryType.getType(), userNotificationDeliveryType.isDefault());
 					%>
 
 						<td class="span1">
-							<aui:input cssClass="notification-delivery" data-userNotificationDeliveryId="<%= String.valueOf(userNotificationDelivery.getUserNotificationDeliveryId()) %>" inlineLabel="true" label="<%= userNotificationDeliveryType.getName() %>" name="<%= String.valueOf(userNotificationDelivery.getUserNotificationDeliveryId()) %>" type="checkbox" value="<%= userNotificationDelivery.isDeliver() %>" />
+							<aui:input cssClass="notification-delivery" data-userNotificationDeliveryId="<%= String.valueOf(userNotificationDelivery.getUserNotificationDeliveryId()) %>" disabled="<%= !userNotificationDeliveryType.isModifiable() %>" inlineLabel="true" label="<%= userNotificationDeliveryType.getName() %>" name="<%= String.valueOf(userNotificationDelivery.getUserNotificationDeliveryId()) %>" type="checkbox" value="<%= userNotificationDelivery.isDeliver() %>" />
 						</td>
 
 					<%
