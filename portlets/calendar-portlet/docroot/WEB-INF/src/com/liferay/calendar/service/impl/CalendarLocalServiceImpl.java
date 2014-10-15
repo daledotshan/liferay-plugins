@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.model.Group;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.SystemEventConstants;
 import com.liferay.portal.model.User;
@@ -54,7 +55,23 @@ public class CalendarLocalServiceImpl extends CalendarLocalServiceBaseImpl {
 
 		// Calendar
 
-		User user = userPersistence.findByPrimaryKey(userId);
+		User user = userPersistence.fetchByPrimaryKey(userId);
+
+		if (user == null) {
+			user = userPersistence.fetchByPrimaryKey(
+				serviceContext.getUserId());
+		}
+
+		if (user == null) {
+			Group group = groupPersistence.fetchByPrimaryKey(groupId);
+
+			if (group == null)
+				return null;
+
+			else {
+				user = userLocalService.getDefaultUser(group.getCompanyId());
+			}
+		}
 
 		if (color <= 0) {
 			color = PortletPropsValues.CALENDAR_COLOR_DEFAULT;
