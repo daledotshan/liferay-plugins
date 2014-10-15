@@ -14,7 +14,7 @@
 
 package com.liferay.sync.model.impl;
 
-import com.liferay.portal.kernel.exception.SystemException;
+import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.sync.model.SyncDLFileVersionDiff;
 import com.liferay.sync.service.SyncDLFileVersionDiffLocalServiceUtil;
@@ -31,6 +31,7 @@ import com.liferay.sync.service.SyncDLFileVersionDiffLocalServiceUtil;
  * @see com.liferay.sync.model.SyncDLFileVersionDiff
  * @generated
  */
+@ProviderType
 public abstract class SyncDLFileVersionDiffBaseImpl
 	extends SyncDLFileVersionDiffModelImpl implements SyncDLFileVersionDiff {
 	/*
@@ -39,7 +40,7 @@ public abstract class SyncDLFileVersionDiffBaseImpl
 	 * Never modify or reference this class directly. All methods that expect a sync d l file version diff model instance should use the {@link SyncDLFileVersionDiff} interface instead.
 	 */
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			SyncDLFileVersionDiffLocalServiceUtil.addSyncDLFileVersionDiff(this);
 		}

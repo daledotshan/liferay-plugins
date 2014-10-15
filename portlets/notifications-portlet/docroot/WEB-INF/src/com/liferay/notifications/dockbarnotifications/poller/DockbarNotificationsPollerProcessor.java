@@ -17,6 +17,7 @@ package com.liferay.notifications.dockbarnotifications.poller;
 import com.liferay.portal.kernel.poller.BasePollerProcessor;
 import com.liferay.portal.kernel.poller.PollerRequest;
 import com.liferay.portal.kernel.poller.PollerResponse;
+import com.liferay.portal.model.UserNotificationDeliveryConstants;
 import com.liferay.portal.service.UserNotificationEventLocalServiceUtil;
 
 /**
@@ -25,38 +26,46 @@ import com.liferay.portal.service.UserNotificationEventLocalServiceUtil;
 public class DockbarNotificationsPollerProcessor extends BasePollerProcessor {
 
 	@Override
-	protected void doReceive(
-			PollerRequest pollerRequest, PollerResponse pollerResponse)
+	protected PollerResponse doReceive(PollerRequest pollerRequest)
 		throws Exception {
 
-		setUserNotificationsCount(pollerRequest, pollerResponse);
+		return setUserNotificationsCount(pollerRequest);
 	}
 
 	@Override
 	protected void doSend(PollerRequest pollerRequest) throws Exception {
 	}
 
-	protected void setUserNotificationsCount(
-			PollerRequest pollerRequest, PollerResponse pollerResponse)
+	protected PollerResponse setUserNotificationsCount(
+			PollerRequest pollerRequest)
 		throws Exception {
+
+		PollerResponse pollerResponse = pollerRequest.createPollerResponse();
 
 		int newUserNotificationsCount =
 			UserNotificationEventLocalServiceUtil.
 				getDeliveredUserNotificationEventsCount(
-					pollerRequest.getUserId(), false);
+					pollerRequest.getUserId(),
+					UserNotificationDeliveryConstants.TYPE_WEBSITE, false);
 
 		pollerResponse.setParameter(
 			"newUserNotificationsCount",
 			String.valueOf(newUserNotificationsCount));
 
+		pollerResponse.setParameter(
+			"timestamp", String.valueOf(System.currentTimeMillis()));
+
 		int unreadUserNotificationsCount =
 			UserNotificationEventLocalServiceUtil.
 				getArchivedUserNotificationEventsCount(
-					pollerRequest.getUserId(), false);
+					pollerRequest.getUserId(),
+					UserNotificationDeliveryConstants.TYPE_WEBSITE, false);
 
 		pollerResponse.setParameter(
 			"unreadUserNotificationsCount",
 			String.valueOf(unreadUserNotificationsCount));
+
+		return pollerResponse;
 	}
 
 }

@@ -15,7 +15,6 @@
 package com.liferay.resourcesimporter.util;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Group;
@@ -213,13 +212,16 @@ public abstract class BaseImporter implements Importer {
 	}
 
 	@Override
+	public void setUpdateModeEnabled(boolean updateModeEnabled) {
+		this.updateModeEnabled = updateModeEnabled;
+	}
+
+	@Override
 	public void setVersion(String version) {
 		this.version = version;
 	}
 
-	protected LayoutPrototype getLayoutPrototype(long companyId, String name)
-		throws SystemException {
-
+	protected LayoutPrototype getLayoutPrototype(long companyId, String name) {
 		Locale locale = LocaleUtil.getDefault();
 
 		List<LayoutPrototype> layoutPrototypes =
@@ -264,6 +266,7 @@ public abstract class BaseImporter implements Importer {
 	protected String targetClassName;
 	protected long targetClassPK;
 	protected String targetValue;
+	protected boolean updateModeEnabled;
 	protected long userId;
 	protected String version;
 

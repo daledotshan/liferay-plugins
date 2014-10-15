@@ -24,7 +24,6 @@ import com.liferay.calendar.util.CalendarResourceUtil;
 import com.liferay.calendar.util.PortletKeys;
 import com.liferay.calendar.util.WebKeys;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.security.permission.PermissionChecker;
@@ -50,7 +49,7 @@ public class CalendarBookingAssetRendererFactory
 
 	@Override
 	public AssetRenderer getAssetRenderer(long classPK, int type)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		CalendarBooking calendarBooking =
 			CalendarBookingLocalServiceUtil.getCalendarBooking(classPK);
@@ -69,6 +68,11 @@ public class CalendarBookingAssetRendererFactory
 	}
 
 	@Override
+	public String getIconCssClass() {
+		return "icon-calendar";
+	}
+
+	@Override
 	public String getType() {
 		return TYPE;
 	}
@@ -77,7 +81,7 @@ public class CalendarBookingAssetRendererFactory
 	public PortletURL getURLAdd(
 			LiferayPortletRequest liferayPortletRequest,
 			LiferayPortletResponse liferayPortletResponse)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay)liferayPortletRequest.getAttribute(
