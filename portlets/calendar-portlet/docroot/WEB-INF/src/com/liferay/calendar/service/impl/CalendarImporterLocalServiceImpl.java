@@ -88,6 +88,10 @@ public class CalendarImporterLocalServiceImpl
 		CalendarResource calendarResource = getCalendarResource(
 			calEvent.getCompanyId(), calEvent.getGroupId());
 
+		if (calendarResource == null) {
+			return;
+		}
+
 		Date startDate = calEvent.getStartDate();
 
 		long startTime = startDate.getTime();
@@ -453,6 +457,10 @@ public class CalendarImporterLocalServiceImpl
 		CalendarResource calendarResource = getCalendarResource(
 			calEvent.getCompanyId(), calEvent.getGroupId());
 
+		if (calendarResource == null) {
+			return null;
+		}
+
 		return calendarBookingPersistence.fetchByUUID_G(
 			calEvent.getUuid(), calendarResource.getGroupId());
 	}
@@ -534,15 +542,21 @@ public class CalendarImporterLocalServiceImpl
 
 		serviceContext.setUserId(userId);
 
-		Group group = groupLocalService.getGroup(groupId);
+		Group group = groupPersistence.fetchByPrimaryKey(groupId);
 
-		if (group.isUser()) {
-			return CalendarResourceUtil.getUserCalendarResource(
-				group.getCreatorUserId(), serviceContext);
+		if (group == null) {
+			return null;
 		}
 
-		return CalendarResourceUtil.getGroupCalendarResource(
-			groupId, serviceContext);
+		else {
+			if (group.isUser()) {
+				return CalendarResourceUtil.getUserCalendarResource(
+					group.getCreatorUserId(), serviceContext);
+			}
+
+			return CalendarResourceUtil.getGroupCalendarResource(
+				groupId, serviceContext);
+			}
 	}
 
 	protected String getRecurrence(TZSRecurrence tzsRecurrence) {
@@ -658,6 +672,10 @@ public class CalendarImporterLocalServiceImpl
 
 			CalendarResource calendarResource = getCalendarResource(
 				calEvent.getCompanyId(), calEvent.getGroupId());
+
+			if (calendarResource == null) {
+				return;
+			}
 
 			linkedAssetEntry = assetEntryPersistence.findByG_CU(
 				calendarResource.getGroupId(), calEvent.getUuid());
