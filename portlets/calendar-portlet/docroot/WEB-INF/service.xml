@@ -53,6 +53,10 @@
 			<finder-column name="calendarResourceId" />
 			<finder-column name="defaultCalendar" />
 		</finder>
+
+		<!-- References -->
+
+		<reference package-path="com.liferay.portal" entity="Group" />
 	</entity>
 	<entity name="CalendarBooking" uuid="true" local-service="true" remote-service="true" trash-enabled="true">
 
@@ -268,6 +272,7 @@
 		<!-- References -->
 
 		<reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
+		<reference package-path="com.liferay.portal" entity="Group" />
 	</entity>
 	<exceptions>
 		<exception>CalendarBookingDuration</exception>
