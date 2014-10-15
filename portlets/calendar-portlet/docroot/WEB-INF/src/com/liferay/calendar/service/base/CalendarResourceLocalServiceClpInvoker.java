@@ -144,87 +144,87 @@ public class CalendarResourceLocalServiceClpInvoker {
 				"com.liferay.calendar.model.CalendarResource"
 			};
 
-		_methodName80 = "getBeanIdentifier";
+		_methodName86 = "getBeanIdentifier";
 
-		_methodParameterTypes80 = new String[] {  };
+		_methodParameterTypes86 = new String[] {  };
 
-		_methodName81 = "setBeanIdentifier";
+		_methodName87 = "setBeanIdentifier";
 
-		_methodParameterTypes81 = new String[] { "java.lang.String" };
+		_methodParameterTypes87 = new String[] { "java.lang.String" };
 
-		_methodName86 = "addCalendarResource";
+		_methodName92 = "addCalendarResource";
 
-		_methodParameterTypes86 = new String[] {
+		_methodParameterTypes92 = new String[] {
 				"long", "long", "long", "long", "java.lang.String",
 				"java.lang.String", "java.util.Map", "java.util.Map", "boolean",
 				"com.liferay.portal.service.ServiceContext"
 			};
 
-		_methodName87 = "deleteCalendarResource";
+		_methodName93 = "deleteCalendarResource";
 
-		_methodParameterTypes87 = new String[] {
+		_methodParameterTypes93 = new String[] {
 				"com.liferay.calendar.model.CalendarResource"
 			};
 
-		_methodName88 = "deleteCalendarResource";
+		_methodName94 = "deleteCalendarResource";
 
-		_methodParameterTypes88 = new String[] { "long" };
+		_methodParameterTypes94 = new String[] { "long" };
 
-		_methodName89 = "deleteCalendarResources";
+		_methodName95 = "deleteCalendarResources";
 
-		_methodParameterTypes89 = new String[] { "long" };
+		_methodParameterTypes95 = new String[] { "long" };
 
-		_methodName90 = "fetchCalendarResource";
+		_methodName96 = "fetchCalendarResource";
 
-		_methodParameterTypes90 = new String[] { "long", "long" };
+		_methodParameterTypes96 = new String[] { "long", "long" };
 
-		_methodName91 = "getCalendarResource";
+		_methodName97 = "getCalendarResource";
 
-		_methodParameterTypes91 = new String[] { "long" };
+		_methodParameterTypes97 = new String[] { "long" };
 
-		_methodName92 = "getCalendarResources";
+		_methodName98 = "getCalendarResources";
 
-		_methodParameterTypes92 = new String[] { "long" };
+		_methodParameterTypes98 = new String[] { "long" };
 
-		_methodName93 = "search";
+		_methodName99 = "search";
 
-		_methodParameterTypes93 = new String[] {
+		_methodParameterTypes99 = new String[] {
 				"long", "long[][]", "long[][]", "java.lang.String",
 				"java.lang.String", "java.lang.String", "boolean", "boolean",
 				"int", "int", "com.liferay.portal.kernel.util.OrderByComparator"
 			};
 
-		_methodName94 = "searchByKeywords";
+		_methodName100 = "searchByKeywords";
 
-		_methodParameterTypes94 = new String[] {
+		_methodParameterTypes100 = new String[] {
 				"long", "long[][]", "long[][]", "java.lang.String", "boolean",
 				"boolean", "int", "int",
 				"com.liferay.portal.kernel.util.OrderByComparator"
 			};
 
-		_methodName95 = "searchCount";
+		_methodName101 = "searchCount";
 
-		_methodParameterTypes95 = new String[] {
+		_methodParameterTypes101 = new String[] {
 				"long", "long[][]", "long[][]", "java.lang.String", "boolean"
 			};
 
-		_methodName96 = "searchCount";
+		_methodName102 = "searchCount";
 
-		_methodParameterTypes96 = new String[] {
+		_methodParameterTypes102 = new String[] {
 				"long", "long[][]", "long[][]", "java.lang.String",
 				"java.lang.String", "java.lang.String", "boolean", "boolean"
 			};
 
-		_methodName97 = "updateAsset";
+		_methodName103 = "updateAsset";
 
-		_methodParameterTypes97 = new String[] {
+		_methodParameterTypes103 = new String[] {
 				"long", "com.liferay.calendar.model.CalendarResource",
 				"long[][]", "java.lang.String[][]"
 			};
 
-		_methodName98 = "updateCalendarResource";
+		_methodName104 = "updateCalendarResource";
 
-		_methodParameterTypes98 = new String[] {
+		_methodParameterTypes104 = new String[] {
 				"long", "java.util.Map", "java.util.Map", "boolean",
 				"com.liferay.portal.service.ServiceContext"
 			};
@@ -361,20 +361,20 @@ public class CalendarResourceLocalServiceClpInvoker {
 			return CalendarResourceLocalServiceUtil.updateCalendarResource((com.liferay.calendar.model.CalendarResource)arguments[0]);
 		}
 
-		if (_methodName80.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes80, parameterTypes)) {
+		if (_methodName86.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes86, parameterTypes)) {
 			return CalendarResourceLocalServiceUtil.getBeanIdentifier();
 		}
 
-		if (_methodName81.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes81, parameterTypes)) {
+		if (_methodName87.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes87, parameterTypes)) {
 			CalendarResourceLocalServiceUtil.setBeanIdentifier((java.lang.String)arguments[0]);
 
 			return null;
 		}
 
-		if (_methodName86.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes86, parameterTypes)) {
+		if (_methodName92.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes92, parameterTypes)) {
 			return CalendarResourceLocalServiceUtil.addCalendarResource(((Long)arguments[0]).longValue(),
 				((Long)arguments[1]).longValue(),
 				((Long)arguments[2]).longValue(),
@@ -386,41 +386,41 @@ public class CalendarResourceLocalServiceClpInvoker {
 				(com.liferay.portal.service.ServiceContext)arguments[9]);
 		}
 
-		if (_methodName87.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes87, parameterTypes)) {
+		if (_methodName93.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes93, parameterTypes)) {
 			return CalendarResourceLocalServiceUtil.deleteCalendarResource((com.liferay.calendar.model.CalendarResource)arguments[0]);
 		}
 
-		if (_methodName88.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes88, parameterTypes)) {
+		if (_methodName94.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes94, parameterTypes)) {
 			return CalendarResourceLocalServiceUtil.deleteCalendarResource(((Long)arguments[0]).longValue());
 		}
 
-		if (_methodName89.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes89, parameterTypes)) {
+		if (_methodName95.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes95, parameterTypes)) {
 			CalendarResourceLocalServiceUtil.deleteCalendarResources(((Long)arguments[0]).longValue());
 
 			return null;
 		}
 
-		if (_methodName90.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes90, parameterTypes)) {
+		if (_methodName96.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes96, parameterTypes)) {
 			return CalendarResourceLocalServiceUtil.fetchCalendarResource(((Long)arguments[0]).longValue(),
 				((Long)arguments[1]).longValue());
 		}
 
-		if (_methodName91.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes91, parameterTypes)) {
+		if (_methodName97.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes97, parameterTypes)) {
 			return CalendarResourceLocalServiceUtil.getCalendarResource(((Long)arguments[0]).longValue());
 		}
 
-		if (_methodName92.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes92, parameterTypes)) {
+		if (_methodName98.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes98, parameterTypes)) {
 			return CalendarResourceLocalServiceUtil.getCalendarResources(((Long)arguments[0]).longValue());
 		}
 
-		if (_methodName93.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes93, parameterTypes)) {
+		if (_methodName99.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes99, parameterTypes)) {
 			return CalendarResourceLocalServiceUtil.search(((Long)arguments[0]).longValue(),
 				(long[])arguments[1], (long[])arguments[2],
 				(java.lang.String)arguments[3], (java.lang.String)arguments[4],
@@ -432,8 +432,8 @@ public class CalendarResourceLocalServiceClpInvoker {
 				(com.liferay.portal.kernel.util.OrderByComparator<com.liferay.calendar.model.CalendarResource>)arguments[10]);
 		}
 
-		if (_methodName94.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes94, parameterTypes)) {
+		if (_methodName100.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes100, parameterTypes)) {
 			return CalendarResourceLocalServiceUtil.searchByKeywords(((Long)arguments[0]).longValue(),
 				(long[])arguments[1], (long[])arguments[2],
 				(java.lang.String)arguments[3],
@@ -444,16 +444,16 @@ public class CalendarResourceLocalServiceClpInvoker {
 				(com.liferay.portal.kernel.util.OrderByComparator<com.liferay.calendar.model.CalendarResource>)arguments[8]);
 		}
 
-		if (_methodName95.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes95, parameterTypes)) {
+		if (_methodName101.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes101, parameterTypes)) {
 			return CalendarResourceLocalServiceUtil.searchCount(((Long)arguments[0]).longValue(),
 				(long[])arguments[1], (long[])arguments[2],
 				(java.lang.String)arguments[3],
 				((Boolean)arguments[4]).booleanValue());
 		}
 
-		if (_methodName96.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes96, parameterTypes)) {
+		if (_methodName102.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes102, parameterTypes)) {
 			return CalendarResourceLocalServiceUtil.searchCount(((Long)arguments[0]).longValue(),
 				(long[])arguments[1], (long[])arguments[2],
 				(java.lang.String)arguments[3], (java.lang.String)arguments[4],
@@ -462,8 +462,8 @@ public class CalendarResourceLocalServiceClpInvoker {
 				((Boolean)arguments[7]).booleanValue());
 		}
 
-		if (_methodName97.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes97, parameterTypes)) {
+		if (_methodName103.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes103, parameterTypes)) {
 			CalendarResourceLocalServiceUtil.updateAsset(((Long)arguments[0]).longValue(),
 				(com.liferay.calendar.model.CalendarResource)arguments[1],
 				(long[])arguments[2], (java.lang.String[])arguments[3]);
@@ -471,8 +471,8 @@ public class CalendarResourceLocalServiceClpInvoker {
 			return null;
 		}
 
-		if (_methodName98.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes98, parameterTypes)) {
+		if (_methodName104.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes104, parameterTypes)) {
 			return CalendarResourceLocalServiceUtil.updateCalendarResource(((Long)arguments[0]).longValue(),
 				(java.util.Map<java.util.Locale, java.lang.String>)arguments[1],
 				(java.util.Map<java.util.Locale, java.lang.String>)arguments[2],
@@ -529,22 +529,10 @@ public class CalendarResourceLocalServiceClpInvoker {
 	private String[] _methodParameterTypes22;
 	private String _methodName23;
 	private String[] _methodParameterTypes23;
-	private String _methodName80;
-	private String[] _methodParameterTypes80;
-	private String _methodName81;
-	private String[] _methodParameterTypes81;
 	private String _methodName86;
 	private String[] _methodParameterTypes86;
 	private String _methodName87;
 	private String[] _methodParameterTypes87;
-	private String _methodName88;
-	private String[] _methodParameterTypes88;
-	private String _methodName89;
-	private String[] _methodParameterTypes89;
-	private String _methodName90;
-	private String[] _methodParameterTypes90;
-	private String _methodName91;
-	private String[] _methodParameterTypes91;
 	private String _methodName92;
 	private String[] _methodParameterTypes92;
 	private String _methodName93;
@@ -559,4 +547,16 @@ public class CalendarResourceLocalServiceClpInvoker {
 	private String[] _methodParameterTypes97;
 	private String _methodName98;
 	private String[] _methodParameterTypes98;
+	private String _methodName99;
+	private String[] _methodParameterTypes99;
+	private String _methodName100;
+	private String[] _methodParameterTypes100;
+	private String _methodName101;
+	private String[] _methodParameterTypes101;
+	private String _methodName102;
+	private String[] _methodParameterTypes102;
+	private String _methodName103;
+	private String[] _methodParameterTypes103;
+	private String _methodName104;
+	private String[] _methodParameterTypes104;
 }
