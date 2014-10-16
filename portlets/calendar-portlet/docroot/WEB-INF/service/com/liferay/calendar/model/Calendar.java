@@ -14,6 +14,8 @@
 
 package com.liferay.calendar.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.model.PermissionedModel;
 
 /**
@@ -25,6 +27,7 @@ import com.liferay.portal.model.PermissionedModel;
  * @see com.liferay.calendar.model.impl.CalendarModelImpl
  * @generated
  */
+@ProviderType
 public interface Calendar extends CalendarModel, PermissionedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -32,10 +35,8 @@ public interface Calendar extends CalendarModel, PermissionedModel {
 	 * Never modify this interface directly. Add methods to {@link com.liferay.calendar.model.impl.CalendarImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
 	public com.liferay.calendar.model.CalendarResource getCalendarResource()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException;
+		throws com.liferay.portal.kernel.exception.PortalException;
 
 	public java.util.TimeZone getTimeZone()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException;
+		throws com.liferay.portal.kernel.exception.PortalException;
 }

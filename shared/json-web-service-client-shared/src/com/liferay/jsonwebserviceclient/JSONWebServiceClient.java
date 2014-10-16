@@ -16,6 +16,8 @@ package com.liferay.jsonwebserviceclient;
 
 import java.io.IOException;
 
+import java.security.KeyStore;
+
 import java.util.Map;
 
 import javax.security.auth.login.CredentialException;
@@ -32,7 +34,12 @@ public interface JSONWebServiceClient {
 	public String doPost(String url, Map<String, String> parameters)
 		throws CredentialException, IOException;
 
+	public String doPostAsJSON(String url, String json)
+		throws CredentialException, IOException;
+
 	public void resetHttpClient();
+
+	public void setKeyStore(KeyStore keyStore);
 
 	public void setLogin(String login);
 

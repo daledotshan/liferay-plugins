@@ -18,13 +18,15 @@ import com.liferay.calendar.model.Calendar;
 import com.liferay.calendar.model.CalendarResource;
 import com.liferay.calendar.service.CalendarLocalServiceUtil;
 import com.liferay.calendar.service.CalendarResourceLocalServiceUtil;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
+import com.liferay.portal.kernel.lar.StagedModelModifiedDateComparator;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.xml.Element;
@@ -53,16 +55,40 @@ public class CalendarResourceStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException, SystemException {
+		throws PortalException {
 
-		CalendarResource calendarResource =
-			CalendarResourceLocalServiceUtil.
-				fetchCalendarResourceByUuidAndGroupId(uuid, groupId);
+		CalendarResource calendarResource = fetchStagedModelByUuidAndGroupId(
+			uuid, groupId);
 
 		if (calendarResource != null) {
 			CalendarResourceLocalServiceUtil.deleteCalendarResource(
 				calendarResource);
 		}
+	}
+
+	@Override
+	public CalendarResource fetchStagedModelByUuidAndCompanyId(
+		String uuid, long companyId) {
+
+		List<CalendarResource> calendarResources =
+			CalendarResourceLocalServiceUtil.
+				getCalendarResourcesByUuidAndCompanyId(
+					uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					new StagedModelModifiedDateComparator<CalendarResource>());
+
+		if (ListUtil.isEmpty(calendarResources)) {
+			return null;
+		}
+
+		return calendarResources.get(0);
+	}
+
+	@Override
+	public CalendarResource fetchStagedModelByUuidAndGroupId(
+		String uuid, long groupId) {
+
+		return CalendarResourceLocalServiceUtil.
+			fetchCalendarResourceByUuidAndGroupId(uuid, groupId);
 	}
 
 	@Override
@@ -130,9 +156,6 @@ public class CalendarResourceStagedModelDataHandler
 		long userId = portletDataContext.getUserId(
 			calendarResource.getUserUuid());
 
-		StagedModelDataHandlerUtil.importReferenceStagedModels(
-			portletDataContext, calendarResource, Calendar.class);
-
 		long classPK = getClassPK(portletDataContext, calendarResource, userId);
 		Map<Locale, String> calendarResourceNameMap =
 			getCalendarResourceNameMap(portletDataContext, calendarResource);
@@ -144,10 +167,9 @@ public class CalendarResourceStagedModelDataHandler
 
 		if (portletDataContext.isDataStrategyMirror()) {
 			CalendarResource existingCalendarResource =
-				CalendarResourceLocalServiceUtil.
-					fetchCalendarResourceByUuidAndGroupId(
-						calendarResource.getUuid(),
-						portletDataContext.getScopeGroupId());
+				fetchStagedModelByUuidAndGroupId(
+					calendarResource.getUuid(),
+					portletDataContext.getScopeGroupId());
 
 			if (existingCalendarResource == null) {
 				existingCalendarResource =
@@ -206,7 +228,7 @@ public class CalendarResourceStagedModelDataHandler
 			portletDataContext.getSourceGroupId());
 
 		if ((sourceGroup == null) ||
-			!calendarResourceName.equals(sourceGroup.getName())) {
+			!calendarResourceName.equals(sourceGroup.getDescriptiveName())) {
 
 			return calendarResource.getNameMap();
 		}
@@ -244,10 +266,9 @@ public class CalendarResourceStagedModelDataHandler
 	}
 
 	protected void updateCalendars(
-			PortletDataContext portletDataContext,
-			CalendarResource calendarResource,
-			CalendarResource importedCalendarResource)
-		throws SystemException {
+		PortletDataContext portletDataContext,
+		CalendarResource calendarResource,
+		CalendarResource importedCalendarResource) {
 
 		Map<Long, Long> calendarIds =
 			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
