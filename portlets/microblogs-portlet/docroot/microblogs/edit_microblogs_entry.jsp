@@ -99,7 +99,7 @@ if (comment) {
 		<c:otherwise>
 			<div class="microblogs-entry">
 				<span class="thumbnail">
-					<a href="<%= receiverUserDisplayURL %>"><img alt="<%= receiverUserFullName %>" src="<%= receiverUserPortaitURL %>" /></a>
+					<a href="<%= receiverUserDisplayURL %>"><img alt="<%= HtmlUtil.escapeAttribute(receiverUserFullName) %>" src="<%= receiverUserPortaitURL %>" /></a>
 				</span>
 
 				<div class="entry-bubble">
@@ -122,12 +122,12 @@ if (comment) {
 
 <portlet:actionURL name="updateMicroblogsEntry" var="updateMicroblogsEntryURL" />
 
-<portlet:renderURL var="commentsURL" windowState="<%= LiferayWindowState.EXCLUSIVE.toString() %>">
-	<portlet:param name="mvcPath" value="/microblogs/view_comments.jsp" />
-	<portlet:param name="receiverMicroblogsEntryId" value="<%= String.valueOf(microblogsEntryId) %>" />
-</portlet:renderURL>
-
 <aui:form action="<%= updateMicroblogsEntryURL %>" cssClass="<%= formCssClass %>" name="<%= formName %>">
+	<portlet:renderURL var="commentsURL" windowState="<%= LiferayWindowState.EXCLUSIVE.toString() %>">
+		<portlet:param name="mvcPath" value="/microblogs/view_comments.jsp" />
+		<portlet:param name="receiverMicroblogsEntryId" value="<%= String.valueOf(microblogsEntryId) %>" />
+	</portlet:renderURL>
+
 	<aui:input name="redirect" type="hidden" value="<%= comment ? commentsURL : redirect %>" />
 	<aui:input name="microblogsEntryId" type="hidden" value="<%= edit ? microblogsEntryId : 0 %>" />
 	<aui:input name="receiverUserId" type="hidden" value="<%= receiverUserId %>" />
@@ -149,7 +149,7 @@ if (comment) {
 	<c:if test="<%= !repost %>">
 		<c:if test="<%= comment %>">
 			<span class="thumbnail">
-				<a href="<%= user.getDisplayURL(themeDisplay) %>"><img alt="<%= HtmlUtil.escape(user.getFullName()) %>" src="<%= user.getPortraitURL(themeDisplay) %>" /></a>
+				<a href="<%= user.getDisplayURL(themeDisplay) %>"><img alt="<%= HtmlUtil.escapeAttribute(user.getFullName()) %>" src="<%= user.getPortraitURL(themeDisplay) %>" /></a>
 			</span>
 		</c:if>
 
@@ -188,7 +188,7 @@ if (comment) {
 	%>
 
 	<div class="<%= rowCssClass %>">
-		<aui:button cssClass="microblogs-post pull-left" disabled="<%= !repost %>" name="submit" type="submit" value="post" />
+		<aui:button cssClass="microblogs-post pull-left" disabled="<%= !repost %>" type="submit" value="post" />
 
 		<c:if test="<%= repost %>">
 			<aui:button onClick="Liferay.Microblogs.closePopup();" type="cancel" />
@@ -229,7 +229,7 @@ if (comment) {
 
 	var TPL_SEARCH_RESULTS = '<div class="microblogs-autocomplete">' +
 		'<div class="thumbnail">' +
-			'<img src="{portraitURL}" alt="{fullName}" />' +
+			'<img alt="{fullName}" src="{portraitURL}" />' +
 		'</div>' +
 		'<div>' +
 			'<span class="user-name">{fullName}</span><br />' +
@@ -245,11 +245,11 @@ if (comment) {
 			var contentInput = event.currentTarget;
 
 			var countdown = form.one('.microblogs-countdown');
-			var submitButton = form.one('#<portlet:namespace />submit');
+			var submitButton = form.one('.microblogs-post');
 
 			var remaining = (150 - contentInput.val().length);
 
-			var disabled = ((remaining == 150) || (contentInput.get('value') == "") || (remaining < 0));
+			var disabled = ((remaining == 150) || (contentInput.get('value') == '') || (remaining < 0));
 
 			countdown.html(remaining);
 
@@ -493,7 +493,7 @@ if (comment) {
 				updateContainer = A.one('#<portlet:namespace />commentsContainer<%= microblogsEntryId %>');
 			</c:if>
 
-			Liferay.Microblogs.updateMicroblogs(form, url.get("value"), updateContainer);
+			Liferay.Microblogs.updateMicroblogs(form, url.get('value'), updateContainer);
 
 			<c:if test="<%= repost %>">
 				Liferay.Microblogs.closePopup();
