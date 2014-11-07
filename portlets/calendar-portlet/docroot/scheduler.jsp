@@ -17,7 +17,7 @@
 <%@ include file="/init.jsp" %>
 
 <%
-String activeView = ParamUtil.getString(request, "activeView", defaultView);
+String activeView = ParamUtil.getString(request, "activeView", sessionClicksDefaultView);
 long date = ParamUtil.getLong(request, "date", System.currentTimeMillis());
 String editCalendarBookingURL = ParamUtil.getString(request, "editCalendarBookingURL");
 String filterCalendarBookings = ParamUtil.getString(request, "filterCalendarBookings", null);
@@ -37,7 +37,6 @@ String viewCalendarBookingURL = ParamUtil.getString(request, "viewCalendarBookin
 <%@ include file="/event_recorder.jspf" %>
 
 <aui:script use="aui-toggler,liferay-calendar-list,liferay-scheduler,liferay-store,json">
-	Liferay.CalendarUtil.CALENDAR_BOOKINGS_URL = '<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="calendarBookings" />';
 	Liferay.CalendarUtil.PORTLET_NAMESPACE = '<portlet:namespace />';
 	Liferay.CalendarUtil.USER_TIME_ZONE = '<%= HtmlUtil.escapeJS(userTimeZone.getID()) %>';
 
@@ -72,7 +71,12 @@ String viewCalendarBookingURL = ParamUtil.getString(request, "viewCalendarBookin
 			{
 				height: 700,
 				isoTime: <%= isoTimeFormat %>,
-				readOnly: <%= readOnly %>
+				readOnly: <%= readOnly %>,
+				strings: {
+					close: '<liferay-ui:message key="close" />',
+					more: '<%= StringUtil.toLowerCase(LanguageUtil.get(request, "more")) %>',
+					show: '<liferay-ui:message key="show" />'
+				}
 			}
 		);
 	</c:if>
