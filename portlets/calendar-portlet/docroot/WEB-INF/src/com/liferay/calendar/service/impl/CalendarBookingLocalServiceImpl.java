@@ -21,10 +21,14 @@ import com.liferay.calendar.model.CalendarBooking;
 import com.liferay.calendar.model.CalendarBookingConstants;
 import com.liferay.calendar.notification.NotificationTemplateType;
 import com.liferay.calendar.notification.NotificationType;
+import com.liferay.calendar.recurrence.Frequency;
+import com.liferay.calendar.recurrence.PositionalWeekday;
 import com.liferay.calendar.recurrence.Recurrence;
 import com.liferay.calendar.recurrence.RecurrenceSerializer;
+import com.liferay.calendar.recurrence.Weekday;
 import com.liferay.calendar.service.base.CalendarBookingLocalServiceBaseImpl;
 import com.liferay.calendar.social.CalendarActivityKeys;
+import com.liferay.calendar.util.CalendarBookingIterator;
 import com.liferay.calendar.util.CalendarDataFormat;
 import com.liferay.calendar.util.CalendarDataHandler;
 import com.liferay.calendar.util.CalendarDataHandlerFactory;
@@ -172,6 +176,30 @@ public class CalendarBookingLocalServiceImpl
 		calendarBooking.setStatus(
 			CalendarBookingWorkflowConstants.STATUS_PENDING);
 		calendarBooking.setStatusDate(serviceContext.getModifiedDate(now));
+
+		if (Validator.isNotNull(recurrence)) {
+			Recurrence recurrenceObj = RecurrenceSerializer.deserialize(
+				recurrence);
+
+			List<PositionalWeekday> positionalWeekdays =
+				recurrenceObj.getPositionalWeekdays();
+
+			boolean isInWeekdays = true;
+
+			if (!positionalWeekdays.isEmpty()) {
+				isInWeekdays = isInWeekdays(
+					positionalWeekdays, startTimeJCalendar, recurrenceObj);
+			}
+
+			if (!isInWeekdays) {
+				try {
+					resetStartTimeAndEndTime(calendarBooking);
+				}
+				catch (java.text.ParseException pe) {
+					_log.error("Unable to parse data ", pe);
+				}
+			}
+		}
 
 		calendarBookingPersistence.update(calendarBooking);
 
@@ -1086,6 +1114,76 @@ public class CalendarBookingLocalServiceImpl
 		jsonObject.put("title", calendarBooking.getTitle());
 
 		return jsonObject.toString();
+	}
+
+	protected boolean isInWeekdays(
+		List<PositionalWeekday> positionalWeekdays,
+		java.util.Calendar startTimeJCalendar, Recurrence recurrence) {
+
+		Weekday startTimeWeekday = Weekday.getWeekday(startTimeJCalendar);
+
+		List<Weekday> weekdays = new ArrayList<Weekday>();
+
+		for (PositionalWeekday positionalWeekday : positionalWeekdays) {
+			weekdays.add(positionalWeekday.getWeekday());
+		}
+
+		int position = startTimeJCalendar.get(
+			java.util.Calendar.DAY_OF_WEEK_IN_MONTH);
+
+		PositionalWeekday positionalWeekday = new PositionalWeekday(
+			startTimeWeekday, position);
+
+		Frequency frequency = recurrence.getFrequency();
+		boolean isInWeekdays = true;
+
+		switch (frequency) {
+
+			case DAILY :
+
+				/* No more adjustments needed */
+
+				break;
+
+			case WEEKLY :
+
+				if (!weekdays.contains(startTimeWeekday)) {
+					isInWeekdays = false;
+				}
+
+				break;
+
+			case MONTHLY :
+			case YEARLY :
+
+				if (!positionalWeekdays.contains(positionalWeekday)) {
+					isInWeekdays = false;
+				}
+
+				break;
+		}
+
+		return isInWeekdays;
+	}
+
+	protected void resetStartTimeAndEndTime(CalendarBooking calendarBooking)
+		throws java.text.ParseException {
+
+		int i = 1;
+		CalendarBookingIterator calendarBookingIterator =
+			new CalendarBookingIterator(calendarBooking);
+
+		while (calendarBookingIterator.hasNext()) {
+			CalendarBooking calendarBooking1 = calendarBookingIterator.next();
+
+			if (i == 2) {
+				calendarBooking.setStartTime(calendarBooking1.getStartTime());
+				calendarBooking.setEndTime(calendarBooking1.getEndTime());
+				break;
+			}
+
+			i++;
+		}
 	}
 
 	protected void sendNotification(
