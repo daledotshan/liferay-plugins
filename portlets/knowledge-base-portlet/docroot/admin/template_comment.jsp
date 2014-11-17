@@ -32,7 +32,7 @@ KBComment kbComment = (KBComment)request.getAttribute("template_comment.jsp-kb_c
 				userName="<%= kbComment.getUserName() %>"
 			/>
 		</td>
-		<td valign="top" width="99%">
+		<td valign="top" width="90%">
 			<div>
 				<strong class="kb-question"><liferay-ui:message key="was-this-information-helpful" /></strong>
 
@@ -55,7 +55,7 @@ KBComment kbComment = (KBComment)request.getAttribute("template_comment.jsp-kb_c
 			<br />
 
 			<div>
-				<%= LanguageUtil.format(pageContext, "posted-on-x", dateFormatDateTime.format(kbComment.getModifiedDate()), false) %>
+				<%= LanguageUtil.format(request, "posted-on-x", dateFormatDateTime.format(kbComment.getModifiedDate()), false) %>
 			</div>
 
 			<c:if test="<%= KBCommentPermission.contains(permissionChecker, kbComment, ActionKeys.DELETE) %>">
