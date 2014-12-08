@@ -1033,9 +1033,7 @@ public class CalendarBookingLocalServiceImpl
 			childCalendarIds.length);
 
 		for (CalendarBooking childCalendarBooking : childCalendarBookings) {
-			if (childCalendarBooking.isMasterBooking() ||
-				childCalendarBooking.isDenied()) {
-
+			if (childCalendarBooking.isMasterBooking()) {
 				continue;
 			}
 
