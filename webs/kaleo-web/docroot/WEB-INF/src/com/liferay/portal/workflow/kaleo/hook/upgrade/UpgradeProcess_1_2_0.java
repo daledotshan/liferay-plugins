@@ -30,6 +30,24 @@ public class UpgradeProcess_1_2_0 extends UpgradeProcess {
 
 	@Override
 	protected void doUpgrade() throws Exception {
+		if (tableHasColumn("KaleoAction", "scriptRequiredContexts") ||
+			tableHasColumn("KaleoCondition", "scriptRequiredContexts") ||
+			tableHasColumn(
+				"KaleoTaskAssignment","assigneeScriptRequiredContexts")){
+
+			return;
+		}
+
+		runSQL(
+			"alter table KaleoAction add column scriptRequiredContexts " +
+				"VARCHAR(75) null");
+		runSQL(
+			"alter table KaleoCondition add column scriptRequiredContexts " +
+				"VARCHAR(75) null");
+		runSQL(
+			"alter table KaleoTaskAssignment add column " +
+				"assigneeScriptRequiredContexts VARCHAR(75) null");
+
 		upgrade(UpgradeKaleoLog.class);
 		upgrade(UpgradeKaleoNotificationRecipient.class);
 	}
