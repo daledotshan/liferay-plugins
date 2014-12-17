@@ -23,7 +23,6 @@ import com.liferay.calendar.service.permission.CalendarPermission;
 import com.liferay.calendar.util.comparator.CalendarNameComparator;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -31,7 +30,6 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.UniqueList;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.theme.ThemeDisplay;
 
@@ -39,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,9 +51,8 @@ import java.util.TimeZone;
 public class CalendarUtil {
 
 	public static JSONObject getCalendarRenderingRules(
-			ThemeDisplay themeDisplay, long[] calendarIds, int[] statuses,
-			long startTime, long endTime, String ruleName)
-		throws SystemException {
+		ThemeDisplay themeDisplay, long[] calendarIds, int[] statuses,
+		long startTime, long endTime, String ruleName, TimeZone timeZone) {
 
 		List<CalendarBooking> calendarBookings =
 			CalendarBookingLocalServiceUtil.search(
@@ -66,10 +64,16 @@ public class CalendarUtil {
 			new HashMap<Integer, Map<Integer, List<Integer>>>();
 
 		for (CalendarBooking calendarBooking : calendarBookings) {
+			TimeZone displayTimeZone = timeZone;
+
+			if (calendarBooking.isAllDay()) {
+				displayTimeZone = _utcTimeZone;
+			}
+
 			java.util.Calendar startTimeJCalendar = JCalendarUtil.getJCalendar(
-				calendarBooking.getStartTime());
+				calendarBooking.getStartTime(), displayTimeZone);
 			java.util.Calendar endTimeJCalendar = JCalendarUtil.getJCalendar(
-				calendarBooking.getEndTime());
+				calendarBooking.getEndTime(), displayTimeZone);
 
 			long days = JCalendarUtil.getDaysBetween(
 				startTimeJCalendar, endTimeJCalendar);
@@ -135,7 +139,7 @@ public class CalendarUtil {
 
 	public static Collection<CalendarResource> getCalendarResources(
 			List<CalendarBooking> calendarBookings)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		Set<CalendarResource> calendarResources =
 			new HashSet<CalendarResource>();
@@ -167,7 +171,7 @@ public class CalendarUtil {
 		return calendarBooking;
 	}
 
-	public static OrderByComparator getOrderByComparator(
+	public static OrderByComparator<Calendar> getOrderByComparator(
 		String orderByCol, String orderByType) {
 
 		boolean orderByAsc = false;
@@ -176,21 +180,21 @@ public class CalendarUtil {
 			orderByAsc = true;
 		}
 
-		OrderByComparator orderByComparator = new CalendarNameComparator(
-			orderByAsc);
+		OrderByComparator<Calendar> orderByComparator =
+			new CalendarNameComparator(orderByAsc);
 
 		return orderByComparator;
 	}
 
 	public static String[] splitKeywords(String keywords) {
-		List<String> keywordsList = new UniqueList<String>();
+		Set<String> keywordsSet = new LinkedHashSet<String>();
 
 		StringBundler sb = new StringBundler();
 
 		for (char c : keywords.toCharArray()) {
 			if (Character.isWhitespace(c)) {
 				if (sb.length() > 0) {
-					keywordsList.add(sb.toString());
+					keywordsSet.add(sb.toString());
 
 					sb = new StringBundler();
 				}
@@ -204,16 +208,15 @@ public class CalendarUtil {
 		}
 
 		if (sb.length() > 0) {
-			keywordsList.add(sb.toString());
+			keywordsSet.add(sb.toString());
 		}
 
-		return StringUtil.split(StringUtil.merge(keywordsList));
+		return StringUtil.split(StringUtil.merge(keywordsSet));
 	}
 
 	public static JSONObject toCalendarBookingJSONObject(
-			ThemeDisplay themeDisplay, CalendarBooking calendarBooking,
-			TimeZone timeZone)
-		throws SystemException {
+		ThemeDisplay themeDisplay, CalendarBooking calendarBooking,
+		TimeZone timeZone) {
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
@@ -237,6 +240,14 @@ public class CalendarUtil {
 		jsonObject.put("firstReminder", calendarBooking.getFirstReminder());
 		jsonObject.put(
 			"firstReminderType", calendarBooking.getFirstReminderType());
+
+		List<CalendarBooking> childCalendarBookings =
+			calendarBooking.getChildCalendarBookings();
+
+		jsonObject.put(
+			"hasChildCalendarBookings", childCalendarBookings.size() > 1);
+
+		jsonObject.put("instanceIndex", calendarBooking.getInstanceIndex());
 		jsonObject.put("location", calendarBooking.getLocation());
 		jsonObject.put(
 			"parentCalendarBookingId",
@@ -260,7 +271,7 @@ public class CalendarUtil {
 
 	public static JSONArray toCalendarBookingsJSONArray(
 			ThemeDisplay themeDisplay, List<CalendarBooking> calendarBookings)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
@@ -279,9 +290,8 @@ public class CalendarUtil {
 	}
 
 	public static JSONArray toCalendarBookingsJSONArray(
-			ThemeDisplay themeDisplay, List<CalendarBooking> calendarBookings,
-			TimeZone timeZone)
-		throws PortalException, SystemException {
+		ThemeDisplay themeDisplay, List<CalendarBooking> calendarBookings,
+		TimeZone timeZone) {
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
@@ -296,8 +306,7 @@ public class CalendarUtil {
 	}
 
 	public static JSONObject toCalendarJSONObject(
-			ThemeDisplay themeDisplay, Calendar calendar)
-		throws SystemException {
+		ThemeDisplay themeDisplay, Calendar calendar) {
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
@@ -347,8 +356,7 @@ public class CalendarUtil {
 	}
 
 	public static JSONArray toCalendarsJSONArray(
-			ThemeDisplay themeDisplay, List<Calendar> calendars)
-		throws SystemException {
+		ThemeDisplay themeDisplay, List<Calendar> calendars) {
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
@@ -418,5 +426,7 @@ public class CalendarUtil {
 
 		return jsonObject;
 	}
+
+	private static TimeZone _utcTimeZone = TimeZone.getTimeZone(StringPool.UTC);
 
 }
