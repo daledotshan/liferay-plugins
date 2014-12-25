@@ -32,9 +32,9 @@ String successURL = portletPreferences.getValue("successURL", StringPool.BLANK);
 		<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
 	</c:if>
 
-	<aui:fieldset label="<%= HtmlUtil.escape(title) %>">
+	<aui:fieldset label="<%= title %>">
 		<c:if test="<%= Validator.isNotNull(description) %>">
-			<p class="description"><%= HtmlUtil.escape(description) %></p>
+			<p class="description"><%= description %></p>
 		</c:if>
 
 		<liferay-ui:success key="success" message="the-form-information-was-sent-successfully" />
@@ -80,25 +80,25 @@ String successURL = portletPreferences.getValue("successURL", StringPool.BLANK);
 
 			<c:choose>
 				<c:when test='<%= fieldType.equals("paragraph") %>'>
-					<p class="lfr-webform" id="<portlet:namespace /><%= fieldName %>"><%= HtmlUtil.escape(fieldOptions) %></p>
+					<p class="lfr-webform" id="<portlet:namespace /><%= fieldName %>"><%= fieldOptions %></p>
 				</c:when>
 				<c:when test='<%= fieldType.equals("text") %>'>
-					<aui:input cssClass='<%= fieldOptional ? "optional" : StringPool.BLANK %>' label="<%= HtmlUtil.escape(fieldLabel) %>" name="<%= fieldName %>" value="<%= HtmlUtil.escape(fieldValue) %>" />
+					<aui:input cssClass='<%= fieldOptional ? "optional" : StringPool.BLANK %>' label="<%= fieldLabel %>" name="<%= fieldName %>" value="<%= fieldValue %>" />
 				</c:when>
 				<c:when test='<%= fieldType.equals("textarea") %>'>
-					<aui:input cssClass='<%= "lfr-textarea-container" + (fieldOptional ? "optional" : StringPool.BLANK) %>' label="<%= HtmlUtil.escape(fieldLabel) %>" name="<%= fieldName %>" type="textarea" value="<%= HtmlUtil.escape(fieldValue) %>" wrap="soft" />
+					<aui:input cssClass='<%= (fieldOptional ? "optional" : StringPool.BLANK) %>' label="<%= fieldLabel %>" name="<%= fieldName %>" type="textarea" value="<%= fieldValue %>" wrap="soft" wrapperCssClass="lfr-textarea-container" />
 				</c:when>
 				<c:when test='<%= fieldType.equals("checkbox") %>'>
-					<aui:input cssClass='<%= fieldOptional ? "optional" : StringPool.BLANK %>' label="<%= HtmlUtil.escape(fieldLabel) %>" name="<%= fieldName %>" type="checkbox" value="<%= GetterUtil.getBoolean(fieldValue) %>" />
+					<aui:input cssClass='<%= fieldOptional ? "optional" : StringPool.BLANK %>' label="<%= fieldLabel %>" name="<%= fieldName %>" type="checkbox" value="<%= GetterUtil.getBoolean(fieldValue) %>" />
 				</c:when>
 				<c:when test='<%= fieldType.equals("radio") %>'>
-					<aui:field-wrapper cssClass='<%= fieldOptional ? "optional" : StringPool.BLANK %>' label="<%= HtmlUtil.escape(fieldLabel) %>" name="<%= fieldName %>">
+					<aui:field-wrapper cssClass='<%= fieldOptional ? "optional" : StringPool.BLANK %>' label="<%= fieldLabel %>" name="<%= fieldName %>">
 
 						<%
 						for (String fieldOptionValue : WebFormUtil.split(fieldOptions)) {
 						%>
 
-							<aui:input checked="<%= fieldValue.equals(fieldOptionValue) %>" label="<%= HtmlUtil.escape(fieldOptionValue) %>" name="<%= fieldName %>" type="radio" value="<%= HtmlUtil.escape(fieldOptionValue) %>" />
+							<aui:input checked="<%= fieldValue.equals(fieldOptionValue) %>" label="<%= fieldOptionValue %>" name="<%= fieldName %>" type="radio" value="<%= fieldOptionValue %>" />
 
 						<%
 						}
@@ -107,13 +107,13 @@ String successURL = portletPreferences.getValue("successURL", StringPool.BLANK);
 					</aui:field-wrapper>
 				</c:when>
 				<c:when test='<%= fieldType.equals("options") %>'>
-					<aui:select cssClass='<%= fieldOptional ? "optional" : StringPool.BLANK %>' label="<%= HtmlUtil.escape(fieldLabel) %>" name="<%= fieldName %>">
+					<aui:select cssClass='<%= fieldOptional ? "optional" : StringPool.BLANK %>' label="<%= fieldLabel %>" name="<%= fieldName %>">
 
 						<%
 						for (String fieldOptionValue : WebFormUtil.split(fieldOptions)) {
 						%>
 
-							<aui:option selected="<%= fieldValue.equals(fieldOptionValue) %>" value="<%= HtmlUtil.escape(fieldOptionValue) %>"><%= HtmlUtil.escape(fieldOptionValue) %></aui:option>
+							<aui:option selected="<%= fieldValue.equals(fieldOptionValue) %>" value="<%= fieldOptionValue %>"><%= fieldOptionValue %></aui:option>
 
 						<%
 						}
@@ -173,12 +173,12 @@ String successURL = portletPreferences.getValue("successURL", StringPool.BLANK);
 					String fieldValidationErrorMessage = portletPreferences.getValue("fieldValidationErrorMessage" + i, StringPool.BLANK);
 				%>
 
-					var key = "<%= fieldName %>";
+					var key = '<%= fieldName %>';
 
 					keys[<%= i %>] = key;
 
-					fieldLabels[key] = "<%= HtmlUtil.escape(fieldLabel) %>";
-					fieldValidationErrorMessages[key] = "<%= fieldValidationErrorMessage %>";
+					fieldLabels[key] = '<%= HtmlUtil.escape(fieldLabel) %>';
+					fieldValidationErrorMessages[key] = '<%= fieldValidationErrorMessage %>';
 
 					function fieldValidationFunction<%= i %>(currentFieldValue, fieldsMap) {
 						<c:choose>
@@ -195,13 +195,13 @@ String successURL = portletPreferences.getValue("successURL", StringPool.BLANK);
 					fieldValidationFunctions[key] = fieldValidationFunction<%= i %>;
 
 					<c:choose>
-						<c:when test='<%= fieldType.equals("radio") %>'>
-							var radioButton = A.one('input[name=<portlet:namespace />field<%= i %>]:checked');
+						<c:when test='<%= fieldType.equals("checkbox") || fieldType.equals("radio") %>'>
+							var checkedField = A.one('input[name=<portlet:namespace />field<%= i %>]:checked');
 
 							fieldsMap[key] = '';
 
-							if (radioButton) {
-								fieldsMap[key] = radioButton.val();
+							if (checkedField) {
+								fieldsMap[key] = checkedField.val();
 							}
 						</c:when>
 						<c:otherwise>

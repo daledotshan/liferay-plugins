@@ -15,9 +15,8 @@
 package com.liferay.mentions.util;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.User;
-import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portlet.social.util.SocialInteractionsConfiguration;
 
 import java.util.List;
 
@@ -30,10 +29,13 @@ public class MentionsUserFinderUtil {
 		return _mentionsUserFinder;
 	}
 
-	public static List<User> getUsers(String query, ThemeDisplay themeDisplay)
-		throws PortalException, SystemException {
+	public static List<User> getUsers(
+			long companyId, long userId, String query,
+			SocialInteractionsConfiguration socialInteractionsConfiguration)
+		throws PortalException {
 
-		return getMentionsUserFinder().getUsers(query, themeDisplay);
+		return getMentionsUserFinder().getUsers(
+			companyId, userId, query, socialInteractionsConfiguration);
 	}
 
 	public void setMentionsUserFinder(MentionsUserFinder mentionsUserFinder) {

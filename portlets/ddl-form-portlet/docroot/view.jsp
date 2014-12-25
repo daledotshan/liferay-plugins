@@ -87,7 +87,7 @@ try {
 									/>
 
 									<aui:button-row>
-										<aui:button onClick='<%= renderResponse.getNamespace() + "publishRecord();" %>' type="submit" value="send" />
+										<aui:button type="submit" value="send" />
 									</aui:button-row>
 								</aui:fieldset>
 							</c:when>
@@ -126,7 +126,7 @@ catch (NoSuchRecordSetException nsrse) {
 %>
 
 	<div class="alert alert-error">
-		<%= LanguageUtil.get(pageContext, "the-selected-list-no-longer-exists") %>
+		<%= LanguageUtil.get(request, "the-selected-list-no-longer-exists") %>
 	</div>
 
 <%
@@ -157,7 +157,7 @@ boolean showEditTemplateIcon = (ddmTemplate != null) && (permissionChecker.hasOw
 
 				<liferay-ui:icon
 					cssClass="lfr-icon-action lfr-icon-action-add"
-					image="add_template"
+					iconCssClass="icon-plus"
 					label="<%= true %>"
 					message="add-form"
 					url="<%= addTemplateURL %>"
@@ -176,7 +176,7 @@ boolean showEditTemplateIcon = (ddmTemplate != null) && (permissionChecker.hasOw
 
 				<liferay-ui:icon
 					cssClass="lfr-icon-action lfr-icon-action-edit-template"
-					image="../file_system/small/xml"
+					iconCssClass="icon-edit"
 					label="<%= true %>"
 					message="edit-form"
 					url="<%= editTemplateURL %>"
@@ -186,7 +186,7 @@ boolean showEditTemplateIcon = (ddmTemplate != null) && (permissionChecker.hasOw
 			<c:if test="<%= hasConfigurationPermission %>">
 				<liferay-ui:icon
 					cssClass="lfr-icon-action lfr-icon-action-configuration"
-					image="configuration"
+					iconCssClass="icon-cog"
 					label="<%= true %>"
 					message="select-list"
 					method="get"
@@ -205,7 +205,7 @@ boolean showEditTemplateIcon = (ddmTemplate != null) && (permissionChecker.hasOw
 
 				<liferay-ui:icon
 					cssClass="lfr-icon-action lfr-icon-action-add"
-					image="add_article"
+					iconCssClass="icon-plus"
 					label="<%= true %>"
 					message="add-list"
 					url="<%= addListURL %>"
