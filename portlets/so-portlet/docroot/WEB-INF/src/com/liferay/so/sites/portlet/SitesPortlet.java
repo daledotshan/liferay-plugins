@@ -18,12 +18,13 @@
 package com.liferay.so.sites.portlet;
 
 import com.liferay.portal.DuplicateGroupException;
-import com.liferay.portal.GroupNameException;
+import com.liferay.portal.GroupKeyException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.util.ClassResolverUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -38,6 +39,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
+import com.liferay.portal.model.LayoutConstants;
 import com.liferay.portal.model.LayoutSet;
 import com.liferay.portal.model.LayoutSetPrototype;
 import com.liferay.portal.model.MembershipRequestConstants;
@@ -60,12 +62,11 @@ import com.liferay.portal.service.UserGroupLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.service.permission.GroupPermissionUtil;
 import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortletKeys;
 import com.liferay.so.service.FavoriteSiteLocalServiceUtil;
 import com.liferay.so.service.SocialOfficeServiceUtil;
 import com.liferay.so.sites.util.SitesUtil;
 import com.liferay.so.util.GroupConstants;
-import com.liferay.util.bridges.mvc.MVCPortlet;
+import com.liferay.so.util.PortletKeys;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,7 +113,7 @@ public class SitesPortlet extends MVCPortlet {
 				if (e instanceof DuplicateGroupException) {
 					message = "please-enter-a-unique-name";
 				}
-				else if (e instanceof GroupNameException) {
+				else if (e instanceof GroupKeyException) {
 					message = "please-enter-a-valid-name";
 				}
 				else {
@@ -199,6 +200,8 @@ public class SitesPortlet extends MVCPortlet {
 			resourceRequest, "maxResultSize", 10);
 		String searchTab = ParamUtil.getString(resourceRequest, "searchTab");
 		int start = ParamUtil.getInteger(resourceRequest, "start");
+
+		updateUserPreferences(themeDisplay, searchTab);
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
@@ -666,6 +669,21 @@ public class SitesPortlet extends MVCPortlet {
 
 		GroupLocalServiceUtil.updateGroup(
 			group.getGroupId(), typeSettingsProperties.toString());
+	}
+
+	protected void updateUserPreferences(
+			ThemeDisplay themeDisplay, String searchTab)
+		throws Exception {
+
+		PortletPreferences portletPreferences =
+			PortletPreferencesLocalServiceUtil.getPreferences(
+				themeDisplay.getCompanyId(), themeDisplay.getUserId(),
+				PortletKeys.PREFS_OWNER_TYPE_USER, LayoutConstants.DEFAULT_PLID,
+				PortletKeys.SO_SITES);
+
+		portletPreferences.setValue("defaultSearchTab", searchTab);
+
+		portletPreferences.store();
 	}
 
 	private static final String _CLASS_NAME =

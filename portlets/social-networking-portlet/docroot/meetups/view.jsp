@@ -87,7 +87,7 @@ for (int i = 0; i < meetupsEntries.size(); i++) {
 			}
 			%>
 
-			<a href="<%= viewMeetupsEntryURL %>"><img alt="<liferay-ui:message key="view-meetup" />" src="<%= thumbnailURL %>" /></a>
+			<a href="<%= viewMeetupsEntryURL %>"><img alt="<liferay-ui:message escapeAttribute="<%= true %>" key="view-meetup" />" src="<%= thumbnailURL %>" /></a>
 		</td>
 		<td valign="top" width="80%">
 			<div>
@@ -110,7 +110,7 @@ for (int i = 0; i < meetupsEntries.size(); i++) {
 
 			<c:if test="<%= yesTotal > 1 %>">
 				<div>
-					<%= LanguageUtil.format(pageContext, "x-people-are-planning-to-attend-this-meetup", String.valueOf(yesTotal), false) %>
+					<%= LanguageUtil.format(request, "x-people-are-planning-to-attend-this-meetup", String.valueOf(yesTotal), false) %>
 				</div>
 
 				<br />
@@ -131,14 +131,15 @@ for (int i = 0; i < meetupsEntries.size(); i++) {
 					%>
 
 					<liferay-ui:icon
-						image="edit"
+						iconCssClass="icon-edit"
+						message="edit"
 						method="get"
 						url="<%= editMeetupsEntryURL.toString() %>"
 					/>
 				</c:if>
 
 				<liferay-ui:icon
-					image="join"
+					iconCssClass="icon-group"
 					message="register"
 					method="get"
 					url="<%= viewMeetupsEntryURL.toString() %>"
