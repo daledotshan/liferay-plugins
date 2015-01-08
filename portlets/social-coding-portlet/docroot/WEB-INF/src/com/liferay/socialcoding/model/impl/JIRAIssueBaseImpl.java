@@ -14,7 +14,7 @@
 
 package com.liferay.socialcoding.model.impl;
 
-import com.liferay.portal.kernel.exception.SystemException;
+import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.socialcoding.model.JIRAIssue;
 import com.liferay.socialcoding.service.JIRAIssueLocalServiceUtil;
@@ -31,6 +31,7 @@ import com.liferay.socialcoding.service.JIRAIssueLocalServiceUtil;
  * @see com.liferay.socialcoding.model.JIRAIssue
  * @generated
  */
+@ProviderType
 public abstract class JIRAIssueBaseImpl extends JIRAIssueModelImpl
 	implements JIRAIssue {
 	/*
@@ -39,7 +40,7 @@ public abstract class JIRAIssueBaseImpl extends JIRAIssueModelImpl
 	 * Never modify or reference this class directly. All methods that expect a j i r a issue model instance should use the {@link JIRAIssue} interface instead.
 	 */
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			JIRAIssueLocalServiceUtil.addJIRAIssue(this);
 		}
