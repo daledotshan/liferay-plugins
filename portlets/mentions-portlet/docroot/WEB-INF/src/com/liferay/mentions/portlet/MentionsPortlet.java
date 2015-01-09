@@ -17,27 +17,25 @@ package com.liferay.mentions.portlet;
 import com.liferay.mentions.util.MentionsUserFinderUtil;
 import com.liferay.mentions.util.MentionsUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.ServletResponseUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.User;
+import com.liferay.portal.theme.PortletDisplay;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.util.bridges.mvc.MVCPortlet;
-
-import java.io.IOException;
+import com.liferay.portlet.social.util.SocialInteractionsConfiguration;
+import com.liferay.portlet.social.util.SocialInteractionsConfigurationUtil;
 
 import java.util.List;
 
-import javax.portlet.PortletException;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
@@ -52,8 +50,7 @@ public class MentionsPortlet extends MVCPortlet {
 
 	@Override
 	public void serveResource(
-			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
-		throws IOException, PortletException {
+		ResourceRequest resourceRequest, ResourceResponse resourceResponse) {
 
 		try {
 			ThemeDisplay themeDisplay =
@@ -86,16 +83,25 @@ public class MentionsPortlet extends MVCPortlet {
 	}
 
 	protected JSONArray getJSONArray(HttpServletRequest request)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		String query = ParamUtil.getString(request, "query") + StringPool.STAR;
+		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
 
-		List<User> users = MentionsUserFinderUtil.getUsers(query, themeDisplay);
+		SocialInteractionsConfiguration socialInteractionsConfiguration =
+			SocialInteractionsConfigurationUtil.
+				getSocialInteractionsConfiguration(
+					themeDisplay.getCompanyId(), portletDisplay.getId());
+
+		String query = ParamUtil.getString(request, "query");
+
+		List<User> users = MentionsUserFinderUtil.getUsers(
+			themeDisplay.getCompanyId(), themeDisplay.getUserId(), query,
+			socialInteractionsConfiguration);
 
 		for (User user : users) {
 			if (user.isDefaultUser() ||
@@ -108,6 +114,7 @@ public class MentionsPortlet extends MVCPortlet {
 
 			jsonObject.put("fullName", user.getFullName());
 			jsonObject.put("portraitURL", user.getPortraitURL(themeDisplay));
+			jsonObject.put("profileURL", user.getDisplayURL(themeDisplay));
 			jsonObject.put("screenName", user.getScreenName());
 
 			jsonArray.put(jsonObject);
