@@ -63,7 +63,7 @@ public class ConfigurationActionImpl extends DefaultConfigurationAction {
 			return;
 		}
 
-		Locale defaultLocale = LocaleUtil.getDefault();
+		Locale defaultLocale = LocaleUtil.getSiteDefault();
 		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
 
 		boolean updateFields = ParamUtil.getBoolean(
@@ -124,9 +124,12 @@ public class ConfigurationActionImpl extends DefaultConfigurationAction {
 				updateModifiedLocales(
 					"fieldOptions" + i, fieldOptionsMap, preferences);
 
+				preferences.setValue(
+					"fieldLabel" + i, fieldLabelMap.get(defaultLocale));
 				preferences.setValue("fieldType" + i, fieldType);
 				preferences.setValue(
 					"fieldOptional" + i, String.valueOf(fieldOptional));
+				preferences.setValue("fieldOptions" + i, StringPool.BLANK);
 				preferences.setValue(
 					"fieldValidationScript" + i, fieldValidationScript);
 				preferences.setValue(
@@ -162,6 +165,7 @@ public class ConfigurationActionImpl extends DefaultConfigurationAction {
 						StringPool.BLANK);
 				}
 
+				preferences.setValue("fieldLabel" + i, StringPool.BLANK);
 				preferences.setValue("fieldType" + i, StringPool.BLANK);
 				preferences.setValue("fieldOptional" + i, StringPool.BLANK);
 				preferences.setValue(
@@ -222,7 +226,7 @@ public class ConfigurationActionImpl extends DefaultConfigurationAction {
 	protected void validateFields(ActionRequest actionRequest)
 		throws Exception {
 
-		Locale defaultLocale = LocaleUtil.getDefault();
+		Locale defaultLocale = LocaleUtil.getSiteDefault();
 		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
 
 		boolean sendAsEmail = GetterUtil.getBoolean(
@@ -307,9 +311,9 @@ public class ConfigurationActionImpl extends DefaultConfigurationAction {
 	}
 
 	protected boolean validateUniqueFieldNames(ActionRequest actionRequest) {
-		Locale defaultLocale = LocaleUtil.getDefault();
+		Locale defaultLocale = LocaleUtil.getSiteDefault();
 
-		Set<String> localizedUniqueFieldNames = new HashSet<String>();
+		Set<String> localizedUniqueFieldNames = new HashSet<>();
 
 		int[] formFieldsIndexes = StringUtil.split(
 			ParamUtil.getString(actionRequest, "formFieldsIndexes"), 0);
