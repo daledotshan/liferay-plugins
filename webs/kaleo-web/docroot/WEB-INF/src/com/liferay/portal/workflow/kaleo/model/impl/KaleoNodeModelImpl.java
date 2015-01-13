@@ -14,9 +14,10 @@
 
 package com.liferay.portal.workflow.kaleo.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -53,6 +54,7 @@ import java.util.Map;
  * @see com.liferay.portal.workflow.kaleo.model.KaleoNodeModel
  * @generated
  */
+@ProviderType
 public class KaleoNodeModelImpl extends BaseModelImpl<KaleoNode>
 	implements KaleoNodeModel {
 	/*
@@ -93,9 +95,9 @@ public class KaleoNodeModelImpl extends BaseModelImpl<KaleoNode>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.util.service.ServiceProps.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.workflow.kaleo.model.KaleoNode"),
 			true);
-	public static long COMPANYID_COLUMN_BITMASK = 1L;
-	public static long KALEODEFINITIONID_COLUMN_BITMASK = 2L;
-	public static long KALEONODEID_COLUMN_BITMASK = 4L;
+	public static final long COMPANYID_COLUMN_BITMASK = 1L;
+	public static final long KALEODEFINITIONID_COLUMN_BITMASK = 2L;
+	public static final long KALEONODEID_COLUMN_BITMASK = 4L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.util.service.ServiceProps.get(
 				"lock.expiration.time.com.liferay.portal.workflow.kaleo.model.KaleoNode"));
 
@@ -299,7 +301,7 @@ public class KaleoNodeModelImpl extends BaseModelImpl<KaleoNode>
 	}
 
 	@Override
-	public String getUserUuid() throws SystemException {
+	public String getUserUuid() {
 		try {
 			User user = UserLocalServiceUtil.getUserById(getUserId());
 
@@ -771,8 +773,8 @@ public class KaleoNodeModelImpl extends BaseModelImpl<KaleoNode>
 		return sb.toString();
 	}
 
-	private static ClassLoader _classLoader = KaleoNode.class.getClassLoader();
-	private static Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static final ClassLoader _classLoader = KaleoNode.class.getClassLoader();
+	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
 			KaleoNode.class
 		};
 	private long _kaleoNodeId;

@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.search.BaseIndexer;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
@@ -58,9 +57,9 @@ public class CalendarBookingIndexer extends BaseIndexer {
 
 	public CalendarBookingIndexer() {
 		setDefaultSelectedFieldNames(
-			new String[] {
-				Field.COMPANY_ID, Field.DESCRIPTION, Field.ENTRY_CLASS_NAME,
-				Field.ENTRY_CLASS_PK, Field.TITLE, Field.UID});
+			Field.COMPANY_ID, Field.ENTRY_CLASS_NAME, Field.ENTRY_CLASS_PK,
+			Field.UID);
+		setDefaultSelectedLocalizedFieldNames(Field.DESCRIPTION, Field.TITLE);
 	}
 
 	@Override
@@ -180,7 +179,8 @@ public class CalendarBookingIndexer extends BaseIndexer {
 			Document document = getDocument(calendarBooking);
 
 			SearchEngineUtil.updateDocument(
-				getSearchEngineId(), calendarBooking.getCompanyId(), document);
+				getSearchEngineId(), calendarBooking.getCompanyId(), document,
+				isCommitImmediately());
 		}
 		else if ((status == CalendarBookingWorkflowConstants.STATUS_DENIED) ||
 				 (status == CalendarBookingWorkflowConstants.STATUS_IN_TRASH)) {
@@ -223,9 +223,9 @@ public class CalendarBookingIndexer extends BaseIndexer {
 	}
 
 	protected void reindexCalendarBookings(long companyId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
-		final Collection<Document> documents = new ArrayList<Document>();
+		final Collection<Document> documents = new ArrayList<>();
 
 		ActionableDynamicQuery actionableDynamicQuery =
 			new CalendarBookingActionableDynamicQuery() {
@@ -258,7 +258,7 @@ public class CalendarBookingIndexer extends BaseIndexer {
 		actionableDynamicQuery.performActions();
 
 		SearchEngineUtil.updateDocuments(
-			getSearchEngineId(), companyId, documents);
+			getSearchEngineId(), companyId, documents, isCommitImmediately());
 	}
 
 }

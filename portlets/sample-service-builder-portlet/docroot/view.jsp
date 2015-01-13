@@ -18,12 +18,12 @@
 
 <strong><liferay-ui:message key="welcome-to-the-sample-service-builder-portlet" /></strong>
 
-<portlet:renderURL var="editFooURL">
-	<portlet:param name="mvcPath" value="/edit_foo.jsp" />
-	<portlet:param name="redirect" value="<%= currentURL %>" />
-</portlet:renderURL>
-
 <aui:button-row>
+	<portlet:renderURL var="editFooURL">
+		<portlet:param name="mvcPath" value="/edit_foo.jsp" />
+		<portlet:param name="redirect" value="<%= currentURL %>" />
+	</portlet:renderURL>
+
 	<aui:button href="<%= editFooURL %>" value="add-foo" />
 </aui:button-row>
 
@@ -91,6 +91,7 @@
 		/>
 
 		<liferay-ui:search-container-column-jsp
+			cssClass="entry-action"
 			path="/foo_action.jsp"
 			valign="top"
 		/>
