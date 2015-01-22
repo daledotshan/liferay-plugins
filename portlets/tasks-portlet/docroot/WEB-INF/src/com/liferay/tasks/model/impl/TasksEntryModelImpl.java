@@ -16,7 +16,6 @@ package com.liferay.tasks.model.impl;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -103,10 +102,11 @@ public class TasksEntryModelImpl extends BaseModelImpl<TasksEntry>
 	public static long ASSIGNEEUSERID_COLUMN_BITMASK = 1L;
 	public static long GROUPID_COLUMN_BITMASK = 2L;
 	public static long RESOLVERUSERID_COLUMN_BITMASK = 4L;
-	public static long USERID_COLUMN_BITMASK = 8L;
-	public static long PRIORITY_COLUMN_BITMASK = 16L;
-	public static long DUEDATE_COLUMN_BITMASK = 32L;
-	public static long CREATEDATE_COLUMN_BITMASK = 64L;
+	public static long STATUS_COLUMN_BITMASK = 8L;
+	public static long USERID_COLUMN_BITMASK = 16L;
+	public static long PRIORITY_COLUMN_BITMASK = 32L;
+	public static long DUEDATE_COLUMN_BITMASK = 64L;
+	public static long CREATEDATE_COLUMN_BITMASK = 128L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -372,7 +372,7 @@ public class TasksEntryModelImpl extends BaseModelImpl<TasksEntry>
 	}
 
 	@Override
-	public String getUserUuid() throws SystemException {
+	public String getUserUuid() {
 		try {
 			User user = UserLocalServiceUtil.getUserById(getUserId());
 
@@ -480,7 +480,7 @@ public class TasksEntryModelImpl extends BaseModelImpl<TasksEntry>
 	}
 
 	@Override
-	public String getAssigneeUserUuid() throws SystemException {
+	public String getAssigneeUserUuid() {
 		try {
 			User user = UserLocalServiceUtil.getUserById(getAssigneeUserId());
 
@@ -519,7 +519,7 @@ public class TasksEntryModelImpl extends BaseModelImpl<TasksEntry>
 	}
 
 	@Override
-	public String getResolverUserUuid() throws SystemException {
+	public String getResolverUserUuid() {
 		try {
 			User user = UserLocalServiceUtil.getUserById(getResolverUserId());
 
@@ -570,7 +570,19 @@ public class TasksEntryModelImpl extends BaseModelImpl<TasksEntry>
 
 	@Override
 	public void setStatus(int status) {
+		_columnBitmask |= STATUS_COLUMN_BITMASK;
+
+		if (!_setOriginalStatus) {
+			_setOriginalStatus = true;
+
+			_originalStatus = _status;
+		}
+
 		_status = status;
+	}
+
+	public int getOriginalStatus() {
+		return _originalStatus;
 	}
 
 	public long getColumnBitmask() {
@@ -713,6 +725,10 @@ public class TasksEntryModelImpl extends BaseModelImpl<TasksEntry>
 		tasksEntryModelImpl._originalResolverUserId = tasksEntryModelImpl._resolverUserId;
 
 		tasksEntryModelImpl._setOriginalResolverUserId = false;
+
+		tasksEntryModelImpl._originalStatus = tasksEntryModelImpl._status;
+
+		tasksEntryModelImpl._setOriginalStatus = false;
 
 		tasksEntryModelImpl._columnBitmask = 0;
 	}
@@ -925,6 +941,8 @@ public class TasksEntryModelImpl extends BaseModelImpl<TasksEntry>
 	private Date _dueDate;
 	private Date _finishDate;
 	private int _status;
+	private int _originalStatus;
+	private boolean _setOriginalStatus;
 	private long _columnBitmask;
 	private TasksEntry _escapedModel;
 }

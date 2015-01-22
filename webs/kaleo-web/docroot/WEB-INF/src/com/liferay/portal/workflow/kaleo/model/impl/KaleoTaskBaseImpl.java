@@ -14,7 +14,8 @@
 
 package com.liferay.portal.workflow.kaleo.model.impl;
 
-import com.liferay.portal.kernel.exception.SystemException;
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.workflow.kaleo.model.KaleoTask;
 import com.liferay.portal.workflow.kaleo.service.KaleoTaskLocalServiceUtil;
 
@@ -30,6 +31,7 @@ import com.liferay.portal.workflow.kaleo.service.KaleoTaskLocalServiceUtil;
  * @see com.liferay.portal.workflow.kaleo.model.KaleoTask
  * @generated
  */
+@ProviderType
 public abstract class KaleoTaskBaseImpl extends KaleoTaskModelImpl
 	implements KaleoTask {
 	/*
@@ -38,7 +40,7 @@ public abstract class KaleoTaskBaseImpl extends KaleoTaskModelImpl
 	 * Never modify or reference this class directly. All methods that expect a kaleo task model instance should use the {@link KaleoTask} interface instead.
 	 */
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			KaleoTaskLocalServiceUtil.addKaleoTask(this);
 		}

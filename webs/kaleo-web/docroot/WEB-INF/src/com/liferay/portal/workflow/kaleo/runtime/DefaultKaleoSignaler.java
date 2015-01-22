@@ -15,7 +15,6 @@
 package com.liferay.portal.workflow.kaleo.runtime;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.messaging.sender.DefaultSingleDestinationMessageSender;
 import com.liferay.portal.kernel.messaging.sender.SingleDestinationMessageSender;
@@ -56,7 +55,7 @@ public class DefaultKaleoSignaler
 	@Override
 	public void signalEntry(
 			String transitionName, ExecutionContext executionContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		KaleoInstanceToken kaleoInstanceToken =
 			executionContext.getKaleoInstanceToken();
@@ -75,12 +74,12 @@ public class DefaultKaleoSignaler
 		rollbackFor = {Exception.class})
 	public void signalExecute(
 			KaleoNode currentKaleoNode, ExecutionContext executionContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		NodeExecutor nodeExecutor = NodeExecutorFactory.getNodeExecutor(
 			currentKaleoNode.getType());
 
-		List<PathElement> remainingPathElements = new ArrayList<PathElement>();
+		List<PathElement> remainingPathElements = new ArrayList<>();
 
 		nodeExecutor.execute(
 			currentKaleoNode, executionContext, remainingPathElements);
@@ -95,7 +94,7 @@ public class DefaultKaleoSignaler
 	@Override
 	public void signalExit(
 			String transitionName, ExecutionContext executionContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		KaleoInstanceToken kaleoInstanceToken =
 			executionContext.getKaleoInstanceToken();

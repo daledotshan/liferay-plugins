@@ -17,6 +17,7 @@ package com.liferay.portal.search.solr.facet;
 import com.liferay.portal.kernel.search.facet.collector.DefaultTermCollector;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
+import com.liferay.portal.kernel.util.ListUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -36,9 +37,11 @@ public class SolrFacetFieldCollector implements FacetCollector {
 
 		List<Count> counts = facetField.getValues();
 
-		if (counts != null) {
+		if (ListUtil.isNotEmpty(counts)) {
 			for (Count count : counts) {
-				_counts.put(count.getName(), count);
+				if (count.getCount() > 0) {
+					_counts.put(count.getName(), count);
+				}
 			}
 		}
 	}
@@ -67,7 +70,7 @@ public class SolrFacetFieldCollector implements FacetCollector {
 			return _termCollectors;
 		}
 
-		List<TermCollector> termCollectors = new ArrayList<TermCollector>();
+		List<TermCollector> termCollectors = new ArrayList<>();
 
 		for (Map.Entry<String, Count> entry : _counts.entrySet()) {
 			Count count = entry.getValue();
@@ -83,7 +86,7 @@ public class SolrFacetFieldCollector implements FacetCollector {
 		return _termCollectors;
 	}
 
-	private Map<String, Count> _counts = new LinkedHashMap<String, Count>();
+	private Map<String, Count> _counts = new LinkedHashMap<>();
 	private String _fieldName;
 	private List<TermCollector> _termCollectors;
 
