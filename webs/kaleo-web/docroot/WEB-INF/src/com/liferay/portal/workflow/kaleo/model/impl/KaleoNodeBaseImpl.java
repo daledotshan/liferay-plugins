@@ -14,7 +14,8 @@
 
 package com.liferay.portal.workflow.kaleo.model.impl;
 
-import com.liferay.portal.kernel.exception.SystemException;
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.workflow.kaleo.model.KaleoNode;
 import com.liferay.portal.workflow.kaleo.service.KaleoNodeLocalServiceUtil;
 
@@ -30,6 +31,7 @@ import com.liferay.portal.workflow.kaleo.service.KaleoNodeLocalServiceUtil;
  * @see com.liferay.portal.workflow.kaleo.model.KaleoNode
  * @generated
  */
+@ProviderType
 public abstract class KaleoNodeBaseImpl extends KaleoNodeModelImpl
 	implements KaleoNode {
 	/*
@@ -38,7 +40,7 @@ public abstract class KaleoNodeBaseImpl extends KaleoNodeModelImpl
 	 * Never modify or reference this class directly. All methods that expect a kaleo node model instance should use the {@link KaleoNode} interface instead.
 	 */
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			KaleoNodeLocalServiceUtil.addKaleoNode(this);
 		}

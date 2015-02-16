@@ -31,5 +31,14 @@
 		<order by="asc">
 			<order-column name="bookingNumber" />
 		</order>
+
+		<!-- Finder methods -->
+
+		<finder name="GroupId" return-type="Collection">
+			<finder-column name="groupId" />
+		</finder>
 	</entity>
+	<exceptions>
+		<exception>SampleLARBookingBookingNumber</exception>
+	</exceptions>
 </service-builder>

@@ -23,11 +23,9 @@ import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.search.BaseIndexer;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchEngineUtil;
 import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -50,27 +48,18 @@ import javax.portlet.PortletURL;
  */
 public class CalendarBookingIndexer extends BaseIndexer {
 
-	public static final String[] CLASS_NAMES = {
-		CalendarBooking.class.getName()
-	};
-
-	public static final String PORTLET_ID = PortletKeys.CALENDAR;
+	public static final String CLASS_NAME = CalendarBooking.class.getName();
 
 	public CalendarBookingIndexer() {
 		setDefaultSelectedFieldNames(
-			new String[] {
-				Field.COMPANY_ID, Field.DESCRIPTION, Field.ENTRY_CLASS_NAME,
-				Field.ENTRY_CLASS_PK, Field.TITLE, Field.UID});
+			Field.COMPANY_ID, Field.ENTRY_CLASS_NAME, Field.ENTRY_CLASS_PK,
+			Field.UID);
+		setDefaultSelectedLocalizedFieldNames(Field.DESCRIPTION, Field.TITLE);
 	}
 
 	@Override
-	public String[] getClassNames() {
-		return CLASS_NAMES;
-	}
-
-	@Override
-	public String getPortletId() {
-		return PORTLET_ID;
+	public String getClassName() {
+		return CLASS_NAME;
 	}
 
 	@Override
@@ -86,7 +75,7 @@ public class CalendarBookingIndexer extends BaseIndexer {
 	protected Document doGetDocument(Object obj) throws Exception {
 		CalendarBooking calendarBooking = (CalendarBooking)obj;
 
-		Document document = getBaseModelDocument(PORTLET_ID, calendarBooking);
+		Document document = getBaseModelDocument(CLASS_NAME, calendarBooking);
 
 		Locale defaultLocale = LocaleUtil.getSiteDefault();
 
@@ -180,7 +169,8 @@ public class CalendarBookingIndexer extends BaseIndexer {
 			Document document = getDocument(calendarBooking);
 
 			SearchEngineUtil.updateDocument(
-				getSearchEngineId(), calendarBooking.getCompanyId(), document);
+				getSearchEngineId(), calendarBooking.getCompanyId(), document,
+				isCommitImmediately());
 		}
 		else if ((status == CalendarBookingWorkflowConstants.STATUS_DENIED) ||
 				 (status == CalendarBookingWorkflowConstants.STATUS_IN_TRASH)) {
@@ -217,15 +207,10 @@ public class CalendarBookingIndexer extends BaseIndexer {
 		return languageIds;
 	}
 
-	@Override
-	protected String getPortletId(SearchContext searchContext) {
-		return PORTLET_ID;
-	}
-
 	protected void reindexCalendarBookings(long companyId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
-		final Collection<Document> documents = new ArrayList<Document>();
+		final Collection<Document> documents = new ArrayList<>();
 
 		ActionableDynamicQuery actionableDynamicQuery =
 			new CalendarBookingActionableDynamicQuery() {
@@ -258,7 +243,7 @@ public class CalendarBookingIndexer extends BaseIndexer {
 		actionableDynamicQuery.performActions();
 
 		SearchEngineUtil.updateDocuments(
-			getSearchEngineId(), companyId, documents);
+			getSearchEngineId(), companyId, documents, isCommitImmediately());
 	}
 
 }

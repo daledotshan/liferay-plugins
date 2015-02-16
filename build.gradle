@@ -1,0 +1,217 @@
+apply from: "$gradle.lfrSdkDir/versions.gradle"
+
+allprojects {
+	apply plugin: "war"
+
+	ant.loadproperties(srcFile: "$gradle.lfrSdkDir/build.properties")
+
+	File pluginSrcDir = file("$projectDir/docroot")
+
+	if (!pluginSrcDir.exists()) {
+		pluginSrcDir = file("$projectDir/src")
+
+		if (!pluginSrcDir.exists()) {
+			pluginSrcDir = null
+		}
+	}
+
+	if (pluginSrcDir == null) {
+		return
+	}
+
+	task initGradle {
+		def getBuildGradleDependencies
+		def getBuildGradleDependenciesCompile
+		def getBuildGradleDependenciesProvidedCompile
+		def getBuildGradleExt
+		def getBuildGradleExtPluginFullVersion
+		def getBuildXmlProperty
+		def writeBuildGradleFile
+
+		getBuildGradleDependencies = {
+			Node ivyXmlNode, Properties pluginPackageProperties ->
+
+			List contents = []
+
+			contents << "dependencies {"
+
+			contents.addAll(getBuildGradleDependenciesCompile(ivyXmlNode))
+			contents.addAll(getBuildGradleDependenciesProvidedCompile(pluginPackageProperties))
+
+			contents << "}"
+
+			return contents
+		}
+
+		getBuildGradleDependenciesCompile = {
+			Node ivyXmlNode ->
+
+			List contents = []
+
+			contents << "\tcompile("
+
+			if (ivyXmlNode) {
+				ivyXmlNode.dependencies.dependency.each {
+					contents << "\t\t[group: \"${it.@org}\", name:\"${it.@name}\", version: \"${it.@rev}\"],"
+				}
+			}
+
+			contents << "\t)"
+
+			return contents
+		}
+
+		getBuildGradleDependenciesProvidedCompile = {
+			Properties pluginPackageProperties ->
+
+			List contents = []
+
+			contents << "\tprovidedCompile("
+
+			String portalDependencyJars = pluginPackageProperties["portal-dependency-jars"]
+
+			if (portalDependencyJars != null) {
+				portalDependencyJars = portalDependencyJars.replaceAll("\\.jar", "")
+				portalDependencyJars = portalDependencyJars.replaceAll("-\\w") {
+					it[1].toUpperCase()
+				}
+
+				String[] portalDependencyJarsArray = portalDependencyJars.split(",");
+
+				portalDependencyJarsArray.each {
+					portalDependencyJar ->
+
+					Map portalDependencyJarsMap = portalDependencies.get(portalDependencyJar)
+
+					if (portalDependencyJarsMap == null) {
+						println("Portal dependency " + portalDependencyJar + " is not defined in versions.gradle")
+					}
+					else {
+						contents << "\t\t[group: \"${portalDependencyJarsMap."group"}\", name: \"${portalDependencyJarsMap."name"}\", version: \"${portalDependencyJarsMap."version"}\"],"
+					}
+				}
+			}
+
+			contents << "\t)"
+
+			return contents
+		}
+
+		getBuildGradleExt = {
+			Properties bndProperties, Node buildXmlNode, Properties pluginPackageProperties ->
+
+			List contents = []
+
+			contents << "ext {"
+			contents.addAll(getBuildGradleExtPluginFullVersion(bndProperties, buildXmlNode, pluginPackageProperties))
+			contents << "}"
+
+			return contents
+		}
+
+		getBuildGradleExtPluginFullVersion = {
+			Properties bndProperties, Node buildXmlNode, Properties pluginPackageProperties ->
+
+			String pluginFullVersion = null;
+
+			String moduleFullVersion = pluginPackageProperties["module-full-version"]
+
+			if (moduleFullVersion != null) {
+				pluginFullVersion = moduleFullVersion
+			}
+			else {
+				String bundleVersion = bndProperties["Bundle-Version"]
+
+				if (bundleVersion != null) {
+					pluginFullVersion = bundleVersion
+				}
+				else {
+					String moduleIncrementalVersion = pluginPackageProperties["module-incremental-version"]
+
+					if (moduleIncrementalVersion == null) {
+						moduleIncrementalVersion = getBuildXmlProperty(buildXmlNode, "plugin.version", "1")
+					}
+
+					pluginFullVersion = getBuildXmlProperty(buildXmlNode, "plugin.full.version", ant.properties["lp.version"] + "." + moduleIncrementalVersion)
+				}
+			}
+
+			return "\tpluginFullVersion = \"${pluginFullVersion}\""
+		}
+
+		getBuildXmlProperty = {
+			Node buildXmlNode, String key, String defaultValue ->
+
+			String value = defaultValue
+
+			buildXmlNode.property.each {
+				println it.@name + " " + key + " " + (it.@name == key)
+
+				if (it.@name == key) {
+					value = it.@value
+				}
+			}
+
+			return value
+		}
+
+		writeBuildGradleFile = {
+			Properties bndProperties, Node buildXmlNode, Node ivyXmlNode, Properties pluginPackageProperties ->
+
+			List contents = []
+
+			contents.addAll(getBuildGradleDependencies(ivyXmlNode, pluginPackageProperties))
+			contents.addAll(getBuildGradleExt(bndProperties, buildXmlNode, pluginPackageProperties))
+
+			File buildGradleFile = new File("$projectDir/build.gradle")
+
+			contents.each {
+				buildGradleFile << it + "\n"
+			}
+		}
+
+		// bnd.bnd
+
+		Properties bndProperties = new Properties()
+
+		File bndPropertiesFile = new File("$projectDir/bnd.bnd")
+
+		if (bndPropertiesFile.exists()) {
+			bndProperties.load(new FileInputStream(bndPropertiesFile))
+		}
+
+		// build.xml
+
+		XmlParser xmlParser = new XmlParser()
+
+		xmlParser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
+
+		File buildXmlFile = new File("$projectDir/build.xml")
+
+		Node buildXmlNode = xmlParser.parse(buildXmlFile)
+
+		// ivy.xml
+
+		Node ivyXmlNode = null
+
+		File ivyXmlFile = new File("$projectDir/ivy.xml")
+
+		if (ivyXmlFile.exists()) {
+			ivyXmlNode = xmlParser.parse(ivyXmlFile)
+		}
+
+		// liferay-plugin-package.properties
+
+		Properties pluginPackageProperties = new Properties()
+
+		File pluginPackagePropertiesFile = new File("$projectDir/docroot/WEB-INF/liferay-plugin-package.properties")
+
+		if (pluginPackagePropertiesFile.exists()) {
+			pluginPackageProperties.load(new FileInputStream(pluginPackagePropertiesFile))
+		}
+
+		// build.gradle
+
+		writeBuildGradleFile(bndProperties, buildXmlNode, ivyXmlNode, pluginPackageProperties)
+	}
+}

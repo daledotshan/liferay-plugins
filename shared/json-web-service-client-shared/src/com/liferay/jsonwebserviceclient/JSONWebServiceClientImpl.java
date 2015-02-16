@@ -15,42 +15,65 @@
 package com.liferay.jsonwebserviceclient;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.io.UnsupportedEncodingException;
 
-import java.util.Iterator;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+
+import java.security.KeyStore;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
-import javax.security.auth.login.CredentialException;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.Charsets;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.BasicAuthCache;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.conn.routing.HttpRoutePlanner;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContextBuilder;
+import org.apache.http.conn.ssl.SSLContexts;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.CoreConnectionPNames;
-import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
@@ -64,36 +87,73 @@ import org.slf4j.LoggerFactory;
 public class JSONWebServiceClientImpl implements JSONWebServiceClient {
 
 	public void afterPropertiesSet() {
-		PoolingClientConnectionManager poolingClientConnectionManager =
-			new PoolingClientConnectionManager();
+		HttpClientBuilder httpClientBuilder = HttpClients.custom();
 
-		poolingClientConnectionManager.setMaxTotal(20);
+		HttpClientConnectionManager httpClientConnectionManager =
+			getPoolingHttpClientConnectionManager();
 
-		_defaultHttpClient = new DefaultHttpClient(
-			poolingClientConnectionManager);
+		httpClientBuilder.setConnectionManager(httpClientConnectionManager);
 
-		HttpParams httpParams = _defaultHttpClient.getParams();
+		if ((_login != null) && (_password != null)) {
+			CredentialsProvider credentialsProvider =
+				new BasicCredentialsProvider();
 
-		httpParams.setIntParameter(
-			CoreConnectionPNames.CONNECTION_TIMEOUT, 60000);
+			credentialsProvider.setCredentials(
+				new AuthScope(_hostName, _hostPort),
+				new UsernamePasswordCredentials(_login, _password));
+
+			httpClientBuilder.setDefaultCredentialsProvider(
+				credentialsProvider);
+			httpClientBuilder.setRetryHandler(
+				new HttpRequestRetryHandlerImpl());
+		}
+		else {
+			if (_logger.isWarnEnabled()) {
+				_logger.warn("Login and password are required");
+			}
+		}
+
+		try {
+			setProxyHost(httpClientBuilder);
+
+			_closeableHttpClient = httpClientBuilder.build();
+
+			_idleConnectionMonitorThread = new IdleConnectionMonitorThread(
+				httpClientConnectionManager);
+
+			_idleConnectionMonitorThread.start();
+
+			if (_logger.isDebugEnabled()) {
+				_logger.debug(
+					"Configured client for " + _protocol + "://" + _hostName);
+			}
+		}
+		catch (Exception e) {
+			_logger.error("Unable to configure client", e);
+		}
 	}
 
 	public void destroy() {
-		ClientConnectionManager clientConnectionManager =
-			_defaultHttpClient.getConnectionManager();
+		try {
+			_closeableHttpClient.close();
+		}
+		catch (IOException e) {
+			_logger.error("Unable to close client", e);
+		}
 
-		clientConnectionManager.shutdown();
+		_closeableHttpClient = null;
+
+		_idleConnectionMonitorThread.shutdown();
 	}
 
 	@Override
 	public String doGet(String url, Map<String, String> parameters)
-		throws CredentialException, IOException {
+		throws JSONWebServiceTransportException {
 
 		List<NameValuePair> nameValuePairs = toNameValuePairs(parameters);
 
 		if (!nameValuePairs.isEmpty()) {
-			String queryString = URLEncodedUtils.format(
-				nameValuePairs, Charsets.UTF_8);
+			String queryString = URLEncodedUtils.format(nameValuePairs, "utf8");
 
 			url += "?" + queryString;
 		}
@@ -105,36 +165,73 @@ public class JSONWebServiceClientImpl implements JSONWebServiceClient {
 
 		HttpGet httpGet = new HttpGet(url);
 
+		for (String key : _headers.keySet()) {
+			httpGet.addHeader(key, _headers.get(key));
+		}
+
 		return execute(httpGet);
 	}
 
 	@Override
 	public String doPost(String url, Map<String, String> parameters)
-		throws CredentialException, IOException {
+		throws JSONWebServiceTransportException {
 
 		if (_logger.isDebugEnabled()) {
 			_logger.debug(
 				"Sending POST request to " + _login + "@" + _hostName + url);
 		}
 
+		try {
+			HttpPost httpPost = new HttpPost(url);
+
+			List<NameValuePair> nameValuePairs = toNameValuePairs(parameters);
+
+			HttpEntity httpEntity = new UrlEncodedFormEntity(
+				nameValuePairs, "utf8");
+
+			for (String key : _headers.keySet()) {
+				httpPost.addHeader(key, _headers.get(key));
+			}
+
+			httpPost.setEntity(httpEntity);
+
+			return execute(httpPost);
+		}
+		catch (UnsupportedEncodingException uee) {
+			throw new JSONWebServiceTransportException.CommunicationFailure(
+				uee);
+		}
+	}
+
+	@Override
+	public String doPostAsJSON(String url, String json)
+		throws JSONWebServiceTransportException {
+
 		HttpPost httpPost = new HttpPost(url);
 
-		List<NameValuePair> nameValuePairs = toNameValuePairs(parameters);
+		for (String key : _headers.keySet()) {
+			httpPost.addHeader(key, _headers.get(key));
+		}
 
-		HttpEntity httpEntity = new UrlEncodedFormEntity(
-			nameValuePairs, Charsets.UTF_8);
+		StringEntity stringEntity = new StringEntity(json.toString(), "utf8");
 
-		httpPost.setEntity(httpEntity);
+		stringEntity.setContentType("application/json");
+
+		httpPost.setEntity(stringEntity);
 
 		return execute(httpPost);
+	}
+
+	public Map<String, String> getHeaders() {
+		return _headers;
 	}
 
 	public String getHostName() {
 		return _hostName;
 	}
 
-	public int getPort() {
-		return _port;
+	public int getHostPort() {
+		return _hostPort;
 	}
 
 	public String getProtocol() {
@@ -148,12 +245,21 @@ public class JSONWebServiceClientImpl implements JSONWebServiceClient {
 		afterPropertiesSet();
 	}
 
+	public void setHeaders(Map<String, String> headers) {
+		_headers = headers;
+	}
+
 	public void setHostName(String hostName) {
 		_hostName = hostName;
 	}
 
-	public void setHostPort(int port) {
-		_port = port;
+	public void setHostPort(int hostPort) {
+		_hostPort = hostPort;
+	}
+
+	@Override
+	public void setKeyStore(KeyStore keyStore) {
+		_keyStore = keyStore;
 	}
 
 	@Override
@@ -170,87 +276,126 @@ public class JSONWebServiceClientImpl implements JSONWebServiceClient {
 		_protocol = protocol;
 	}
 
-	protected String execute(HttpRequestBase httpRequestBase)
-		throws CredentialException, IOException {
+	public void setProxyHostName(String proxyHostName) {
+		_proxyHostName = proxyHostName;
+	}
 
-		HttpHost httpHost = new HttpHost(_hostName, _port, _protocol);
+	public void setProxyHostPort(int proxyHostPort) {
+		_proxyHostPort = proxyHostPort;
+	}
+
+	protected String execute(HttpRequestBase httpRequestBase)
+		throws JSONWebServiceTransportException {
+
+		HttpHost httpHost = new HttpHost(_hostName, _hostPort, _protocol);
 
 		try {
-			HttpContext httpContext = null;
-
-			if ((_login != null) && (_password != null)) {
-				CredentialsProvider credentialsProvider =
-					_defaultHttpClient.getCredentialsProvider();
-
-				AuthScope authScope = new AuthScope(
-					httpHost.getHostName(), httpHost.getPort());
-
-				UsernamePasswordCredentials usernamePasswordCredentials =
-					new UsernamePasswordCredentials(_login, _password);
-
-				credentialsProvider.setCredentials(
-					authScope, usernamePasswordCredentials);
-
-				httpContext = new BasicHttpContext();
-
-				AuthCache authCache = new BasicAuthCache();
-
-				BasicScheme basicScheme = new BasicScheme();
-
-				authCache.put(httpHost, basicScheme);
-
-				httpContext.setAttribute(ClientContext.AUTH_CACHE, authCache);
+			if (_closeableHttpClient == null) {
+				afterPropertiesSet();
 			}
 
-			HttpResponse httpResponse = null;
-
-			if (httpContext == null) {
-				httpResponse = _defaultHttpClient.execute(
-					httpHost, httpRequestBase);
-			}
-			else {
-				httpResponse = _defaultHttpClient.execute(
-					httpHost, httpRequestBase, httpContext);
-			}
+			HttpResponse httpResponse = _closeableHttpClient.execute(
+				httpHost, httpRequestBase);
 
 			StatusLine statusLine = httpResponse.getStatusLine();
 
 			if (statusLine.getStatusCode() ==
-					HttpServletResponse.SC_NOT_FOUND) {
+					HttpServletResponse.SC_UNAUTHORIZED) {
 
-				if (_logger.isWarnEnabled()) {
-					_logger.warn("Status code " + statusLine.getStatusCode());
-				}
-
-				return null;
+				throw new JSONWebServiceTransportException.
+					AuthenticationFailure(
+						"Not authorized to access JSON web service");
 			}
-			else if (statusLine.getStatusCode() ==
-						HttpServletResponse.SC_UNAUTHORIZED) {
-
-				throw new CredentialException(
-					"Not authorized to access JSON web service");
+			else if (statusLine.getStatusCode() >= 400) {
+				throw new JSONWebServiceTransportException.CommunicationFailure(
+					statusLine.getStatusCode());
 			}
 
-			return EntityUtils.toString(
-				httpResponse.getEntity(), Charsets.UTF_8);
+			return EntityUtils.toString(httpResponse.getEntity(), "utf8");
+		}
+		catch (IOException ioe) {
+			throw new JSONWebServiceTransportException.CommunicationFailure(
+				"Unable to transmit request", ioe);
 		}
 		finally {
 			httpRequestBase.releaseConnection();
 		}
 	}
 
+	protected PoolingHttpClientConnectionManager
+		getPoolingHttpClientConnectionManager() {
+
+		PoolingHttpClientConnectionManager poolingHttpClientConnectionManager =
+			null;
+
+		if (_keyStore != null) {
+			poolingHttpClientConnectionManager =
+				new PoolingHttpClientConnectionManager(
+					getSocketFactoryRegistry(), null, null, null, 60000,
+					TimeUnit.MILLISECONDS);
+		}
+		else {
+			poolingHttpClientConnectionManager =
+				new PoolingHttpClientConnectionManager(
+					60000, TimeUnit.MILLISECONDS);
+		}
+
+		poolingHttpClientConnectionManager.setMaxTotal(20);
+
+		return poolingHttpClientConnectionManager;
+	}
+
+	protected Registry<ConnectionSocketFactory> getSocketFactoryRegistry() {
+		RegistryBuilder<ConnectionSocketFactory> registryBuilder =
+			RegistryBuilder.<ConnectionSocketFactory> create();
+
+		registryBuilder.register("http", new PlainConnectionSocketFactory());
+		registryBuilder.register("https", getSSLConnectionSocketFactory());
+
+		return registryBuilder.build();
+	}
+
+	protected SSLConnectionSocketFactory getSSLConnectionSocketFactory() {
+		SSLContextBuilder sslContextBuilder = SSLContexts.custom();
+
+		SSLContext sslContext = null;
+
+		try {
+			sslContextBuilder.loadTrustMaterial(_keyStore);
+
+			sslContext = sslContextBuilder.build();
+
+			sslContext.init(
+				null, new TrustManager[] {new X509TrustManagerImpl()}, null);
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+		return new SSLConnectionSocketFactory(
+			sslContext, new String[] {"TLSv1"}, null,
+			SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
+	}
+
+	protected void setProxyHost(HttpClientBuilder httpClientBuilder) {
+		if ((_proxyHostName == null) || _proxyHostName.equals("")) {
+			return;
+		}
+
+		HttpHost httpHost = new HttpHost(_proxyHostName, _proxyHostPort);
+
+		HttpRoutePlanner httpRoutePlanner = new DefaultProxyRoutePlanner(
+			httpHost);
+
+		httpClientBuilder.setRoutePlanner(httpRoutePlanner);
+	}
+
 	protected List<NameValuePair> toNameValuePairs(
 		Map<String, String> parameters) {
 
-		List<NameValuePair> nameValuePairs = new LinkedList<NameValuePair>();
+		List<NameValuePair> nameValuePairs = new LinkedList<>();
 
-		Set<Map.Entry<String, String>> set = parameters.entrySet();
-
-		Iterator<Map.Entry<String, String>> iterator = set.iterator();
-
-		while (iterator.hasNext()) {
-			Map.Entry<String, String> entry = iterator.next();
-
+		for (Map.Entry<String, String> entry : parameters.entrySet()) {
 			String key = entry.getKey();
 
 			String value = entry.getValue();
@@ -272,11 +417,155 @@ public class JSONWebServiceClientImpl implements JSONWebServiceClient {
 	private static Logger _logger = LoggerFactory.getLogger(
 		JSONWebServiceClientImpl.class);
 
-	private DefaultHttpClient _defaultHttpClient;
+	private CloseableHttpClient _closeableHttpClient;
+	private Map<String, String> _headers = Collections.emptyMap();
 	private String _hostName;
+	private int _hostPort = 80;
+	private IdleConnectionMonitorThread _idleConnectionMonitorThread;
+	private KeyStore _keyStore;
 	private String _login;
 	private String _password;
-	private int _port = 80;
 	private String _protocol = "http";
+	private String _proxyHostName;
+	private int _proxyHostPort;
+
+	private class HttpRequestRetryHandlerImpl
+		implements HttpRequestRetryHandler {
+
+		public boolean retryRequest(
+			IOException ioe, int retryCount, HttpContext httpContext) {
+
+			if (retryCount >= 5) {
+				return false;
+			}
+
+			if (ioe instanceof ConnectTimeoutException) {
+				return false;
+			}
+
+			if (ioe instanceof InterruptedIOException) {
+				return false;
+			}
+
+			if (ioe instanceof SocketException) {
+				return true;
+			}
+
+			if (ioe instanceof SSLException) {
+				return false;
+			}
+
+			if (ioe instanceof UnknownHostException) {
+				return false;
+			}
+
+			HttpClientContext httpClientContext = HttpClientContext.adapt(
+				httpContext);
+
+			HttpRequest httpRequest = httpClientContext.getRequest();
+
+			if (httpRequest instanceof HttpEntityEnclosingRequest) {
+				return false;
+			}
+
+			return true;
+		}
+
+	}
+
+	private class IdleConnectionMonitorThread extends Thread {
+
+		public IdleConnectionMonitorThread(
+			HttpClientConnectionManager httpClientConnectionManager) {
+
+			_httpClientConnectionManager = httpClientConnectionManager;
+		}
+
+		@Override
+		public void run() {
+			try {
+				while (!_shutdown) {
+					synchronized (this) {
+						wait(5000);
+
+						_httpClientConnectionManager.closeExpiredConnections();
+
+						_httpClientConnectionManager.closeIdleConnections(
+							30, TimeUnit.SECONDS);
+					}
+				}
+			}
+			catch (InterruptedException ie) {
+			}
+		}
+
+		public void shutdown() {
+			_shutdown = true;
+
+			synchronized (this) {
+				notifyAll();
+			}
+		}
+
+		private final HttpClientConnectionManager _httpClientConnectionManager;
+		private volatile boolean _shutdown;
+
+	}
+
+	private class X509TrustManagerImpl implements X509TrustManager {
+
+		public X509TrustManagerImpl() {
+			try {
+				TrustManagerFactory trustManagerFactory =
+					TrustManagerFactory.getInstance(
+						TrustManagerFactory.getDefaultAlgorithm());
+
+				trustManagerFactory.init((KeyStore)null);
+
+				for (TrustManager trustManager :
+						trustManagerFactory.getTrustManagers()) {
+
+					if (trustManager instanceof X509TrustManager) {
+						_x509TrustManager = (X509TrustManager)trustManager;
+
+						break;
+					}
+				}
+			}
+			catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		@Override
+		public void checkClientTrusted(
+				X509Certificate[] x509Certificates, String authType)
+			throws CertificateException {
+
+			if (x509Certificates.length != 1) {
+				_x509TrustManager.checkClientTrusted(
+					x509Certificates, authType);
+			}
+		}
+
+		@Override
+		public void checkServerTrusted(
+				X509Certificate[] x509Certificates, String authType)
+			throws CertificateException {
+
+			if (x509Certificates.length != 1) {
+				_x509TrustManager.checkServerTrusted(
+					x509Certificates, authType);
+			}
+		}
+
+		@Override
+		public X509Certificate[] getAcceptedIssuers() {
+			return _x509TrustManager.getAcceptedIssuers();
+		}
+
+		private X509TrustManager _x509TrustManager;
+
+	}
 
 }
