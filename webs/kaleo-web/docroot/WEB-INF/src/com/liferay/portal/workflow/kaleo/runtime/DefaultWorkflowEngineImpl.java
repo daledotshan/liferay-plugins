@@ -15,7 +15,6 @@
 package com.liferay.portal.workflow.kaleo.runtime;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackRegistryUtil;
@@ -44,6 +43,7 @@ import com.liferay.portal.workflow.kaleo.parser.WorkflowValidator;
 import com.liferay.portal.workflow.kaleo.runtime.node.NodeExecutor;
 import com.liferay.portal.workflow.kaleo.runtime.node.NodeExecutorFactory;
 import com.liferay.portal.workflow.kaleo.util.WorkflowModelUtil;
+import com.liferay.portal.workflow.kaleo.util.comparators.KaleoInstanceOrderByComparator;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -58,7 +58,8 @@ import java.util.concurrent.Callable;
  */
 @Transactional(
 	isolation = Isolation.PORTAL, propagation = Propagation.REQUIRED,
-	rollbackFor = {Exception.class})
+	rollbackFor = {Exception.class}
+)
 public class DefaultWorkflowEngineImpl
 	extends BaseKaleoBean implements WorkflowEngine {
 
@@ -176,7 +177,7 @@ public class DefaultWorkflowEngineImpl
 			KaleoInstanceToken rootKaleoInstanceToken =
 				kaleoInstance.getRootKaleoInstanceToken(null, serviceContext);
 
-			List<String> transitionNames = new ArrayList<String>();
+			List<String> transitionNames = new ArrayList<>();
 
 			getNextTransitionNames(rootKaleoInstanceToken, transitionNames);
 
@@ -258,14 +259,17 @@ public class DefaultWorkflowEngineImpl
 	public List<WorkflowInstance> getWorkflowInstances(
 			Long userId, String assetClassName, Long assetClassPK,
 			Boolean completed, int start, int end,
-			OrderByComparator orderByComparator, ServiceContext serviceContext)
+			OrderByComparator<WorkflowInstance> orderByComparator,
+			ServiceContext serviceContext)
 		throws WorkflowException {
 
 		try {
 			List<KaleoInstance> kaleoInstances =
 				kaleoInstanceLocalService.getKaleoInstances(
 					userId, assetClassName, assetClassPK, completed, start, end,
-					orderByComparator, serviceContext);
+					KaleoInstanceOrderByComparator.getOrderByComparator(
+						orderByComparator, serviceContext),
+					serviceContext);
 
 			return toWorkflowInstances(kaleoInstances, serviceContext);
 		}
@@ -277,7 +281,7 @@ public class DefaultWorkflowEngineImpl
 	@Override
 	public List<WorkflowInstance> getWorkflowInstances(
 			Long userId, String[] assetClassNames, Boolean completed, int start,
-			int end, OrderByComparator orderByComparator,
+			int end, OrderByComparator<WorkflowInstance> orderByComparator,
 			ServiceContext serviceContext)
 		throws WorkflowException {
 
@@ -285,7 +289,9 @@ public class DefaultWorkflowEngineImpl
 			List<KaleoInstance> kaleoInstances =
 				kaleoInstanceLocalService.getKaleoInstances(
 					userId, assetClassNames, completed, start, end,
-					orderByComparator, serviceContext);
+					KaleoInstanceOrderByComparator.getOrderByComparator(
+						orderByComparator, serviceContext),
+					serviceContext);
 
 			return toWorkflowInstances(kaleoInstances, serviceContext);
 		}
@@ -298,14 +304,18 @@ public class DefaultWorkflowEngineImpl
 	public List<WorkflowInstance> getWorkflowInstances(
 			String workflowDefinitionName, int workflowDefinitionVersion,
 			boolean completed, int start, int end,
-			OrderByComparator orderByComparator, ServiceContext serviceContext)
+			OrderByComparator<WorkflowInstance> orderByComparator,
+			ServiceContext serviceContext)
 		throws WorkflowException {
 
 		try {
 			List<KaleoInstance> kaleoInstances =
 				kaleoInstanceLocalService.getKaleoInstances(
 					workflowDefinitionName, workflowDefinitionVersion,
-					completed, start, end, orderByComparator, serviceContext);
+					completed, start, end,
+					KaleoInstanceOrderByComparator.getOrderByComparator(
+						orderByComparator, serviceContext),
+					serviceContext);
 
 			return toWorkflowInstances(kaleoInstances, serviceContext);
 		}
@@ -555,10 +565,10 @@ public class DefaultWorkflowEngineImpl
 
 	protected List<WorkflowInstance> toWorkflowInstances(
 			List<KaleoInstance> kaleoInstances, ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
-		List<WorkflowInstance> workflowInstances =
-			new ArrayList<WorkflowInstance>(kaleoInstances.size());
+		List<WorkflowInstance> workflowInstances = new ArrayList<>(
+			kaleoInstances.size());
 
 		for (KaleoInstance kaleoInstance : kaleoInstances) {
 			KaleoInstanceToken rootKaleoInstanceToken =

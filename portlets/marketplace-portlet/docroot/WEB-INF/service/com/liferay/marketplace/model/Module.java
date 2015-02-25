@@ -14,6 +14,8 @@
 
 package com.liferay.marketplace.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.model.PersistedModel;
 
 /**
@@ -25,10 +27,12 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.marketplace.model.impl.ModuleModelImpl
  * @generated
  */
+@ProviderType
 public interface Module extends ModuleModel, PersistedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never modify this interface directly. Add methods to {@link com.liferay.marketplace.model.impl.ModuleImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public boolean isBundle();
 }

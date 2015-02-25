@@ -14,8 +14,10 @@
 
 package com.liferay.jsonwebserviceclient;
 
-import com.liferay.portal.kernel.json.JSONDeserializer;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import java.io.IOException;
 
@@ -24,8 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.login.CredentialException;
-
 /**
  * @author Igor Beslic
  */
@@ -33,78 +33,111 @@ public abstract class BaseJSONWebServiceClientHandler {
 
 	public abstract JSONWebServiceClient getJSONWebServiceClient();
 
-	protected String doGet(String url, String... parametersArray)
-		throws CredentialException, IOException {
+	protected BaseJSONWebServiceClientHandler() {
+		objectMapper.configure(
+			DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	}
 
-		Map<String, String> parameters = new HashMap<String, String>();
+	protected String doGet(String url, String... parametersArray) {
+		JSONWebServiceClient jsonWebServiceClient = getJSONWebServiceClient();
+
+		Map<String, String> parameters = new HashMap<>();
 
 		for (int i = 0; i < parametersArray.length; i += 2) {
 			parameters.put(parametersArray[i], parametersArray[i + 1]);
 		}
 
-		return getJSONWebServiceClient().doGet(url, parameters);
+		return jsonWebServiceClient.doGet(url, parameters);
 	}
 
 	protected <T> List<T> doGetToList(
 			Class<T> clazz, String url, String... parametersArray)
-		throws Exception {
+		throws JSONWebServiceInvocationException {
 
 		String json = doGet(url, parametersArray);
 
-		if ((json == null) || json.equals("{}") || json.equals("[]")) {
+		if ((json == null) || json.equals("") || json.equals("{}") ||
+			json.equals("[]")) {
+
 			return Collections.emptyList();
 		}
 
-		if (json.contains("exception")) {
-			throw new Exception(getExceptionMessage(json));
+		if (json.contains("exception\":\"")) {
+			throw new JSONWebServiceInvocationException(
+				getExceptionMessage(json));
 		}
 
-		JSONDeserializer<List<T>> jsonDeserializer =
-			JSONFactoryUtil.createJSONDeserializer();
+		try {
+			TypeFactory typeFactory = objectMapper.getTypeFactory();
 
-		jsonDeserializer.use("values", clazz);
+			JavaType javaType = typeFactory.constructCollectionType(
+				List.class, clazz);
 
-		return jsonDeserializer.deserialize(json);
+			return objectMapper.readValue(json, javaType);
+		}
+		catch (IOException ie) {
+			throw new JSONWebServiceInvocationException(ie);
+		}
 	}
 
 	protected <T> T doGetToObject(
 			Class<T> clazz, String url, String... parametersArray)
-		throws Exception {
+		throws JSONWebServiceInvocationException {
 
 		String json = doGet(url, parametersArray);
 
-		if (json.contains("exception")) {
-			throw new Exception(getExceptionMessage(json));
+		if ((json == null) || json.equals("") || json.equals("{}")) {
+			return null;
 		}
 
-		return JSONFactoryUtil.looseDeserialize(json, clazz);
-	}
-
-	protected <T> T doGetToObject(String url, String... parametersArray)
-		throws Exception {
-
-		String json = doGet(url, parametersArray);
-
-		if (json.contains("exception")) {
-			throw new Exception(getExceptionMessage(json));
+		if (json.contains("exception\":\"")) {
+			throw new JSONWebServiceInvocationException(
+				getExceptionMessage(json));
 		}
 
-		JSONDeserializer<T> jsonDeserializer =
-			JSONFactoryUtil.createJSONDeserializer();
-
-		return jsonDeserializer.deserialize(json);
+		try {
+			return objectMapper.readValue(json, clazz);
+		}
+		catch (IOException ie) {
+			throw new JSONWebServiceInvocationException(ie);
+		}
 	}
 
-	protected void doPost(String url, String... parametersArray)
-		throws CredentialException, IOException {
+	protected String doPost(
+		String url, Map<String, String> parameters,
+		Map<String, String> headers) {
 
-		Map<String, String> parameters = new HashMap<String, String>();
+		JSONWebServiceClient jsonWebServiceClient = getJSONWebServiceClient();
+
+		return jsonWebServiceClient.doPost(url, parameters, headers);
+	}
+
+	protected String doPost(String url, String... parametersArray) {
+		JSONWebServiceClient jsonWebServiceClient = getJSONWebServiceClient();
+
+		Map<String, String> parameters = new HashMap<>();
 
 		for (int i = 0; i < parametersArray.length; i += 2) {
 			parameters.put(parametersArray[i], parametersArray[i + 1]);
 		}
 
-		getJSONWebServiceClient().doPost(url, parameters);
+		return jsonWebServiceClient.doPost(url, parameters);
+	}
+
+	protected String doPostAsJSON(String url, Object object)
+		throws JSONWebServiceInvocationException {
+
+		try {
+			JSONWebServiceClient jsonWebServiceClient =
+				getJSONWebServiceClient();
+
+			String json = objectMapper.writeValueAsString(object);
+
+			return jsonWebServiceClient.doPostAsJSON(url, json);
+		}
+		catch (IOException ie) {
+			throw new JSONWebServiceInvocationException(ie);
+		}
 	}
 
 	protected String getExceptionMessage(String json) {
@@ -114,5 +147,7 @@ public abstract class BaseJSONWebServiceClientHandler {
 
 		return json.substring(exceptionMessageStart, exceptionMessageEnd);
 	}
+
+	protected ObjectMapper objectMapper = new ObjectMapper();
 
 }

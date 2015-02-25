@@ -14,9 +14,10 @@
 
 package com.liferay.portal.workflow.kaleo.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -53,6 +54,7 @@ import java.util.Map;
  * @see com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignmentModel
  * @generated
  */
+@ProviderType
 public class KaleoTaskAssignmentModelImpl extends BaseModelImpl<KaleoTaskAssignment>
 	implements KaleoTaskAssignmentModel {
 	/*
@@ -80,7 +82,7 @@ public class KaleoTaskAssignmentModelImpl extends BaseModelImpl<KaleoTaskAssignm
 			{ "assigneeScriptLanguage", Types.VARCHAR },
 			{ "assigneeScriptRequiredContexts", Types.VARCHAR }
 		};
-	public static final String TABLE_SQL_CREATE = "create table KaleoTaskAssignment (kaleoTaskAssignmentId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(200) null,createDate DATE null,modifiedDate DATE null,kaleoClassName VARCHAR(200) null,kaleoClassPK LONG,kaleoDefinitionId LONG,kaleoNodeId LONG,assigneeClassName VARCHAR(200) null,assigneeClassPK LONG,assigneeActionId VARCHAR(75) null,assigneeScript TEXT null,assigneeScriptLanguage VARCHAR(75) null,assigneeScriptRequiredContexts VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table KaleoTaskAssignment (kaleoTaskAssignmentId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(200) null,createDate DATE null,modifiedDate DATE null,kaleoClassName VARCHAR(200) null,kaleoClassPK LONG,kaleoDefinitionId LONG,kaleoNodeId LONG,assigneeClassName VARCHAR(200) null,assigneeClassPK LONG,assigneeActionId VARCHAR(75) null,assigneeScript TEXT null,assigneeScriptLanguage VARCHAR(75) null,assigneeScriptRequiredContexts STRING null)";
 	public static final String TABLE_SQL_DROP = "drop table KaleoTaskAssignment";
 	public static final String ORDER_BY_JPQL = " ORDER BY kaleoTaskAssignment.kaleoTaskAssignmentId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY KaleoTaskAssignment.kaleoTaskAssignmentId ASC";
@@ -96,12 +98,12 @@ public class KaleoTaskAssignmentModelImpl extends BaseModelImpl<KaleoTaskAssignm
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.util.service.ServiceProps.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment"),
 			true);
-	public static long ASSIGNEECLASSNAME_COLUMN_BITMASK = 1L;
-	public static long COMPANYID_COLUMN_BITMASK = 2L;
-	public static long KALEOCLASSNAME_COLUMN_BITMASK = 4L;
-	public static long KALEOCLASSPK_COLUMN_BITMASK = 8L;
-	public static long KALEODEFINITIONID_COLUMN_BITMASK = 16L;
-	public static long KALEOTASKASSIGNMENTID_COLUMN_BITMASK = 32L;
+	public static final long ASSIGNEECLASSNAME_COLUMN_BITMASK = 1L;
+	public static final long COMPANYID_COLUMN_BITMASK = 2L;
+	public static final long KALEOCLASSNAME_COLUMN_BITMASK = 4L;
+	public static final long KALEOCLASSPK_COLUMN_BITMASK = 8L;
+	public static final long KALEODEFINITIONID_COLUMN_BITMASK = 16L;
+	public static final long KALEOTASKASSIGNMENTID_COLUMN_BITMASK = 32L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.util.service.ServiceProps.get(
 				"lock.expiration.time.com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment"));
 
@@ -330,7 +332,7 @@ public class KaleoTaskAssignmentModelImpl extends BaseModelImpl<KaleoTaskAssignm
 	}
 
 	@Override
-	public String getUserUuid() throws SystemException {
+	public String getUserUuid() {
 		try {
 			User user = UserLocalServiceUtil.getUserById(getUserId());
 
@@ -914,8 +916,8 @@ public class KaleoTaskAssignmentModelImpl extends BaseModelImpl<KaleoTaskAssignm
 		return sb.toString();
 	}
 
-	private static ClassLoader _classLoader = KaleoTaskAssignment.class.getClassLoader();
-	private static Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static final ClassLoader _classLoader = KaleoTaskAssignment.class.getClassLoader();
+	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
 			KaleoTaskAssignment.class
 		};
 	private long _kaleoTaskAssignmentId;
