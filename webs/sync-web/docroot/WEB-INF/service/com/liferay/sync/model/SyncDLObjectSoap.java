@@ -14,6 +14,8 @@
 
 package com.liferay.sync.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import java.util.List;
  * @see com.liferay.sync.service.http.SyncDLObjectServiceSoap
  * @generated
  */
+@ProviderType
 public class SyncDLObjectSoap implements Serializable {
 	public static SyncDLObjectSoap toSoapModel(SyncDLObject model) {
 		SyncDLObjectSoap soapModel = new SyncDLObjectSoap();
@@ -44,6 +47,7 @@ public class SyncDLObjectSoap implements Serializable {
 		soapModel.setChangeLog(model.getChangeLog());
 		soapModel.setExtraSettings(model.getExtraSettings());
 		soapModel.setVersion(model.getVersion());
+		soapModel.setVersionId(model.getVersionId());
 		soapModel.setSize(model.getSize());
 		soapModel.setChecksum(model.getChecksum());
 		soapModel.setEvent(model.getEvent());
@@ -209,6 +213,14 @@ public class SyncDLObjectSoap implements Serializable {
 		_version = version;
 	}
 
+	public long getVersionId() {
+		return _versionId;
+	}
+
+	public void setVersionId(long versionId) {
+		_versionId = versionId;
+	}
+
 	public long getSize() {
 		return _size;
 	}
@@ -294,6 +306,7 @@ public class SyncDLObjectSoap implements Serializable {
 	private String _changeLog;
 	private String _extraSettings;
 	private String _version;
+	private long _versionId;
 	private long _size;
 	private String _checksum;
 	private String _event;

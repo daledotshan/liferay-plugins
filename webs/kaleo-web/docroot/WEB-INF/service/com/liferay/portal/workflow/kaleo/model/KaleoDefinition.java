@@ -14,6 +14,8 @@
 
 package com.liferay.portal.workflow.kaleo.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.model.PersistedModel;
 
 /**
@@ -25,6 +27,7 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.portal.workflow.kaleo.model.impl.KaleoDefinitionModelImpl
  * @generated
  */
+@ProviderType
 public interface KaleoDefinition extends KaleoDefinitionModel, PersistedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -32,9 +35,7 @@ public interface KaleoDefinition extends KaleoDefinitionModel, PersistedModel {
 	 * Never modify this interface directly. Add methods to {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoDefinitionImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
 	public com.liferay.portal.workflow.kaleo.model.KaleoNode getKaleoStartNode()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException;
+		throws com.liferay.portal.kernel.exception.PortalException;
 
-	public boolean hasIncompleteKaleoInstances()
-		throws com.liferay.portal.kernel.exception.SystemException;
+	public boolean hasIncompleteKaleoInstances();
 }
