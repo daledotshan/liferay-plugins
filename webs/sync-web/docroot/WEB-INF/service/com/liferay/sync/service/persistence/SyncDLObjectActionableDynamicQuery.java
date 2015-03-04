@@ -15,18 +15,19 @@
 package com.liferay.sync.service.persistence;
 
 import com.liferay.portal.kernel.dao.orm.BaseActionableDynamicQuery;
-import com.liferay.portal.kernel.exception.SystemException;
 
 import com.liferay.sync.model.SyncDLObject;
 import com.liferay.sync.service.SyncDLObjectLocalServiceUtil;
 
 /**
  * @author Brian Wing Shun Chan
+ * @deprecated As of 7.0.0, replaced by {@link SyncDLObjectLocalServiceUtil#getActionableDynamicQuery()}
  * @generated
  */
+@Deprecated
 public abstract class SyncDLObjectActionableDynamicQuery
 	extends BaseActionableDynamicQuery {
-	public SyncDLObjectActionableDynamicQuery() throws SystemException {
+	public SyncDLObjectActionableDynamicQuery() {
 		setBaseLocalService(SyncDLObjectLocalServiceUtil.getService());
 		setClass(SyncDLObject.class);
 
