@@ -14,6 +14,8 @@
 
 package com.liferay.calendar.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import java.util.List;
  * @see com.liferay.calendar.service.http.CalendarBookingServiceSoap
  * @generated
  */
+@ProviderType
 public class CalendarBookingSoap implements Serializable {
 	public static CalendarBookingSoap toSoapModel(CalendarBooking model) {
 		CalendarBookingSoap soapModel = new CalendarBookingSoap();
@@ -43,6 +46,7 @@ public class CalendarBookingSoap implements Serializable {
 		soapModel.setCalendarId(model.getCalendarId());
 		soapModel.setCalendarResourceId(model.getCalendarResourceId());
 		soapModel.setParentCalendarBookingId(model.getParentCalendarBookingId());
+		soapModel.setVEventUid(model.getVEventUid());
 		soapModel.setTitle(model.getTitle());
 		soapModel.setDescription(model.getDescription());
 		soapModel.setLocation(model.getLocation());
@@ -208,6 +212,14 @@ public class CalendarBookingSoap implements Serializable {
 		_parentCalendarBookingId = parentCalendarBookingId;
 	}
 
+	public String getVEventUid() {
+		return _vEventUid;
+	}
+
+	public void setVEventUid(String vEventUid) {
+		_vEventUid = vEventUid;
+	}
+
 	public String getTitle() {
 		return _title;
 	}
@@ -344,6 +356,7 @@ public class CalendarBookingSoap implements Serializable {
 	private long _calendarId;
 	private long _calendarResourceId;
 	private long _parentCalendarBookingId;
+	private String _vEventUid;
 	private String _title;
 	private String _description;
 	private String _location;

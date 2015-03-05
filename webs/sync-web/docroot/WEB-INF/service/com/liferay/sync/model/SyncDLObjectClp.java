@@ -14,14 +14,18 @@
 
 package com.liferay.sync.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.BaseModel;
+import com.liferay.portal.model.User;
 import com.liferay.portal.model.impl.BaseModelImpl;
-import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.service.UserLocalServiceUtil;
 
 import com.liferay.sync.service.ClpSerializer;
 import com.liferay.sync.service.SyncDLObjectLocalServiceUtil;
@@ -37,6 +41,7 @@ import java.util.Map;
 /**
  * @author Brian Wing Shun Chan
  */
+@ProviderType
 public class SyncDLObjectClp extends BaseModelImpl<SyncDLObject>
 	implements SyncDLObject {
 	public SyncDLObjectClp() {
@@ -89,6 +94,7 @@ public class SyncDLObjectClp extends BaseModelImpl<SyncDLObject>
 		attributes.put("changeLog", getChangeLog());
 		attributes.put("extraSettings", getExtraSettings());
 		attributes.put("version", getVersion());
+		attributes.put("versionId", getVersionId());
 		attributes.put("size", getSize());
 		attributes.put("checksum", getChecksum());
 		attributes.put("event", getEvent());
@@ -183,6 +189,12 @@ public class SyncDLObjectClp extends BaseModelImpl<SyncDLObject>
 
 		if (version != null) {
 			setVersion(version);
+		}
+
+		Long versionId = (Long)attributes.get("versionId");
+
+		if (versionId != null) {
+			setVersionId(versionId);
 		}
 
 		Long size = (Long)attributes.get("size");
@@ -543,6 +555,29 @@ public class SyncDLObjectClp extends BaseModelImpl<SyncDLObject>
 	}
 
 	@Override
+	public long getVersionId() {
+		return _versionId;
+	}
+
+	@Override
+	public void setVersionId(long versionId) {
+		_versionId = versionId;
+
+		if (_syncDLObjectRemoteModel != null) {
+			try {
+				Class<?> clazz = _syncDLObjectRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setVersionId", long.class);
+
+				method.invoke(_syncDLObjectRemoteModel, versionId);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
+	}
+
+	@Override
 	public long getSize() {
 		return _size;
 	}
@@ -659,13 +694,19 @@ public class SyncDLObjectClp extends BaseModelImpl<SyncDLObject>
 	}
 
 	@Override
-	public String getLockUserUuid() throws SystemException {
-		return PortalUtil.getUserValue(getLockUserId(), "uuid", _lockUserUuid);
+	public String getLockUserUuid() {
+		try {
+			User user = UserLocalServiceUtil.getUserById(getLockUserId());
+
+			return user.getUuid();
+		}
+		catch (PortalException pe) {
+			return StringPool.BLANK;
+		}
 	}
 
 	@Override
 	public void setLockUserUuid(String lockUserUuid) {
-		_lockUserUuid = lockUserUuid;
 	}
 
 	@Override
@@ -842,7 +883,7 @@ public class SyncDLObjectClp extends BaseModelImpl<SyncDLObject>
 	}
 
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			SyncDLObjectLocalServiceUtil.addSyncDLObject(this);
 		}
@@ -874,6 +915,7 @@ public class SyncDLObjectClp extends BaseModelImpl<SyncDLObject>
 		clone.setChangeLog(getChangeLog());
 		clone.setExtraSettings(getExtraSettings());
 		clone.setVersion(getVersion());
+		clone.setVersionId(getVersionId());
 		clone.setSize(getSize());
 		clone.setChecksum(getChecksum());
 		clone.setEvent(getEvent());
@@ -958,6 +1000,10 @@ public class SyncDLObjectClp extends BaseModelImpl<SyncDLObject>
 		}
 	}
 
+	public Class<?> getClpSerializerClass() {
+		return _clpSerializerClass;
+	}
+
 	@Override
 	public int hashCode() {
 		return (int)getPrimaryKey();
@@ -975,7 +1021,7 @@ public class SyncDLObjectClp extends BaseModelImpl<SyncDLObject>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(45);
+		StringBundler sb = new StringBundler(47);
 
 		sb.append("{syncDLObjectId=");
 		sb.append(getSyncDLObjectId());
@@ -1003,6 +1049,8 @@ public class SyncDLObjectClp extends BaseModelImpl<SyncDLObject>
 		sb.append(getExtraSettings());
 		sb.append(", version=");
 		sb.append(getVersion());
+		sb.append(", versionId=");
+		sb.append(getVersionId());
 		sb.append(", size=");
 		sb.append(getSize());
 		sb.append(", checksum=");
@@ -1028,7 +1076,7 @@ public class SyncDLObjectClp extends BaseModelImpl<SyncDLObject>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(70);
+		StringBundler sb = new StringBundler(73);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.sync.model.SyncDLObject");
@@ -1087,6 +1135,10 @@ public class SyncDLObjectClp extends BaseModelImpl<SyncDLObject>
 		sb.append(getVersion());
 		sb.append("]]></column-value></column>");
 		sb.append(
+			"<column><column-name>versionId</column-name><column-value><![CDATA[");
+		sb.append(getVersionId());
+		sb.append("]]></column-value></column>");
+		sb.append(
 			"<column><column-name>size</column-name><column-value><![CDATA[");
 		sb.append(getSize());
 		sb.append("]]></column-value></column>");
@@ -1141,17 +1193,18 @@ public class SyncDLObjectClp extends BaseModelImpl<SyncDLObject>
 	private String _changeLog;
 	private String _extraSettings;
 	private String _version;
+	private long _versionId;
 	private long _size;
 	private String _checksum;
 	private String _event;
 	private Date _lockExpirationDate;
 	private long _lockUserId;
-	private String _lockUserUuid;
 	private String _lockUserName;
 	private String _type;
 	private long _typePK;
 	private String _typeUuid;
 	private BaseModel<?> _syncDLObjectRemoteModel;
+	private Class<?> _clpSerializerClass = com.liferay.sync.service.ClpSerializer.class;
 	private boolean _entityCacheEnabled;
 	private boolean _finderCacheEnabled;
 }

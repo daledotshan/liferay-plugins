@@ -14,12 +14,14 @@
 
 package com.liferay.portal.workflow.kaleo.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.LocaleException;
 import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.GroupedModel;
+import com.liferay.portal.model.LocalizedModel;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -43,8 +45,9 @@ import java.util.Map;
  * @see com.liferay.portal.workflow.kaleo.model.impl.KaleoDefinitionModelImpl
  * @generated
  */
+@ProviderType
 public interface KaleoDefinitionModel extends BaseModel<KaleoDefinition>,
-	GroupedModel {
+	GroupedModel, LocalizedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -131,10 +134,9 @@ public interface KaleoDefinitionModel extends BaseModel<KaleoDefinition>,
 	 * Returns the user uuid of this kaleo definition.
 	 *
 	 * @return the user uuid of this kaleo definition
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid() throws SystemException;
+	public String getUserUuid();
 
 	/**
 	 * Sets the user uuid of this kaleo definition.
@@ -419,12 +421,16 @@ public interface KaleoDefinitionModel extends BaseModel<KaleoDefinition>,
 	@Override
 	public void setExpandoBridgeAttributes(ServiceContext serviceContext);
 
+	@Override
 	public String[] getAvailableLanguageIds();
 
+	@Override
 	public String getDefaultLanguageId();
 
+	@Override
 	public void prepareLocalizedFieldsForImport() throws LocaleException;
 
+	@Override
 	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
 		throws LocaleException;
 
@@ -432,19 +438,20 @@ public interface KaleoDefinitionModel extends BaseModel<KaleoDefinition>,
 	public Object clone();
 
 	@Override
-	public int compareTo(KaleoDefinition kaleoDefinition);
+	public int compareTo(
+		com.liferay.portal.workflow.kaleo.model.KaleoDefinition kaleoDefinition);
 
 	@Override
 	public int hashCode();
 
 	@Override
-	public CacheModel<KaleoDefinition> toCacheModel();
+	public CacheModel<com.liferay.portal.workflow.kaleo.model.KaleoDefinition> toCacheModel();
 
 	@Override
-	public KaleoDefinition toEscapedModel();
+	public com.liferay.portal.workflow.kaleo.model.KaleoDefinition toEscapedModel();
 
 	@Override
-	public KaleoDefinition toUnescapedModel();
+	public com.liferay.portal.workflow.kaleo.model.KaleoDefinition toUnescapedModel();
 
 	@Override
 	public String toString();
