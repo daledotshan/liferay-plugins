@@ -15,7 +15,6 @@
 package com.liferay.portal.workflow.kaleo.runtime;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.messaging.sender.DefaultSingleDestinationMessageSender;
 import com.liferay.portal.kernel.messaging.sender.SingleDestinationMessageSender;
@@ -38,7 +37,8 @@ import java.util.List;
  */
 @Transactional(
 	isolation = Isolation.PORTAL, propagation = Propagation.SUPPORTS,
-	rollbackFor = {Exception.class})
+	rollbackFor = {Exception.class}
+)
 public class DefaultKaleoSignaler
 	extends BaseKaleoBean implements KaleoSignaler {
 
@@ -47,8 +47,8 @@ public class DefaultKaleoSignaler
 			new DefaultSingleDestinationMessageSender();
 
 		singleDestinationMessageSender.setDestinationName(destinationName);
-		singleDestinationMessageSender.setMessageSender(
-			MessageBusUtil.getMessageSender());
+		singleDestinationMessageSender.setMessageBus(
+			MessageBusUtil.getMessageBus());
 
 		_singleDestinationMessageSender = singleDestinationMessageSender;
 	}
@@ -56,7 +56,7 @@ public class DefaultKaleoSignaler
 	@Override
 	public void signalEntry(
 			String transitionName, ExecutionContext executionContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		KaleoInstanceToken kaleoInstanceToken =
 			executionContext.getKaleoInstanceToken();
@@ -72,15 +72,16 @@ public class DefaultKaleoSignaler
 	@Override
 	@Transactional(
 		isolation = Isolation.PORTAL, propagation = Propagation.REQUIRED,
-		rollbackFor = {Exception.class})
+		rollbackFor = {Exception.class}
+	)
 	public void signalExecute(
 			KaleoNode currentKaleoNode, ExecutionContext executionContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		NodeExecutor nodeExecutor = NodeExecutorFactory.getNodeExecutor(
 			currentKaleoNode.getType());
 
-		List<PathElement> remainingPathElements = new ArrayList<PathElement>();
+		List<PathElement> remainingPathElements = new ArrayList<>();
 
 		nodeExecutor.execute(
 			currentKaleoNode, executionContext, remainingPathElements);
@@ -95,7 +96,7 @@ public class DefaultKaleoSignaler
 	@Override
 	public void signalExit(
 			String transitionName, ExecutionContext executionContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		KaleoInstanceToken kaleoInstanceToken =
 			executionContext.getKaleoInstanceToken();

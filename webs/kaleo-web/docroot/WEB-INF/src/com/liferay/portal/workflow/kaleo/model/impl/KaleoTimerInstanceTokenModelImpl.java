@@ -14,9 +14,10 @@
 
 package com.liferay.portal.workflow.kaleo.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -53,6 +54,7 @@ import java.util.Map;
  * @see com.liferay.portal.workflow.kaleo.model.KaleoTimerInstanceTokenModel
  * @generated
  */
+@ProviderType
 public class KaleoTimerInstanceTokenModelImpl extends BaseModelImpl<KaleoTimerInstanceToken>
 	implements KaleoTimerInstanceTokenModel {
 	/*
@@ -99,12 +101,12 @@ public class KaleoTimerInstanceTokenModelImpl extends BaseModelImpl<KaleoTimerIn
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.util.service.ServiceProps.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.workflow.kaleo.model.KaleoTimerInstanceToken"),
 			true);
-	public static long BLOCKING_COLUMN_BITMASK = 1L;
-	public static long COMPLETED_COLUMN_BITMASK = 2L;
-	public static long KALEOINSTANCEID_COLUMN_BITMASK = 4L;
-	public static long KALEOINSTANCETOKENID_COLUMN_BITMASK = 8L;
-	public static long KALEOTIMERID_COLUMN_BITMASK = 16L;
-	public static long KALEOTIMERINSTANCETOKENID_COLUMN_BITMASK = 32L;
+	public static final long BLOCKING_COLUMN_BITMASK = 1L;
+	public static final long COMPLETED_COLUMN_BITMASK = 2L;
+	public static final long KALEOINSTANCEID_COLUMN_BITMASK = 4L;
+	public static final long KALEOINSTANCETOKENID_COLUMN_BITMASK = 8L;
+	public static final long KALEOTIMERID_COLUMN_BITMASK = 16L;
+	public static final long KALEOTIMERINSTANCETOKENID_COLUMN_BITMASK = 32L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.util.service.ServiceProps.get(
 				"lock.expiration.time.com.liferay.portal.workflow.kaleo.model.KaleoTimerInstanceToken"));
 
@@ -341,7 +343,7 @@ public class KaleoTimerInstanceTokenModelImpl extends BaseModelImpl<KaleoTimerIn
 	}
 
 	@Override
-	public String getUserUuid() throws SystemException {
+	public String getUserUuid() {
 		try {
 			User user = UserLocalServiceUtil.getUserById(getUserId());
 
@@ -555,7 +557,7 @@ public class KaleoTimerInstanceTokenModelImpl extends BaseModelImpl<KaleoTimerIn
 	}
 
 	@Override
-	public String getCompletionUserUuid() throws SystemException {
+	public String getCompletionUserUuid() {
 		try {
 			User user = UserLocalServiceUtil.getUserById(getCompletionUserId());
 
@@ -1000,8 +1002,8 @@ public class KaleoTimerInstanceTokenModelImpl extends BaseModelImpl<KaleoTimerIn
 		return sb.toString();
 	}
 
-	private static ClassLoader _classLoader = KaleoTimerInstanceToken.class.getClassLoader();
-	private static Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static final ClassLoader _classLoader = KaleoTimerInstanceToken.class.getClassLoader();
+	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
 			KaleoTimerInstanceToken.class
 		};
 	private long _kaleoTimerInstanceTokenId;

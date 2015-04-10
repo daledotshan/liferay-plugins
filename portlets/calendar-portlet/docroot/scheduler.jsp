@@ -17,7 +17,7 @@
 <%@ include file="/init.jsp" %>
 
 <%
-String activeView = ParamUtil.getString(request, "activeView", defaultView);
+String activeView = ParamUtil.getString(request, "activeView", sessionClicksDefaultView);
 long date = ParamUtil.getLong(request, "date", System.currentTimeMillis());
 String editCalendarBookingURL = ParamUtil.getString(request, "editCalendarBookingURL");
 String filterCalendarBookings = ParamUtil.getString(request, "filterCalendarBookings", null);
@@ -37,13 +37,21 @@ String viewCalendarBookingURL = ParamUtil.getString(request, "viewCalendarBookin
 <%@ include file="/event_recorder.jspf" %>
 
 <aui:script use="aui-toggler,liferay-calendar-list,liferay-scheduler,liferay-store,json">
-	Liferay.CalendarUtil.CALENDAR_BOOKINGS_URL = '<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="calendarBookings" />';
 	Liferay.CalendarUtil.PORTLET_NAMESPACE = '<portlet:namespace />';
 	Liferay.CalendarUtil.USER_TIME_ZONE = '<%= HtmlUtil.escapeJS(userTimeZone.getID()) %>';
 
+	var showMoreStrings = {
+		close: '<liferay-ui:message key="close" />',
+		more: '<%= StringUtil.toLowerCase(LanguageUtil.get(request, "more")) %>',
+		show: '<liferay-ui:message key="show" />'
+	};
+
 	<c:if test="<%= !hideDayView %>">
-		window.<portlet:namespace />dayView = new A.SchedulerDayView(
+		window.<portlet:namespace />dayView = new Liferay.SchedulerDayView(
 			{
+				headerViewConfig: {
+					strings: showMoreStrings
+				},
 				height: 700,
 				isoTime: <%= isoTimeFormat %>,
 				readOnly: <%= readOnly %>,
@@ -55,8 +63,12 @@ String viewCalendarBookingURL = ParamUtil.getString(request, "viewCalendarBookin
 	</c:if>
 
 	<c:if test="<%= !hideWeekView %>">
-		window.<portlet:namespace />weekView = new A.SchedulerWeekView(
+		window.<portlet:namespace />weekView = new Liferay.SchedulerWeekView(
 			{
+				headerViewConfig: {
+					displayDaysInterval: A.DataType.DateMath.WEEK_LENGTH,
+					strings: showMoreStrings
+				},
 				height: 700,
 				isoTime: <%= isoTimeFormat %>,
 				readOnly: <%= readOnly %>,
@@ -68,17 +80,18 @@ String viewCalendarBookingURL = ParamUtil.getString(request, "viewCalendarBookin
 	</c:if>
 
 	<c:if test="<%= !hideMonthView %>">
-		window.<portlet:namespace />monthView = new A.SchedulerMonthView(
+		window.<portlet:namespace />monthView = new Liferay.SchedulerMonthView(
 			{
-				height: 700,
+				height: 'auto',
 				isoTime: <%= isoTimeFormat %>,
-				readOnly: <%= readOnly %>
+				readOnly: <%= readOnly %>,
+				strings: showMoreStrings
 			}
 		);
 	</c:if>
 
 	<c:if test="<%= !hideAgendaView %>">
-		window.<portlet:namespace />agendaView = new A.SchedulerAgendaView(
+		window.<portlet:namespace />agendaView = new Liferay.SchedulerAgendaView(
 			{
 				height: 700,
 				isoTime: <%= isoTimeFormat %>,
