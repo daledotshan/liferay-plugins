@@ -14,13 +14,14 @@
 
 package com.liferay.marketplace.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.marketplace.model.App;
 import com.liferay.marketplace.model.AppModel;
 import com.liferay.marketplace.model.AppSoap;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -61,6 +62,7 @@ import java.util.Map;
  * @generated
  */
 @JSON(strict = true)
+@ProviderType
 public class AppModelImpl extends BaseModelImpl<App> implements AppModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -99,11 +101,11 @@ public class AppModelImpl extends BaseModelImpl<App> implements AppModel {
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.util.service.ServiceProps.get(
 				"value.object.column.bitmask.enabled.com.liferay.marketplace.model.App"),
 			true);
-	public static long CATEGORY_COLUMN_BITMASK = 1L;
-	public static long COMPANYID_COLUMN_BITMASK = 2L;
-	public static long REMOTEAPPID_COLUMN_BITMASK = 4L;
-	public static long UUID_COLUMN_BITMASK = 8L;
-	public static long APPID_COLUMN_BITMASK = 16L;
+	public static final long CATEGORY_COLUMN_BITMASK = 1L;
+	public static final long COMPANYID_COLUMN_BITMASK = 2L;
+	public static final long REMOTEAPPID_COLUMN_BITMASK = 4L;
+	public static final long UUID_COLUMN_BITMASK = 8L;
+	public static final long APPID_COLUMN_BITMASK = 16L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -366,7 +368,7 @@ public class AppModelImpl extends BaseModelImpl<App> implements AppModel {
 	}
 
 	@Override
-	public String getUserUuid() throws SystemException {
+	public String getUserUuid() {
 		try {
 			User user = UserLocalServiceUtil.getUserById(getUserId());
 
@@ -849,8 +851,10 @@ public class AppModelImpl extends BaseModelImpl<App> implements AppModel {
 		return sb.toString();
 	}
 
-	private static ClassLoader _classLoader = App.class.getClassLoader();
-	private static Class<?>[] _escapedModelInterfaces = new Class[] { App.class };
+	private static final ClassLoader _classLoader = App.class.getClassLoader();
+	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+			App.class
+		};
 	private String _uuid;
 	private String _originalUuid;
 	private long _appId;

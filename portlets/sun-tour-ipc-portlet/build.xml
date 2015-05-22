@@ -2,7 +2,7 @@
 <!DOCTYPE project>
 
 <project name="sun-tour-ipc-portlet" basedir="." default="deploy">
-	<import file="../build-common-portlet.xml" />
+	<property name="compile.jsp.docroot.dir" value="tmp" />
 
 	<!--
 	Download Tour IPC Portlets from
@@ -11,9 +11,11 @@
 
 	<property name="original.war.file" value="touripcportlet.war" />
 
+	<import file="../build-common-portlet.xml" />
+
 	<target name="merge">
 		<merge
-			module.dir="."
+			module.dir="${basedir}"
 		/>
 
 		<replace file="tmp/WEB-INF/portlet.xml">

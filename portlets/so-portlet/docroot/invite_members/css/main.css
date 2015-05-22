@@ -1,3 +1,5 @@
+@import "mixins";
+
 .so-portlet-invite-members {
 	.email-invited h2 span {
 		color: #999;
@@ -18,9 +20,9 @@
 		border: 1px solid;
 		border-color: #BFBFBF #DEDEDE #DEDEDE #BFBFBF;
 		height: 300px;
-		width: 205px;
 		overflow-x: hidden;
 		overflow-y: auto;
+		width: 205px;
 
 		.more-results a {
 			display: block;
@@ -39,6 +41,11 @@
 		border: 1px solid #B0BAFF;
 		float: left;
 		padding: 12px;
+
+		.footnote {
+			color: #AAA;
+			font-size: 0.8em;
+		}
 	}
 
 	.invited-users-wrapper {
@@ -147,6 +154,10 @@
 		padding-left: 10px;
 	}
 
+	.pending-member-request {
+		background: url(@theme_image_path@/common/check.png) no-repeat 0 50%;
+	}
+
 	.invited {
 		background: #DFD url(@theme_image_path@/arrows/01_minus.png) no-repeat 0 50%;
 		border-color: #AFA;
@@ -164,44 +175,31 @@
 	}
 }
 
-.ie .so-portlet-invite-members .invite-to select {
-	width: 300px;
-}
-
-.ie6 .so-portlet-invite-members {
-	.search {
-		background-image: none;
-	}
-
-	.invited, .user {
-		border-bottom: 1px solid #FFF;
-		border-top: 1px solid #FFF;
-	}
-}
-
 /* ---------- Responsive ---------- */
 
-html.aui {
-	@media (max-width: 767px) {
-		.so-portlet-invite-members .modal-body {
-			.user-search-wrapper {
-				float: none;
-				margin-top: 10px;
-			}
+@include respond-to(phone) {
+	.so-portlet-invite-members.modal {
+		.user-search-wrapper {
+			float: none;
+			margin-top: 10px;
 
-			.search {
-				height: auto;
-				max-height: 300px;
-				width: auto;
+			h2 {
+				line-height: 1em;
 			}
+		}
 
-			.invited-users-wrapper {
-				margin-left: 0;
-			}
+		.search {
+			height: auto;
+			max-height: 300px;
+			width: auto;
+		}
 
-			.user-invited h2 span {
-				display: none;
-			}
+		.invited-users-wrapper {
+			margin-left: 0;
+		}
+
+		.user-invited h2 span {
+			display: none;
 		}
 	}
 }

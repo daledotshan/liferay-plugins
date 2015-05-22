@@ -14,8 +14,11 @@
 
 package com.liferay.calendar.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.calendar.model.CalendarBooking;
 
+import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
@@ -34,11 +37,36 @@ import java.util.Date;
  * @see CalendarBooking
  * @generated
  */
+@ProviderType
 public class CalendarBookingCacheModel implements CacheModel<CalendarBooking>,
 	Externalizable {
 	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof CalendarBookingCacheModel)) {
+			return false;
+		}
+
+		CalendarBookingCacheModel calendarBookingCacheModel = (CalendarBookingCacheModel)obj;
+
+		if (calendarBookingId == calendarBookingCacheModel.calendarBookingId) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return HashUtil.hash(0, calendarBookingId);
+	}
+
+	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(55);
+		StringBundler sb = new StringBundler(57);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -64,6 +92,8 @@ public class CalendarBookingCacheModel implements CacheModel<CalendarBooking>,
 		sb.append(calendarResourceId);
 		sb.append(", parentCalendarBookingId=");
 		sb.append(parentCalendarBookingId);
+		sb.append(", vEventUid=");
+		sb.append(vEventUid);
 		sb.append(", title=");
 		sb.append(title);
 		sb.append(", description=");
@@ -140,6 +170,13 @@ public class CalendarBookingCacheModel implements CacheModel<CalendarBooking>,
 		calendarBookingImpl.setCalendarId(calendarId);
 		calendarBookingImpl.setCalendarResourceId(calendarResourceId);
 		calendarBookingImpl.setParentCalendarBookingId(parentCalendarBookingId);
+
+		if (vEventUid == null) {
+			calendarBookingImpl.setVEventUid(StringPool.BLANK);
+		}
+		else {
+			calendarBookingImpl.setVEventUid(vEventUid);
+		}
 
 		if (title == null) {
 			calendarBookingImpl.setTitle(StringPool.BLANK);
@@ -227,6 +264,7 @@ public class CalendarBookingCacheModel implements CacheModel<CalendarBooking>,
 		calendarId = objectInput.readLong();
 		calendarResourceId = objectInput.readLong();
 		parentCalendarBookingId = objectInput.readLong();
+		vEventUid = objectInput.readUTF();
 		title = objectInput.readUTF();
 		description = objectInput.readUTF();
 		location = objectInput.readUTF();
@@ -272,6 +310,13 @@ public class CalendarBookingCacheModel implements CacheModel<CalendarBooking>,
 		objectOutput.writeLong(calendarId);
 		objectOutput.writeLong(calendarResourceId);
 		objectOutput.writeLong(parentCalendarBookingId);
+
+		if (vEventUid == null) {
+			objectOutput.writeUTF(StringPool.BLANK);
+		}
+		else {
+			objectOutput.writeUTF(vEventUid);
+		}
 
 		if (title == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
@@ -348,6 +393,7 @@ public class CalendarBookingCacheModel implements CacheModel<CalendarBooking>,
 	public long calendarId;
 	public long calendarResourceId;
 	public long parentCalendarBookingId;
+	public String vEventUid;
 	public String title;
 	public String description;
 	public String location;

@@ -21,7 +21,6 @@ import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
-import com.liferay.portal.kernel.search.StringDistanceCalculatorUtil;
 import com.liferay.portal.kernel.search.SuggestionConstants;
 import com.liferay.portal.kernel.search.TokenizerUtil;
 import com.liferay.portal.kernel.search.WeightedWord;
@@ -39,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.apache.lucene.search.spell.LevensteinDistance;
+import org.apache.lucene.search.spell.StringDistance;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServer;
@@ -65,13 +66,16 @@ public class SolrQuerySuggester extends BaseQuerySuggester {
 		_solrServer = solrServer;
 	}
 
+	public void setStringDistance(StringDistance stringDistance) {
+		_stringDistance = stringDistance;
+	}
+
 	@Override
 	public Map<String, List<String>> spellCheckKeywords(
 			SearchContext searchContext, int max)
 		throws SearchException {
 
-		Map<String, List<String>> suggestions =
-			new HashMap<String, List<String>>();
+		Map<String, List<String>> suggestions = new HashMap<>();
 
 		String localizedFieldName = DocumentImpl.getLocalizedName(
 			searchContext.getLanguageId(), Field.SPELL_CHECK_WORD);
@@ -145,7 +149,7 @@ public class SolrQuerySuggester extends BaseQuerySuggester {
 	protected String[] getFilterQueries(
 		SearchContext searchContext, String type) {
 
-		List<String> filterQueries = new ArrayList<String>(4);
+		List<String> filterQueries = new ArrayList<>(4);
 
 		String companyIdFilterQuery = getFilterQuery(
 			Field.COMPANY_ID, searchContext.getCompanyId());
@@ -226,7 +230,7 @@ public class SolrQuerySuggester extends BaseQuerySuggester {
 
 		max = Math.min(max, suggestionsSet.size());
 
-		List<String> suggestionsList = new ArrayList<String>(max);
+		List<String> suggestionsList = new ArrayList<>(max);
 
 		int count = 0;
 
@@ -257,10 +261,8 @@ public class SolrQuerySuggester extends BaseQuerySuggester {
 		throws SearchException {
 
 		try {
-			Map<String, WeightedWord> weightedWordsMap =
-				new HashMap<String, WeightedWord>();
-			TreeSet<WeightedWord> weightedWordsSet =
-				new TreeSet<WeightedWord>();
+			Map<String, WeightedWord> weightedWordsMap = new HashMap<>();
+			TreeSet<WeightedWord> weightedWordsSet = new TreeSet<>();
 
 			SolrQuery solrQuery = _nGramQueryBuilder.getNGramQuery(input);
 
@@ -296,7 +298,7 @@ public class SolrQuerySuggester extends BaseQuerySuggester {
 					String suggestionLowerCase = StringUtil.toLowerCase(
 						suggestion);
 
-					float distance = StringDistanceCalculatorUtil.getDistance(
+					float distance = _stringDistance.getDistance(
 						inputLowerCase, suggestionLowerCase);
 
 					if (distance >= _distanceThreshold) {
@@ -340,5 +342,6 @@ public class SolrQuerySuggester extends BaseQuerySuggester {
 	private float _distanceThreshold;
 	private NGramQueryBuilder _nGramQueryBuilder;
 	private SolrServer _solrServer;
+	private StringDistance _stringDistance = new LevensteinDistance();
 
 }

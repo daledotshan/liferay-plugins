@@ -15,7 +15,6 @@
 package com.liferay.wsrp.admin.lar;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
@@ -30,6 +29,8 @@ import com.liferay.wsrp.model.WSRPConsumerPortlet;
 import com.liferay.wsrp.service.WSRPConsumerLocalServiceUtil;
 import com.liferay.wsrp.service.WSRPConsumerPortletLocalServiceUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,7 +45,7 @@ public class WSRPConsumerPortletStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		Group group = GroupLocalServiceUtil.getGroup(groupId);
 
@@ -57,6 +58,19 @@ public class WSRPConsumerPortletStagedModelDataHandler
 			WSRPConsumerPortletLocalServiceUtil.deleteWSRPConsumerPortlet(
 				wsrpConsumerPortlet);
 		}
+	}
+
+	@Override
+	public List<WSRPConsumerPortlet> fetchStagedModelsByUuidAndCompanyId(
+		String uuid, long companyId) {
+
+		List<WSRPConsumerPortlet> wsrpConsumerPortlets = new ArrayList<>();
+
+		wsrpConsumerPortlets.add(
+			WSRPConsumerPortletLocalServiceUtil.
+				fetchWSRPConsumerPortletByUuidAndCompanyId(uuid, companyId));
+
+		return wsrpConsumerPortlets;
 	}
 
 	@Override
@@ -97,10 +111,6 @@ public class WSRPConsumerPortletStagedModelDataHandler
 			PortletDataContext portletDataContext,
 			WSRPConsumerPortlet wsrpConsumerPortlet)
 		throws Exception {
-
-		StagedModelDataHandlerUtil.importReferenceStagedModel(
-			portletDataContext, wsrpConsumerPortlet, WSRPConsumer.class,
-			wsrpConsumerPortlet.getWsrpConsumerId());
 
 		Map<Long, Long> wsrpConsumerIds =
 			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
@@ -151,22 +161,6 @@ public class WSRPConsumerPortletStagedModelDataHandler
 
 		portletDataContext.importClassedModel(
 			wsrpConsumerPortlet, importedWSRPConsumerPortlet);
-	}
-
-	@Override
-	protected boolean validateMissingReference(
-			String uuid, long companyId, long groupId)
-		throws Exception {
-
-		WSRPConsumerPortlet wsrpConsumerPortlet =
-			WSRPConsumerPortletLocalServiceUtil.
-				fetchWSRPConsumerPortletByUuidAndCompanyId(uuid, companyId);
-
-		if (wsrpConsumerPortlet == null) {
-			return false;
-		}
-
-		return true;
 	}
 
 }
