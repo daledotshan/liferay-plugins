@@ -14,7 +14,8 @@
 
 package com.liferay.portal.workflow.kaleo.model.impl;
 
-import com.liferay.portal.kernel.exception.SystemException;
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken;
 import com.liferay.portal.workflow.kaleo.service.KaleoTaskInstanceTokenLocalServiceUtil;
 
@@ -27,9 +28,10 @@ import com.liferay.portal.workflow.kaleo.service.KaleoTaskInstanceTokenLocalServ
  *
  * @author Brian Wing Shun Chan
  * @see KaleoTaskInstanceTokenImpl
- * @see com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken
+ * @see KaleoTaskInstanceToken
  * @generated
  */
+@ProviderType
 public abstract class KaleoTaskInstanceTokenBaseImpl
 	extends KaleoTaskInstanceTokenModelImpl implements KaleoTaskInstanceToken {
 	/*
@@ -38,7 +40,7 @@ public abstract class KaleoTaskInstanceTokenBaseImpl
 	 * Never modify or reference this class directly. All methods that expect a kaleo task instance token model instance should use the {@link KaleoTaskInstanceToken} interface instead.
 	 */
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			KaleoTaskInstanceTokenLocalServiceUtil.addKaleoTaskInstanceToken(this);
 		}

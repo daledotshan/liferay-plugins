@@ -14,8 +14,9 @@
 
 package com.liferay.wsrp.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
@@ -38,6 +39,7 @@ import java.util.Map;
 /**
  * @author Brian Wing Shun Chan
  */
+@ProviderType
 public class WSRPConsumerClp extends BaseModelImpl<WSRPConsumer>
 	implements WSRPConsumer {
 	public WSRPConsumerClp() {
@@ -625,7 +627,7 @@ public class WSRPConsumerClp extends BaseModelImpl<WSRPConsumer>
 	}
 
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			WSRPConsumerLocalServiceUtil.addWSRPConsumer(this);
 		}
@@ -694,6 +696,10 @@ public class WSRPConsumerClp extends BaseModelImpl<WSRPConsumer>
 		else {
 			return false;
 		}
+	}
+
+	public Class<?> getClpSerializerClass() {
+		return _clpSerializerClass;
 	}
 
 	@Override
@@ -826,6 +832,7 @@ public class WSRPConsumerClp extends BaseModelImpl<WSRPConsumer>
 	private String _forwardHeaders;
 	private String _markupCharacterSets;
 	private BaseModel<?> _wsrpConsumerRemoteModel;
+	private Class<?> _clpSerializerClass = ClpSerializer.class;
 	private boolean _entityCacheEnabled;
 	private boolean _finderCacheEnabled;
 }

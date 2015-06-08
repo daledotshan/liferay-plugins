@@ -14,6 +14,8 @@
 
 package com.liferay.calendar.service.http;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.calendar.service.CalendarResourceServiceUtil;
 
 import com.liferay.portal.kernel.log.Log;
@@ -27,7 +29,7 @@ import java.util.Map;
 
 /**
  * Provides the SOAP utility for the
- * {@link com.liferay.calendar.service.CalendarResourceServiceUtil} service utility. The
+ * {@link CalendarResourceServiceUtil} service utility. The
  * static methods of this class calls the same methods of the service utility.
  * However, the signatures are different because it is difficult for SOAP to
  * support certain types.
@@ -62,9 +64,10 @@ import java.util.Map;
  * @author Eduardo Lundgren
  * @see CalendarResourceServiceHttp
  * @see com.liferay.calendar.model.CalendarResourceSoap
- * @see com.liferay.calendar.service.CalendarResourceServiceUtil
+ * @see CalendarResourceServiceUtil
  * @generated
  */
+@ProviderType
 public class CalendarResourceServiceSoap {
 	public static com.liferay.calendar.model.CalendarResourceSoap addCalendarResource(
 		long groupId, long classNameId, long classPK,
@@ -141,7 +144,7 @@ public class CalendarResourceServiceSoap {
 		long companyId, long[] groupIds, long[] classNameIds,
 		java.lang.String keywords, boolean active, boolean andOperator,
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.calendar.model.CalendarResource> orderByComparator)
 		throws RemoteException {
 		try {
 			java.util.List<com.liferay.calendar.model.CalendarResource> returnValue =
@@ -163,7 +166,7 @@ public class CalendarResourceServiceSoap {
 		java.lang.String code, java.lang.String name,
 		java.lang.String description, boolean active, boolean andOperator,
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.calendar.model.CalendarResource> orderByComparator)
 		throws RemoteException {
 		try {
 			java.util.List<com.liferay.calendar.model.CalendarResource> returnValue =

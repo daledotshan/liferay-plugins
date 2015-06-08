@@ -27,9 +27,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portlet.expando.DuplicateColumnNameException;
 import com.liferay.webform.util.WebFormUtil;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -63,7 +60,7 @@ public class ConfigurationActionImpl extends DefaultConfigurationAction {
 			return;
 		}
 
-		Locale defaultLocale = LocaleUtil.getDefault();
+		Locale defaultLocale = LocaleUtil.getSiteDefault();
 		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
 
 		boolean updateFields = ParamUtil.getBoolean(
@@ -106,6 +103,9 @@ public class ConfigurationActionImpl extends DefaultConfigurationAction {
 				Map<Locale, String> fieldOptionsMap =
 					LocalizationUtil.getLocalizationMap(
 						actionRequest, "fieldOptions" + formFieldsIndex);
+				Map<Locale, String> fieldParagraphMap =
+					LocalizationUtil.getLocalizationMap(
+						actionRequest, "fieldParagraph" + formFieldsIndex);
 				String fieldValidationScript = ParamUtil.getString(
 					actionRequest, "fieldValidationScript" + formFieldsIndex);
 				String fieldValidationErrorMessage = ParamUtil.getString(
@@ -123,10 +123,16 @@ public class ConfigurationActionImpl extends DefaultConfigurationAction {
 					"fieldLabel" + i, fieldLabelMap, preferences);
 				updateModifiedLocales(
 					"fieldOptions" + i, fieldOptionsMap, preferences);
+				updateModifiedLocales(
+					"fieldParagraph" + i, fieldParagraphMap, preferences);
 
+				preferences.setValue(
+					"fieldLabel" + i, fieldLabelMap.get(defaultLocale));
 				preferences.setValue("fieldType" + i, fieldType);
 				preferences.setValue(
 					"fieldOptional" + i, String.valueOf(fieldOptional));
+				preferences.setValue("fieldOptions" + i, StringPool.BLANK);
+				preferences.setValue("fieldParagraph" + i, StringPool.BLANK);
 				preferences.setValue(
 					"fieldValidationScript" + i, fieldValidationScript);
 				preferences.setValue(
@@ -156,12 +162,15 @@ public class ConfigurationActionImpl extends DefaultConfigurationAction {
 					LocalizationUtil.setPreferencesValue(
 						preferences, "fieldLabel" + i, languageId,
 						StringPool.BLANK);
-
 					LocalizationUtil.setPreferencesValue(
 						preferences, "fieldOptions" + i, languageId,
 						StringPool.BLANK);
+					LocalizationUtil.setPreferencesValue(
+						preferences, "fieldParagraph" + i, languageId,
+						StringPool.BLANK);
 				}
 
+				preferences.setValue("fieldLabel" + i, StringPool.BLANK);
 				preferences.setValue("fieldType" + i, StringPool.BLANK);
 				preferences.setValue("fieldOptional" + i, StringPool.BLANK);
 				preferences.setValue(
@@ -222,7 +231,7 @@ public class ConfigurationActionImpl extends DefaultConfigurationAction {
 	protected void validateFields(ActionRequest actionRequest)
 		throws Exception {
 
-		Locale defaultLocale = LocaleUtil.getDefault();
+		Locale defaultLocale = LocaleUtil.getSiteDefault();
 		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
 
 		boolean sendAsEmail = GetterUtil.getBoolean(
@@ -246,36 +255,30 @@ public class ConfigurationActionImpl extends DefaultConfigurationAction {
 
 			String[] emailAdresses = WebFormUtil.split(
 				getParameter(actionRequest, "emailAddress"));
+			String emailFromAddress = GetterUtil.getString(
+				getParameter(actionRequest, "emailFromAddress"));
 
-			if (emailAdresses.length == 0) {
+			if ((emailAdresses.length == 0) ||
+				Validator.isNull(emailFromAddress)) {
+
 				SessionErrors.add(actionRequest, "emailAddressRequired");
 			}
 
-			for (String emailAdress : emailAdresses) {
-				emailAdress = emailAdress.trim();
+			if (Validator.isNotNull(emailFromAddress) &&
+				!Validator.isEmailAddress(emailFromAddress)) {
 
-				if (!Validator.isEmailAddress(emailAdress)) {
-					SessionErrors.add(actionRequest, "emailAddressInvalid");
+				SessionErrors.add(actionRequest, "emailAddressInvalid");
+			}
+			else {
+				for (String emailAdress : emailAdresses) {
+					emailAdress = emailAdress.trim();
+
+					if (!Validator.isEmailAddress(emailAdress)) {
+						SessionErrors.add(actionRequest, "emailAddressInvalid");
+
+						break;
+					}
 				}
-			}
-		}
-
-		if (saveToFile) {
-			String fileName = getParameter(actionRequest, "fileName");
-
-			// Check if server can create a file as specified
-
-			try {
-				FileOutputStream fileOutputStream = new FileOutputStream(
-					fileName, true);
-
-				fileOutputStream.close();
-			}
-			catch (SecurityException se) {
-				SessionErrors.add(actionRequest, "fileNameInvalid");
-			}
-			catch (FileNotFoundException fnfe) {
-				SessionErrors.add(actionRequest, "fileNameInvalid");
 			}
 		}
 
@@ -307,9 +310,9 @@ public class ConfigurationActionImpl extends DefaultConfigurationAction {
 	}
 
 	protected boolean validateUniqueFieldNames(ActionRequest actionRequest) {
-		Locale defaultLocale = LocaleUtil.getDefault();
+		Locale defaultLocale = LocaleUtil.getSiteDefault();
 
-		Set<String> localizedUniqueFieldNames = new HashSet<String>();
+		Set<String> localizedUniqueFieldNames = new HashSet<>();
 
 		int[] formFieldsIndexes = StringUtil.split(
 			ParamUtil.getString(actionRequest, "formFieldsIndexes"), 0);

@@ -22,15 +22,17 @@ import com.liferay.portal.kernel.lar.PortletDataHandlerBoolean;
 import com.liferay.portal.kernel.lar.PortletDataHandlerControl;
 import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.portal.kernel.lar.StagedModelType;
+import com.liferay.portal.kernel.lar.xstream.XStreamAliasRegistryUtil;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.wsrp.model.WSRPConsumer;
 import com.liferay.wsrp.model.WSRPConsumerPortlet;
 import com.liferay.wsrp.model.WSRPProducer;
+import com.liferay.wsrp.model.impl.WSRPConsumerImpl;
+import com.liferay.wsrp.model.impl.WSRPConsumerPortletImpl;
+import com.liferay.wsrp.model.impl.WSRPProducerImpl;
 import com.liferay.wsrp.service.WSRPConsumerLocalServiceUtil;
+import com.liferay.wsrp.service.WSRPConsumerPortletLocalServiceUtil;
 import com.liferay.wsrp.service.WSRPProducerLocalServiceUtil;
-import com.liferay.wsrp.service.persistence.WSRPConsumerExportActionableDynamicQuery;
-import com.liferay.wsrp.service.persistence.WSRPConsumerPortletExportActionableDynamicQuery;
-import com.liferay.wsrp.service.persistence.WSRPProducerExportActionableDynamicQuery;
 
 import java.util.List;
 
@@ -58,6 +60,13 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 						NAMESPACE, "wsrp-consumer-portlets")
 				}));
 		setPublishToLiveByDefault(true);
+
+		XStreamAliasRegistryUtil.register(
+			WSRPConsumerImpl.class, "WSRPConsumer");
+		XStreamAliasRegistryUtil.register(
+			WSRPConsumerPortletImpl.class, "WSRPConsumerPortlet");
+		XStreamAliasRegistryUtil.register(
+			WSRPProducerImpl.class, "WSRPProducer");
 	}
 
 	@Override
@@ -96,7 +105,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 				NAMESPACE, "wsrp-producers")) {
 
 			ActionableDynamicQuery wsrpProducerExportActionableDynamicQuery =
-				new WSRPProducerExportActionableDynamicQuery(
+				WSRPProducerLocalServiceUtil.getExportActionableDynamicQuery(
 					portletDataContext);
 
 			wsrpProducerExportActionableDynamicQuery.performActions();
@@ -106,7 +115,7 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 				NAMESPACE, "wsrp-consumers")) {
 
 			ActionableDynamicQuery wsrpConsumerExportActionableDynamicQuery =
-				new WSRPConsumerExportActionableDynamicQuery(
+				WSRPConsumerLocalServiceUtil.getExportActionableDynamicQuery(
 					portletDataContext);
 
 			wsrpConsumerExportActionableDynamicQuery.performActions();
@@ -116,8 +125,8 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 
 				ActionableDynamicQuery
 					wsrpConsumerPortletExportActionableDynamicQuery =
-						new WSRPConsumerPortletExportActionableDynamicQuery(
-							portletDataContext);
+						WSRPConsumerPortletLocalServiceUtil.
+							getExportActionableDynamicQuery(portletDataContext);
 
 				wsrpConsumerPortletExportActionableDynamicQuery.
 					performActions();
@@ -193,18 +202,20 @@ public class AdminPortletDataHandler extends BasePortletDataHandler {
 		throws Exception {
 
 		ActionableDynamicQuery wsrpConsumerExportActionableDynamicQuery =
-			new WSRPConsumerExportActionableDynamicQuery(portletDataContext);
+			WSRPConsumerLocalServiceUtil.getExportActionableDynamicQuery(
+				portletDataContext);
 
 		wsrpConsumerExportActionableDynamicQuery.performCount();
 
 		ActionableDynamicQuery wsrpConsumerPortletExportActionableDynamicQuery =
-			new WSRPConsumerPortletExportActionableDynamicQuery(
+			WSRPConsumerPortletLocalServiceUtil.getExportActionableDynamicQuery(
 				portletDataContext);
 
 		wsrpConsumerPortletExportActionableDynamicQuery.performCount();
 
 		ActionableDynamicQuery wsrpProducerExportActionableDynamicQuery =
-			new WSRPProducerExportActionableDynamicQuery(portletDataContext);
+			WSRPProducerLocalServiceUtil.getExportActionableDynamicQuery(
+				portletDataContext);
 
 		wsrpProducerExportActionableDynamicQuery.performCount();
 	}

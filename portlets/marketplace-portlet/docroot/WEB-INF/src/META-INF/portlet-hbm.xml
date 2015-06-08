@@ -5,7 +5,6 @@
 	<import class="com.liferay.marketplace.model.App" />
 	<import class="com.liferay.marketplace.model.Module" />
 	<class name="com.liferay.marketplace.model.impl.AppImpl" table="Marketplace_App">
-		<cache usage="read-write" />
 		<id name="appId" type="long">
 			<generator class="assigned" />
 		</id>
@@ -23,12 +22,13 @@
 		<property name="version" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 	</class>
 	<class name="com.liferay.marketplace.model.impl.ModuleImpl" table="Marketplace_Module">
-		<cache usage="read-write" />
 		<id name="moduleId" type="long">
 			<generator class="assigned" />
 		</id>
 		<property name="uuid" type="com.liferay.portal.dao.orm.hibernate.StringType" column="uuid_" />
 		<property name="appId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="bundleSymbolicName" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="bundleVersion" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property name="contextName" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 	</class>
 </hibernate-mapping>

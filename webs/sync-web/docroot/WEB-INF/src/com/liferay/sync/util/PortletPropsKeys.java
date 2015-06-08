@@ -17,10 +17,14 @@ package com.liferay.sync.util;
 /**
  * @author Dennis Ju
  */
-public class PortletPropsKeys {
+public class PortletPropsKeys
+	extends com.liferay.sync.shared.util.PortletPropsKeys {
 
 	public static final String SYNC_AUTH_VERIFIER_PIPELINE =
 		"sync.auth.verifier.pipeline";
+
+	public static final String SYNC_FILE_CHECKSUM_THRESHOLD_SIZE =
+		"sync.file.checksum.threshold.size";
 
 	public static final String SYNC_FILE_DIFF_CACHE_DELETE_INTERVAL =
 		"sync.file.diff.cache.delete.interval";
@@ -30,5 +34,11 @@ public class PortletPropsKeys {
 
 	public static final String SYNC_FILE_DIFF_CACHE_EXPIRATION_TIME =
 		"sync.file.diff.cache.expiration.time";
+
+	public static final String SYNC_MAC_PACKAGE_FOLDER_EXTENSIONS =
+		"sync.mac.package.folder.extensions";
+
+	public static final String SYNC_MAC_PACKAGE_METADATA_FILE_NAMES =
+		"sync.mac.package.metadata.file.names";
 
 }

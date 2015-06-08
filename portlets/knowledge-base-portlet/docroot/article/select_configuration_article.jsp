@@ -45,6 +45,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 
 	<liferay-ui:search-container-row
 		className="com.liferay.knowledgebase.model.KBArticle"
+		escapedModel="<%= true %>"
 		keyProperty="resourcePrimKey"
 		modelVar="kbArticle"
 	>
@@ -92,7 +93,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 			href="<%= rowURL %>"
 			name="status"
 			orderable="<%= true %>"
-			value='<%= kbArticle.getStatus() + " (" + LanguageUtil.get(pageContext, WorkflowConstants.getStatusLabel(kbArticle.getStatus())) + ")" %>'
+			value='<%= kbArticle.getStatus() + " (" + LanguageUtil.get(request, WorkflowConstants.getStatusLabel(kbArticle.getStatus())) + ")" %>'
 		/>
 
 		<liferay-ui:search-container-column-text
@@ -119,13 +120,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 	<c:if test="<%= selResourcePrimKey > 0 %>">
 
 		<%
-		KBArticle selKBArticle = null;
-
-		try {
-			selKBArticle = KBArticleLocalServiceUtil.getLatestKBArticle(selResourcePrimKey, WorkflowConstants.STATUS_APPROVED);
-		}
-		catch (NoSuchArticleException nsae) {
-		}
+		KBArticle selKBArticle = KBArticleLocalServiceUtil.fetchLatestKBArticle(selResourcePrimKey, WorkflowConstants.STATUS_APPROVED);
 		%>
 
 		<c:if test="<%= selKBArticle != null %>">

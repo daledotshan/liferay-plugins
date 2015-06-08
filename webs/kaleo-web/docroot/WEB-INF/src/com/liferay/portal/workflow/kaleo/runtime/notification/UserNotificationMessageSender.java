@@ -16,11 +16,11 @@ package com.liferay.portal.workflow.kaleo.runtime.notification;
 
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.notifications.NotificationEvent;
-import com.liferay.portal.kernel.notifications.NotificationEventFactoryUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.model.UserNotificationDeliveryConstants;
 import com.liferay.portal.service.UserNotificationEventLocalServiceUtil;
 import com.liferay.portal.util.PortletKeys;
+import com.liferay.portal.workflow.kaleo.definition.NotificationReceptionType;
 import com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken;
 import com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken;
 import com.liferay.portal.workflow.kaleo.runtime.ExecutionContext;
@@ -38,27 +38,30 @@ public class UserNotificationMessageSender
 
 	@Override
 	protected void doSendNotification(
-			Set<NotificationRecipient> notificationRecipients,
-			String defaultSubject, String notificationMessage,
-			ExecutionContext executionContext)
+			Map<NotificationReceptionType, Set<NotificationRecipient>>
+				notificationRecipients, String defaultSubject,
+			String notificationMessage, ExecutionContext executionContext)
 		throws Exception {
 
 		JSONObject jsonObject = populateJSONObject(
 			notificationMessage, executionContext);
 
-		NotificationEvent notificationEvent =
-			NotificationEventFactoryUtil.createNotificationEvent(
-				System.currentTimeMillis(), PortletKeys.MY_WORKFLOW_TASKS,
-				jsonObject);
+		for (Map.Entry<NotificationReceptionType, Set<NotificationRecipient>>
+				entry : notificationRecipients.entrySet()) {
 
-		notificationEvent.setDeliveryRequired(0);
+			for (NotificationRecipient notificationRecipient :
+					entry.getValue()) {
 
-		for (NotificationRecipient notificationRecipient :
-				notificationRecipients) {
+				if (notificationRecipient.getUserId() <= 0) {
+					continue;
+				}
 
-			if (notificationRecipient.getUserId() > 0) {
-				UserNotificationEventLocalServiceUtil.addUserNotificationEvent(
-					notificationRecipient.getUserId(), notificationEvent);
+				UserNotificationEventLocalServiceUtil.
+					sendUserNotificationEvents(
+						notificationRecipient.getUserId(),
+						PortletKeys.MY_WORKFLOW_TASK,
+						UserNotificationDeliveryConstants.TYPE_WEBSITE,
+						jsonObject);
 			}
 		}
 	}

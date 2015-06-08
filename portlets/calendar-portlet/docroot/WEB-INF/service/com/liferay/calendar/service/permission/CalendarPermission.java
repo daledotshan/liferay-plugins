@@ -16,8 +16,9 @@ package com.liferay.calendar.service.permission;
 
 import com.liferay.calendar.model.Calendar;
 import com.liferay.calendar.service.CalendarLocalServiceUtil;
+import com.liferay.calendar.util.PortletKeys;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.staging.permission.StagingPermissionUtil;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.PermissionChecker;
 
@@ -40,7 +41,7 @@ public class CalendarPermission {
 	public static void check(
 			PermissionChecker permissionChecker, long calendarId,
 			String actionId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		if (!contains(permissionChecker, calendarId, actionId)) {
 			throw new PrincipalException();
@@ -50,6 +51,14 @@ public class CalendarPermission {
 	public static boolean contains(
 		PermissionChecker permissionChecker, Calendar calendar,
 		String actionId) {
+
+		Boolean hasPermission = StagingPermissionUtil.hasPermission(
+			permissionChecker, calendar.getGroupId(), Calendar.class.getName(),
+			calendar.getCalendarId(), PortletKeys.CALENDAR, actionId);
+
+		if (hasPermission != null) {
+			return hasPermission.booleanValue();
+		}
 
 		if (permissionChecker.hasOwnerPermission(
 				calendar.getCompanyId(), Calendar.class.getName(),
@@ -66,7 +75,7 @@ public class CalendarPermission {
 	public static boolean contains(
 			PermissionChecker permissionChecker, long calendarId,
 			String actionId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		Calendar calendar = CalendarLocalServiceUtil.getCalendar(calendarId);
 

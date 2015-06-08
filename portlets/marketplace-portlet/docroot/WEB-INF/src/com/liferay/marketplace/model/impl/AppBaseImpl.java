@@ -14,10 +14,10 @@
 
 package com.liferay.marketplace.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.marketplace.model.App;
 import com.liferay.marketplace.service.AppLocalServiceUtil;
-
-import com.liferay.portal.kernel.exception.SystemException;
 
 /**
  * The extended model base implementation for the App service. Represents a row in the &quot;Marketplace_App&quot; database table, with each column mapped to a property of this class.
@@ -28,9 +28,10 @@ import com.liferay.portal.kernel.exception.SystemException;
  *
  * @author Ryan Park
  * @see AppImpl
- * @see com.liferay.marketplace.model.App
+ * @see App
  * @generated
  */
+@ProviderType
 public abstract class AppBaseImpl extends AppModelImpl implements App {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -38,7 +39,7 @@ public abstract class AppBaseImpl extends AppModelImpl implements App {
 	 * Never modify or reference this class directly. All methods that expect a app model instance should use the {@link App} interface instead.
 	 */
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			AppLocalServiceUtil.addApp(this);
 		}

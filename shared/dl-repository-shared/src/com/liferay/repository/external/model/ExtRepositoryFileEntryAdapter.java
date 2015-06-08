@@ -17,18 +17,24 @@ package com.liferay.repository.external.model;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.StagedModelType;
+import com.liferay.portal.kernel.lock.Lock;
+import com.liferay.portal.kernel.lock.LockManagerUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.repository.Repository;
+import com.liferay.portal.kernel.repository.capabilities.Capability;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
+import com.liferay.portal.kernel.repository.model.RepositoryModelOperation;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.model.Lock;
 import com.liferay.portal.model.User;
-import com.liferay.portal.service.persistence.LockUtil;
+import com.liferay.portal.security.auth.PrincipalThreadLocal;
 import com.liferay.portlet.documentlibrary.NoSuchFileVersionException;
+import com.liferay.portlet.documentlibrary.model.DLFileEntryConstants;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.repository.external.ExtRepositoryAdapter;
 import com.liferay.repository.external.ExtRepositoryFileEntry;
@@ -36,7 +42,6 @@ import com.liferay.repository.external.ExtRepositoryFileEntry;
 import java.io.InputStream;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,18 +63,21 @@ public class ExtRepositoryFileEntryAdapter
 	}
 
 	@Override
-	public InputStream getContentStream()
-		throws PortalException, SystemException {
+	public void execute(RepositoryModelOperation repositoryModelOperation)
+		throws PortalException {
 
+		repositoryModelOperation.execute(this);
+	}
+
+	@Override
+	public InputStream getContentStream() throws PortalException {
 		ExtRepositoryAdapter extRepositoryAdapter = getRepository();
 
 		return extRepositoryAdapter.getContentStream(this);
 	}
 
 	@Override
-	public InputStream getContentStream(String version)
-		throws PortalException, SystemException {
-
+	public InputStream getContentStream(String version) throws PortalException {
 		ExtRepositoryAdapter extRepositoryAdapter = getRepository();
 
 		FileVersion fileVersion = getFileVersion(version);
@@ -89,7 +97,17 @@ public class ExtRepositoryFileEntryAdapter
 	}
 
 	@Override
-	public FileVersion getFileVersion() throws SystemException {
+	public String getFileName() {
+		return DLUtil.getSanitizedFileName(getTitle(), getExtension());
+	}
+
+	@Override
+	public List<FileShortcut> getFileShortcuts() {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public FileVersion getFileVersion() {
 		try {
 			List<ExtRepositoryFileVersionAdapter>
 				extRepositoryFileVersionAdapters =
@@ -103,9 +121,7 @@ public class ExtRepositoryFileEntryAdapter
 	}
 
 	@Override
-	public FileVersion getFileVersion(String version)
-		throws PortalException, SystemException {
-
+	public FileVersion getFileVersion(String version) throws PortalException {
 		List<ExtRepositoryFileVersionAdapter> extRepositoryFileVersionAdapters =
 			_getExtRepositoryFileVersionAdapters();
 
@@ -126,9 +142,7 @@ public class ExtRepositoryFileEntryAdapter
 
 	@Override
 	@SuppressWarnings({"rawtypes"})
-	public List<FileVersion> getFileVersions(int status)
-		throws SystemException {
-
+	public List<FileVersion> getFileVersions(int status) {
 		if ((status == WorkflowConstants.STATUS_ANY) ||
 			(status == WorkflowConstants.STATUS_APPROVED)) {
 
@@ -171,17 +185,20 @@ public class ExtRepositoryFileEntryAdapter
 	}
 
 	@Override
-	@SuppressWarnings("unused")
-	public FileVersion getLatestFileVersion()
-		throws PortalException, SystemException {
+	public String getIconCssClass() {
+		return DLUtil.getFileIconCssClass(getExtension());
+	}
 
+	@Override
+	@SuppressWarnings("unused")
+	public FileVersion getLatestFileVersion() throws PortalException {
 		return getFileVersion();
 	}
 
 	@Override
 	@SuppressWarnings("unused")
 	public FileVersion getLatestFileVersion(boolean trusted)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		return getFileVersion();
 	}
@@ -196,18 +213,15 @@ public class ExtRepositoryFileEntryAdapter
 
 		User user = getUser(checkedOutBy);
 
-		Lock lock = LockUtil.create(0);
-
-		lock.setCompanyId(getCompanyId());
+		long userId = 0;
+		String userName = null;
 
 		if (user != null) {
-			lock.setUserId(user.getUserId());
-			lock.setUserName(user.getFullName());
+			userId = user.getUserId();
+			userName = user.getFullName();
 		}
 
-		lock.setCreateDate(new Date());
-
-		return lock;
+		return LockManagerUtil.createLock(0, getCompanyId(), userId, userName);
 	}
 
 	@Override
@@ -272,8 +286,17 @@ public class ExtRepositoryFileEntryAdapter
 	}
 
 	@Override
+	public <T extends Capability> T getRepositoryCapability(
+		Class<T> capabilityClass) {
+
+		Repository repository = getRepository();
+
+		return repository.getCapability(capabilityClass);
+	}
+
+	@Override
 	public StagedModelType getStagedModelType() {
-		return new StagedModelType(FileEntry.class);
+		return new StagedModelType(DLFileEntryConstants.getClassName());
 	}
 
 	@Override
@@ -308,14 +331,24 @@ public class ExtRepositoryFileEntryAdapter
 	}
 
 	@Override
-	@SuppressWarnings("unused")
-	public String getVersionUserUuid() throws SystemException {
+	public String getVersionUserUuid() {
 		return getUserUuid();
 	}
 
 	@Override
 	public boolean hasLock() {
-		return isCheckedOut();
+		if (!isCheckedOut()) {
+			return false;
+		}
+
+		User checkedOutByUser = getUser(
+			_extRepositoryFileEntry.getCheckedOutBy());
+
+		if (checkedOutByUser.getUserId() != PrincipalThreadLocal.getUserId()) {
+			return false;
+		}
+
+		return true;
 	}
 
 	@Override
@@ -333,29 +366,31 @@ public class ExtRepositoryFileEntryAdapter
 	}
 
 	@Override
+	public <T extends Capability> boolean isRepositoryCapabilityProvided(
+		Class<T> capabilityClass) {
+
+		Repository repository = getRepository();
+
+		return repository.isCapabilityProvided(capabilityClass);
+	}
+
+	@Override
 	public boolean isSupportsLocking() {
 		return true;
 	}
 
 	private List<ExtRepositoryFileVersionAdapter>
 			_getExtRepositoryFileVersionAdapters()
-		throws PortalException, SystemException {
+		throws PortalException {
 
-		if (_extRepositoryFileVersionAdapters == null) {
-			ExtRepositoryAdapter extRepositoryAdapter = getRepository();
+		ExtRepositoryAdapter extRepositoryAdapter = getRepository();
 
-			_extRepositoryFileVersionAdapters =
-				extRepositoryAdapter.getExtRepositoryFileVersionAdapters(this);
-		}
-
-		return _extRepositoryFileVersionAdapters;
+		return extRepositoryAdapter.getExtRepositoryFileVersionAdapters(this);
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(
 		ExtRepositoryFileEntryAdapter.class);
 
 	private ExtRepositoryFileEntry _extRepositoryFileEntry;
-	private List<ExtRepositoryFileVersionAdapter>
-		_extRepositoryFileVersionAdapters;
 
 }

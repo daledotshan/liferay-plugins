@@ -14,8 +14,11 @@
 
 package com.liferay.marketplace.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.marketplace.model.App;
 
+import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
@@ -34,7 +37,32 @@ import java.util.Date;
  * @see App
  * @generated
  */
+@ProviderType
 public class AppCacheModel implements CacheModel<App>, Externalizable {
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof AppCacheModel)) {
+			return false;
+		}
+
+		AppCacheModel appCacheModel = (AppCacheModel)obj;
+
+		if (appId == appCacheModel.appId) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return HashUtil.hash(0, appId);
+	}
+
 	@Override
 	public String toString() {
 		StringBundler sb = new StringBundler(27);

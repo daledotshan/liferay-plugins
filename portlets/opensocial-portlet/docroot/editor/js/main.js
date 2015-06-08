@@ -74,17 +74,17 @@ AUI.add(
 		var STR_EMPTY = '';
 
 		var TPL_EDITOR = '<div id="editorPortlet">' +
-			'<div id="gadgetEditorToolbar"></div>' +
-			'<hr />' +
-			'<div class="gadget-editor-content" id="gadgetEditorContent">' +
-				'<div class="tree-view-editor-column" id="treeViewEditorColumn">' +
-					'<div id="treeViewEditor"></div>' +
+				'<div id="gadgetEditorToolbar"></div>' +
+				'<hr />' +
+				'<div class="gadget-editor-content" id="gadgetEditorContent">' +
+					'<div class="tree-view-editor-column" id="treeViewEditorColumn">' +
+						'<div id="treeViewEditor"></div>' +
+					'</div>' +
+					'<div class="main-editor-column" id="mainEditorColumn">' +
+						'<div id="tabViewEditor"></div>' +
+					'</div>' +
 				'</div>' +
-				'<div class="main-editor-column" id="mainEditorColumn">' +
-					'<div id="tabViewEditor"></div>' +
-				'</div>' +
-			'</div>' +
-		'</div>';
+			'</div>';
 
 		var TPL_ERROR_MESSAGE = '{name}<br /><br />{message}';
 
@@ -100,20 +100,27 @@ AUI.add(
 
 		var Editor = A.Component.create(
 			{
-				AUGMENTS: [Liferay.PortletBase],
-
 				ATTRS: {
 					baseRenderURL: {
 						validator: Lang.isString
 					},
+
 					editorGadgetURL: {},
+
 					gadgetPortletId: {},
+
 					gadgetServerBase: {},
+
 					publishGadgetPermission: {},
+
 					repositoryId: {},
+
 					resourceURL: {},
+
 					rootFolderId: {}
 				},
+
+				AUGMENTS: [Liferay.PortletBase],
 
 				NAME: 'gadget-editor',
 
@@ -182,8 +189,6 @@ AUI.add(
 						var instance = this;
 
 						instance._tabViewEditor.addNewTab();
-
-						var tabViewEditorBoundingBox = instance._tabViewEditor.get(BOUNDING_BOX);
 					},
 
 					_addEntryToMap: function(object) {
@@ -303,8 +308,10 @@ AUI.add(
 
 						var node = instance._getNodeFromDataSet(entryId);
 
+						var lastSelected;
+
 						if (activeTab.get(IS_NEW)) {
-							var lastSelected = instance._treeViewEditor.get(LAST_SELECTED);
+							lastSelected = instance._treeViewEditor.get(LAST_SELECTED);
 
 							if (lastSelected && lastSelected.isLeaf()) {
 								lastSelected.unselect();
@@ -315,7 +322,7 @@ AUI.add(
 							}
 						}
 						else if (node && !node.isSelected()) {
-							var lastSelected = instance._treeViewEditor.get(LAST_SELECTED);
+							lastSelected = instance._treeViewEditor.get(LAST_SELECTED);
 
 							if (lastSelected) {
 								lastSelected.unselect();
@@ -522,9 +529,8 @@ AUI.add(
 						else {
 							var treeViewEditor = instance._treeViewEditor;
 
-							AArray.each(
-								data,
-								function(item, index, collection) {
+							data.forEach(
+								function(item, index) {
 									var node = new A.TreeNodeEditor(
 										{
 											entryId: item.entryId,
@@ -617,23 +623,23 @@ AUI.add(
 
 						if (options) {
 							if ('buttons' in options) {
-								dialog['toolbars.footer'] = options['buttons'];
+								dialog['toolbars.footer'] = options.buttons;
 							}
 
 							if ('centered' in options) {
-								dialog.centered = options['centered'];
+								dialog.centered = options.centered;
 							}
 
 							if ('height' in options) {
-								dialog.height = options['height'];
+								dialog.height = options.height;
 							}
 
 							if ('modal' in options) {
-								dialog.modal = options['modal'];
+								dialog.modal = options.modal;
 							}
 
 							if ('width' in options) {
-								dialog.width = options['width'];
+								dialog.width = options.width;
 							}
 						}
 
@@ -755,7 +761,8 @@ AUI.add(
 						var tab = instance._getTabFromDataSet(event.entryId);
 
 						if (tab && tab.get(IS_DIRTY) && !event.noConfirm) {
-							var tabFileName =  tab.get('fileName');
+							var tabFileName = tab.get('fileName');
+
 							var message = Liferay.Language.get('has-not-been-saved-are-you-sure-you-want-to-close-the-tab', tabFileName);
 
 							instance._showConfirmationDialog(message, instance._closeFileEntry, entryId);
@@ -955,9 +962,8 @@ AUI.add(
 								else {
 									var children = node.getChildren(true);
 
-									AArray.each(
-										children,
-										function(item, index, collection) {
+									children.forEach(
+										function(item, index) {
 											if (item.isLeaf()) {
 												instance.fire(
 													EVENT_CLOSE_FILE_ENTRY,
@@ -1001,7 +1007,7 @@ AUI.add(
 								instance._getResourceURL(resourceId),
 								{
 									autoLoad: false,
-									dataType: 'json',
+									dataType: 'JSON',
 									on: {
 										failure: function(event) {
 											instance._loadingMask.hide();
@@ -1052,9 +1058,8 @@ AUI.add(
 						var duplicateLabel = false;
 
 						do {
-							duplicateLabel = AArray.some(
-								children,
-								function(item, index, collection) {
+							duplicateLabel = children.some(
+								function(item, index) {
 									if (item.isLeaf() == leafNode && item.get(LABEL).toLowerCase() == label.toLowerCase()) {
 										i++;
 
@@ -1148,13 +1153,13 @@ AUI.add(
 						var instance = this;
 
 						var loadingMask = A.one('#editorPortlet').plug(
-						   A.LoadingMask,
-						   {
-							  background: 'none',
-							  strings: {
-								 loading: Liferay.Language.get('busy')
-							  }
-						   }
+							A.LoadingMask,
+							{
+								background: 'none',
+								strings: {
+									loading: Liferay.Language.get('busy')
+								}
+							}
 						).loadingmask;
 
 						instance._loadingMask = loadingMask;
@@ -1251,6 +1256,7 @@ AUI.add(
 						var previewButton = new A.Button(
 							{
 								icon: 'icon-eye-open',
+								label: Liferay.Language.get('preview'),
 								on: {
 									click: function(event) {
 										var entryId = instance._tabViewEditor.getSelectedTab().get(ENTRY_ID);
@@ -1262,8 +1268,7 @@ AUI.add(
 											}
 										);
 									}
-								},
-								label: Liferay.Language.get('preview')
+								}
 							}
 						);
 
@@ -1292,8 +1297,8 @@ AUI.add(
 						var searchEditorButton = new A.ToggleButton(
 							{
 								activeState: true,
-								label: Liferay.Language.get('search'),
 								icon: 'icon-search',
+								label: Liferay.Language.get('search'),
 								on: {
 									click: function(event) {
 										if (event.target.get('pressed')) {
@@ -1358,6 +1363,7 @@ AUI.add(
 												{
 													folderId: node.get(ENTRY_ID),
 													getFileEntries: true,
+													p_auth: Liferay.authToken,
 													repositoryId: instance.get(REPOSITORY_ID)
 												}
 											);
@@ -1658,6 +1664,13 @@ AUI.add(
 
 						var io = instance._getIORequest(name, callback);
 
+						data = A.merge(
+							data,
+							{
+								p_auth: Liferay.authToken
+							}
+						);
+
 						io.set('data', instance.ns(data));
 
 						io.start();
@@ -1752,8 +1765,8 @@ AUI.add(
 						var buttons = [
 							new A.Button(
 								{
-									label: Liferay.Language.get('find'),
 									icon: 'icon-search',
+									label: Liferay.Language.get('find'),
 									on: {
 										click: function(event) {
 											var tab = instance._tabViewEditor.getSelectedTab();
@@ -1767,8 +1780,8 @@ AUI.add(
 							),
 							new A.Button(
 								{
-									label: Liferay.Language.get('replace'),
 									icon: 'icon-random',
+									label: Liferay.Language.get('replace'),
 									on: {
 										click: function(event) {
 											var tab = instance._tabViewEditor.getSelectedTab();
@@ -1784,8 +1797,8 @@ AUI.add(
 							),
 							new A.Button(
 								{
-									label: Liferay.Language.get('close'),
 									icon: 'icon-remove',
+									label: Liferay.Language.get('close'),
 									on: {
 										click: function(event) {
 											instance._closeSearchDialog();
@@ -1837,6 +1850,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-button-core', 'aui-form-deprecated', 'aui-map', 'aui-panel-deprecated', 'aui-tabs-base', 'aui-toolbar', 'gadget-editor-tabs', 'gadget-editor-tree', 'liferay-open-social-gadget', 'liferay-portlet-base', 'liferay-util-window' ]
+		requires: ['aui-button-core', 'aui-form-deprecated', 'aui-map', 'aui-panel-deprecated', 'aui-tabs-base', 'aui-toolbar', 'gadget-editor-tabs', 'gadget-editor-tree', 'liferay-open-social-gadget', 'liferay-portlet-base', 'liferay-util-window']
 	}
 );

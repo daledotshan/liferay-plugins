@@ -14,10 +14,10 @@
 
 package com.liferay.marketplace.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.marketplace.model.Module;
 import com.liferay.marketplace.service.ModuleLocalServiceUtil;
-
-import com.liferay.portal.kernel.exception.SystemException;
 
 /**
  * The extended model base implementation for the Module service. Represents a row in the &quot;Marketplace_Module&quot; database table, with each column mapped to a property of this class.
@@ -28,9 +28,10 @@ import com.liferay.portal.kernel.exception.SystemException;
  *
  * @author Ryan Park
  * @see ModuleImpl
- * @see com.liferay.marketplace.model.Module
+ * @see Module
  * @generated
  */
+@ProviderType
 public abstract class ModuleBaseImpl extends ModuleModelImpl implements Module {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -38,7 +39,7 @@ public abstract class ModuleBaseImpl extends ModuleModelImpl implements Module {
 	 * Never modify or reference this class directly. All methods that expect a module model instance should use the {@link Module} interface instead.
 	 */
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			ModuleLocalServiceUtil.addModule(this);
 		}

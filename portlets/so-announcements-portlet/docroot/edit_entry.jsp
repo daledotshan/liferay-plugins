@@ -114,7 +114,7 @@ if (entry == null) {
 		</div>
 
 		<aui:field-wrapper label="content">
-			<liferay-ui:input-editor height="150" toolbarSet="Basic" width="100%" />
+			<liferay-ui:input-editor contents="<%= content %>" height="150" toolbarSet="Basic" width="100%" />
 
 			<aui:input name="content" type="hidden" />
 		</aui:field-wrapper>
@@ -136,7 +136,7 @@ if (entry == null) {
 </aui:form>
 
 <div class="entries preview unread-entries">
-	<div class="entry hide" id="<portlet:namespace />preview">
+	<div class="clearfix entry hide" id="<portlet:namespace />preview">
 		<div class="user-portrait">
 			<span class="avatar">
 
@@ -145,22 +145,22 @@ if (entry == null) {
 				%>
 
 				<a href="<%= currentUser.getDisplayURL(themeDisplay) %>">
-					<img alt="<%= currentUser.getFullName() %>" src="<%= currentUser.getPortraitURL(themeDisplay) %>" />
+					<img alt="<%= HtmlUtil.escapeAttribute(currentUser.getFullName()) %>" src="<%= currentUser.getPortraitURL(themeDisplay) %>" />
 				</a>
 			</span>
 		</div>
 
-		<div class="entry-data">
-			<div class="entry-header">
-				<div class="entry-time">
-					<%= LanguageUtil.get(pageContext, "about-a-minute-ago") %>
-				</div>
-
-				<div class="entry-action">
-					<%= LanguageUtil.format(pageContext, "x-to-x", new Object[] {"<a href=\"" + currentUser.getDisplayURL(themeDisplay) + "\">" + HtmlUtil.escape(currentUser.getFullName()) + "</a>", "<span class=\"scope\" id=\"" + renderResponse.getNamespace() + "scope\"></span>"}, false) %>
-				</div>
+		<div class="entry-header">
+			<div class="entry-action">
+				<%= LanguageUtil.format(request, "x-to-x", new Object[] {"<a href=\"" + currentUser.getDisplayURL(themeDisplay) + "\">" + HtmlUtil.escape(currentUser.getFullName()) + "</a>", "<span class=\"scope\" id=\"" + renderResponse.getNamespace() + "scope\"></span>"}, false) %>
 			</div>
 
+			<div class="entry-time">
+				<%= LanguageUtil.get(request, "about-a-minute-ago") %>
+			</div>
+		</div>
+
+		<div class="entry-block">
 			<div class="entry-body">
 				<div class="title" id="<portlet:namespace />title"></div>
 
@@ -172,7 +172,7 @@ if (entry == null) {
 			<div class="entry-footer" id="<portlet:namespace />entryFooter">
 				<div class="entry-footer-toolbar">
 					<div class="edit-actions">
-						<span class="toggle action hide">
+						<span class="action hide toggle">
 							<a class="toggle-entry" data-entryId="preview" href="javascript:;">
 								<i class="icon-expand-alt"></i>
 
@@ -187,14 +187,6 @@ if (entry == null) {
 </div>
 
 <aui:script>
-	function <portlet:namespace />initEditor() {
-		var ckEditor = CKEDITOR.instances["<portlet:namespace />editor"];
-
-		ckEditor.resize("100%", "200");
-
-		return "<%= UnicodeFormatter.toString(content) %>";
-	}
-
 	function <portlet:namespace />closeEntry() {
 		Liferay.Util.getWindow('<portlet:namespace />Dialog').hide();
 	}
@@ -217,23 +209,28 @@ if (entry == null) {
 			preview.removeClass('important-entry');
 		}
 
+		var scope;
+
 		if (<%= entry != null %>) {
-			var scope = A.one('#<portlet:namespace />scope').get('value');;
+			scope = A.one('#<portlet:namespace />scope').get('value');
 		}
 		else {
 			var optValue = A.one('select[name="<portlet:namespace />distributionScope"]').get('value');
-			var scope = A.one('option[value=' + optValue + ']').get('text');
+
+			scope = A.one('option[value=' + optValue + ']').get('text');
 		}
 
 		A.one('#<portlet:namespace />scope').html(scope);
 
 		var url = A.one('#<portlet:namespace />url').get('value');
 
+		var title;
+
 		if (url.length != 0) {
-			var title = '<a href="' + url + '">' + A.one('#<portlet:namespace />title').get('value') + '</a>';
+			title = '<a href="' + url + '">' + A.one('#<portlet:namespace />title').get('value') + '</a>';
 		}
 		else {
-			var title = A.one('#<portlet:namespace />title').get('value');
+			title = A.one('#<portlet:namespace />title').get('value');
 		}
 
 		A.one('.preview #<portlet:namespace />title').html(title);
@@ -251,7 +248,7 @@ if (entry == null) {
 
 			toggle.removeClass('hide');
 
-			preview.addClass('announcement-collapsed')
+			preview.addClass('announcement-collapsed');
 		}
 		else {
 			var contentContainer = preview.one('.entry-content-container');
@@ -281,20 +278,18 @@ if (entry == null) {
 							var message = A.one('#<portlet:namespace />errorMessage');
 
 							if (message) {
-								message.html('<span class="alert alert-error">' + responseData.message + '</span>');
+								message.html('<span class="alert alert-danger">' + responseData.message + '</span>');
 							}
 						}
+						else if (<%= redirectMvcPath.equals("/manage_entries.jsp") %>) {
+							window.location.href = responseData.redirect;
+						}
 						else {
-							if (<%= redirectMvcPath.equals("/manage_entries.jsp") %>) {
-								window.location.href = responseData.redirect;
-							}
-							else {
-								Liferay.Util.getWindow('<portlet:namespace />Dialog').hide();
-							}
+							Liferay.Util.getWindow('<portlet:namespace />Dialog').hide();
 						}
 					}
 				},
-				dataType: 'json',
+				dataType: 'JSON',
 				form: {
 					id: form
 				}

@@ -14,17 +14,18 @@
 
 package com.liferay.wsrp.admin.lar;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
+import com.liferay.portal.kernel.lar.StagedModelModifiedDateComparator;
 import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.wsrp.model.WSRPProducer;
 import com.liferay.wsrp.service.WSRPProducerLocalServiceUtil;
+
+import java.util.List;
 
 /**
  * @author Michael C. Han
@@ -37,17 +38,38 @@ public class WSRPProducerStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException, SystemException {
+		throws PortalException {
 
-		Group group = GroupLocalServiceUtil.getGroup(groupId);
-
-		WSRPProducer wsrpProducer =
-			WSRPProducerLocalServiceUtil.fetchWSRPProducerByUuidAndCompanyId(
-				uuid, group.getCompanyId());
+		WSRPProducer wsrpProducer = fetchStagedModelByUuidAndGroupId(
+			uuid, groupId);
 
 		if (wsrpProducer != null) {
-			WSRPProducerLocalServiceUtil.deleteWSRPProducer(wsrpProducer);
+			deleteStagedModel(wsrpProducer);
 		}
+	}
+
+	@Override
+	public void deleteStagedModel(WSRPProducer wsrpProducer)
+		throws PortalException {
+
+		WSRPProducerLocalServiceUtil.deleteWSRPProducer(wsrpProducer);
+	}
+
+	@Override
+	public WSRPProducer fetchStagedModelByUuidAndGroupId(
+		String uuid, long groupId) {
+
+		return WSRPProducerLocalServiceUtil.fetchWSRPProducerByUuidAndGroupId(
+			uuid, groupId);
+	}
+
+	@Override
+	public List<WSRPProducer> fetchStagedModelsByUuidAndCompanyId(
+		String uuid, long companyId) {
+
+		return WSRPProducerLocalServiceUtil.getWSRPProducersByUuidAndCompanyId(
+			uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+			new StagedModelModifiedDateComparator<WSRPProducer>());
 	}
 
 	@Override
@@ -85,10 +107,9 @@ public class WSRPProducerStagedModelDataHandler
 
 		if (portletDataContext.isDataStrategyMirror()) {
 			WSRPProducer existingWSRPProducer =
-				WSRPProducerLocalServiceUtil.
-					fetchWSRPProducerByUuidAndCompanyId(
-						wsrpProducer.getUuid(),
-						portletDataContext.getCompanyId());
+				fetchStagedModelByUuidAndGroupId(
+					wsrpProducer.getUuid(),
+					portletDataContext.getScopeGroupId());
 
 			if (existingWSRPProducer == null) {
 				serviceContext.setUuid(wsrpProducer.getUuid());
@@ -114,11 +135,10 @@ public class WSRPProducerStagedModelDataHandler
 			}
 		}
 		else {
-			importedWSRPProducer =
-				WSRPProducerLocalServiceUtil.addWSRPProducer(
-					portletDataContext.getUserId(null), wsrpProducer.getName(),
-					wsrpProducer.getVersion(), wsrpProducer.getPortletIds(),
-					serviceContext);
+			importedWSRPProducer = WSRPProducerLocalServiceUtil.addWSRPProducer(
+				portletDataContext.getUserId(null), wsrpProducer.getName(),
+				wsrpProducer.getVersion(), wsrpProducer.getPortletIds(),
+				serviceContext);
 		}
 
 		portletDataContext.importClassedModel(

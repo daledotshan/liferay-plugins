@@ -14,6 +14,8 @@
 
 package com.liferay.sync.service.http;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
@@ -23,7 +25,7 @@ import java.rmi.RemoteException;
 
 /**
  * Provides the SOAP utility for the
- * {@link com.liferay.sync.service.SyncDLObjectServiceUtil} service utility. The
+ * {@link SyncDLObjectServiceUtil} service utility. The
  * static methods of this class calls the same methods of the service utility.
  * However, the signatures are different because it is difficult for SOAP to
  * support certain types.
@@ -58,9 +60,10 @@ import java.rmi.RemoteException;
  * @author Brian Wing Shun Chan
  * @see SyncDLObjectServiceHttp
  * @see com.liferay.sync.model.SyncDLObjectSoap
- * @see com.liferay.sync.service.SyncDLObjectServiceUtil
+ * @see SyncDLObjectServiceUtil
  * @generated
  */
+@ProviderType
 public class SyncDLObjectServiceSoap {
 	public static com.liferay.sync.model.SyncDLObjectSoap addFolder(
 		long repositoryId, long parentFolderId, java.lang.String name,
@@ -145,6 +148,40 @@ public class SyncDLObjectServiceSoap {
 		}
 	}
 
+	public static com.liferay.sync.model.SyncDLObjectSoap[] getAllFolderSyncDLObjects(
+		long companyId, long repositoryId) throws RemoteException {
+		try {
+			java.util.List<com.liferay.sync.model.SyncDLObject> returnValue = SyncDLObjectServiceUtil.getAllFolderSyncDLObjects(companyId,
+					repositoryId);
+
+			return com.liferay.sync.model.SyncDLObjectSoap.toSoapModels(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	/**
+	* @deprecated As of 7.0.0, with no direct replacement
+	*/
+	@Deprecated
+	public static com.liferay.sync.model.SyncDLObjectUpdate getAllSyncDLObjects(
+		long repositoryId, long folderId) throws RemoteException {
+		try {
+			com.liferay.sync.model.SyncDLObjectUpdate returnValue = SyncDLObjectServiceUtil.getAllSyncDLObjects(repositoryId,
+					folderId);
+
+			return returnValue;
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static com.liferay.sync.model.SyncDLObjectSoap getFileEntrySyncDLObject(
 		long groupId, long folderId, java.lang.String title)
 		throws RemoteException {
@@ -180,6 +217,22 @@ public class SyncDLObjectServiceSoap {
 		long folderId) throws RemoteException {
 		try {
 			com.liferay.sync.model.SyncDLObject returnValue = SyncDLObjectServiceUtil.getFolderSyncDLObject(folderId);
+
+			return com.liferay.sync.model.SyncDLObjectSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.liferay.sync.model.SyncDLObjectSoap getFolderSyncDLObject(
+		long repositoryId, long parentFolderId, java.lang.String name)
+		throws RemoteException {
+		try {
+			com.liferay.sync.model.SyncDLObject returnValue = SyncDLObjectServiceUtil.getFolderSyncDLObject(repositoryId,
+					parentFolderId, name);
 
 			return com.liferay.sync.model.SyncDLObjectSoap.toSoapModel(returnValue);
 		}
@@ -232,6 +285,24 @@ public class SyncDLObjectServiceSoap {
 		}
 	}
 
+	public static com.liferay.sync.model.SyncContext getSyncContext()
+		throws RemoteException {
+		try {
+			com.liferay.sync.model.SyncContext returnValue = SyncDLObjectServiceUtil.getSyncContext();
+
+			return returnValue;
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	/**
+	* @deprecated As of 7.0.0, replaced by {@link #getSyncContext()}
+	*/
+	@Deprecated
 	public static com.liferay.sync.model.SyncContext getSyncContext(
 		java.lang.String uuid) throws RemoteException {
 		try {
@@ -252,6 +323,22 @@ public class SyncDLObjectServiceSoap {
 		try {
 			com.liferay.sync.model.SyncDLObjectUpdate returnValue = SyncDLObjectServiceUtil.getSyncDLObjectUpdate(companyId,
 					repositoryId, lastAccessTime);
+
+			return returnValue;
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.liferay.sync.model.SyncDLObjectUpdate getSyncDLObjectUpdate(
+		long companyId, long repositoryId, long parentFolderId,
+		long lastAccessTime) throws RemoteException {
+		try {
+			com.liferay.sync.model.SyncDLObjectUpdate returnValue = SyncDLObjectServiceUtil.getSyncDLObjectUpdate(companyId,
+					repositoryId, parentFolderId, lastAccessTime);
 
 			return returnValue;
 		}

@@ -14,8 +14,9 @@
 
 package com.liferay.portal.workflow.kaleo.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.GroupedModel;
@@ -40,6 +41,7 @@ import java.util.Date;
  * @see com.liferay.portal.workflow.kaleo.model.impl.KaleoNotificationRecipientModelImpl
  * @generated
  */
+@ProviderType
 public interface KaleoNotificationRecipientModel extends BaseModel<KaleoNotificationRecipient>,
 	GroupedModel {
 	/*
@@ -129,10 +131,9 @@ public interface KaleoNotificationRecipientModel extends BaseModel<KaleoNotifica
 	 * Returns the user uuid of this kaleo notification recipient.
 	 *
 	 * @return the user uuid of this kaleo notification recipient
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid() throws SystemException;
+	public String getUserUuid();
 
 	/**
 	 * Sets the user uuid of this kaleo notification recipient.
@@ -263,6 +264,52 @@ public interface KaleoNotificationRecipientModel extends BaseModel<KaleoNotifica
 	public void setRecipientRoleType(int recipientRoleType);
 
 	/**
+	 * Returns the recipient script of this kaleo notification recipient.
+	 *
+	 * @return the recipient script of this kaleo notification recipient
+	 */
+	@AutoEscape
+	public String getRecipientScript();
+
+	/**
+	 * Sets the recipient script of this kaleo notification recipient.
+	 *
+	 * @param recipientScript the recipient script of this kaleo notification recipient
+	 */
+	public void setRecipientScript(String recipientScript);
+
+	/**
+	 * Returns the recipient script language of this kaleo notification recipient.
+	 *
+	 * @return the recipient script language of this kaleo notification recipient
+	 */
+	@AutoEscape
+	public String getRecipientScriptLanguage();
+
+	/**
+	 * Sets the recipient script language of this kaleo notification recipient.
+	 *
+	 * @param recipientScriptLanguage the recipient script language of this kaleo notification recipient
+	 */
+	public void setRecipientScriptLanguage(String recipientScriptLanguage);
+
+	/**
+	 * Returns the recipient script required contexts of this kaleo notification recipient.
+	 *
+	 * @return the recipient script required contexts of this kaleo notification recipient
+	 */
+	@AutoEscape
+	public String getRecipientScriptRequiredContexts();
+
+	/**
+	 * Sets the recipient script required contexts of this kaleo notification recipient.
+	 *
+	 * @param recipientScriptRequiredContexts the recipient script required contexts of this kaleo notification recipient
+	 */
+	public void setRecipientScriptRequiredContexts(
+		String recipientScriptRequiredContexts);
+
+	/**
 	 * Returns the address of this kaleo notification recipient.
 	 *
 	 * @return the address of this kaleo notification recipient
@@ -276,6 +323,21 @@ public interface KaleoNotificationRecipientModel extends BaseModel<KaleoNotifica
 	 * @param address the address of this kaleo notification recipient
 	 */
 	public void setAddress(String address);
+
+	/**
+	 * Returns the notification reception type of this kaleo notification recipient.
+	 *
+	 * @return the notification reception type of this kaleo notification recipient
+	 */
+	@AutoEscape
+	public String getNotificationReceptionType();
+
+	/**
+	 * Sets the notification reception type of this kaleo notification recipient.
+	 *
+	 * @param notificationReceptionType the notification reception type of this kaleo notification recipient
+	 */
+	public void setNotificationReceptionType(String notificationReceptionType);
 
 	@Override
 	public boolean isNew();
@@ -314,19 +376,20 @@ public interface KaleoNotificationRecipientModel extends BaseModel<KaleoNotifica
 	public Object clone();
 
 	@Override
-	public int compareTo(KaleoNotificationRecipient kaleoNotificationRecipient);
+	public int compareTo(
+		com.liferay.portal.workflow.kaleo.model.KaleoNotificationRecipient kaleoNotificationRecipient);
 
 	@Override
 	public int hashCode();
 
 	@Override
-	public CacheModel<KaleoNotificationRecipient> toCacheModel();
+	public CacheModel<com.liferay.portal.workflow.kaleo.model.KaleoNotificationRecipient> toCacheModel();
 
 	@Override
-	public KaleoNotificationRecipient toEscapedModel();
+	public com.liferay.portal.workflow.kaleo.model.KaleoNotificationRecipient toEscapedModel();
 
 	@Override
-	public KaleoNotificationRecipient toUnescapedModel();
+	public com.liferay.portal.workflow.kaleo.model.KaleoNotificationRecipient toUnescapedModel();
 
 	@Override
 	public String toString();
