@@ -27,7 +27,7 @@ Group group = themeDisplay.getScopeGroup();
 	<c:when test="<%= group.isUser() %>">
 
 		<%
-		List<User> users = UserLocalServiceUtil.getSocialUsers(group.getClassPK(), 0, 10, new UserLoginDateComparator());
+		List<User> users = UserLocalServiceUtil.getSocialUsers(group.getClassPK(), SocialRelationConstants.TYPE_BI_CONNECTION, StringPool.EQUAL, 0, 10, new UserLastNameComparator());
 
 		PortletURL portletURL = null;
 
@@ -48,7 +48,7 @@ Group group = themeDisplay.getScopeGroup();
 		<c:choose>
 			<c:when test="<%= users.isEmpty() %>">
 				<div class="alert alert-info">
-					<liferay-ui:message arguments="<%= HtmlUtil.escape(group.getDescriptiveName(locale)) %>" key="x-has-no-contacts" translateArguments="<%= false %>" />
+					<liferay-ui:message arguments="<%= HtmlUtil.escape(group.getDescriptiveName(locale)) %>" key="x-has-no-connections" translateArguments="<%= false %>" />
 				</div>
 			</c:when>
 			<c:otherwise>
@@ -60,7 +60,7 @@ Group group = themeDisplay.getScopeGroup();
 
 						<aui:layout cssClass="lfr-contact-grid-item">
 							<div class="lfr-contact-thumb">
-								<a href="<%= user2.getDisplayURL(themeDisplay) %>"><img alt="<%= HtmlUtil.escape(user2.getFullName()) %>" src="<%= user2.getPortraitURL(themeDisplay) %>" /></a>
+								<a href="<%= user2.getDisplayURL(themeDisplay) %>"><img alt="<%= HtmlUtil.escapeAttribute(user2.getFullName()) %>" src="<%= user2.getPortraitURL(themeDisplay) %>" /></a>
 							</div>
 
 							<div class="lfr-contact-info">
@@ -88,8 +88,8 @@ Group group = themeDisplay.getScopeGroup();
 		</c:choose>
 	</c:when>
 	<c:otherwise>
-		<div class="alert alert-error">
-			<liferay-ui:message key="this-application-will-only-function-when-placed-on-a-user-page" />
+		<div class="alert alert-danger">
+			<liferay-ui:message key="this-application-only-functions-when-placed-on-a-user-page" />
 		</div>
 	</c:otherwise>
 </c:choose>

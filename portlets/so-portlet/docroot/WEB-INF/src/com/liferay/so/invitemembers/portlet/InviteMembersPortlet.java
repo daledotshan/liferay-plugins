@@ -23,9 +23,10 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Group;
@@ -40,16 +41,12 @@ import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.service.UserLocalServiceUtil;
-import com.liferay.portal.service.UserNotificationEventLocalServiceUtil;
 import com.liferay.portal.service.permission.LayoutPermissionUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.PortletURLFactoryUtil;
-import com.liferay.so.MemberRequestAlreadyUsedException;
-import com.liferay.so.MemberRequestInvalidUserException;
 import com.liferay.so.invitemembers.util.InviteMembersUtil;
 import com.liferay.so.service.MemberRequestLocalServiceUtil;
-import com.liferay.util.bridges.mvc.MVCPortlet;
 
 import java.util.List;
 
@@ -97,16 +94,19 @@ public class InviteMembersPortlet extends MVCPortlet {
 
 		jsonObject.put("options", optionsJSONObject);
 
-		List<User> users =
-			InviteMembersUtil.getAvailableUsers(
-				themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(),
-				keywords, start, end);
+		List<User> users = InviteMembersUtil.getAvailableUsers(
+			themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(),
+			keywords, start, end);
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
 		for (User user : users) {
 			JSONObject userJSONObject = JSONFactoryUtil.createJSONObject();
 
+			userJSONObject.put(
+				"hasPendingMemberRequest",
+				MemberRequestLocalServiceUtil.hasPendingMemberRequest(
+					themeDisplay.getScopeGroupId(), user.getUserId()));
 			userJSONObject.put("userEmailAddress", user.getEmailAddress());
 			userJSONObject.put("userFullName", user.getFullName());
 			userJSONObject.put("userId", user.getUserId());
@@ -166,23 +166,19 @@ public class InviteMembersPortlet extends MVCPortlet {
 		long userNotificationEventId = ParamUtil.getLong(
 			actionRequest, "userNotificationEventId");
 
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
 		try {
 			MemberRequestLocalServiceUtil.updateMemberRequest(
 				themeDisplay.getUserId(), memberRequestId, status);
 
-			UserNotificationEventLocalServiceUtil.deleteUserNotificationEvent(
-				userNotificationEventId);
+			jsonObject.put("success", Boolean.TRUE);
 		}
 		catch (Exception e) {
-			if ((e instanceof MemberRequestAlreadyUsedException) ||
-				(e instanceof MemberRequestInvalidUserException)) {
-
-				SessionErrors.add(actionRequest, e.getClass(), e);
-			}
-			else {
-				throw e;
-			}
+			jsonObject.put("success", Boolean.FALSE);
 		}
+
+		writeJSON(actionRequest, actionResponse, jsonObject);
 	}
 
 	protected void doSendInvite(
@@ -224,6 +220,7 @@ public class InviteMembersPortlet extends MVCPortlet {
 			PortletRequest.RENDER_PHASE);
 
 		portletURL.setParameter("mvcPath", "/notifications/view.jsp");
+		portletURL.setParameter("actionable", StringPool.TRUE);
 		portletURL.setWindowState(WindowState.MAXIMIZED);
 
 		serviceContext.setAttribute("redirectURL", portletURL.toString());

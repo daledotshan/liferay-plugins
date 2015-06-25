@@ -14,6 +14,8 @@
 
 package com.liferay.portal.workflow.kaleo.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import java.util.List;
  * @author Brian Wing Shun Chan
  * @generated
  */
+@ProviderType
 public class KaleoNotificationRecipientSoap implements Serializable {
 	public static KaleoNotificationRecipientSoap toSoapModel(
 		KaleoNotificationRecipient model) {
@@ -43,7 +46,11 @@ public class KaleoNotificationRecipientSoap implements Serializable {
 		soapModel.setRecipientClassName(model.getRecipientClassName());
 		soapModel.setRecipientClassPK(model.getRecipientClassPK());
 		soapModel.setRecipientRoleType(model.getRecipientRoleType());
+		soapModel.setRecipientScript(model.getRecipientScript());
+		soapModel.setRecipientScriptLanguage(model.getRecipientScriptLanguage());
+		soapModel.setRecipientScriptRequiredContexts(model.getRecipientScriptRequiredContexts());
 		soapModel.setAddress(model.getAddress());
+		soapModel.setNotificationReceptionType(model.getNotificationReceptionType());
 
 		return soapModel;
 	}
@@ -196,12 +203,45 @@ public class KaleoNotificationRecipientSoap implements Serializable {
 		_recipientRoleType = recipientRoleType;
 	}
 
+	public String getRecipientScript() {
+		return _recipientScript;
+	}
+
+	public void setRecipientScript(String recipientScript) {
+		_recipientScript = recipientScript;
+	}
+
+	public String getRecipientScriptLanguage() {
+		return _recipientScriptLanguage;
+	}
+
+	public void setRecipientScriptLanguage(String recipientScriptLanguage) {
+		_recipientScriptLanguage = recipientScriptLanguage;
+	}
+
+	public String getRecipientScriptRequiredContexts() {
+		return _recipientScriptRequiredContexts;
+	}
+
+	public void setRecipientScriptRequiredContexts(
+		String recipientScriptRequiredContexts) {
+		_recipientScriptRequiredContexts = recipientScriptRequiredContexts;
+	}
+
 	public String getAddress() {
 		return _address;
 	}
 
 	public void setAddress(String address) {
 		_address = address;
+	}
+
+	public String getNotificationReceptionType() {
+		return _notificationReceptionType;
+	}
+
+	public void setNotificationReceptionType(String notificationReceptionType) {
+		_notificationReceptionType = notificationReceptionType;
 	}
 
 	private long _kaleoNotificationRecipientId;
@@ -216,5 +256,9 @@ public class KaleoNotificationRecipientSoap implements Serializable {
 	private String _recipientClassName;
 	private long _recipientClassPK;
 	private int _recipientRoleType;
+	private String _recipientScript;
+	private String _recipientScriptLanguage;
+	private String _recipientScriptRequiredContexts;
 	private String _address;
+	private String _notificationReceptionType;
 }

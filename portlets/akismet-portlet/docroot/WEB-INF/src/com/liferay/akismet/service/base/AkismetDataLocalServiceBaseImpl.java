@@ -14,6 +14,8 @@
 
 package com.liferay.akismet.service.base;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.akismet.model.AkismetData;
 import com.liferay.akismet.service.AkismetDataLocalService;
 import com.liferay.akismet.service.persistence.AkismetDataPersistence;
@@ -24,6 +26,8 @@ import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Projection;
@@ -57,6 +61,7 @@ import javax.sql.DataSource;
  * @see com.liferay.akismet.service.AkismetDataLocalServiceUtil
  * @generated
  */
+@ProviderType
 public abstract class AkismetDataLocalServiceBaseImpl
 	extends BaseLocalServiceImpl implements AkismetDataLocalService,
 		IdentifiableBean {
@@ -71,12 +76,10 @@ public abstract class AkismetDataLocalServiceBaseImpl
 	 *
 	 * @param akismetData the akismet data
 	 * @return the akismet data that was added
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public AkismetData addAkismetData(AkismetData akismetData)
-		throws SystemException {
+	public AkismetData addAkismetData(AkismetData akismetData) {
 		akismetData.setNew(true);
 
 		return akismetDataPersistence.update(akismetData);
@@ -99,12 +102,11 @@ public abstract class AkismetDataLocalServiceBaseImpl
 	 * @param akismetDataId the primary key of the akismet data
 	 * @return the akismet data that was removed
 	 * @throws PortalException if a akismet data with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public AkismetData deleteAkismetData(long akismetDataId)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return akismetDataPersistence.remove(akismetDataId);
 	}
 
@@ -113,12 +115,10 @@ public abstract class AkismetDataLocalServiceBaseImpl
 	 *
 	 * @param akismetData the akismet data
 	 * @return the akismet data that was removed
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public AkismetData deleteAkismetData(AkismetData akismetData)
-		throws SystemException {
+	public AkismetData deleteAkismetData(AkismetData akismetData) {
 		return akismetDataPersistence.remove(akismetData);
 	}
 
@@ -135,12 +135,9 @@ public abstract class AkismetDataLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
 		return akismetDataPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -155,12 +152,10 @@ public abstract class AkismetDataLocalServiceBaseImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end) {
 		return akismetDataPersistence.findWithDynamicQuery(dynamicQuery, start,
 			end);
 	}
@@ -177,47 +172,41 @@ public abstract class AkismetDataLocalServiceBaseImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator orderByComparator) throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end, OrderByComparator<T> orderByComparator) {
 		return akismetDataPersistence.findWithDynamicQuery(dynamicQuery, start,
 			end, orderByComparator);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
 		return akismetDataPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) throws SystemException {
+		Projection projection) {
 		return akismetDataPersistence.countWithDynamicQuery(dynamicQuery,
 			projection);
 	}
 
 	@Override
-	public AkismetData fetchAkismetData(long akismetDataId)
-		throws SystemException {
+	public AkismetData fetchAkismetData(long akismetDataId) {
 		return akismetDataPersistence.fetchByPrimaryKey(akismetDataId);
 	}
 
@@ -227,17 +216,47 @@ public abstract class AkismetDataLocalServiceBaseImpl
 	 * @param akismetDataId the primary key of the akismet data
 	 * @return the akismet data
 	 * @throws PortalException if a akismet data with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public AkismetData getAkismetData(long akismetDataId)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return akismetDataPersistence.findByPrimaryKey(akismetDataId);
 	}
 
 	@Override
+	public ActionableDynamicQuery getActionableDynamicQuery() {
+		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
+
+		actionableDynamicQuery.setBaseLocalService(com.liferay.akismet.service.AkismetDataLocalServiceUtil.getService());
+		actionableDynamicQuery.setClass(AkismetData.class);
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("akismetDataId");
+
+		return actionableDynamicQuery;
+	}
+
+	protected void initActionableDynamicQuery(
+		ActionableDynamicQuery actionableDynamicQuery) {
+		actionableDynamicQuery.setBaseLocalService(com.liferay.akismet.service.AkismetDataLocalServiceUtil.getService());
+		actionableDynamicQuery.setClass(AkismetData.class);
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("akismetDataId");
+	}
+
+	/**
+	 * @throws PortalException
+	 */
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException {
+		return akismetDataLocalService.deleteAkismetData((AkismetData)persistedModel);
+	}
+
+	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return akismetDataPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
@@ -251,11 +270,9 @@ public abstract class AkismetDataLocalServiceBaseImpl
 	 * @param start the lower bound of the range of akismet datas
 	 * @param end the upper bound of the range of akismet datas (not inclusive)
 	 * @return the range of akismet datas
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<AkismetData> getAkismetDatas(int start, int end)
-		throws SystemException {
+	public List<AkismetData> getAkismetDatas(int start, int end) {
 		return akismetDataPersistence.findAll(start, end);
 	}
 
@@ -263,10 +280,9 @@ public abstract class AkismetDataLocalServiceBaseImpl
 	 * Returns the number of akismet datas.
 	 *
 	 * @return the number of akismet datas
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getAkismetDatasCount() throws SystemException {
+	public int getAkismetDatasCount() {
 		return akismetDataPersistence.countAll();
 	}
 
@@ -275,12 +291,10 @@ public abstract class AkismetDataLocalServiceBaseImpl
 	 *
 	 * @param akismetData the akismet data
 	 * @return the akismet data that was updated
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public AkismetData updateAkismetData(AkismetData akismetData)
-		throws SystemException {
+	public AkismetData updateAkismetData(AkismetData akismetData) {
 		return akismetDataPersistence.update(akismetData);
 	}
 
@@ -289,7 +303,7 @@ public abstract class AkismetDataLocalServiceBaseImpl
 	 *
 	 * @return the akismet data local service
 	 */
-	public com.liferay.akismet.service.AkismetDataLocalService getAkismetDataLocalService() {
+	public AkismetDataLocalService getAkismetDataLocalService() {
 		return akismetDataLocalService;
 	}
 
@@ -299,7 +313,7 @@ public abstract class AkismetDataLocalServiceBaseImpl
 	 * @param akismetDataLocalService the akismet data local service
 	 */
 	public void setAkismetDataLocalService(
-		com.liferay.akismet.service.AkismetDataLocalService akismetDataLocalService) {
+		AkismetDataLocalService akismetDataLocalService) {
 		this.akismetDataLocalService = akismetDataLocalService;
 	}
 
@@ -541,7 +555,7 @@ public abstract class AkismetDataLocalServiceBaseImpl
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) throws SystemException {
+	protected void runSQL(String sql) {
 		try {
 			DataSource dataSource = akismetDataPersistence.getDataSource();
 
@@ -560,8 +574,8 @@ public abstract class AkismetDataLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.akismet.service.AkismetDataLocalService.class)
-	protected com.liferay.akismet.service.AkismetDataLocalService akismetDataLocalService;
+	@BeanReference(type = AkismetDataLocalService.class)
+	protected AkismetDataLocalService akismetDataLocalService;
 	@BeanReference(type = AkismetDataPersistence.class)
 	protected AkismetDataPersistence akismetDataPersistence;
 	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)

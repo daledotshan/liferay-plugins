@@ -14,9 +14,10 @@
 
 package com.liferay.portal.workflow.kaleo.service.persistence;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.PortletBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.ServiceContext;
@@ -25,7 +26,7 @@ import com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment;
 import java.util.List;
 
 /**
- * The persistence utility for the kaleo task assignment service. This utility wraps {@link KaleoTaskAssignmentPersistenceImpl} and provides direct access to the database for CRUD operations. This utility should only be used by the service layer, as it must operate within a transaction. Never access this utility in a JSP, controller, model, or other front-end class.
+ * The persistence utility for the kaleo task assignment service. This utility wraps {@link com.liferay.portal.workflow.kaleo.service.persistence.impl.KaleoTaskAssignmentPersistenceImpl} and provides direct access to the database for CRUD operations. This utility should only be used by the service layer, as it must operate within a transaction. Never access this utility in a JSP, controller, model, or other front-end class.
  *
  * <p>
  * Caching information and settings can be found in <code>portal.properties</code>
@@ -33,9 +34,10 @@ import java.util.List;
  *
  * @author Brian Wing Shun Chan
  * @see KaleoTaskAssignmentPersistence
- * @see KaleoTaskAssignmentPersistenceImpl
+ * @see com.liferay.portal.workflow.kaleo.service.persistence.impl.KaleoTaskAssignmentPersistenceImpl
  * @generated
  */
+@ProviderType
 public class KaleoTaskAssignmentUtil {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -60,8 +62,7 @@ public class KaleoTaskAssignmentUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -69,7 +70,7 @@ public class KaleoTaskAssignmentUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<KaleoTaskAssignment> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) throws SystemException {
+		DynamicQuery dynamicQuery) {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -77,8 +78,7 @@ public class KaleoTaskAssignmentUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<KaleoTaskAssignment> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end)
-		throws SystemException {
+		DynamicQuery dynamicQuery, int start, int end) {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -87,7 +87,7 @@ public class KaleoTaskAssignmentUtil {
 	 */
 	public static List<KaleoTaskAssignment> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator orderByComparator) throws SystemException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator) {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -97,7 +97,7 @@ public class KaleoTaskAssignmentUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
 	public static KaleoTaskAssignment update(
-		KaleoTaskAssignment kaleoTaskAssignment) throws SystemException {
+		KaleoTaskAssignment kaleoTaskAssignment) {
 		return getPersistence().update(kaleoTaskAssignment);
 	}
 
@@ -105,8 +105,7 @@ public class KaleoTaskAssignmentUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static KaleoTaskAssignment update(
-		KaleoTaskAssignment kaleoTaskAssignment, ServiceContext serviceContext)
-		throws SystemException {
+		KaleoTaskAssignment kaleoTaskAssignment, ServiceContext serviceContext) {
 		return getPersistence().update(kaleoTaskAssignment, serviceContext);
 	}
 
@@ -115,11 +114,8 @@ public class KaleoTaskAssignmentUtil {
 	*
 	* @param companyId the company ID
 	* @return the matching kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment> findByCompanyId(
-		long companyId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoTaskAssignment> findByCompanyId(long companyId) {
 		return getPersistence().findByCompanyId(companyId);
 	}
 
@@ -127,18 +123,16 @@ public class KaleoTaskAssignmentUtil {
 	* Returns a range of all the kaleo task assignments where companyId = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param companyId the company ID
 	* @param start the lower bound of the range of kaleo task assignments
 	* @param end the upper bound of the range of kaleo task assignments (not inclusive)
 	* @return the range of matching kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment> findByCompanyId(
-		long companyId, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoTaskAssignment> findByCompanyId(long companyId,
+		int start, int end) {
 		return getPersistence().findByCompanyId(companyId, start, end);
 	}
 
@@ -146,7 +140,7 @@ public class KaleoTaskAssignmentUtil {
 	* Returns an ordered range of all the kaleo task assignments where companyId = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param companyId the company ID
@@ -154,12 +148,10 @@ public class KaleoTaskAssignmentUtil {
 	* @param end the upper bound of the range of kaleo task assignments (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment> findByCompanyId(
-		long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoTaskAssignment> findByCompanyId(long companyId,
+		int start, int end,
+		OrderByComparator<KaleoTaskAssignment> orderByComparator) {
 		return getPersistence()
 				   .findByCompanyId(companyId, start, end, orderByComparator);
 	}
@@ -170,14 +162,11 @@ public class KaleoTaskAssignmentUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo task assignment
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment findByCompanyId_First(
-		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
+	public static KaleoTaskAssignment findByCompanyId_First(long companyId,
+		OrderByComparator<KaleoTaskAssignment> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
 		return getPersistence()
 				   .findByCompanyId_First(companyId, orderByComparator);
 	}
@@ -188,12 +177,9 @@ public class KaleoTaskAssignmentUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo task assignment, or <code>null</code> if a matching kaleo task assignment could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment fetchByCompanyId_First(
-		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static KaleoTaskAssignment fetchByCompanyId_First(long companyId,
+		OrderByComparator<KaleoTaskAssignment> orderByComparator) {
 		return getPersistence()
 				   .fetchByCompanyId_First(companyId, orderByComparator);
 	}
@@ -204,14 +190,11 @@ public class KaleoTaskAssignmentUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo task assignment
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment findByCompanyId_Last(
-		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
+	public static KaleoTaskAssignment findByCompanyId_Last(long companyId,
+		OrderByComparator<KaleoTaskAssignment> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
 		return getPersistence()
 				   .findByCompanyId_Last(companyId, orderByComparator);
 	}
@@ -222,12 +205,9 @@ public class KaleoTaskAssignmentUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo task assignment, or <code>null</code> if a matching kaleo task assignment could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment fetchByCompanyId_Last(
-		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static KaleoTaskAssignment fetchByCompanyId_Last(long companyId,
+		OrderByComparator<KaleoTaskAssignment> orderByComparator) {
 		return getPersistence()
 				   .fetchByCompanyId_Last(companyId, orderByComparator);
 	}
@@ -239,14 +219,12 @@ public class KaleoTaskAssignmentUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next kaleo task assignment
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment[] findByCompanyId_PrevAndNext(
+	public static KaleoTaskAssignment[] findByCompanyId_PrevAndNext(
 		long kaleoTaskAssignmentId, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
 		return getPersistence()
 				   .findByCompanyId_PrevAndNext(kaleoTaskAssignmentId,
 			companyId, orderByComparator);
@@ -256,10 +234,8 @@ public class KaleoTaskAssignmentUtil {
 	* Removes all the kaleo task assignments where companyId = &#63; from the database.
 	*
 	* @param companyId the company ID
-	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByCompanyId(long companyId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static void removeByCompanyId(long companyId) {
 		getPersistence().removeByCompanyId(companyId);
 	}
 
@@ -268,10 +244,8 @@ public class KaleoTaskAssignmentUtil {
 	*
 	* @param companyId the company ID
 	* @return the number of matching kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByCompanyId(long companyId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static int countByCompanyId(long companyId) {
 		return getPersistence().countByCompanyId(companyId);
 	}
 
@@ -280,11 +254,9 @@ public class KaleoTaskAssignmentUtil {
 	*
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @return the matching kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment> findByKaleoDefinitionId(
-		long kaleoDefinitionId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoTaskAssignment> findByKaleoDefinitionId(
+		long kaleoDefinitionId) {
 		return getPersistence().findByKaleoDefinitionId(kaleoDefinitionId);
 	}
 
@@ -292,18 +264,16 @@ public class KaleoTaskAssignmentUtil {
 	* Returns a range of all the kaleo task assignments where kaleoDefinitionId = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @param start the lower bound of the range of kaleo task assignments
 	* @param end the upper bound of the range of kaleo task assignments (not inclusive)
 	* @return the range of matching kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment> findByKaleoDefinitionId(
-		long kaleoDefinitionId, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoTaskAssignment> findByKaleoDefinitionId(
+		long kaleoDefinitionId, int start, int end) {
 		return getPersistence()
 				   .findByKaleoDefinitionId(kaleoDefinitionId, start, end);
 	}
@@ -312,7 +282,7 @@ public class KaleoTaskAssignmentUtil {
 	* Returns an ordered range of all the kaleo task assignments where kaleoDefinitionId = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param kaleoDefinitionId the kaleo definition ID
@@ -320,12 +290,10 @@ public class KaleoTaskAssignmentUtil {
 	* @param end the upper bound of the range of kaleo task assignments (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment> findByKaleoDefinitionId(
+	public static List<KaleoTaskAssignment> findByKaleoDefinitionId(
 		long kaleoDefinitionId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator) {
 		return getPersistence()
 				   .findByKaleoDefinitionId(kaleoDefinitionId, start, end,
 			orderByComparator);
@@ -337,14 +305,12 @@ public class KaleoTaskAssignmentUtil {
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo task assignment
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment findByKaleoDefinitionId_First(
+	public static KaleoTaskAssignment findByKaleoDefinitionId_First(
 		long kaleoDefinitionId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
 		return getPersistence()
 				   .findByKaleoDefinitionId_First(kaleoDefinitionId,
 			orderByComparator);
@@ -356,12 +322,10 @@ public class KaleoTaskAssignmentUtil {
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo task assignment, or <code>null</code> if a matching kaleo task assignment could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment fetchByKaleoDefinitionId_First(
+	public static KaleoTaskAssignment fetchByKaleoDefinitionId_First(
 		long kaleoDefinitionId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator) {
 		return getPersistence()
 				   .fetchByKaleoDefinitionId_First(kaleoDefinitionId,
 			orderByComparator);
@@ -373,14 +337,12 @@ public class KaleoTaskAssignmentUtil {
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo task assignment
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment findByKaleoDefinitionId_Last(
+	public static KaleoTaskAssignment findByKaleoDefinitionId_Last(
 		long kaleoDefinitionId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
 		return getPersistence()
 				   .findByKaleoDefinitionId_Last(kaleoDefinitionId,
 			orderByComparator);
@@ -392,12 +354,10 @@ public class KaleoTaskAssignmentUtil {
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo task assignment, or <code>null</code> if a matching kaleo task assignment could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment fetchByKaleoDefinitionId_Last(
+	public static KaleoTaskAssignment fetchByKaleoDefinitionId_Last(
 		long kaleoDefinitionId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator) {
 		return getPersistence()
 				   .fetchByKaleoDefinitionId_Last(kaleoDefinitionId,
 			orderByComparator);
@@ -410,14 +370,12 @@ public class KaleoTaskAssignmentUtil {
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next kaleo task assignment
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment[] findByKaleoDefinitionId_PrevAndNext(
+	public static KaleoTaskAssignment[] findByKaleoDefinitionId_PrevAndNext(
 		long kaleoTaskAssignmentId, long kaleoDefinitionId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
 		return getPersistence()
 				   .findByKaleoDefinitionId_PrevAndNext(kaleoTaskAssignmentId,
 			kaleoDefinitionId, orderByComparator);
@@ -427,10 +385,8 @@ public class KaleoTaskAssignmentUtil {
 	* Removes all the kaleo task assignments where kaleoDefinitionId = &#63; from the database.
 	*
 	* @param kaleoDefinitionId the kaleo definition ID
-	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByKaleoDefinitionId(long kaleoDefinitionId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static void removeByKaleoDefinitionId(long kaleoDefinitionId) {
 		getPersistence().removeByKaleoDefinitionId(kaleoDefinitionId);
 	}
 
@@ -439,10 +395,8 @@ public class KaleoTaskAssignmentUtil {
 	*
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @return the number of matching kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByKaleoDefinitionId(long kaleoDefinitionId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static int countByKaleoDefinitionId(long kaleoDefinitionId) {
 		return getPersistence().countByKaleoDefinitionId(kaleoDefinitionId);
 	}
 
@@ -452,11 +406,9 @@ public class KaleoTaskAssignmentUtil {
 	* @param kaleoClassName the kaleo class name
 	* @param kaleoClassPK the kaleo class p k
 	* @return the matching kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment> findByKCN_KCPK(
-		java.lang.String kaleoClassName, long kaleoClassPK)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoTaskAssignment> findByKCN_KCPK(
+		java.lang.String kaleoClassName, long kaleoClassPK) {
 		return getPersistence().findByKCN_KCPK(kaleoClassName, kaleoClassPK);
 	}
 
@@ -464,7 +416,7 @@ public class KaleoTaskAssignmentUtil {
 	* Returns a range of all the kaleo task assignments where kaleoClassName = &#63; and kaleoClassPK = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param kaleoClassName the kaleo class name
@@ -472,11 +424,9 @@ public class KaleoTaskAssignmentUtil {
 	* @param start the lower bound of the range of kaleo task assignments
 	* @param end the upper bound of the range of kaleo task assignments (not inclusive)
 	* @return the range of matching kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment> findByKCN_KCPK(
-		java.lang.String kaleoClassName, long kaleoClassPK, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoTaskAssignment> findByKCN_KCPK(
+		java.lang.String kaleoClassName, long kaleoClassPK, int start, int end) {
 		return getPersistence()
 				   .findByKCN_KCPK(kaleoClassName, kaleoClassPK, start, end);
 	}
@@ -485,7 +435,7 @@ public class KaleoTaskAssignmentUtil {
 	* Returns an ordered range of all the kaleo task assignments where kaleoClassName = &#63; and kaleoClassPK = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param kaleoClassName the kaleo class name
@@ -494,12 +444,10 @@ public class KaleoTaskAssignmentUtil {
 	* @param end the upper bound of the range of kaleo task assignments (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment> findByKCN_KCPK(
+	public static List<KaleoTaskAssignment> findByKCN_KCPK(
 		java.lang.String kaleoClassName, long kaleoClassPK, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator) {
 		return getPersistence()
 				   .findByKCN_KCPK(kaleoClassName, kaleoClassPK, start, end,
 			orderByComparator);
@@ -512,14 +460,12 @@ public class KaleoTaskAssignmentUtil {
 	* @param kaleoClassPK the kaleo class p k
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo task assignment
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment findByKCN_KCPK_First(
+	public static KaleoTaskAssignment findByKCN_KCPK_First(
 		java.lang.String kaleoClassName, long kaleoClassPK,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
 		return getPersistence()
 				   .findByKCN_KCPK_First(kaleoClassName, kaleoClassPK,
 			orderByComparator);
@@ -532,12 +478,10 @@ public class KaleoTaskAssignmentUtil {
 	* @param kaleoClassPK the kaleo class p k
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo task assignment, or <code>null</code> if a matching kaleo task assignment could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment fetchByKCN_KCPK_First(
+	public static KaleoTaskAssignment fetchByKCN_KCPK_First(
 		java.lang.String kaleoClassName, long kaleoClassPK,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator) {
 		return getPersistence()
 				   .fetchByKCN_KCPK_First(kaleoClassName, kaleoClassPK,
 			orderByComparator);
@@ -550,14 +494,12 @@ public class KaleoTaskAssignmentUtil {
 	* @param kaleoClassPK the kaleo class p k
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo task assignment
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment findByKCN_KCPK_Last(
+	public static KaleoTaskAssignment findByKCN_KCPK_Last(
 		java.lang.String kaleoClassName, long kaleoClassPK,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
 		return getPersistence()
 				   .findByKCN_KCPK_Last(kaleoClassName, kaleoClassPK,
 			orderByComparator);
@@ -570,12 +512,10 @@ public class KaleoTaskAssignmentUtil {
 	* @param kaleoClassPK the kaleo class p k
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo task assignment, or <code>null</code> if a matching kaleo task assignment could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment fetchByKCN_KCPK_Last(
+	public static KaleoTaskAssignment fetchByKCN_KCPK_Last(
 		java.lang.String kaleoClassName, long kaleoClassPK,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator) {
 		return getPersistence()
 				   .fetchByKCN_KCPK_Last(kaleoClassName, kaleoClassPK,
 			orderByComparator);
@@ -589,15 +529,13 @@ public class KaleoTaskAssignmentUtil {
 	* @param kaleoClassPK the kaleo class p k
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next kaleo task assignment
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment[] findByKCN_KCPK_PrevAndNext(
+	public static KaleoTaskAssignment[] findByKCN_KCPK_PrevAndNext(
 		long kaleoTaskAssignmentId, java.lang.String kaleoClassName,
 		long kaleoClassPK,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
 		return getPersistence()
 				   .findByKCN_KCPK_PrevAndNext(kaleoTaskAssignmentId,
 			kaleoClassName, kaleoClassPK, orderByComparator);
@@ -608,11 +546,9 @@ public class KaleoTaskAssignmentUtil {
 	*
 	* @param kaleoClassName the kaleo class name
 	* @param kaleoClassPK the kaleo class p k
-	* @throws SystemException if a system exception occurred
 	*/
 	public static void removeByKCN_KCPK(java.lang.String kaleoClassName,
-		long kaleoClassPK)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		long kaleoClassPK) {
 		getPersistence().removeByKCN_KCPK(kaleoClassName, kaleoClassPK);
 	}
 
@@ -622,11 +558,9 @@ public class KaleoTaskAssignmentUtil {
 	* @param kaleoClassName the kaleo class name
 	* @param kaleoClassPK the kaleo class p k
 	* @return the number of matching kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
 	public static int countByKCN_KCPK(java.lang.String kaleoClassName,
-		long kaleoClassPK)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		long kaleoClassPK) {
 		return getPersistence().countByKCN_KCPK(kaleoClassName, kaleoClassPK);
 	}
 
@@ -637,12 +571,10 @@ public class KaleoTaskAssignmentUtil {
 	* @param kaleoClassPK the kaleo class p k
 	* @param assigneeClassName the assignee class name
 	* @return the matching kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment> findByKCN_KCPK_ACN(
+	public static List<KaleoTaskAssignment> findByKCN_KCPK_ACN(
 		java.lang.String kaleoClassName, long kaleoClassPK,
-		java.lang.String assigneeClassName)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		java.lang.String assigneeClassName) {
 		return getPersistence()
 				   .findByKCN_KCPK_ACN(kaleoClassName, kaleoClassPK,
 			assigneeClassName);
@@ -652,7 +584,7 @@ public class KaleoTaskAssignmentUtil {
 	* Returns a range of all the kaleo task assignments where kaleoClassName = &#63; and kaleoClassPK = &#63; and assigneeClassName = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param kaleoClassName the kaleo class name
@@ -661,12 +593,10 @@ public class KaleoTaskAssignmentUtil {
 	* @param start the lower bound of the range of kaleo task assignments
 	* @param end the upper bound of the range of kaleo task assignments (not inclusive)
 	* @return the range of matching kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment> findByKCN_KCPK_ACN(
+	public static List<KaleoTaskAssignment> findByKCN_KCPK_ACN(
 		java.lang.String kaleoClassName, long kaleoClassPK,
-		java.lang.String assigneeClassName, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		java.lang.String assigneeClassName, int start, int end) {
 		return getPersistence()
 				   .findByKCN_KCPK_ACN(kaleoClassName, kaleoClassPK,
 			assigneeClassName, start, end);
@@ -676,7 +606,7 @@ public class KaleoTaskAssignmentUtil {
 	* Returns an ordered range of all the kaleo task assignments where kaleoClassName = &#63; and kaleoClassPK = &#63; and assigneeClassName = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param kaleoClassName the kaleo class name
@@ -686,13 +616,11 @@ public class KaleoTaskAssignmentUtil {
 	* @param end the upper bound of the range of kaleo task assignments (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment> findByKCN_KCPK_ACN(
+	public static List<KaleoTaskAssignment> findByKCN_KCPK_ACN(
 		java.lang.String kaleoClassName, long kaleoClassPK,
 		java.lang.String assigneeClassName, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator) {
 		return getPersistence()
 				   .findByKCN_KCPK_ACN(kaleoClassName, kaleoClassPK,
 			assigneeClassName, start, end, orderByComparator);
@@ -706,15 +634,13 @@ public class KaleoTaskAssignmentUtil {
 	* @param assigneeClassName the assignee class name
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo task assignment
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment findByKCN_KCPK_ACN_First(
+	public static KaleoTaskAssignment findByKCN_KCPK_ACN_First(
 		java.lang.String kaleoClassName, long kaleoClassPK,
 		java.lang.String assigneeClassName,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
 		return getPersistence()
 				   .findByKCN_KCPK_ACN_First(kaleoClassName, kaleoClassPK,
 			assigneeClassName, orderByComparator);
@@ -728,13 +654,11 @@ public class KaleoTaskAssignmentUtil {
 	* @param assigneeClassName the assignee class name
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo task assignment, or <code>null</code> if a matching kaleo task assignment could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment fetchByKCN_KCPK_ACN_First(
+	public static KaleoTaskAssignment fetchByKCN_KCPK_ACN_First(
 		java.lang.String kaleoClassName, long kaleoClassPK,
 		java.lang.String assigneeClassName,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator) {
 		return getPersistence()
 				   .fetchByKCN_KCPK_ACN_First(kaleoClassName, kaleoClassPK,
 			assigneeClassName, orderByComparator);
@@ -748,15 +672,13 @@ public class KaleoTaskAssignmentUtil {
 	* @param assigneeClassName the assignee class name
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo task assignment
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchTaskAssignmentException if a matching kaleo task assignment could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment findByKCN_KCPK_ACN_Last(
+	public static KaleoTaskAssignment findByKCN_KCPK_ACN_Last(
 		java.lang.String kaleoClassName, long kaleoClassPK,
 		java.lang.String assigneeClassName,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
 		return getPersistence()
 				   .findByKCN_KCPK_ACN_Last(kaleoClassName, kaleoClassPK,
 			assigneeClassName, orderByComparator);
@@ -770,13 +692,11 @@ public class KaleoTaskAssignmentUtil {
 	* @param assigneeClassName the assignee class name
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo task assignment, or <code>null</code> if a matching kaleo task assignment could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment fetchByKCN_KCPK_ACN_Last(
+	public static KaleoTaskAssignment fetchByKCN_KCPK_ACN_Last(
 		java.lang.String kaleoClassName, long kaleoClassPK,
 		java.lang.String assigneeClassName,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator) {
 		return getPersistence()
 				   .fetchByKCN_KCPK_ACN_Last(kaleoClassName, kaleoClassPK,
 			assigneeClassName, orderByComparator);
@@ -791,15 +711,13 @@ public class KaleoTaskAssignmentUtil {
 	* @param assigneeClassName the assignee class name
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next kaleo task assignment
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment[] findByKCN_KCPK_ACN_PrevAndNext(
+	public static KaleoTaskAssignment[] findByKCN_KCPK_ACN_PrevAndNext(
 		long kaleoTaskAssignmentId, java.lang.String kaleoClassName,
 		long kaleoClassPK, java.lang.String assigneeClassName,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
+		OrderByComparator<KaleoTaskAssignment> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
 		return getPersistence()
 				   .findByKCN_KCPK_ACN_PrevAndNext(kaleoTaskAssignmentId,
 			kaleoClassName, kaleoClassPK, assigneeClassName, orderByComparator);
@@ -811,11 +729,9 @@ public class KaleoTaskAssignmentUtil {
 	* @param kaleoClassName the kaleo class name
 	* @param kaleoClassPK the kaleo class p k
 	* @param assigneeClassName the assignee class name
-	* @throws SystemException if a system exception occurred
 	*/
 	public static void removeByKCN_KCPK_ACN(java.lang.String kaleoClassName,
-		long kaleoClassPK, java.lang.String assigneeClassName)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		long kaleoClassPK, java.lang.String assigneeClassName) {
 		getPersistence()
 			.removeByKCN_KCPK_ACN(kaleoClassName, kaleoClassPK,
 			assigneeClassName);
@@ -828,11 +744,9 @@ public class KaleoTaskAssignmentUtil {
 	* @param kaleoClassPK the kaleo class p k
 	* @param assigneeClassName the assignee class name
 	* @return the number of matching kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
 	public static int countByKCN_KCPK_ACN(java.lang.String kaleoClassName,
-		long kaleoClassPK, java.lang.String assigneeClassName)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		long kaleoClassPK, java.lang.String assigneeClassName) {
 		return getPersistence()
 				   .countByKCN_KCPK_ACN(kaleoClassName, kaleoClassPK,
 			assigneeClassName);
@@ -843,8 +757,7 @@ public class KaleoTaskAssignmentUtil {
 	*
 	* @param kaleoTaskAssignment the kaleo task assignment
 	*/
-	public static void cacheResult(
-		com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment kaleoTaskAssignment) {
+	public static void cacheResult(KaleoTaskAssignment kaleoTaskAssignment) {
 		getPersistence().cacheResult(kaleoTaskAssignment);
 	}
 
@@ -854,7 +767,7 @@ public class KaleoTaskAssignmentUtil {
 	* @param kaleoTaskAssignments the kaleo task assignments
 	*/
 	public static void cacheResult(
-		java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment> kaleoTaskAssignments) {
+		List<KaleoTaskAssignment> kaleoTaskAssignments) {
 		getPersistence().cacheResult(kaleoTaskAssignments);
 	}
 
@@ -864,8 +777,7 @@ public class KaleoTaskAssignmentUtil {
 	* @param kaleoTaskAssignmentId the primary key for the new kaleo task assignment
 	* @return the new kaleo task assignment
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment create(
-		long kaleoTaskAssignmentId) {
+	public static KaleoTaskAssignment create(long kaleoTaskAssignmentId) {
 		return getPersistence().create(kaleoTaskAssignmentId);
 	}
 
@@ -874,34 +786,28 @@ public class KaleoTaskAssignmentUtil {
 	*
 	* @param kaleoTaskAssignmentId the primary key of the kaleo task assignment
 	* @return the kaleo task assignment that was removed
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment remove(
-		long kaleoTaskAssignmentId)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
+	public static KaleoTaskAssignment remove(long kaleoTaskAssignmentId)
+		throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
 		return getPersistence().remove(kaleoTaskAssignmentId);
 	}
 
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment updateImpl(
-		com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment kaleoTaskAssignment)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static KaleoTaskAssignment updateImpl(
+		KaleoTaskAssignment kaleoTaskAssignment) {
 		return getPersistence().updateImpl(kaleoTaskAssignment);
 	}
 
 	/**
-	* Returns the kaleo task assignment with the primary key or throws a {@link com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException} if it could not be found.
+	* Returns the kaleo task assignment with the primary key or throws a {@link NoSuchTaskAssignmentException} if it could not be found.
 	*
 	* @param kaleoTaskAssignmentId the primary key of the kaleo task assignment
 	* @return the kaleo task assignment
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchTaskAssignmentException if a kaleo task assignment with the primary key could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment findByPrimaryKey(
+	public static KaleoTaskAssignment findByPrimaryKey(
 		long kaleoTaskAssignmentId)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
+		throws com.liferay.portal.workflow.kaleo.NoSuchTaskAssignmentException {
 		return getPersistence().findByPrimaryKey(kaleoTaskAssignmentId);
 	}
 
@@ -910,22 +816,23 @@ public class KaleoTaskAssignmentUtil {
 	*
 	* @param kaleoTaskAssignmentId the primary key of the kaleo task assignment
 	* @return the kaleo task assignment, or <code>null</code> if a kaleo task assignment with the primary key could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment fetchByPrimaryKey(
-		long kaleoTaskAssignmentId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static KaleoTaskAssignment fetchByPrimaryKey(
+		long kaleoTaskAssignmentId) {
 		return getPersistence().fetchByPrimaryKey(kaleoTaskAssignmentId);
+	}
+
+	public static java.util.Map<java.io.Serializable, KaleoTaskAssignment> fetchByPrimaryKeys(
+		java.util.Set<java.io.Serializable> primaryKeys) {
+		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the kaleo task assignments.
 	*
 	* @return the kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment> findAll()
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoTaskAssignment> findAll() {
 		return getPersistence().findAll();
 	}
 
@@ -933,17 +840,14 @@ public class KaleoTaskAssignmentUtil {
 	* Returns a range of all the kaleo task assignments.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param start the lower bound of the range of kaleo task assignments
 	* @param end the upper bound of the range of kaleo task assignments (not inclusive)
 	* @return the range of kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment> findAll(
-		int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoTaskAssignment> findAll(int start, int end) {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -951,29 +855,23 @@ public class KaleoTaskAssignmentUtil {
 	* Returns an ordered range of all the kaleo task assignments.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoTaskAssignmentModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param start the lower bound of the range of kaleo task assignments
 	* @param end the upper bound of the range of kaleo task assignments (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoTaskAssignment> findAll(int start, int end,
+		OrderByComparator<KaleoTaskAssignment> orderByComparator) {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the kaleo task assignments from the database.
-	*
-	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll()
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static void removeAll() {
 		getPersistence().removeAll();
 	}
 
@@ -981,10 +879,8 @@ public class KaleoTaskAssignmentUtil {
 	* Returns the number of kaleo task assignments.
 	*
 	* @return the number of kaleo task assignments
-	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll()
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static int countAll() {
 		return getPersistence().countAll();
 	}
 

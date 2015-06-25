@@ -68,7 +68,7 @@ request.setAttribute("view_user.jsp-user", user2);
 						</c:if>
 
 						<c:if test="<%= follower %>">
-							<span class="lfr-asset-icon lfr-asset-follower last">
+							<span class="last lfr-asset-follower lfr-asset-icon">
 								<i class="icon-user"></i>
 
 								<liferay-ui:message key="follower" />
@@ -132,12 +132,12 @@ request.setAttribute("view_user.jsp-user", user2);
 				</aui:layout>
 			</aui:layout>
 
-			<div class="lfr-detail-info field-group" data-sectionId="details" data-title="<%= LanguageUtil.get(pageContext, "details") %>">
+			<div class="field-group lfr-detail-info" data-sectionId="details" data-title="<%= LanguageUtil.get(request, "details") %>">
 				<i class="icon-edit"></i>
 
 				<c:if test="<%= showIcon %>">
 					<div class="lfr-contact-thumb">
-						<a href="<%= user2.getDisplayURL(themeDisplay) %>"><img alt="<%= user2.getFullName() %>" src="<%= user2.getPortraitURL(themeDisplay) %>" /></a>
+						<a href="<%= user2.getDisplayURL(themeDisplay) %>"><img alt="<%= HtmlUtil.escapeAttribute(user2.getFullName()) %>" src="<%= user2.getPortraitURL(themeDisplay) %>" /></a>
 					</div>
 				</c:if>
 
@@ -248,13 +248,7 @@ request.setAttribute("view_user.jsp-user", user2);
 											for (Group curGroup : results) {
 											%>
 
-												<liferay-portlet:actionURL portletName="<%= PortletKeys.SITE_REDIRECTOR %>" var="siteURL" windowState="<%= LiferayWindowState.NORMAL.toString() %>">
-													<portlet:param name="struts_action" value="/my_sites/view" />
-													<portlet:param name="groupId" value="<%= String.valueOf(curGroup.getGroupId()) %>" />
-													<portlet:param name="privateLayout" value="<%= String.valueOf(!curGroup.hasPublicLayouts()) %>" />
-												</liferay-portlet:actionURL>
-
-												<li class="user-information-sites <%= SocialOfficeServiceUtil.isSocialOfficeGroup(curGroup.getGroupId()) ? "social-office-enabled" : "social-office-disabled" %>"><a href="<%= siteURL %>"><%= HtmlUtil.escape(curGroup.getDescriptiveName(locale)) %></a></li>
+												<li class="user-information-sites <%= SocialOfficeServiceUtil.isSocialOfficeGroup(curGroup.getGroupId()) ? "social-office-enabled" : "social-office-disabled" %>"><a href="<%= curGroup.getDisplayURL(themeDisplay, !curGroup.hasPublicLayouts()) %>"><%= HtmlUtil.escape(curGroup.getDescriptiveName(locale)) %></a></li>
 
 											<%
 											}
@@ -281,7 +275,7 @@ request.setAttribute("view_user.jsp-user", user2);
 
 								<c:choose>
 									<c:when test="<%= !assetTags.isEmpty() %>">
-										<div class="field-group" data-sectionId="categorization" data-title="<%= LanguageUtil.get(pageContext, "tags") %>">
+										<div class="field-group" data-sectionId="categorization" data-title="<%= LanguageUtil.get(request, "tags") %>">
 											<i class="icon-edit"></i>
 
 											<ul class="user-tags">
