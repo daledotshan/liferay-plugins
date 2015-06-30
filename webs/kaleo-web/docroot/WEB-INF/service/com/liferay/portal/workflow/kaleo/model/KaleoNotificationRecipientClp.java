@@ -14,14 +14,18 @@
 
 package com.liferay.portal.workflow.kaleo.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.BaseModel;
+import com.liferay.portal.model.User;
 import com.liferay.portal.model.impl.BaseModelImpl;
-import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.workflow.kaleo.service.ClpSerializer;
 import com.liferay.portal.workflow.kaleo.service.KaleoNotificationRecipientLocalServiceUtil;
 
@@ -36,6 +40,7 @@ import java.util.Map;
 /**
  * @author Brian Wing Shun Chan
  */
+@ProviderType
 public class KaleoNotificationRecipientClp extends BaseModelImpl<KaleoNotificationRecipient>
 	implements KaleoNotificationRecipient {
 	public KaleoNotificationRecipientClp() {
@@ -88,7 +93,13 @@ public class KaleoNotificationRecipientClp extends BaseModelImpl<KaleoNotificati
 		attributes.put("recipientClassName", getRecipientClassName());
 		attributes.put("recipientClassPK", getRecipientClassPK());
 		attributes.put("recipientRoleType", getRecipientRoleType());
+		attributes.put("recipientScript", getRecipientScript());
+		attributes.put("recipientScriptLanguage", getRecipientScriptLanguage());
+		attributes.put("recipientScriptRequiredContexts",
+			getRecipientScriptRequiredContexts());
 		attributes.put("address", getAddress());
+		attributes.put("notificationReceptionType",
+			getNotificationReceptionType());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -171,10 +182,37 @@ public class KaleoNotificationRecipientClp extends BaseModelImpl<KaleoNotificati
 			setRecipientRoleType(recipientRoleType);
 		}
 
+		String recipientScript = (String)attributes.get("recipientScript");
+
+		if (recipientScript != null) {
+			setRecipientScript(recipientScript);
+		}
+
+		String recipientScriptLanguage = (String)attributes.get(
+				"recipientScriptLanguage");
+
+		if (recipientScriptLanguage != null) {
+			setRecipientScriptLanguage(recipientScriptLanguage);
+		}
+
+		String recipientScriptRequiredContexts = (String)attributes.get(
+				"recipientScriptRequiredContexts");
+
+		if (recipientScriptRequiredContexts != null) {
+			setRecipientScriptRequiredContexts(recipientScriptRequiredContexts);
+		}
+
 		String address = (String)attributes.get("address");
 
 		if (address != null) {
 			setAddress(address);
+		}
+
+		String notificationReceptionType = (String)attributes.get(
+				"notificationReceptionType");
+
+		if (notificationReceptionType != null) {
+			setNotificationReceptionType(notificationReceptionType);
 		}
 
 		_entityCacheEnabled = GetterUtil.getBoolean("entityCacheEnabled");
@@ -277,13 +315,19 @@ public class KaleoNotificationRecipientClp extends BaseModelImpl<KaleoNotificati
 	}
 
 	@Override
-	public String getUserUuid() throws SystemException {
-		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
+	public String getUserUuid() {
+		try {
+			User user = UserLocalServiceUtil.getUserById(getUserId());
+
+			return user.getUuid();
+		}
+		catch (PortalException pe) {
+			return StringPool.BLANK;
+		}
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
-		_userUuid = userUuid;
 	}
 
 	@Override
@@ -482,6 +526,82 @@ public class KaleoNotificationRecipientClp extends BaseModelImpl<KaleoNotificati
 	}
 
 	@Override
+	public String getRecipientScript() {
+		return _recipientScript;
+	}
+
+	@Override
+	public void setRecipientScript(String recipientScript) {
+		_recipientScript = recipientScript;
+
+		if (_kaleoNotificationRecipientRemoteModel != null) {
+			try {
+				Class<?> clazz = _kaleoNotificationRecipientRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setRecipientScript",
+						String.class);
+
+				method.invoke(_kaleoNotificationRecipientRemoteModel,
+					recipientScript);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
+	}
+
+	@Override
+	public String getRecipientScriptLanguage() {
+		return _recipientScriptLanguage;
+	}
+
+	@Override
+	public void setRecipientScriptLanguage(String recipientScriptLanguage) {
+		_recipientScriptLanguage = recipientScriptLanguage;
+
+		if (_kaleoNotificationRecipientRemoteModel != null) {
+			try {
+				Class<?> clazz = _kaleoNotificationRecipientRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setRecipientScriptLanguage",
+						String.class);
+
+				method.invoke(_kaleoNotificationRecipientRemoteModel,
+					recipientScriptLanguage);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
+	}
+
+	@Override
+	public String getRecipientScriptRequiredContexts() {
+		return _recipientScriptRequiredContexts;
+	}
+
+	@Override
+	public void setRecipientScriptRequiredContexts(
+		String recipientScriptRequiredContexts) {
+		_recipientScriptRequiredContexts = recipientScriptRequiredContexts;
+
+		if (_kaleoNotificationRecipientRemoteModel != null) {
+			try {
+				Class<?> clazz = _kaleoNotificationRecipientRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setRecipientScriptRequiredContexts",
+						String.class);
+
+				method.invoke(_kaleoNotificationRecipientRemoteModel,
+					recipientScriptRequiredContexts);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
+	}
+
+	@Override
 	public String getAddress() {
 		return _address;
 	}
@@ -497,6 +617,31 @@ public class KaleoNotificationRecipientClp extends BaseModelImpl<KaleoNotificati
 				Method method = clazz.getMethod("setAddress", String.class);
 
 				method.invoke(_kaleoNotificationRecipientRemoteModel, address);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
+	}
+
+	@Override
+	public String getNotificationReceptionType() {
+		return _notificationReceptionType;
+	}
+
+	@Override
+	public void setNotificationReceptionType(String notificationReceptionType) {
+		_notificationReceptionType = notificationReceptionType;
+
+		if (_kaleoNotificationRecipientRemoteModel != null) {
+			try {
+				Class<?> clazz = _kaleoNotificationRecipientRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setNotificationReceptionType",
+						String.class);
+
+				method.invoke(_kaleoNotificationRecipientRemoteModel,
+					notificationReceptionType);
 			}
 			catch (Exception e) {
 				throw new UnsupportedOperationException(e);
@@ -555,7 +700,7 @@ public class KaleoNotificationRecipientClp extends BaseModelImpl<KaleoNotificati
 	}
 
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			KaleoNotificationRecipientLocalServiceUtil.addKaleoNotificationRecipient(this);
 		}
@@ -587,7 +732,11 @@ public class KaleoNotificationRecipientClp extends BaseModelImpl<KaleoNotificati
 		clone.setRecipientClassName(getRecipientClassName());
 		clone.setRecipientClassPK(getRecipientClassPK());
 		clone.setRecipientRoleType(getRecipientRoleType());
+		clone.setRecipientScript(getRecipientScript());
+		clone.setRecipientScriptLanguage(getRecipientScriptLanguage());
+		clone.setRecipientScriptRequiredContexts(getRecipientScriptRequiredContexts());
 		clone.setAddress(getAddress());
+		clone.setNotificationReceptionType(getNotificationReceptionType());
 
 		return clone;
 	}
@@ -635,6 +784,10 @@ public class KaleoNotificationRecipientClp extends BaseModelImpl<KaleoNotificati
 		}
 	}
 
+	public Class<?> getClpSerializerClass() {
+		return _clpSerializerClass;
+	}
+
 	@Override
 	public int hashCode() {
 		return (int)getPrimaryKey();
@@ -652,7 +805,7 @@ public class KaleoNotificationRecipientClp extends BaseModelImpl<KaleoNotificati
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(27);
+		StringBundler sb = new StringBundler(35);
 
 		sb.append("{kaleoNotificationRecipientId=");
 		sb.append(getKaleoNotificationRecipientId());
@@ -678,8 +831,16 @@ public class KaleoNotificationRecipientClp extends BaseModelImpl<KaleoNotificati
 		sb.append(getRecipientClassPK());
 		sb.append(", recipientRoleType=");
 		sb.append(getRecipientRoleType());
+		sb.append(", recipientScript=");
+		sb.append(getRecipientScript());
+		sb.append(", recipientScriptLanguage=");
+		sb.append(getRecipientScriptLanguage());
+		sb.append(", recipientScriptRequiredContexts=");
+		sb.append(getRecipientScriptRequiredContexts());
 		sb.append(", address=");
 		sb.append(getAddress());
+		sb.append(", notificationReceptionType=");
+		sb.append(getNotificationReceptionType());
 		sb.append("}");
 
 		return sb.toString();
@@ -687,7 +848,7 @@ public class KaleoNotificationRecipientClp extends BaseModelImpl<KaleoNotificati
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(43);
+		StringBundler sb = new StringBundler(55);
 
 		sb.append("<model><model-name>");
 		sb.append(
@@ -743,8 +904,24 @@ public class KaleoNotificationRecipientClp extends BaseModelImpl<KaleoNotificati
 		sb.append(getRecipientRoleType());
 		sb.append("]]></column-value></column>");
 		sb.append(
+			"<column><column-name>recipientScript</column-name><column-value><![CDATA[");
+		sb.append(getRecipientScript());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>recipientScriptLanguage</column-name><column-value><![CDATA[");
+		sb.append(getRecipientScriptLanguage());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>recipientScriptRequiredContexts</column-name><column-value><![CDATA[");
+		sb.append(getRecipientScriptRequiredContexts());
+		sb.append("]]></column-value></column>");
+		sb.append(
 			"<column><column-name>address</column-name><column-value><![CDATA[");
 		sb.append(getAddress());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>notificationReceptionType</column-name><column-value><![CDATA[");
+		sb.append(getNotificationReceptionType());
 		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
@@ -756,7 +933,6 @@ public class KaleoNotificationRecipientClp extends BaseModelImpl<KaleoNotificati
 	private long _groupId;
 	private long _companyId;
 	private long _userId;
-	private String _userUuid;
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;
@@ -765,8 +941,13 @@ public class KaleoNotificationRecipientClp extends BaseModelImpl<KaleoNotificati
 	private String _recipientClassName;
 	private long _recipientClassPK;
 	private int _recipientRoleType;
+	private String _recipientScript;
+	private String _recipientScriptLanguage;
+	private String _recipientScriptRequiredContexts;
 	private String _address;
+	private String _notificationReceptionType;
 	private BaseModel<?> _kaleoNotificationRecipientRemoteModel;
+	private Class<?> _clpSerializerClass = ClpSerializer.class;
 	private boolean _entityCacheEnabled;
 	private boolean _finderCacheEnabled;
 }

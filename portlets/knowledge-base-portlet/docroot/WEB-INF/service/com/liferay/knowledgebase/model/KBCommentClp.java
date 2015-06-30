@@ -14,12 +14,13 @@
 
 package com.liferay.knowledgebase.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.knowledgebase.service.ClpSerializer;
 import com.liferay.knowledgebase.service.KBCommentLocalServiceUtil;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.lar.StagedModelType;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
@@ -27,8 +28,12 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.BaseModel;
+import com.liferay.portal.model.User;
 import com.liferay.portal.model.impl.BaseModelImpl;
+import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
+
+import com.liferay.portlet.exportimport.lar.StagedModelType;
 
 import java.io.Serializable;
 
@@ -41,6 +46,7 @@ import java.util.Map;
 /**
  * @author Brian Wing Shun Chan
  */
+@ProviderType
 public class KBCommentClp extends BaseModelImpl<KBComment> implements KBComment {
 	public KBCommentClp() {
 	}
@@ -90,7 +96,8 @@ public class KBCommentClp extends BaseModelImpl<KBComment> implements KBComment 
 		attributes.put("classNameId", getClassNameId());
 		attributes.put("classPK", getClassPK());
 		attributes.put("content", getContent());
-		attributes.put("helpful", getHelpful());
+		attributes.put("userRating", getUserRating());
+		attributes.put("status", getStatus());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -166,10 +173,16 @@ public class KBCommentClp extends BaseModelImpl<KBComment> implements KBComment 
 			setContent(content);
 		}
 
-		Boolean helpful = (Boolean)attributes.get("helpful");
+		Integer userRating = (Integer)attributes.get("userRating");
 
-		if (helpful != null) {
-			setHelpful(helpful);
+		if (userRating != null) {
+			setUserRating(userRating);
+		}
+
+		Integer status = (Integer)attributes.get("status");
+
+		if (status != null) {
+			setStatus(status);
 		}
 
 		_entityCacheEnabled = GetterUtil.getBoolean("entityCacheEnabled");
@@ -292,13 +305,19 @@ public class KBCommentClp extends BaseModelImpl<KBComment> implements KBComment 
 	}
 
 	@Override
-	public String getUserUuid() throws SystemException {
-		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
+	public String getUserUuid() {
+		try {
+			User user = UserLocalServiceUtil.getUserById(getUserId());
+
+			return user.getUuid();
+		}
+		catch (PortalException pe) {
+			return StringPool.BLANK;
+		}
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
-		_userUuid = userUuid;
 	}
 
 	@Override
@@ -460,26 +479,44 @@ public class KBCommentClp extends BaseModelImpl<KBComment> implements KBComment 
 	}
 
 	@Override
-	public boolean getHelpful() {
-		return _helpful;
+	public int getUserRating() {
+		return _userRating;
 	}
 
 	@Override
-	public boolean isHelpful() {
-		return _helpful;
-	}
-
-	@Override
-	public void setHelpful(boolean helpful) {
-		_helpful = helpful;
+	public void setUserRating(int userRating) {
+		_userRating = userRating;
 
 		if (_kbCommentRemoteModel != null) {
 			try {
 				Class<?> clazz = _kbCommentRemoteModel.getClass();
 
-				Method method = clazz.getMethod("setHelpful", boolean.class);
+				Method method = clazz.getMethod("setUserRating", int.class);
 
-				method.invoke(_kbCommentRemoteModel, helpful);
+				method.invoke(_kbCommentRemoteModel, userRating);
+			}
+			catch (Exception e) {
+				throw new UnsupportedOperationException(e);
+			}
+		}
+	}
+
+	@Override
+	public int getStatus() {
+		return _status;
+	}
+
+	@Override
+	public void setStatus(int status) {
+		_status = status;
+
+		if (_kbCommentRemoteModel != null) {
+			try {
+				Class<?> clazz = _kbCommentRemoteModel.getClass();
+
+				Method method = clazz.getMethod("setStatus", int.class);
+
+				method.invoke(_kbCommentRemoteModel, status);
 			}
 			catch (Exception e) {
 				throw new UnsupportedOperationException(e);
@@ -543,7 +580,7 @@ public class KBCommentClp extends BaseModelImpl<KBComment> implements KBComment 
 	}
 
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			KBCommentLocalServiceUtil.addKBComment(this);
 		}
@@ -573,7 +610,8 @@ public class KBCommentClp extends BaseModelImpl<KBComment> implements KBComment 
 		clone.setClassNameId(getClassNameId());
 		clone.setClassPK(getClassPK());
 		clone.setContent(getContent());
-		clone.setHelpful(getHelpful());
+		clone.setUserRating(getUserRating());
+		clone.setStatus(getStatus());
 
 		return clone;
 	}
@@ -616,6 +654,10 @@ public class KBCommentClp extends BaseModelImpl<KBComment> implements KBComment 
 		}
 	}
 
+	public Class<?> getClpSerializerClass() {
+		return _clpSerializerClass;
+	}
+
 	@Override
 	public int hashCode() {
 		return (int)getPrimaryKey();
@@ -633,7 +675,7 @@ public class KBCommentClp extends BaseModelImpl<KBComment> implements KBComment 
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(27);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -657,8 +699,10 @@ public class KBCommentClp extends BaseModelImpl<KBComment> implements KBComment 
 		sb.append(getClassPK());
 		sb.append(", content=");
 		sb.append(getContent());
-		sb.append(", helpful=");
-		sb.append(getHelpful());
+		sb.append(", userRating=");
+		sb.append(getUserRating());
+		sb.append(", status=");
+		sb.append(getStatus());
 		sb.append("}");
 
 		return sb.toString();
@@ -666,7 +710,7 @@ public class KBCommentClp extends BaseModelImpl<KBComment> implements KBComment 
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(40);
+		StringBundler sb = new StringBundler(43);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.knowledgebase.model.KBComment");
@@ -717,8 +761,12 @@ public class KBCommentClp extends BaseModelImpl<KBComment> implements KBComment 
 		sb.append(getContent());
 		sb.append("]]></column-value></column>");
 		sb.append(
-			"<column><column-name>helpful</column-name><column-value><![CDATA[");
-		sb.append(getHelpful());
+			"<column><column-name>userRating</column-name><column-value><![CDATA[");
+		sb.append(getUserRating());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>status</column-name><column-value><![CDATA[");
+		sb.append(getStatus());
 		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
@@ -731,15 +779,16 @@ public class KBCommentClp extends BaseModelImpl<KBComment> implements KBComment 
 	private long _groupId;
 	private long _companyId;
 	private long _userId;
-	private String _userUuid;
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;
 	private long _classNameId;
 	private long _classPK;
 	private String _content;
-	private boolean _helpful;
+	private int _userRating;
+	private int _status;
 	private BaseModel<?> _kbCommentRemoteModel;
+	private Class<?> _clpSerializerClass = ClpSerializer.class;
 	private boolean _entityCacheEnabled;
 	private boolean _finderCacheEnabled;
 }

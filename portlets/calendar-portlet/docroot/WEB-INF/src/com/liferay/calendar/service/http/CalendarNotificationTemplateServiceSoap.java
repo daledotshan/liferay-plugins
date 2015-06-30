@@ -14,6 +14,8 @@
 
 package com.liferay.calendar.service.http;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.calendar.service.CalendarNotificationTemplateServiceUtil;
 
 import com.liferay.portal.kernel.log.Log;
@@ -23,7 +25,7 @@ import java.rmi.RemoteException;
 
 /**
  * Provides the SOAP utility for the
- * {@link com.liferay.calendar.service.CalendarNotificationTemplateServiceUtil} service utility. The
+ * {@link CalendarNotificationTemplateServiceUtil} service utility. The
  * static methods of this class calls the same methods of the service utility.
  * However, the signatures are different because it is difficult for SOAP to
  * support certain types.
@@ -58,9 +60,10 @@ import java.rmi.RemoteException;
  * @author Eduardo Lundgren
  * @see CalendarNotificationTemplateServiceHttp
  * @see com.liferay.calendar.model.CalendarNotificationTemplateSoap
- * @see com.liferay.calendar.service.CalendarNotificationTemplateServiceUtil
+ * @see CalendarNotificationTemplateServiceUtil
  * @generated
  */
+@ProviderType
 public class CalendarNotificationTemplateServiceSoap {
 	public static com.liferay.calendar.model.CalendarNotificationTemplateSoap addCalendarNotificationTemplate(
 		long calendarId,

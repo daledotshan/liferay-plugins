@@ -14,10 +14,10 @@
 
 package com.liferay.calendar.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.calendar.model.CalendarBooking;
 import com.liferay.calendar.service.CalendarBookingLocalServiceUtil;
-
-import com.liferay.portal.kernel.exception.SystemException;
 
 /**
  * The extended model base implementation for the CalendarBooking service. Represents a row in the &quot;CalendarBooking&quot; database table, with each column mapped to a property of this class.
@@ -28,9 +28,10 @@ import com.liferay.portal.kernel.exception.SystemException;
  *
  * @author Eduardo Lundgren
  * @see CalendarBookingImpl
- * @see com.liferay.calendar.model.CalendarBooking
+ * @see CalendarBooking
  * @generated
  */
+@ProviderType
 public abstract class CalendarBookingBaseImpl extends CalendarBookingModelImpl
 	implements CalendarBooking {
 	/*
@@ -39,7 +40,7 @@ public abstract class CalendarBookingBaseImpl extends CalendarBookingModelImpl
 	 * Never modify or reference this class directly. All methods that expect a calendar booking model instance should use the {@link CalendarBooking} interface instead.
 	 */
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			CalendarBookingLocalServiceUtil.addCalendarBooking(this);
 		}

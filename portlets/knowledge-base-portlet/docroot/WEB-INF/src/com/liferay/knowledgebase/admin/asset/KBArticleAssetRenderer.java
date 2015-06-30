@@ -34,8 +34,6 @@ import java.util.Locale;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
 
 /**
  * @author Peter Shin
@@ -69,7 +67,7 @@ public class KBArticleAssetRenderer extends BaseAssetRenderer {
 
 		if (Validator.isNull(summary)) {
 			summary = StringUtil.shorten(
-				HtmlUtil.stripHtml(_kbArticle.getContent()), 200);
+				HtmlUtil.extractText(_kbArticle.getContent()), 200);
 		}
 
 		return summary;
@@ -146,11 +144,11 @@ public class KBArticleAssetRenderer extends BaseAssetRenderer {
 
 	@Override
 	public String render(
-		RenderRequest renderRequest, RenderResponse renderResponse,
+		PortletRequest portletRequest, PortletResponse portletResponse,
 		String template) {
 
 		if (template.equals(TEMPLATE_FULL_CONTENT)) {
-			renderRequest.setAttribute(
+			portletRequest.setAttribute(
 				WebKeys.KNOWLEDGE_BASE_KB_ARTICLE, _kbArticle);
 
 			return "/admin/asset/" + template + ".jsp";

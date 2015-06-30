@@ -16,10 +16,11 @@ package com.liferay.calendar.service.permission;
 
 import com.liferay.calendar.model.CalendarResource;
 import com.liferay.calendar.service.CalendarResourceLocalServiceUtil;
+import com.liferay.calendar.util.PortletKeys;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.PermissionChecker;
+import com.liferay.portlet.exportimport.staging.permission.StagingPermissionUtil;
 
 /**
  * @author Eduardo Lundgren
@@ -40,7 +41,7 @@ public class CalendarResourcePermission {
 	public static void check(
 			PermissionChecker permissionChecker, long calendarResourceId,
 			String actionId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		if (!contains(permissionChecker, calendarResourceId, actionId)) {
 			throw new PrincipalException();
@@ -50,6 +51,16 @@ public class CalendarResourcePermission {
 	public static boolean contains(
 		PermissionChecker permissionChecker, CalendarResource calendarResource,
 		String actionId) {
+
+		Boolean hasPermission = StagingPermissionUtil.hasPermission(
+			permissionChecker, calendarResource.getGroupId(),
+			CalendarResource.class.getName(),
+			calendarResource.getCalendarResourceId(), PortletKeys.CALENDAR,
+			actionId);
+
+		if (hasPermission != null) {
+			return hasPermission.booleanValue();
+		}
 
 		if (permissionChecker.hasOwnerPermission(
 				calendarResource.getCompanyId(),
@@ -68,7 +79,7 @@ public class CalendarResourcePermission {
 	public static boolean contains(
 			PermissionChecker permissionChecker, long calendarResourceId,
 			String actionId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		CalendarResource calendarResource =
 			CalendarResourceLocalServiceUtil.getCalendarResource(

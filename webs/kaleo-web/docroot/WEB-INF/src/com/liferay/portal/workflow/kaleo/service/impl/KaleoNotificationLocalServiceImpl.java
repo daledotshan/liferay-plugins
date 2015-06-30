@@ -15,12 +15,12 @@
 package com.liferay.portal.workflow.kaleo.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.workflow.kaleo.definition.Notification;
+import com.liferay.portal.workflow.kaleo.definition.NotificationReceptionType;
 import com.liferay.portal.workflow.kaleo.definition.NotificationType;
 import com.liferay.portal.workflow.kaleo.definition.Recipient;
 import com.liferay.portal.workflow.kaleo.model.KaleoNotification;
@@ -28,6 +28,7 @@ import com.liferay.portal.workflow.kaleo.service.base.KaleoNotificationLocalServ
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -41,7 +42,7 @@ public class KaleoNotificationLocalServiceImpl
 			String kaleoClassName, long kaleoClassPK, long kaleoDefinitionId,
 			String kaleoNodeName, Notification notification,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		// Kaleo notification
 
@@ -91,21 +92,23 @@ public class KaleoNotificationLocalServiceImpl
 
 		// Kaleo notification recipients
 
-		Set<Recipient> recipients = notification.getRecipients();
+		Map<NotificationReceptionType, Set<Recipient>> recipientsMap =
+			notification.getRecipientsMap();
 
-		for (Recipient recipient : recipients) {
-			kaleoNotificationRecipientLocalService.
-				addKaleoNotificationRecipient(
-					kaleoDefinitionId, kaleoNotificationId, recipient,
-					serviceContext);
+		for (Set<Recipient> recipients : recipientsMap.values()) {
+			for (Recipient recipient : recipients) {
+				kaleoNotificationRecipientLocalService.
+					addKaleoNotificationRecipient(
+						kaleoDefinitionId, kaleoNotificationId, recipient,
+						serviceContext);
+			}
 		}
 
 		return kaleoNotification;
 	}
 
 	@Override
-	public void deleteCompanyKaleoNotifications(long companyId)
-		throws SystemException {
+	public void deleteCompanyKaleoNotifications(long companyId) {
 
 		// Kaleo notifications
 
@@ -118,8 +121,8 @@ public class KaleoNotificationLocalServiceImpl
 	}
 
 	@Override
-	public void deleteKaleoDefinitionKaleoNotifications(long kaleoDefinitionId)
-		throws SystemException {
+	public void deleteKaleoDefinitionKaleoNotifications(
+		long kaleoDefinitionId) {
 
 		// Kaleo notifications
 
@@ -134,8 +137,7 @@ public class KaleoNotificationLocalServiceImpl
 
 	@Override
 	public List<KaleoNotification> getKaleoNotifications(
-			String kaleoClassName, long kaleoClassPK)
-		throws SystemException {
+		String kaleoClassName, long kaleoClassPK) {
 
 		return kaleoNotificationPersistence.findByKCN_KCPK(
 			kaleoClassName, kaleoClassPK);
@@ -143,8 +145,7 @@ public class KaleoNotificationLocalServiceImpl
 
 	@Override
 	public List<KaleoNotification> getKaleoNotifications(
-			String kaleoClassName, long kaleoClassPK, String executionType)
-		throws SystemException {
+		String kaleoClassName, long kaleoClassPK, String executionType) {
 
 		return kaleoNotificationPersistence.findByKCN_KCPK_ET(
 			kaleoClassName, kaleoClassPK, executionType);

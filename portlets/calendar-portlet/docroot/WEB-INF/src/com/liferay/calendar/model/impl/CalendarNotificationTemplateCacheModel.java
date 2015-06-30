@@ -14,8 +14,11 @@
 
 package com.liferay.calendar.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.calendar.model.CalendarNotificationTemplate;
 
+import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
@@ -34,8 +37,34 @@ import java.util.Date;
  * @see CalendarNotificationTemplate
  * @generated
  */
+@ProviderType
 public class CalendarNotificationTemplateCacheModel implements CacheModel<CalendarNotificationTemplate>,
 	Externalizable {
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof CalendarNotificationTemplateCacheModel)) {
+			return false;
+		}
+
+		CalendarNotificationTemplateCacheModel calendarNotificationTemplateCacheModel =
+			(CalendarNotificationTemplateCacheModel)obj;
+
+		if (calendarNotificationTemplateId == calendarNotificationTemplateCacheModel.calendarNotificationTemplateId) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return HashUtil.hash(0, calendarNotificationTemplateId);
+	}
+
 	@Override
 	public String toString() {
 		StringBundler sb = new StringBundler(29);

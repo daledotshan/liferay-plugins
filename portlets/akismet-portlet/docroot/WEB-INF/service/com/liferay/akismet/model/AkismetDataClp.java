@@ -14,11 +14,12 @@
 
 package com.liferay.akismet.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.akismet.service.AkismetDataLocalServiceUtil;
 import com.liferay.akismet.service.ClpSerializer;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -39,6 +40,7 @@ import java.util.Map;
 /**
  * @author Brian Wing Shun Chan
  */
+@ProviderType
 public class AkismetDataClp extends BaseModelImpl<AkismetData>
 	implements AkismetData {
 	public AkismetDataClp() {
@@ -461,7 +463,7 @@ public class AkismetDataClp extends BaseModelImpl<AkismetData>
 	}
 
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			AkismetDataLocalServiceUtil.addAkismetData(this);
 		}
@@ -529,6 +531,10 @@ public class AkismetDataClp extends BaseModelImpl<AkismetData>
 		else {
 			return false;
 		}
+	}
+
+	public Class<?> getClpSerializerClass() {
+		return _clpSerializerClass;
 	}
 
 	@Override
@@ -640,6 +646,7 @@ public class AkismetDataClp extends BaseModelImpl<AkismetData>
 	private String _userIP;
 	private String _userURL;
 	private BaseModel<?> _akismetDataRemoteModel;
+	private Class<?> _clpSerializerClass = ClpSerializer.class;
 	private boolean _entityCacheEnabled;
 	private boolean _finderCacheEnabled;
 }

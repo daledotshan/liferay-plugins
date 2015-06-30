@@ -14,7 +14,8 @@
 
 package com.liferay.portal.workflow.kaleo.model.impl;
 
-import com.liferay.portal.kernel.exception.SystemException;
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.workflow.kaleo.model.KaleoLog;
 import com.liferay.portal.workflow.kaleo.service.KaleoLogLocalServiceUtil;
 
@@ -27,9 +28,10 @@ import com.liferay.portal.workflow.kaleo.service.KaleoLogLocalServiceUtil;
  *
  * @author Brian Wing Shun Chan
  * @see KaleoLogImpl
- * @see com.liferay.portal.workflow.kaleo.model.KaleoLog
+ * @see KaleoLog
  * @generated
  */
+@ProviderType
 public abstract class KaleoLogBaseImpl extends KaleoLogModelImpl
 	implements KaleoLog {
 	/*
@@ -38,7 +40,7 @@ public abstract class KaleoLogBaseImpl extends KaleoLogModelImpl
 	 * Never modify or reference this class directly. All methods that expect a kaleo log model instance should use the {@link KaleoLog} interface instead.
 	 */
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			KaleoLogLocalServiceUtil.addKaleoLog(this);
 		}

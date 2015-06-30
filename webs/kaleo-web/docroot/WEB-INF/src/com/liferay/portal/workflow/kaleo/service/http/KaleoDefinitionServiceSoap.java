@@ -14,6 +14,8 @@
 
 package com.liferay.portal.workflow.kaleo.service.http;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.workflow.kaleo.service.KaleoDefinitionServiceUtil;
@@ -22,7 +24,7 @@ import java.rmi.RemoteException;
 
 /**
  * Provides the SOAP utility for the
- * {@link com.liferay.portal.workflow.kaleo.service.KaleoDefinitionServiceUtil} service utility. The
+ * {@link KaleoDefinitionServiceUtil} service utility. The
  * static methods of this class calls the same methods of the service utility.
  * However, the signatures are different because it is difficult for SOAP to
  * support certain types.
@@ -57,9 +59,10 @@ import java.rmi.RemoteException;
  * @author Brian Wing Shun Chan
  * @see KaleoDefinitionServiceHttp
  * @see com.liferay.portal.workflow.kaleo.model.KaleoDefinitionSoap
- * @see com.liferay.portal.workflow.kaleo.service.KaleoDefinitionServiceUtil
+ * @see KaleoDefinitionServiceUtil
  * @generated
  */
+@ProviderType
 public class KaleoDefinitionServiceSoap {
 	public static com.liferay.portal.workflow.kaleo.model.KaleoDefinitionSoap[] getKaleoDefinitions(
 		int start, int end) throws RemoteException {

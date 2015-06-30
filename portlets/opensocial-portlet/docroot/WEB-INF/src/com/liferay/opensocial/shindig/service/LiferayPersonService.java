@@ -115,7 +115,7 @@ public class LiferayPersonService implements PersonService {
 			SecurityToken securityToken)
 		throws Exception {
 
-		List<Person> people = new ArrayList<Person>();
+		List<Person> people = new ArrayList<>();
 
 		for (UserId userId : userIds) {
 			Person person = null;
@@ -183,7 +183,7 @@ public class LiferayPersonService implements PersonService {
 	}
 
 	protected List<ListField> getEmails(User user) throws Exception {
-		List<ListField> emails = new ArrayList<ListField>();
+		List<ListField> emails = new ArrayList<>();
 
 		ListField email = new ListFieldImpl(
 			Field.PRIMARY.toString(), user.getEmailAddress());
@@ -240,7 +240,7 @@ public class LiferayPersonService implements PersonService {
 	protected List<ListField> getPhoneNumbers(String className, long classPK)
 		throws Exception {
 
-		List<ListField> phoneNumbers = new ArrayList<ListField>();
+		List<ListField> phoneNumbers = new ArrayList<>();
 
 		List<com.liferay.portal.model.Phone> liferayPhones =
 			PhoneServiceUtil.getPhones(className, classPK);
@@ -337,7 +337,8 @@ public class LiferayPersonService implements PersonService {
 		}
 
 		if (fields.contains(Person.Field.UTC_OFFSET.toString())) {
-			person.setUtcOffset(new Long(user.getTimeZone().getRawOffset()));
+			person.setUtcOffset(
+				Long.valueOf(user.getTimeZone().getRawOffset()));
 		}
 
 		if (securityToken.getOwnerId().equals(person.getId())) {

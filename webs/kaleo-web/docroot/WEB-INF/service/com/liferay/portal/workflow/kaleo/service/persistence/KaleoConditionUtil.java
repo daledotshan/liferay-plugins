@@ -14,9 +14,10 @@
 
 package com.liferay.portal.workflow.kaleo.service.persistence;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.PortletBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.ServiceContext;
@@ -25,7 +26,7 @@ import com.liferay.portal.workflow.kaleo.model.KaleoCondition;
 import java.util.List;
 
 /**
- * The persistence utility for the kaleo condition service. This utility wraps {@link KaleoConditionPersistenceImpl} and provides direct access to the database for CRUD operations. This utility should only be used by the service layer, as it must operate within a transaction. Never access this utility in a JSP, controller, model, or other front-end class.
+ * The persistence utility for the kaleo condition service. This utility wraps {@link com.liferay.portal.workflow.kaleo.service.persistence.impl.KaleoConditionPersistenceImpl} and provides direct access to the database for CRUD operations. This utility should only be used by the service layer, as it must operate within a transaction. Never access this utility in a JSP, controller, model, or other front-end class.
  *
  * <p>
  * Caching information and settings can be found in <code>portal.properties</code>
@@ -33,9 +34,10 @@ import java.util.List;
  *
  * @author Brian Wing Shun Chan
  * @see KaleoConditionPersistence
- * @see KaleoConditionPersistenceImpl
+ * @see com.liferay.portal.workflow.kaleo.service.persistence.impl.KaleoConditionPersistenceImpl
  * @generated
  */
+@ProviderType
 public class KaleoConditionUtil {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -60,8 +62,7 @@ public class KaleoConditionUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -69,7 +70,7 @@ public class KaleoConditionUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<KaleoCondition> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) throws SystemException {
+		DynamicQuery dynamicQuery) {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -77,8 +78,7 @@ public class KaleoConditionUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<KaleoCondition> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end)
-		throws SystemException {
+		DynamicQuery dynamicQuery, int start, int end) {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -87,7 +87,7 @@ public class KaleoConditionUtil {
 	 */
 	public static List<KaleoCondition> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator orderByComparator) throws SystemException {
+		OrderByComparator<KaleoCondition> orderByComparator) {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -96,8 +96,7 @@ public class KaleoConditionUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static KaleoCondition update(KaleoCondition kaleoCondition)
-		throws SystemException {
+	public static KaleoCondition update(KaleoCondition kaleoCondition) {
 		return getPersistence().update(kaleoCondition);
 	}
 
@@ -105,7 +104,7 @@ public class KaleoConditionUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static KaleoCondition update(KaleoCondition kaleoCondition,
-		ServiceContext serviceContext) throws SystemException {
+		ServiceContext serviceContext) {
 		return getPersistence().update(kaleoCondition, serviceContext);
 	}
 
@@ -114,11 +113,8 @@ public class KaleoConditionUtil {
 	*
 	* @param companyId the company ID
 	* @return the matching kaleo conditions
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoCondition> findByCompanyId(
-		long companyId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoCondition> findByCompanyId(long companyId) {
 		return getPersistence().findByCompanyId(companyId);
 	}
 
@@ -126,18 +122,16 @@ public class KaleoConditionUtil {
 	* Returns a range of all the kaleo conditions where companyId = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoConditionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoConditionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param companyId the company ID
 	* @param start the lower bound of the range of kaleo conditions
 	* @param end the upper bound of the range of kaleo conditions (not inclusive)
 	* @return the range of matching kaleo conditions
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoCondition> findByCompanyId(
-		long companyId, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoCondition> findByCompanyId(long companyId,
+		int start, int end) {
 		return getPersistence().findByCompanyId(companyId, start, end);
 	}
 
@@ -145,7 +139,7 @@ public class KaleoConditionUtil {
 	* Returns an ordered range of all the kaleo conditions where companyId = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoConditionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoConditionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param companyId the company ID
@@ -153,12 +147,9 @@ public class KaleoConditionUtil {
 	* @param end the upper bound of the range of kaleo conditions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching kaleo conditions
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoCondition> findByCompanyId(
-		long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoCondition> findByCompanyId(long companyId,
+		int start, int end, OrderByComparator<KaleoCondition> orderByComparator) {
 		return getPersistence()
 				   .findByCompanyId(companyId, start, end, orderByComparator);
 	}
@@ -169,14 +160,11 @@ public class KaleoConditionUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo condition
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchConditionException if a matching kaleo condition could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchConditionException if a matching kaleo condition could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition findByCompanyId_First(
-		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchConditionException {
+	public static KaleoCondition findByCompanyId_First(long companyId,
+		OrderByComparator<KaleoCondition> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchConditionException {
 		return getPersistence()
 				   .findByCompanyId_First(companyId, orderByComparator);
 	}
@@ -187,12 +175,9 @@ public class KaleoConditionUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo condition, or <code>null</code> if a matching kaleo condition could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition fetchByCompanyId_First(
-		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static KaleoCondition fetchByCompanyId_First(long companyId,
+		OrderByComparator<KaleoCondition> orderByComparator) {
 		return getPersistence()
 				   .fetchByCompanyId_First(companyId, orderByComparator);
 	}
@@ -203,14 +188,11 @@ public class KaleoConditionUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo condition
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchConditionException if a matching kaleo condition could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchConditionException if a matching kaleo condition could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition findByCompanyId_Last(
-		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchConditionException {
+	public static KaleoCondition findByCompanyId_Last(long companyId,
+		OrderByComparator<KaleoCondition> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchConditionException {
 		return getPersistence()
 				   .findByCompanyId_Last(companyId, orderByComparator);
 	}
@@ -221,12 +203,9 @@ public class KaleoConditionUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo condition, or <code>null</code> if a matching kaleo condition could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition fetchByCompanyId_Last(
-		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static KaleoCondition fetchByCompanyId_Last(long companyId,
+		OrderByComparator<KaleoCondition> orderByComparator) {
 		return getPersistence()
 				   .fetchByCompanyId_Last(companyId, orderByComparator);
 	}
@@ -238,14 +217,12 @@ public class KaleoConditionUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next kaleo condition
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchConditionException if a kaleo condition with the primary key could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchConditionException if a kaleo condition with the primary key could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition[] findByCompanyId_PrevAndNext(
+	public static KaleoCondition[] findByCompanyId_PrevAndNext(
 		long kaleoConditionId, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchConditionException {
+		OrderByComparator<KaleoCondition> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchConditionException {
 		return getPersistence()
 				   .findByCompanyId_PrevAndNext(kaleoConditionId, companyId,
 			orderByComparator);
@@ -255,10 +232,8 @@ public class KaleoConditionUtil {
 	* Removes all the kaleo conditions where companyId = &#63; from the database.
 	*
 	* @param companyId the company ID
-	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByCompanyId(long companyId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static void removeByCompanyId(long companyId) {
 		getPersistence().removeByCompanyId(companyId);
 	}
 
@@ -267,10 +242,8 @@ public class KaleoConditionUtil {
 	*
 	* @param companyId the company ID
 	* @return the number of matching kaleo conditions
-	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByCompanyId(long companyId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static int countByCompanyId(long companyId) {
 		return getPersistence().countByCompanyId(companyId);
 	}
 
@@ -279,11 +252,9 @@ public class KaleoConditionUtil {
 	*
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @return the matching kaleo conditions
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoCondition> findByKaleoDefinitionId(
-		long kaleoDefinitionId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoCondition> findByKaleoDefinitionId(
+		long kaleoDefinitionId) {
 		return getPersistence().findByKaleoDefinitionId(kaleoDefinitionId);
 	}
 
@@ -291,18 +262,16 @@ public class KaleoConditionUtil {
 	* Returns a range of all the kaleo conditions where kaleoDefinitionId = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoConditionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoConditionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @param start the lower bound of the range of kaleo conditions
 	* @param end the upper bound of the range of kaleo conditions (not inclusive)
 	* @return the range of matching kaleo conditions
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoCondition> findByKaleoDefinitionId(
-		long kaleoDefinitionId, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoCondition> findByKaleoDefinitionId(
+		long kaleoDefinitionId, int start, int end) {
 		return getPersistence()
 				   .findByKaleoDefinitionId(kaleoDefinitionId, start, end);
 	}
@@ -311,7 +280,7 @@ public class KaleoConditionUtil {
 	* Returns an ordered range of all the kaleo conditions where kaleoDefinitionId = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoConditionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoConditionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param kaleoDefinitionId the kaleo definition ID
@@ -319,12 +288,10 @@ public class KaleoConditionUtil {
 	* @param end the upper bound of the range of kaleo conditions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching kaleo conditions
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoCondition> findByKaleoDefinitionId(
+	public static List<KaleoCondition> findByKaleoDefinitionId(
 		long kaleoDefinitionId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		OrderByComparator<KaleoCondition> orderByComparator) {
 		return getPersistence()
 				   .findByKaleoDefinitionId(kaleoDefinitionId, start, end,
 			orderByComparator);
@@ -336,14 +303,12 @@ public class KaleoConditionUtil {
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo condition
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchConditionException if a matching kaleo condition could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchConditionException if a matching kaleo condition could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition findByKaleoDefinitionId_First(
+	public static KaleoCondition findByKaleoDefinitionId_First(
 		long kaleoDefinitionId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchConditionException {
+		OrderByComparator<KaleoCondition> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchConditionException {
 		return getPersistence()
 				   .findByKaleoDefinitionId_First(kaleoDefinitionId,
 			orderByComparator);
@@ -355,12 +320,10 @@ public class KaleoConditionUtil {
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo condition, or <code>null</code> if a matching kaleo condition could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition fetchByKaleoDefinitionId_First(
+	public static KaleoCondition fetchByKaleoDefinitionId_First(
 		long kaleoDefinitionId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		OrderByComparator<KaleoCondition> orderByComparator) {
 		return getPersistence()
 				   .fetchByKaleoDefinitionId_First(kaleoDefinitionId,
 			orderByComparator);
@@ -372,14 +335,12 @@ public class KaleoConditionUtil {
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo condition
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchConditionException if a matching kaleo condition could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchConditionException if a matching kaleo condition could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition findByKaleoDefinitionId_Last(
+	public static KaleoCondition findByKaleoDefinitionId_Last(
 		long kaleoDefinitionId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchConditionException {
+		OrderByComparator<KaleoCondition> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchConditionException {
 		return getPersistence()
 				   .findByKaleoDefinitionId_Last(kaleoDefinitionId,
 			orderByComparator);
@@ -391,12 +352,10 @@ public class KaleoConditionUtil {
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo condition, or <code>null</code> if a matching kaleo condition could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition fetchByKaleoDefinitionId_Last(
+	public static KaleoCondition fetchByKaleoDefinitionId_Last(
 		long kaleoDefinitionId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		OrderByComparator<KaleoCondition> orderByComparator) {
 		return getPersistence()
 				   .fetchByKaleoDefinitionId_Last(kaleoDefinitionId,
 			orderByComparator);
@@ -409,14 +368,12 @@ public class KaleoConditionUtil {
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next kaleo condition
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchConditionException if a kaleo condition with the primary key could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchConditionException if a kaleo condition with the primary key could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition[] findByKaleoDefinitionId_PrevAndNext(
+	public static KaleoCondition[] findByKaleoDefinitionId_PrevAndNext(
 		long kaleoConditionId, long kaleoDefinitionId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchConditionException {
+		OrderByComparator<KaleoCondition> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchConditionException {
 		return getPersistence()
 				   .findByKaleoDefinitionId_PrevAndNext(kaleoConditionId,
 			kaleoDefinitionId, orderByComparator);
@@ -426,10 +383,8 @@ public class KaleoConditionUtil {
 	* Removes all the kaleo conditions where kaleoDefinitionId = &#63; from the database.
 	*
 	* @param kaleoDefinitionId the kaleo definition ID
-	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByKaleoDefinitionId(long kaleoDefinitionId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static void removeByKaleoDefinitionId(long kaleoDefinitionId) {
 		getPersistence().removeByKaleoDefinitionId(kaleoDefinitionId);
 	}
 
@@ -438,25 +393,20 @@ public class KaleoConditionUtil {
 	*
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @return the number of matching kaleo conditions
-	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByKaleoDefinitionId(long kaleoDefinitionId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static int countByKaleoDefinitionId(long kaleoDefinitionId) {
 		return getPersistence().countByKaleoDefinitionId(kaleoDefinitionId);
 	}
 
 	/**
-	* Returns the kaleo condition where kaleoNodeId = &#63; or throws a {@link com.liferay.portal.workflow.kaleo.NoSuchConditionException} if it could not be found.
+	* Returns the kaleo condition where kaleoNodeId = &#63; or throws a {@link NoSuchConditionException} if it could not be found.
 	*
 	* @param kaleoNodeId the kaleo node ID
 	* @return the matching kaleo condition
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchConditionException if a matching kaleo condition could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchConditionException if a matching kaleo condition could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition findByKaleoNodeId(
-		long kaleoNodeId)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchConditionException {
+	public static KaleoCondition findByKaleoNodeId(long kaleoNodeId)
+		throws com.liferay.portal.workflow.kaleo.NoSuchConditionException {
 		return getPersistence().findByKaleoNodeId(kaleoNodeId);
 	}
 
@@ -465,11 +415,8 @@ public class KaleoConditionUtil {
 	*
 	* @param kaleoNodeId the kaleo node ID
 	* @return the matching kaleo condition, or <code>null</code> if a matching kaleo condition could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition fetchByKaleoNodeId(
-		long kaleoNodeId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static KaleoCondition fetchByKaleoNodeId(long kaleoNodeId) {
 		return getPersistence().fetchByKaleoNodeId(kaleoNodeId);
 	}
 
@@ -479,11 +426,9 @@ public class KaleoConditionUtil {
 	* @param kaleoNodeId the kaleo node ID
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching kaleo condition, or <code>null</code> if a matching kaleo condition could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition fetchByKaleoNodeId(
-		long kaleoNodeId, boolean retrieveFromCache)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static KaleoCondition fetchByKaleoNodeId(long kaleoNodeId,
+		boolean retrieveFromCache) {
 		return getPersistence()
 				   .fetchByKaleoNodeId(kaleoNodeId, retrieveFromCache);
 	}
@@ -493,12 +438,9 @@ public class KaleoConditionUtil {
 	*
 	* @param kaleoNodeId the kaleo node ID
 	* @return the kaleo condition that was removed
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition removeByKaleoNodeId(
-		long kaleoNodeId)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchConditionException {
+	public static KaleoCondition removeByKaleoNodeId(long kaleoNodeId)
+		throws com.liferay.portal.workflow.kaleo.NoSuchConditionException {
 		return getPersistence().removeByKaleoNodeId(kaleoNodeId);
 	}
 
@@ -507,10 +449,8 @@ public class KaleoConditionUtil {
 	*
 	* @param kaleoNodeId the kaleo node ID
 	* @return the number of matching kaleo conditions
-	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByKaleoNodeId(long kaleoNodeId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static int countByKaleoNodeId(long kaleoNodeId) {
 		return getPersistence().countByKaleoNodeId(kaleoNodeId);
 	}
 
@@ -519,8 +459,7 @@ public class KaleoConditionUtil {
 	*
 	* @param kaleoCondition the kaleo condition
 	*/
-	public static void cacheResult(
-		com.liferay.portal.workflow.kaleo.model.KaleoCondition kaleoCondition) {
+	public static void cacheResult(KaleoCondition kaleoCondition) {
 		getPersistence().cacheResult(kaleoCondition);
 	}
 
@@ -529,8 +468,7 @@ public class KaleoConditionUtil {
 	*
 	* @param kaleoConditions the kaleo conditions
 	*/
-	public static void cacheResult(
-		java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoCondition> kaleoConditions) {
+	public static void cacheResult(List<KaleoCondition> kaleoConditions) {
 		getPersistence().cacheResult(kaleoConditions);
 	}
 
@@ -540,8 +478,7 @@ public class KaleoConditionUtil {
 	* @param kaleoConditionId the primary key for the new kaleo condition
 	* @return the new kaleo condition
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition create(
-		long kaleoConditionId) {
+	public static KaleoCondition create(long kaleoConditionId) {
 		return getPersistence().create(kaleoConditionId);
 	}
 
@@ -550,34 +487,26 @@ public class KaleoConditionUtil {
 	*
 	* @param kaleoConditionId the primary key of the kaleo condition
 	* @return the kaleo condition that was removed
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchConditionException if a kaleo condition with the primary key could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchConditionException if a kaleo condition with the primary key could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition remove(
-		long kaleoConditionId)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchConditionException {
+	public static KaleoCondition remove(long kaleoConditionId)
+		throws com.liferay.portal.workflow.kaleo.NoSuchConditionException {
 		return getPersistence().remove(kaleoConditionId);
 	}
 
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition updateImpl(
-		com.liferay.portal.workflow.kaleo.model.KaleoCondition kaleoCondition)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static KaleoCondition updateImpl(KaleoCondition kaleoCondition) {
 		return getPersistence().updateImpl(kaleoCondition);
 	}
 
 	/**
-	* Returns the kaleo condition with the primary key or throws a {@link com.liferay.portal.workflow.kaleo.NoSuchConditionException} if it could not be found.
+	* Returns the kaleo condition with the primary key or throws a {@link NoSuchConditionException} if it could not be found.
 	*
 	* @param kaleoConditionId the primary key of the kaleo condition
 	* @return the kaleo condition
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchConditionException if a kaleo condition with the primary key could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchConditionException if a kaleo condition with the primary key could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition findByPrimaryKey(
-		long kaleoConditionId)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchConditionException {
+	public static KaleoCondition findByPrimaryKey(long kaleoConditionId)
+		throws com.liferay.portal.workflow.kaleo.NoSuchConditionException {
 		return getPersistence().findByPrimaryKey(kaleoConditionId);
 	}
 
@@ -586,22 +515,22 @@ public class KaleoConditionUtil {
 	*
 	* @param kaleoConditionId the primary key of the kaleo condition
 	* @return the kaleo condition, or <code>null</code> if a kaleo condition with the primary key could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoCondition fetchByPrimaryKey(
-		long kaleoConditionId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static KaleoCondition fetchByPrimaryKey(long kaleoConditionId) {
 		return getPersistence().fetchByPrimaryKey(kaleoConditionId);
+	}
+
+	public static java.util.Map<java.io.Serializable, KaleoCondition> fetchByPrimaryKeys(
+		java.util.Set<java.io.Serializable> primaryKeys) {
+		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the kaleo conditions.
 	*
 	* @return the kaleo conditions
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoCondition> findAll()
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoCondition> findAll() {
 		return getPersistence().findAll();
 	}
 
@@ -609,17 +538,14 @@ public class KaleoConditionUtil {
 	* Returns a range of all the kaleo conditions.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoConditionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoConditionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param start the lower bound of the range of kaleo conditions
 	* @param end the upper bound of the range of kaleo conditions (not inclusive)
 	* @return the range of kaleo conditions
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoCondition> findAll(
-		int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoCondition> findAll(int start, int end) {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -627,29 +553,23 @@ public class KaleoConditionUtil {
 	* Returns an ordered range of all the kaleo conditions.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoConditionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoConditionModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param start the lower bound of the range of kaleo conditions
 	* @param end the upper bound of the range of kaleo conditions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of kaleo conditions
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoCondition> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoCondition> findAll(int start, int end,
+		OrderByComparator<KaleoCondition> orderByComparator) {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the kaleo conditions from the database.
-	*
-	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll()
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static void removeAll() {
 		getPersistence().removeAll();
 	}
 
@@ -657,10 +577,8 @@ public class KaleoConditionUtil {
 	* Returns the number of kaleo conditions.
 	*
 	* @return the number of kaleo conditions
-	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll()
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static int countAll() {
 		return getPersistence().countAll();
 	}
 

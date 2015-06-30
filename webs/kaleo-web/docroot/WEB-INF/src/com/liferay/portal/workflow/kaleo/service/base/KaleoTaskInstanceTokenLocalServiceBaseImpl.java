@@ -14,12 +14,16 @@
 
 package com.liferay.portal.workflow.kaleo.service.base;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.bean.IdentifiableBean;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Projection;
@@ -72,6 +76,7 @@ import javax.sql.DataSource;
  * @see com.liferay.portal.workflow.kaleo.service.KaleoTaskInstanceTokenLocalServiceUtil
  * @generated
  */
+@ProviderType
 public abstract class KaleoTaskInstanceTokenLocalServiceBaseImpl
 	extends BaseLocalServiceImpl implements KaleoTaskInstanceTokenLocalService,
 		IdentifiableBean {
@@ -86,13 +91,11 @@ public abstract class KaleoTaskInstanceTokenLocalServiceBaseImpl
 	 *
 	 * @param kaleoTaskInstanceToken the kaleo task instance token
 	 * @return the kaleo task instance token that was added
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public KaleoTaskInstanceToken addKaleoTaskInstanceToken(
-		KaleoTaskInstanceToken kaleoTaskInstanceToken)
-		throws SystemException {
+		KaleoTaskInstanceToken kaleoTaskInstanceToken) {
 		kaleoTaskInstanceToken.setNew(true);
 
 		return kaleoTaskInstanceTokenPersistence.update(kaleoTaskInstanceToken);
@@ -116,12 +119,11 @@ public abstract class KaleoTaskInstanceTokenLocalServiceBaseImpl
 	 * @param kaleoTaskInstanceTokenId the primary key of the kaleo task instance token
 	 * @return the kaleo task instance token that was removed
 	 * @throws PortalException if a kaleo task instance token with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public KaleoTaskInstanceToken deleteKaleoTaskInstanceToken(
-		long kaleoTaskInstanceTokenId) throws PortalException, SystemException {
+		long kaleoTaskInstanceTokenId) throws PortalException {
 		return kaleoTaskInstanceTokenPersistence.remove(kaleoTaskInstanceTokenId);
 	}
 
@@ -130,13 +132,11 @@ public abstract class KaleoTaskInstanceTokenLocalServiceBaseImpl
 	 *
 	 * @param kaleoTaskInstanceToken the kaleo task instance token
 	 * @return the kaleo task instance token that was removed
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public KaleoTaskInstanceToken deleteKaleoTaskInstanceToken(
-		KaleoTaskInstanceToken kaleoTaskInstanceToken)
-		throws SystemException {
+		KaleoTaskInstanceToken kaleoTaskInstanceToken) {
 		return kaleoTaskInstanceTokenPersistence.remove(kaleoTaskInstanceToken);
 	}
 
@@ -153,12 +153,9 @@ public abstract class KaleoTaskInstanceTokenLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
 		return kaleoTaskInstanceTokenPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -173,12 +170,10 @@ public abstract class KaleoTaskInstanceTokenLocalServiceBaseImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end) {
 		return kaleoTaskInstanceTokenPersistence.findWithDynamicQuery(dynamicQuery,
 			start, end);
 	}
@@ -195,47 +190,42 @@ public abstract class KaleoTaskInstanceTokenLocalServiceBaseImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator orderByComparator) throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end, OrderByComparator<T> orderByComparator) {
 		return kaleoTaskInstanceTokenPersistence.findWithDynamicQuery(dynamicQuery,
 			start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
 		return kaleoTaskInstanceTokenPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) throws SystemException {
+		Projection projection) {
 		return kaleoTaskInstanceTokenPersistence.countWithDynamicQuery(dynamicQuery,
 			projection);
 	}
 
 	@Override
 	public KaleoTaskInstanceToken fetchKaleoTaskInstanceToken(
-		long kaleoTaskInstanceTokenId) throws SystemException {
+		long kaleoTaskInstanceTokenId) {
 		return kaleoTaskInstanceTokenPersistence.fetchByPrimaryKey(kaleoTaskInstanceTokenId);
 	}
 
@@ -245,17 +235,49 @@ public abstract class KaleoTaskInstanceTokenLocalServiceBaseImpl
 	 * @param kaleoTaskInstanceTokenId the primary key of the kaleo task instance token
 	 * @return the kaleo task instance token
 	 * @throws PortalException if a kaleo task instance token with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public KaleoTaskInstanceToken getKaleoTaskInstanceToken(
-		long kaleoTaskInstanceTokenId) throws PortalException, SystemException {
+		long kaleoTaskInstanceTokenId) throws PortalException {
 		return kaleoTaskInstanceTokenPersistence.findByPrimaryKey(kaleoTaskInstanceTokenId);
 	}
 
 	@Override
+	public ActionableDynamicQuery getActionableDynamicQuery() {
+		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
+
+		actionableDynamicQuery.setBaseLocalService(com.liferay.portal.workflow.kaleo.service.KaleoTaskInstanceTokenLocalServiceUtil.getService());
+		actionableDynamicQuery.setClass(KaleoTaskInstanceToken.class);
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName(
+			"kaleoTaskInstanceTokenId");
+
+		return actionableDynamicQuery;
+	}
+
+	protected void initActionableDynamicQuery(
+		ActionableDynamicQuery actionableDynamicQuery) {
+		actionableDynamicQuery.setBaseLocalService(com.liferay.portal.workflow.kaleo.service.KaleoTaskInstanceTokenLocalServiceUtil.getService());
+		actionableDynamicQuery.setClass(KaleoTaskInstanceToken.class);
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName(
+			"kaleoTaskInstanceTokenId");
+	}
+
+	/**
+	 * @throws PortalException
+	 */
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException {
+		return kaleoTaskInstanceTokenLocalService.deleteKaleoTaskInstanceToken((KaleoTaskInstanceToken)persistedModel);
+	}
+
+	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return kaleoTaskInstanceTokenPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
@@ -269,11 +291,10 @@ public abstract class KaleoTaskInstanceTokenLocalServiceBaseImpl
 	 * @param start the lower bound of the range of kaleo task instance tokens
 	 * @param end the upper bound of the range of kaleo task instance tokens (not inclusive)
 	 * @return the range of kaleo task instance tokens
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<KaleoTaskInstanceToken> getKaleoTaskInstanceTokens(int start,
-		int end) throws SystemException {
+		int end) {
 		return kaleoTaskInstanceTokenPersistence.findAll(start, end);
 	}
 
@@ -281,10 +302,9 @@ public abstract class KaleoTaskInstanceTokenLocalServiceBaseImpl
 	 * Returns the number of kaleo task instance tokens.
 	 *
 	 * @return the number of kaleo task instance tokens
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getKaleoTaskInstanceTokensCount() throws SystemException {
+	public int getKaleoTaskInstanceTokensCount() {
 		return kaleoTaskInstanceTokenPersistence.countAll();
 	}
 
@@ -293,13 +313,11 @@ public abstract class KaleoTaskInstanceTokenLocalServiceBaseImpl
 	 *
 	 * @param kaleoTaskInstanceToken the kaleo task instance token
 	 * @return the kaleo task instance token that was updated
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public KaleoTaskInstanceToken updateKaleoTaskInstanceToken(
-		KaleoTaskInstanceToken kaleoTaskInstanceToken)
-		throws SystemException {
+		KaleoTaskInstanceToken kaleoTaskInstanceToken) {
 		return kaleoTaskInstanceTokenPersistence.update(kaleoTaskInstanceToken);
 	}
 
@@ -782,7 +800,7 @@ public abstract class KaleoTaskInstanceTokenLocalServiceBaseImpl
 	 *
 	 * @return the kaleo task instance token local service
 	 */
-	public com.liferay.portal.workflow.kaleo.service.KaleoTaskInstanceTokenLocalService getKaleoTaskInstanceTokenLocalService() {
+	public KaleoTaskInstanceTokenLocalService getKaleoTaskInstanceTokenLocalService() {
 		return kaleoTaskInstanceTokenLocalService;
 	}
 
@@ -792,7 +810,7 @@ public abstract class KaleoTaskInstanceTokenLocalServiceBaseImpl
 	 * @param kaleoTaskInstanceTokenLocalService the kaleo task instance token local service
 	 */
 	public void setKaleoTaskInstanceTokenLocalService(
-		com.liferay.portal.workflow.kaleo.service.KaleoTaskInstanceTokenLocalService kaleoTaskInstanceTokenLocalService) {
+		KaleoTaskInstanceTokenLocalService kaleoTaskInstanceTokenLocalService) {
 		this.kaleoTaskInstanceTokenLocalService = kaleoTaskInstanceTokenLocalService;
 	}
 
@@ -1167,7 +1185,7 @@ public abstract class KaleoTaskInstanceTokenLocalServiceBaseImpl
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) throws SystemException {
+	protected void runSQL(String sql) {
 		try {
 			DataSource dataSource = kaleoTaskInstanceTokenPersistence.getDataSource();
 
@@ -1236,8 +1254,8 @@ public abstract class KaleoTaskInstanceTokenLocalServiceBaseImpl
 	protected com.liferay.portal.workflow.kaleo.service.KaleoTaskAssignmentInstanceLocalService kaleoTaskAssignmentInstanceLocalService;
 	@BeanReference(type = KaleoTaskAssignmentInstancePersistence.class)
 	protected KaleoTaskAssignmentInstancePersistence kaleoTaskAssignmentInstancePersistence;
-	@BeanReference(type = com.liferay.portal.workflow.kaleo.service.KaleoTaskInstanceTokenLocalService.class)
-	protected com.liferay.portal.workflow.kaleo.service.KaleoTaskInstanceTokenLocalService kaleoTaskInstanceTokenLocalService;
+	@BeanReference(type = KaleoTaskInstanceTokenLocalService.class)
+	protected KaleoTaskInstanceTokenLocalService kaleoTaskInstanceTokenLocalService;
 	@BeanReference(type = KaleoTaskInstanceTokenPersistence.class)
 	protected KaleoTaskInstanceTokenPersistence kaleoTaskInstanceTokenPersistence;
 	@BeanReference(type = KaleoTaskInstanceTokenFinder.class)

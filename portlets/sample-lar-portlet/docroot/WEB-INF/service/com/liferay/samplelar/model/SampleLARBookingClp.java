@@ -14,15 +14,21 @@
 
 package com.liferay.samplelar.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.lar.StagedModelType;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.BaseModel;
+import com.liferay.portal.model.User;
 import com.liferay.portal.model.impl.BaseModelImpl;
+import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
+
+import com.liferay.portlet.exportimport.lar.StagedModelType;
 
 import com.liferay.samplelar.service.ClpSerializer;
 import com.liferay.samplelar.service.SampleLARBookingLocalServiceUtil;
@@ -38,6 +44,7 @@ import java.util.Map;
 /**
  * @author Mate Thurzo
  */
+@ProviderType
 public class SampleLARBookingClp extends BaseModelImpl<SampleLARBooking>
 	implements SampleLARBooking {
 	public SampleLARBookingClp() {
@@ -270,13 +277,19 @@ public class SampleLARBookingClp extends BaseModelImpl<SampleLARBooking>
 	}
 
 	@Override
-	public String getUserUuid() throws SystemException {
-		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
+	public String getUserUuid() {
+		try {
+			User user = UserLocalServiceUtil.getUserById(getUserId());
+
+			return user.getUuid();
+		}
+		catch (PortalException pe) {
+			return StringPool.BLANK;
+		}
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
-		_userUuid = userUuid;
 	}
 
 	@Override
@@ -428,7 +441,7 @@ public class SampleLARBookingClp extends BaseModelImpl<SampleLARBooking>
 	}
 
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			SampleLARBookingLocalServiceUtil.addSampleLARBooking(this);
 		}
@@ -494,6 +507,10 @@ public class SampleLARBookingClp extends BaseModelImpl<SampleLARBooking>
 		else {
 			return false;
 		}
+	}
+
+	public Class<?> getClpSerializerClass() {
+		return _clpSerializerClass;
 	}
 
 	@Override
@@ -593,12 +610,12 @@ public class SampleLARBookingClp extends BaseModelImpl<SampleLARBooking>
 	private long _groupId;
 	private long _companyId;
 	private long _userId;
-	private String _userUuid;
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;
 	private String _bookingNumber;
 	private BaseModel<?> _sampleLARBookingRemoteModel;
+	private Class<?> _clpSerializerClass = ClpSerializer.class;
 	private boolean _entityCacheEnabled;
 	private boolean _finderCacheEnabled;
 }

@@ -15,8 +15,9 @@
 package com.liferay.portal.workflow.kaleo.runtime.notification;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.workflow.kaleo.definition.ExecutionType;
 import com.liferay.portal.workflow.kaleo.model.KaleoNotification;
 import com.liferay.portal.workflow.kaleo.model.KaleoNotificationRecipient;
@@ -34,7 +35,7 @@ public class NotificationUtil {
 	public static void sendKaleoNotifications(
 			String kaleoClassName, long kaleoClassPK,
 			ExecutionType executionType, ExecutionContext executionContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		List<KaleoNotification> kaleoNotifications =
 			KaleoNotificationLocalServiceUtil.getKaleoNotifications(
@@ -48,7 +49,7 @@ public class NotificationUtil {
 	private static void _sendKaleoNotification(
 			KaleoNotification kaleoNotification,
 			ExecutionContext executionContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		NotificationMessageGenerator notificationMessageGenerator =
 			NotificationMessageGeneratorFactory.getNotificationMessageGenerator(
@@ -62,7 +63,16 @@ public class NotificationUtil {
 				kaleoNotification.getTemplateLanguage(),
 				kaleoNotification.getTemplate(), executionContext);
 
-		String notificationSubject = kaleoNotification.getDescription();
+		String notificationSubject = StringPool.BLANK;
+
+		if (Validator.isNotNull(kaleoNotification.getDescription())) {
+			notificationSubject = notificationMessageGenerator.generateMessage(
+				kaleoNotification.getKaleoClassName(),
+				kaleoNotification.getKaleoClassPK(),
+				kaleoNotification.getName(),
+				kaleoNotification.getTemplateLanguage(),
+				kaleoNotification.getDescription(), executionContext);
+		}
 
 		String[] notificationTypes = StringUtil.split(
 			kaleoNotification.getNotificationTypes());

@@ -14,9 +14,10 @@
 
 package com.liferay.portal.workflow.kaleo.service.persistence;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.PortletBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.ServiceContext;
@@ -25,7 +26,7 @@ import com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken;
 import java.util.List;
 
 /**
- * The persistence utility for the kaleo instance token service. This utility wraps {@link KaleoInstanceTokenPersistenceImpl} and provides direct access to the database for CRUD operations. This utility should only be used by the service layer, as it must operate within a transaction. Never access this utility in a JSP, controller, model, or other front-end class.
+ * The persistence utility for the kaleo instance token service. This utility wraps {@link com.liferay.portal.workflow.kaleo.service.persistence.impl.KaleoInstanceTokenPersistenceImpl} and provides direct access to the database for CRUD operations. This utility should only be used by the service layer, as it must operate within a transaction. Never access this utility in a JSP, controller, model, or other front-end class.
  *
  * <p>
  * Caching information and settings can be found in <code>portal.properties</code>
@@ -33,9 +34,10 @@ import java.util.List;
  *
  * @author Brian Wing Shun Chan
  * @see KaleoInstanceTokenPersistence
- * @see KaleoInstanceTokenPersistenceImpl
+ * @see com.liferay.portal.workflow.kaleo.service.persistence.impl.KaleoInstanceTokenPersistenceImpl
  * @generated
  */
+@ProviderType
 public class KaleoInstanceTokenUtil {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -60,8 +62,7 @@ public class KaleoInstanceTokenUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -69,7 +70,7 @@ public class KaleoInstanceTokenUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<KaleoInstanceToken> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) throws SystemException {
+		DynamicQuery dynamicQuery) {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -77,8 +78,7 @@ public class KaleoInstanceTokenUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<KaleoInstanceToken> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end)
-		throws SystemException {
+		DynamicQuery dynamicQuery, int start, int end) {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -87,7 +87,7 @@ public class KaleoInstanceTokenUtil {
 	 */
 	public static List<KaleoInstanceToken> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator orderByComparator) throws SystemException {
+		OrderByComparator<KaleoInstanceToken> orderByComparator) {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -97,7 +97,7 @@ public class KaleoInstanceTokenUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
 	public static KaleoInstanceToken update(
-		KaleoInstanceToken kaleoInstanceToken) throws SystemException {
+		KaleoInstanceToken kaleoInstanceToken) {
 		return getPersistence().update(kaleoInstanceToken);
 	}
 
@@ -105,8 +105,7 @@ public class KaleoInstanceTokenUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static KaleoInstanceToken update(
-		KaleoInstanceToken kaleoInstanceToken, ServiceContext serviceContext)
-		throws SystemException {
+		KaleoInstanceToken kaleoInstanceToken, ServiceContext serviceContext) {
 		return getPersistence().update(kaleoInstanceToken, serviceContext);
 	}
 
@@ -115,11 +114,8 @@ public class KaleoInstanceTokenUtil {
 	*
 	* @param companyId the company ID
 	* @return the matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> findByCompanyId(
-		long companyId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoInstanceToken> findByCompanyId(long companyId) {
 		return getPersistence().findByCompanyId(companyId);
 	}
 
@@ -127,18 +123,16 @@ public class KaleoInstanceTokenUtil {
 	* Returns a range of all the kaleo instance tokens where companyId = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param companyId the company ID
 	* @param start the lower bound of the range of kaleo instance tokens
 	* @param end the upper bound of the range of kaleo instance tokens (not inclusive)
 	* @return the range of matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> findByCompanyId(
-		long companyId, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoInstanceToken> findByCompanyId(long companyId,
+		int start, int end) {
 		return getPersistence().findByCompanyId(companyId, start, end);
 	}
 
@@ -146,7 +140,7 @@ public class KaleoInstanceTokenUtil {
 	* Returns an ordered range of all the kaleo instance tokens where companyId = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param companyId the company ID
@@ -154,12 +148,10 @@ public class KaleoInstanceTokenUtil {
 	* @param end the upper bound of the range of kaleo instance tokens (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> findByCompanyId(
-		long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoInstanceToken> findByCompanyId(long companyId,
+		int start, int end,
+		OrderByComparator<KaleoInstanceToken> orderByComparator) {
 		return getPersistence()
 				   .findByCompanyId(companyId, start, end, orderByComparator);
 	}
@@ -170,14 +162,11 @@ public class KaleoInstanceTokenUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo instance token
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchInstanceTokenException if a matching kaleo instance token could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken findByCompanyId_First(
-		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
+	public static KaleoInstanceToken findByCompanyId_First(long companyId,
+		OrderByComparator<KaleoInstanceToken> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
 		return getPersistence()
 				   .findByCompanyId_First(companyId, orderByComparator);
 	}
@@ -188,12 +177,9 @@ public class KaleoInstanceTokenUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo instance token, or <code>null</code> if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken fetchByCompanyId_First(
-		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static KaleoInstanceToken fetchByCompanyId_First(long companyId,
+		OrderByComparator<KaleoInstanceToken> orderByComparator) {
 		return getPersistence()
 				   .fetchByCompanyId_First(companyId, orderByComparator);
 	}
@@ -204,14 +190,11 @@ public class KaleoInstanceTokenUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo instance token
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchInstanceTokenException if a matching kaleo instance token could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken findByCompanyId_Last(
-		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
+	public static KaleoInstanceToken findByCompanyId_Last(long companyId,
+		OrderByComparator<KaleoInstanceToken> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
 		return getPersistence()
 				   .findByCompanyId_Last(companyId, orderByComparator);
 	}
@@ -222,12 +205,9 @@ public class KaleoInstanceTokenUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo instance token, or <code>null</code> if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken fetchByCompanyId_Last(
-		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static KaleoInstanceToken fetchByCompanyId_Last(long companyId,
+		OrderByComparator<KaleoInstanceToken> orderByComparator) {
 		return getPersistence()
 				   .fetchByCompanyId_Last(companyId, orderByComparator);
 	}
@@ -239,14 +219,12 @@ public class KaleoInstanceTokenUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next kaleo instance token
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException if a kaleo instance token with the primary key could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchInstanceTokenException if a kaleo instance token with the primary key could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken[] findByCompanyId_PrevAndNext(
+	public static KaleoInstanceToken[] findByCompanyId_PrevAndNext(
 		long kaleoInstanceTokenId, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
+		OrderByComparator<KaleoInstanceToken> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
 		return getPersistence()
 				   .findByCompanyId_PrevAndNext(kaleoInstanceTokenId,
 			companyId, orderByComparator);
@@ -256,10 +234,8 @@ public class KaleoInstanceTokenUtil {
 	* Removes all the kaleo instance tokens where companyId = &#63; from the database.
 	*
 	* @param companyId the company ID
-	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByCompanyId(long companyId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static void removeByCompanyId(long companyId) {
 		getPersistence().removeByCompanyId(companyId);
 	}
 
@@ -268,10 +244,8 @@ public class KaleoInstanceTokenUtil {
 	*
 	* @param companyId the company ID
 	* @return the number of matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByCompanyId(long companyId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static int countByCompanyId(long companyId) {
 		return getPersistence().countByCompanyId(companyId);
 	}
 
@@ -280,11 +254,9 @@ public class KaleoInstanceTokenUtil {
 	*
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @return the matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> findByKaleoDefinitionId(
-		long kaleoDefinitionId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoInstanceToken> findByKaleoDefinitionId(
+		long kaleoDefinitionId) {
 		return getPersistence().findByKaleoDefinitionId(kaleoDefinitionId);
 	}
 
@@ -292,18 +264,16 @@ public class KaleoInstanceTokenUtil {
 	* Returns a range of all the kaleo instance tokens where kaleoDefinitionId = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @param start the lower bound of the range of kaleo instance tokens
 	* @param end the upper bound of the range of kaleo instance tokens (not inclusive)
 	* @return the range of matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> findByKaleoDefinitionId(
-		long kaleoDefinitionId, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoInstanceToken> findByKaleoDefinitionId(
+		long kaleoDefinitionId, int start, int end) {
 		return getPersistence()
 				   .findByKaleoDefinitionId(kaleoDefinitionId, start, end);
 	}
@@ -312,7 +282,7 @@ public class KaleoInstanceTokenUtil {
 	* Returns an ordered range of all the kaleo instance tokens where kaleoDefinitionId = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param kaleoDefinitionId the kaleo definition ID
@@ -320,12 +290,10 @@ public class KaleoInstanceTokenUtil {
 	* @param end the upper bound of the range of kaleo instance tokens (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> findByKaleoDefinitionId(
+	public static List<KaleoInstanceToken> findByKaleoDefinitionId(
 		long kaleoDefinitionId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		OrderByComparator<KaleoInstanceToken> orderByComparator) {
 		return getPersistence()
 				   .findByKaleoDefinitionId(kaleoDefinitionId, start, end,
 			orderByComparator);
@@ -337,14 +305,12 @@ public class KaleoInstanceTokenUtil {
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo instance token
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchInstanceTokenException if a matching kaleo instance token could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken findByKaleoDefinitionId_First(
+	public static KaleoInstanceToken findByKaleoDefinitionId_First(
 		long kaleoDefinitionId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
+		OrderByComparator<KaleoInstanceToken> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
 		return getPersistence()
 				   .findByKaleoDefinitionId_First(kaleoDefinitionId,
 			orderByComparator);
@@ -356,12 +322,10 @@ public class KaleoInstanceTokenUtil {
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo instance token, or <code>null</code> if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken fetchByKaleoDefinitionId_First(
+	public static KaleoInstanceToken fetchByKaleoDefinitionId_First(
 		long kaleoDefinitionId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		OrderByComparator<KaleoInstanceToken> orderByComparator) {
 		return getPersistence()
 				   .fetchByKaleoDefinitionId_First(kaleoDefinitionId,
 			orderByComparator);
@@ -373,14 +337,12 @@ public class KaleoInstanceTokenUtil {
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo instance token
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchInstanceTokenException if a matching kaleo instance token could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken findByKaleoDefinitionId_Last(
+	public static KaleoInstanceToken findByKaleoDefinitionId_Last(
 		long kaleoDefinitionId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
+		OrderByComparator<KaleoInstanceToken> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
 		return getPersistence()
 				   .findByKaleoDefinitionId_Last(kaleoDefinitionId,
 			orderByComparator);
@@ -392,12 +354,10 @@ public class KaleoInstanceTokenUtil {
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo instance token, or <code>null</code> if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken fetchByKaleoDefinitionId_Last(
+	public static KaleoInstanceToken fetchByKaleoDefinitionId_Last(
 		long kaleoDefinitionId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		OrderByComparator<KaleoInstanceToken> orderByComparator) {
 		return getPersistence()
 				   .fetchByKaleoDefinitionId_Last(kaleoDefinitionId,
 			orderByComparator);
@@ -410,14 +370,12 @@ public class KaleoInstanceTokenUtil {
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next kaleo instance token
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException if a kaleo instance token with the primary key could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchInstanceTokenException if a kaleo instance token with the primary key could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken[] findByKaleoDefinitionId_PrevAndNext(
+	public static KaleoInstanceToken[] findByKaleoDefinitionId_PrevAndNext(
 		long kaleoInstanceTokenId, long kaleoDefinitionId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
+		OrderByComparator<KaleoInstanceToken> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
 		return getPersistence()
 				   .findByKaleoDefinitionId_PrevAndNext(kaleoInstanceTokenId,
 			kaleoDefinitionId, orderByComparator);
@@ -427,10 +385,8 @@ public class KaleoInstanceTokenUtil {
 	* Removes all the kaleo instance tokens where kaleoDefinitionId = &#63; from the database.
 	*
 	* @param kaleoDefinitionId the kaleo definition ID
-	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByKaleoDefinitionId(long kaleoDefinitionId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static void removeByKaleoDefinitionId(long kaleoDefinitionId) {
 		getPersistence().removeByKaleoDefinitionId(kaleoDefinitionId);
 	}
 
@@ -439,10 +395,8 @@ public class KaleoInstanceTokenUtil {
 	*
 	* @param kaleoDefinitionId the kaleo definition ID
 	* @return the number of matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByKaleoDefinitionId(long kaleoDefinitionId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static int countByKaleoDefinitionId(long kaleoDefinitionId) {
 		return getPersistence().countByKaleoDefinitionId(kaleoDefinitionId);
 	}
 
@@ -451,11 +405,9 @@ public class KaleoInstanceTokenUtil {
 	*
 	* @param kaleoInstanceId the kaleo instance ID
 	* @return the matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> findByKaleoInstanceId(
-		long kaleoInstanceId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoInstanceToken> findByKaleoInstanceId(
+		long kaleoInstanceId) {
 		return getPersistence().findByKaleoInstanceId(kaleoInstanceId);
 	}
 
@@ -463,18 +415,16 @@ public class KaleoInstanceTokenUtil {
 	* Returns a range of all the kaleo instance tokens where kaleoInstanceId = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param kaleoInstanceId the kaleo instance ID
 	* @param start the lower bound of the range of kaleo instance tokens
 	* @param end the upper bound of the range of kaleo instance tokens (not inclusive)
 	* @return the range of matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> findByKaleoInstanceId(
-		long kaleoInstanceId, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoInstanceToken> findByKaleoInstanceId(
+		long kaleoInstanceId, int start, int end) {
 		return getPersistence()
 				   .findByKaleoInstanceId(kaleoInstanceId, start, end);
 	}
@@ -483,7 +433,7 @@ public class KaleoInstanceTokenUtil {
 	* Returns an ordered range of all the kaleo instance tokens where kaleoInstanceId = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param kaleoInstanceId the kaleo instance ID
@@ -491,12 +441,10 @@ public class KaleoInstanceTokenUtil {
 	* @param end the upper bound of the range of kaleo instance tokens (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> findByKaleoInstanceId(
+	public static List<KaleoInstanceToken> findByKaleoInstanceId(
 		long kaleoInstanceId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		OrderByComparator<KaleoInstanceToken> orderByComparator) {
 		return getPersistence()
 				   .findByKaleoInstanceId(kaleoInstanceId, start, end,
 			orderByComparator);
@@ -508,14 +456,12 @@ public class KaleoInstanceTokenUtil {
 	* @param kaleoInstanceId the kaleo instance ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo instance token
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchInstanceTokenException if a matching kaleo instance token could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken findByKaleoInstanceId_First(
+	public static KaleoInstanceToken findByKaleoInstanceId_First(
 		long kaleoInstanceId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
+		OrderByComparator<KaleoInstanceToken> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
 		return getPersistence()
 				   .findByKaleoInstanceId_First(kaleoInstanceId,
 			orderByComparator);
@@ -527,12 +473,10 @@ public class KaleoInstanceTokenUtil {
 	* @param kaleoInstanceId the kaleo instance ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo instance token, or <code>null</code> if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken fetchByKaleoInstanceId_First(
+	public static KaleoInstanceToken fetchByKaleoInstanceId_First(
 		long kaleoInstanceId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		OrderByComparator<KaleoInstanceToken> orderByComparator) {
 		return getPersistence()
 				   .fetchByKaleoInstanceId_First(kaleoInstanceId,
 			orderByComparator);
@@ -544,14 +488,12 @@ public class KaleoInstanceTokenUtil {
 	* @param kaleoInstanceId the kaleo instance ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo instance token
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchInstanceTokenException if a matching kaleo instance token could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken findByKaleoInstanceId_Last(
+	public static KaleoInstanceToken findByKaleoInstanceId_Last(
 		long kaleoInstanceId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
+		OrderByComparator<KaleoInstanceToken> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
 		return getPersistence()
 				   .findByKaleoInstanceId_Last(kaleoInstanceId,
 			orderByComparator);
@@ -563,12 +505,10 @@ public class KaleoInstanceTokenUtil {
 	* @param kaleoInstanceId the kaleo instance ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo instance token, or <code>null</code> if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken fetchByKaleoInstanceId_Last(
+	public static KaleoInstanceToken fetchByKaleoInstanceId_Last(
 		long kaleoInstanceId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		OrderByComparator<KaleoInstanceToken> orderByComparator) {
 		return getPersistence()
 				   .fetchByKaleoInstanceId_Last(kaleoInstanceId,
 			orderByComparator);
@@ -581,14 +521,12 @@ public class KaleoInstanceTokenUtil {
 	* @param kaleoInstanceId the kaleo instance ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next kaleo instance token
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException if a kaleo instance token with the primary key could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchInstanceTokenException if a kaleo instance token with the primary key could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken[] findByKaleoInstanceId_PrevAndNext(
+	public static KaleoInstanceToken[] findByKaleoInstanceId_PrevAndNext(
 		long kaleoInstanceTokenId, long kaleoInstanceId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
+		OrderByComparator<KaleoInstanceToken> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
 		return getPersistence()
 				   .findByKaleoInstanceId_PrevAndNext(kaleoInstanceTokenId,
 			kaleoInstanceId, orderByComparator);
@@ -598,10 +536,8 @@ public class KaleoInstanceTokenUtil {
 	* Removes all the kaleo instance tokens where kaleoInstanceId = &#63; from the database.
 	*
 	* @param kaleoInstanceId the kaleo instance ID
-	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByKaleoInstanceId(long kaleoInstanceId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static void removeByKaleoInstanceId(long kaleoInstanceId) {
 		getPersistence().removeByKaleoInstanceId(kaleoInstanceId);
 	}
 
@@ -610,10 +546,8 @@ public class KaleoInstanceTokenUtil {
 	*
 	* @param kaleoInstanceId the kaleo instance ID
 	* @return the number of matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByKaleoInstanceId(long kaleoInstanceId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static int countByKaleoInstanceId(long kaleoInstanceId) {
 		return getPersistence().countByKaleoInstanceId(kaleoInstanceId);
 	}
 
@@ -623,11 +557,9 @@ public class KaleoInstanceTokenUtil {
 	* @param companyId the company ID
 	* @param parentKaleoInstanceTokenId the parent kaleo instance token ID
 	* @return the matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> findByC_PKITI(
-		long companyId, long parentKaleoInstanceTokenId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoInstanceToken> findByC_PKITI(long companyId,
+		long parentKaleoInstanceTokenId) {
 		return getPersistence()
 				   .findByC_PKITI(companyId, parentKaleoInstanceTokenId);
 	}
@@ -636,7 +568,7 @@ public class KaleoInstanceTokenUtil {
 	* Returns a range of all the kaleo instance tokens where companyId = &#63; and parentKaleoInstanceTokenId = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param companyId the company ID
@@ -644,11 +576,9 @@ public class KaleoInstanceTokenUtil {
 	* @param start the lower bound of the range of kaleo instance tokens
 	* @param end the upper bound of the range of kaleo instance tokens (not inclusive)
 	* @return the range of matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> findByC_PKITI(
-		long companyId, long parentKaleoInstanceTokenId, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoInstanceToken> findByC_PKITI(long companyId,
+		long parentKaleoInstanceTokenId, int start, int end) {
 		return getPersistence()
 				   .findByC_PKITI(companyId, parentKaleoInstanceTokenId, start,
 			end);
@@ -658,7 +588,7 @@ public class KaleoInstanceTokenUtil {
 	* Returns an ordered range of all the kaleo instance tokens where companyId = &#63; and parentKaleoInstanceTokenId = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param companyId the company ID
@@ -667,12 +597,10 @@ public class KaleoInstanceTokenUtil {
 	* @param end the upper bound of the range of kaleo instance tokens (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> findByC_PKITI(
-		long companyId, long parentKaleoInstanceTokenId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoInstanceToken> findByC_PKITI(long companyId,
+		long parentKaleoInstanceTokenId, int start, int end,
+		OrderByComparator<KaleoInstanceToken> orderByComparator) {
 		return getPersistence()
 				   .findByC_PKITI(companyId, parentKaleoInstanceTokenId, start,
 			end, orderByComparator);
@@ -685,14 +613,12 @@ public class KaleoInstanceTokenUtil {
 	* @param parentKaleoInstanceTokenId the parent kaleo instance token ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo instance token
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchInstanceTokenException if a matching kaleo instance token could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken findByC_PKITI_First(
-		long companyId, long parentKaleoInstanceTokenId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
+	public static KaleoInstanceToken findByC_PKITI_First(long companyId,
+		long parentKaleoInstanceTokenId,
+		OrderByComparator<KaleoInstanceToken> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
 		return getPersistence()
 				   .findByC_PKITI_First(companyId, parentKaleoInstanceTokenId,
 			orderByComparator);
@@ -705,12 +631,10 @@ public class KaleoInstanceTokenUtil {
 	* @param parentKaleoInstanceTokenId the parent kaleo instance token ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo instance token, or <code>null</code> if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken fetchByC_PKITI_First(
-		long companyId, long parentKaleoInstanceTokenId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static KaleoInstanceToken fetchByC_PKITI_First(long companyId,
+		long parentKaleoInstanceTokenId,
+		OrderByComparator<KaleoInstanceToken> orderByComparator) {
 		return getPersistence()
 				   .fetchByC_PKITI_First(companyId, parentKaleoInstanceTokenId,
 			orderByComparator);
@@ -723,14 +647,12 @@ public class KaleoInstanceTokenUtil {
 	* @param parentKaleoInstanceTokenId the parent kaleo instance token ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo instance token
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchInstanceTokenException if a matching kaleo instance token could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken findByC_PKITI_Last(
-		long companyId, long parentKaleoInstanceTokenId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
+	public static KaleoInstanceToken findByC_PKITI_Last(long companyId,
+		long parentKaleoInstanceTokenId,
+		OrderByComparator<KaleoInstanceToken> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
 		return getPersistence()
 				   .findByC_PKITI_Last(companyId, parentKaleoInstanceTokenId,
 			orderByComparator);
@@ -743,12 +665,10 @@ public class KaleoInstanceTokenUtil {
 	* @param parentKaleoInstanceTokenId the parent kaleo instance token ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo instance token, or <code>null</code> if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken fetchByC_PKITI_Last(
-		long companyId, long parentKaleoInstanceTokenId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static KaleoInstanceToken fetchByC_PKITI_Last(long companyId,
+		long parentKaleoInstanceTokenId,
+		OrderByComparator<KaleoInstanceToken> orderByComparator) {
 		return getPersistence()
 				   .fetchByC_PKITI_Last(companyId, parentKaleoInstanceTokenId,
 			orderByComparator);
@@ -762,15 +682,13 @@ public class KaleoInstanceTokenUtil {
 	* @param parentKaleoInstanceTokenId the parent kaleo instance token ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next kaleo instance token
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException if a kaleo instance token with the primary key could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchInstanceTokenException if a kaleo instance token with the primary key could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken[] findByC_PKITI_PrevAndNext(
+	public static KaleoInstanceToken[] findByC_PKITI_PrevAndNext(
 		long kaleoInstanceTokenId, long companyId,
 		long parentKaleoInstanceTokenId,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
+		OrderByComparator<KaleoInstanceToken> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
 		return getPersistence()
 				   .findByC_PKITI_PrevAndNext(kaleoInstanceTokenId, companyId,
 			parentKaleoInstanceTokenId, orderByComparator);
@@ -781,11 +699,9 @@ public class KaleoInstanceTokenUtil {
 	*
 	* @param companyId the company ID
 	* @param parentKaleoInstanceTokenId the parent kaleo instance token ID
-	* @throws SystemException if a system exception occurred
 	*/
 	public static void removeByC_PKITI(long companyId,
-		long parentKaleoInstanceTokenId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		long parentKaleoInstanceTokenId) {
 		getPersistence().removeByC_PKITI(companyId, parentKaleoInstanceTokenId);
 	}
 
@@ -795,11 +711,9 @@ public class KaleoInstanceTokenUtil {
 	* @param companyId the company ID
 	* @param parentKaleoInstanceTokenId the parent kaleo instance token ID
 	* @return the number of matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
 	public static int countByC_PKITI(long companyId,
-		long parentKaleoInstanceTokenId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		long parentKaleoInstanceTokenId) {
 		return getPersistence()
 				   .countByC_PKITI(companyId, parentKaleoInstanceTokenId);
 	}
@@ -811,12 +725,9 @@ public class KaleoInstanceTokenUtil {
 	* @param parentKaleoInstanceTokenId the parent kaleo instance token ID
 	* @param completionDate the completion date
 	* @return the matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> findByC_PKITI_CD(
-		long companyId, long parentKaleoInstanceTokenId,
-		java.util.Date completionDate)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoInstanceToken> findByC_PKITI_CD(long companyId,
+		long parentKaleoInstanceTokenId, java.util.Date completionDate) {
 		return getPersistence()
 				   .findByC_PKITI_CD(companyId, parentKaleoInstanceTokenId,
 			completionDate);
@@ -826,7 +737,7 @@ public class KaleoInstanceTokenUtil {
 	* Returns a range of all the kaleo instance tokens where companyId = &#63; and parentKaleoInstanceTokenId = &#63; and completionDate = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param companyId the company ID
@@ -835,12 +746,10 @@ public class KaleoInstanceTokenUtil {
 	* @param start the lower bound of the range of kaleo instance tokens
 	* @param end the upper bound of the range of kaleo instance tokens (not inclusive)
 	* @return the range of matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> findByC_PKITI_CD(
-		long companyId, long parentKaleoInstanceTokenId,
-		java.util.Date completionDate, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoInstanceToken> findByC_PKITI_CD(long companyId,
+		long parentKaleoInstanceTokenId, java.util.Date completionDate,
+		int start, int end) {
 		return getPersistence()
 				   .findByC_PKITI_CD(companyId, parentKaleoInstanceTokenId,
 			completionDate, start, end);
@@ -850,7 +759,7 @@ public class KaleoInstanceTokenUtil {
 	* Returns an ordered range of all the kaleo instance tokens where companyId = &#63; and parentKaleoInstanceTokenId = &#63; and completionDate = &#63;.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param companyId the company ID
@@ -860,13 +769,11 @@ public class KaleoInstanceTokenUtil {
 	* @param end the upper bound of the range of kaleo instance tokens (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> findByC_PKITI_CD(
-		long companyId, long parentKaleoInstanceTokenId,
-		java.util.Date completionDate, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoInstanceToken> findByC_PKITI_CD(long companyId,
+		long parentKaleoInstanceTokenId, java.util.Date completionDate,
+		int start, int end,
+		OrderByComparator<KaleoInstanceToken> orderByComparator) {
 		return getPersistence()
 				   .findByC_PKITI_CD(companyId, parentKaleoInstanceTokenId,
 			completionDate, start, end, orderByComparator);
@@ -880,15 +787,12 @@ public class KaleoInstanceTokenUtil {
 	* @param completionDate the completion date
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo instance token
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchInstanceTokenException if a matching kaleo instance token could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken findByC_PKITI_CD_First(
-		long companyId, long parentKaleoInstanceTokenId,
-		java.util.Date completionDate,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
+	public static KaleoInstanceToken findByC_PKITI_CD_First(long companyId,
+		long parentKaleoInstanceTokenId, java.util.Date completionDate,
+		OrderByComparator<KaleoInstanceToken> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
 		return getPersistence()
 				   .findByC_PKITI_CD_First(companyId,
 			parentKaleoInstanceTokenId, completionDate, orderByComparator);
@@ -902,13 +806,10 @@ public class KaleoInstanceTokenUtil {
 	* @param completionDate the completion date
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching kaleo instance token, or <code>null</code> if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken fetchByC_PKITI_CD_First(
-		long companyId, long parentKaleoInstanceTokenId,
-		java.util.Date completionDate,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static KaleoInstanceToken fetchByC_PKITI_CD_First(long companyId,
+		long parentKaleoInstanceTokenId, java.util.Date completionDate,
+		OrderByComparator<KaleoInstanceToken> orderByComparator) {
 		return getPersistence()
 				   .fetchByC_PKITI_CD_First(companyId,
 			parentKaleoInstanceTokenId, completionDate, orderByComparator);
@@ -922,15 +823,12 @@ public class KaleoInstanceTokenUtil {
 	* @param completionDate the completion date
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo instance token
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchInstanceTokenException if a matching kaleo instance token could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken findByC_PKITI_CD_Last(
-		long companyId, long parentKaleoInstanceTokenId,
-		java.util.Date completionDate,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
+	public static KaleoInstanceToken findByC_PKITI_CD_Last(long companyId,
+		long parentKaleoInstanceTokenId, java.util.Date completionDate,
+		OrderByComparator<KaleoInstanceToken> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
 		return getPersistence()
 				   .findByC_PKITI_CD_Last(companyId,
 			parentKaleoInstanceTokenId, completionDate, orderByComparator);
@@ -944,13 +842,10 @@ public class KaleoInstanceTokenUtil {
 	* @param completionDate the completion date
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching kaleo instance token, or <code>null</code> if a matching kaleo instance token could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken fetchByC_PKITI_CD_Last(
-		long companyId, long parentKaleoInstanceTokenId,
-		java.util.Date completionDate,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static KaleoInstanceToken fetchByC_PKITI_CD_Last(long companyId,
+		long parentKaleoInstanceTokenId, java.util.Date completionDate,
+		OrderByComparator<KaleoInstanceToken> orderByComparator) {
 		return getPersistence()
 				   .fetchByC_PKITI_CD_Last(companyId,
 			parentKaleoInstanceTokenId, completionDate, orderByComparator);
@@ -965,15 +860,13 @@ public class KaleoInstanceTokenUtil {
 	* @param completionDate the completion date
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next kaleo instance token
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException if a kaleo instance token with the primary key could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchInstanceTokenException if a kaleo instance token with the primary key could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken[] findByC_PKITI_CD_PrevAndNext(
+	public static KaleoInstanceToken[] findByC_PKITI_CD_PrevAndNext(
 		long kaleoInstanceTokenId, long companyId,
 		long parentKaleoInstanceTokenId, java.util.Date completionDate,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
+		OrderByComparator<KaleoInstanceToken> orderByComparator)
+		throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
 		return getPersistence()
 				   .findByC_PKITI_CD_PrevAndNext(kaleoInstanceTokenId,
 			companyId, parentKaleoInstanceTokenId, completionDate,
@@ -986,11 +879,9 @@ public class KaleoInstanceTokenUtil {
 	* @param companyId the company ID
 	* @param parentKaleoInstanceTokenId the parent kaleo instance token ID
 	* @param completionDate the completion date
-	* @throws SystemException if a system exception occurred
 	*/
 	public static void removeByC_PKITI_CD(long companyId,
-		long parentKaleoInstanceTokenId, java.util.Date completionDate)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		long parentKaleoInstanceTokenId, java.util.Date completionDate) {
 		getPersistence()
 			.removeByC_PKITI_CD(companyId, parentKaleoInstanceTokenId,
 			completionDate);
@@ -1003,11 +894,9 @@ public class KaleoInstanceTokenUtil {
 	* @param parentKaleoInstanceTokenId the parent kaleo instance token ID
 	* @param completionDate the completion date
 	* @return the number of matching kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
 	public static int countByC_PKITI_CD(long companyId,
-		long parentKaleoInstanceTokenId, java.util.Date completionDate)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		long parentKaleoInstanceTokenId, java.util.Date completionDate) {
 		return getPersistence()
 				   .countByC_PKITI_CD(companyId, parentKaleoInstanceTokenId,
 			completionDate);
@@ -1018,8 +907,7 @@ public class KaleoInstanceTokenUtil {
 	*
 	* @param kaleoInstanceToken the kaleo instance token
 	*/
-	public static void cacheResult(
-		com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken kaleoInstanceToken) {
+	public static void cacheResult(KaleoInstanceToken kaleoInstanceToken) {
 		getPersistence().cacheResult(kaleoInstanceToken);
 	}
 
@@ -1028,8 +916,7 @@ public class KaleoInstanceTokenUtil {
 	*
 	* @param kaleoInstanceTokens the kaleo instance tokens
 	*/
-	public static void cacheResult(
-		java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> kaleoInstanceTokens) {
+	public static void cacheResult(List<KaleoInstanceToken> kaleoInstanceTokens) {
 		getPersistence().cacheResult(kaleoInstanceTokens);
 	}
 
@@ -1039,8 +926,7 @@ public class KaleoInstanceTokenUtil {
 	* @param kaleoInstanceTokenId the primary key for the new kaleo instance token
 	* @return the new kaleo instance token
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken create(
-		long kaleoInstanceTokenId) {
+	public static KaleoInstanceToken create(long kaleoInstanceTokenId) {
 		return getPersistence().create(kaleoInstanceTokenId);
 	}
 
@@ -1049,34 +935,27 @@ public class KaleoInstanceTokenUtil {
 	*
 	* @param kaleoInstanceTokenId the primary key of the kaleo instance token
 	* @return the kaleo instance token that was removed
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException if a kaleo instance token with the primary key could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchInstanceTokenException if a kaleo instance token with the primary key could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken remove(
-		long kaleoInstanceTokenId)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
+	public static KaleoInstanceToken remove(long kaleoInstanceTokenId)
+		throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
 		return getPersistence().remove(kaleoInstanceTokenId);
 	}
 
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken updateImpl(
-		com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken kaleoInstanceToken)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static KaleoInstanceToken updateImpl(
+		KaleoInstanceToken kaleoInstanceToken) {
 		return getPersistence().updateImpl(kaleoInstanceToken);
 	}
 
 	/**
-	* Returns the kaleo instance token with the primary key or throws a {@link com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException} if it could not be found.
+	* Returns the kaleo instance token with the primary key or throws a {@link NoSuchInstanceTokenException} if it could not be found.
 	*
 	* @param kaleoInstanceTokenId the primary key of the kaleo instance token
 	* @return the kaleo instance token
-	* @throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException if a kaleo instance token with the primary key could not be found
-	* @throws SystemException if a system exception occurred
+	* @throws NoSuchInstanceTokenException if a kaleo instance token with the primary key could not be found
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken findByPrimaryKey(
-		long kaleoInstanceTokenId)
-		throws com.liferay.portal.kernel.exception.SystemException,
-			com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
+	public static KaleoInstanceToken findByPrimaryKey(long kaleoInstanceTokenId)
+		throws com.liferay.portal.workflow.kaleo.NoSuchInstanceTokenException {
 		return getPersistence().findByPrimaryKey(kaleoInstanceTokenId);
 	}
 
@@ -1085,22 +964,23 @@ public class KaleoInstanceTokenUtil {
 	*
 	* @param kaleoInstanceTokenId the primary key of the kaleo instance token
 	* @return the kaleo instance token, or <code>null</code> if a kaleo instance token with the primary key could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken fetchByPrimaryKey(
-		long kaleoInstanceTokenId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static KaleoInstanceToken fetchByPrimaryKey(
+		long kaleoInstanceTokenId) {
 		return getPersistence().fetchByPrimaryKey(kaleoInstanceTokenId);
+	}
+
+	public static java.util.Map<java.io.Serializable, KaleoInstanceToken> fetchByPrimaryKeys(
+		java.util.Set<java.io.Serializable> primaryKeys) {
+		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the kaleo instance tokens.
 	*
 	* @return the kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> findAll()
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoInstanceToken> findAll() {
 		return getPersistence().findAll();
 	}
 
@@ -1108,17 +988,14 @@ public class KaleoInstanceTokenUtil {
 	* Returns a range of all the kaleo instance tokens.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param start the lower bound of the range of kaleo instance tokens
 	* @param end the upper bound of the range of kaleo instance tokens (not inclusive)
 	* @return the range of kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> findAll(
-		int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoInstanceToken> findAll(int start, int end) {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -1126,29 +1003,23 @@ public class KaleoInstanceTokenUtil {
 	* Returns an ordered range of all the kaleo instance tokens.
 	*
 	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.portal.workflow.kaleo.model.impl.KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link KaleoInstanceTokenModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param start the lower bound of the range of kaleo instance tokens
 	* @param end the upper bound of the range of kaleo instance tokens (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.workflow.kaleo.model.KaleoInstanceToken> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<KaleoInstanceToken> findAll(int start, int end,
+		OrderByComparator<KaleoInstanceToken> orderByComparator) {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the kaleo instance tokens from the database.
-	*
-	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll()
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static void removeAll() {
 		getPersistence().removeAll();
 	}
 
@@ -1156,10 +1027,8 @@ public class KaleoInstanceTokenUtil {
 	* Returns the number of kaleo instance tokens.
 	*
 	* @return the number of kaleo instance tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll()
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static int countAll() {
 		return getPersistence().countAll();
 	}
 

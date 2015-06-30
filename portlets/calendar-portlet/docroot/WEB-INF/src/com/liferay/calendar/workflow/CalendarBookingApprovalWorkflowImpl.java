@@ -19,9 +19,10 @@ import com.liferay.calendar.model.CalendarResource;
 import com.liferay.calendar.service.CalendarBookingLocalServiceUtil;
 import com.liferay.calendar.service.permission.CalendarPermission;
 import com.liferay.calendar.util.ActionKeys;
+import com.liferay.calendar.util.PortletPropsValues;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.security.permission.PermissionChecker;
+import com.liferay.portal.security.permission.PermissionThreadLocal;
 import com.liferay.portal.service.ServiceContext;
 
 import java.util.ArrayList;
@@ -39,17 +40,16 @@ public class CalendarBookingApprovalWorkflowImpl
 	@Override
 	public Map<Long, List<String>> getActionNames(
 			PermissionChecker permissionChecker, long[] calendarBookingIds)
-		throws PortalException, SystemException {
+		throws PortalException {
 
-		Map<Long, List<String>> actionNames =
-			new LinkedHashMap<Long, List<String>>();
+		Map<Long, List<String>> actionNames = new LinkedHashMap<>();
 
 		for (long calendarBookingId : calendarBookingIds) {
 			CalendarBooking calendarBooking =
 				CalendarBookingLocalServiceUtil.getCalendarBooking(
 					calendarBookingId);
 
-			List<String> transitions = new ArrayList<String>();
+			List<String> transitions = new ArrayList<>();
 
 			if (CalendarPermission.contains(
 					permissionChecker, calendarBooking.getCalendarId(),
@@ -74,7 +74,7 @@ public class CalendarBookingApprovalWorkflowImpl
 	public void invokeTransition(
 			long userId, CalendarBooking calendarBooking, int status,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		if (status == CalendarBookingWorkflowConstants.STATUS_PENDING) {
 			if (isAutoApproveCalendarBooking(userId, calendarBooking)) {
@@ -93,7 +93,7 @@ public class CalendarBookingApprovalWorkflowImpl
 	public void startWorkflow(
 			long userId, CalendarBooking calendarBooking,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		invokeTransition(
 			userId, calendarBooking,
@@ -102,7 +102,7 @@ public class CalendarBookingApprovalWorkflowImpl
 
 	protected boolean isAutoApproveCalendarBooking(
 			long userId, CalendarBooking calendarBooking)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		if (calendarBooking.getStatus() ==
 				CalendarBookingWorkflowConstants.STATUS_DENIED) {
@@ -110,14 +110,28 @@ public class CalendarBookingApprovalWorkflowImpl
 			return false;
 		}
 
-		if (userId != calendarBooking.getUserId()) {
+		PermissionChecker permissionChecker =
+			PermissionThreadLocal.getPermissionChecker();
+
+		if (permissionChecker == null) {
 			return false;
 		}
 
 		CalendarResource calendarResource =
 			calendarBooking.getCalendarResource();
 
-		if (userId != calendarResource.getUserId()) {
+		if (PortletPropsValues.CALENDAR_AUTO_APPROVE_GROUP_EVENT &&
+			calendarResource.isGroup() &&
+			CalendarPermission.contains(
+				permissionChecker, calendarBooking.getCalendar(),
+				ActionKeys.MANAGE_BOOKINGS)) {
+
+			return true;
+		}
+
+		if ((userId != calendarBooking.getUserId()) ||
+			(userId != calendarResource.getUserId())) {
+
 			return false;
 		}
 
