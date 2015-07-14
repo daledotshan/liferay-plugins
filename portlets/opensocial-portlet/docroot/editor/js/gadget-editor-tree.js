@@ -2,7 +2,6 @@ AUI.add(
 	'gadget-editor-tree',
 	function(A) {
 		var Lang = A.Lang;
-		var AArray = A.Array;
 		var isString = Lang.isString;
 		var isValue = Lang.isValue;
 
@@ -36,9 +35,9 @@ AUI.add(
 
 		var NEW_NODE = 'newNode';
 
-		var OWNER_TREE = 'ownerTree';
-
 		var OVERFLOW = 'overflow';
+
+		var OWNER_TREE = 'ownerTree';
 
 		var PARENT_NODE = 'parentNode';
 
@@ -54,9 +53,6 @@ AUI.add(
 
 		var TreeViewEditor = A.Component.create(
 			{
-				EXTENDS: A.TreeView,
-
-				NAME: 'tree-view-editor',
 
 				ATTRS: {
 					activeEditable: {
@@ -74,6 +70,10 @@ AUI.add(
 						}
 					}
 				},
+
+				EXTENDS: A.TreeView,
+
+				NAME: 'tree-view-editor',
 
 				prototype: {
 					addNewNodeToFolder: function(label, isLeaf, parentId) {
@@ -153,9 +153,8 @@ AUI.add(
 						var fileEntryChildren = [];
 						var folderChildren = [];
 
-						AArray.each(
-							children,
-							function(item, index, collection) {
+						children.forEach(
+							function(item, index) {
 								if (item.isLeaf()) {
 									fileEntryChildren.push(item);
 								}
@@ -168,8 +167,7 @@ AUI.add(
 						fileEntryChildren.sort(arraySort);
 						folderChildren.sort(arraySort);
 
-						AArray.each(
-							folderChildren,
+						folderChildren.forEach(
 							function(item, index, collection) {
 								if (index != 0) {
 									instance.insertAfter(item, collection[index - 1]);
@@ -177,8 +175,7 @@ AUI.add(
 							}
 						);
 
-						AArray.each(
-							fileEntryChildren,
+						fileEntryChildren.forEach(
 							function(item, index, collection) {
 								if (index === 0) {
 									if (folderChildren.length > 0) {
@@ -199,18 +196,14 @@ AUI.add(
 
 		var TreeNodeEditor = A.Component.create(
 			{
-				EXTENDS: A.TreeNodeIO,
-
-				NAME: 'tree-node-editor',
-
 				ATTRS: {
 					editable: {},
 
 					entryId: {
-						value: STR_EMPTY,
 						setter: function(value) {
 							return String(value);
-						}
+						},
+						value: STR_EMPTY
 					},
 
 					fileEntryLoaded: {
@@ -238,7 +231,21 @@ AUI.add(
 					}
 				},
 
+				EXTENDS: A.TreeNodeIO,
+
+				NAME: 'tree-node-editor',
+
 				prototype: {
+					renderUI: function() {
+						var instance = this;
+
+						TreeNodeEditor.superclass.renderUI.apply(this, arguments);
+
+						instance._renderContextMenu();
+						instance._renderEditable();
+						instance._renderFileEntryLoaded();
+					},
+
 					bindUI: function() {
 						var instance = this;
 
@@ -250,16 +257,6 @@ AUI.add(
 						instance.after('permissionsChange', instance._afterPermissionsChange);
 
 						instance.on('entryIdChange', instance._onEntryIdChange);
-					},
-
-					renderUI: function() {
-						var instance = this;
-
-						TreeNodeEditor.superclass.renderUI.apply(this, arguments);
-
-						instance._renderContextMenu();
-						instance._renderEditable();
-						instance._renderFileEntryLoaded();
 					},
 
 					appendChild: function(node) {
@@ -284,8 +281,7 @@ AUI.add(
 
 							var ownerTree = instance.get(OWNER_TREE);
 
-							AArray.each(
-								siblings,
+							siblings.forEach(
 								function(sibling) {
 									if (sibling.isLeaf() === isLeaf) {
 										filteredSiblings.push(sibling);
@@ -336,9 +332,8 @@ AUI.add(
 
 						var ownerTree = instance.get(OWNER_TREE);
 
-						AArray.each(
-							children,
-							function(item, index, collection) {
+						children.forEach(
+							function(item, index) {
 								if (item.isLeaf()) {
 									fileEntryChildren.push(item);
 								}
@@ -351,8 +346,7 @@ AUI.add(
 						fileEntryChildren.sort(arraySort);
 						folderChildren.sort(arraySort);
 
-						AArray.each(
-							folderChildren,
+						folderChildren.forEach(
 							function(item, index, collection) {
 								if (index != 0) {
 									ownerTree.insertAfter(item, collection[index - 1]);
@@ -360,8 +354,7 @@ AUI.add(
 							}
 						);
 
-						AArray.each(
-							fileEntryChildren,
+						fileEntryChildren.forEach(
 							function(item, index, collection) {
 								if (index === 0) {
 									if (folderChildren.length > 0) {
@@ -538,9 +531,8 @@ AUI.add(
 										if (!overlayContext.get(RENDERED)) {
 											contextMenu.render();
 
-											AArray.each(
-												contextMenu.get('children')[0],
-												function(item, index, collection) {
+											contextMenu.get('children')[0].forEach(
+												function(item, index) {
 													if (A.instanceOf(item, A.Button)) {
 														item.render();
 													}
@@ -751,7 +743,7 @@ AUI.add(
 							}
 							else {
 								publishMenuButton.show();
-								publishMenuButton.get('boundingBox').addClass('last', true)
+								publishMenuButton.get('boundingBox').addClass('last', true);
 								unpublishMenuButton.hide();
 							}
 						}
@@ -766,10 +758,6 @@ AUI.add(
 
 		var EditableEditor = A.Component.create(
 			{
-				EXTENDS: A.Editable,
-
-				NAME: 'editable-editor',
-
 				ATTRS: {
 					entryId: {
 						setter: function(value) {
@@ -778,6 +766,10 @@ AUI.add(
 						value: STR_EMPTY
 					}
 				},
+
+				EXTENDS: A.Editable,
+
+				NAME: 'editable-editor',
 
 				prototype: {
 					_afterFocusedChangeEditable: function(event) {
@@ -792,8 +784,6 @@ AUI.add(
 						var instance = this;
 
 						EditableEditor.superclass._defStartEditingFn.apply(this, arguments);
-
-						var inputField = instance._comboBox._field;
 					}
 				}
 			}

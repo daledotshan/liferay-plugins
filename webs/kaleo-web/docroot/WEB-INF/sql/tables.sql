@@ -31,7 +31,7 @@ create table KaleoCondition (
 	kaleoNodeId LONG,
 	script TEXT null,
 	scriptLanguage VARCHAR(75) null,
-	scriptRequiredContexts VARCHAR(75) null
+	scriptRequiredContexts STRING null
 );
 
 create table KaleoDefinition (
@@ -172,7 +172,11 @@ create table KaleoNotificationRecipient (
 	recipientClassName VARCHAR(200) null,
 	recipientClassPK LONG,
 	recipientRoleType INTEGER,
-	address VARCHAR(255) null
+	recipientScript TEXT null,
+	recipientScriptLanguage VARCHAR(75) null,
+	recipientScriptRequiredContexts STRING null,
+	address VARCHAR(255) null,
+	notificationReceptionType VARCHAR(3) null
 );
 
 create table KaleoTask (
@@ -206,7 +210,7 @@ create table KaleoTaskAssignment (
 	assigneeActionId VARCHAR(75) null,
 	assigneeScript TEXT null,
 	assigneeScriptLanguage VARCHAR(75) null,
-	assigneeScriptRequiredContexts VARCHAR(75) null
+	assigneeScriptRequiredContexts STRING null
 );
 
 create table KaleoTaskAssignmentInstance (

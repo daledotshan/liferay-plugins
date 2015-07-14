@@ -21,6 +21,8 @@ long selResourcePrimKey = ParamUtil.getLong(request, "selResourcePrimKey");
 
 String orderByCol = ParamUtil.getString(request, "orderByCol", "modified-date");
 String orderByType = ParamUtil.getString(request, "orderByType", "desc");
+
+String portletId = PortletProviderUtil.getPortletId(PortletConfigurationApplicationType.PortletConfiguration.CLASS_NAME, PortletProvider.Action.VIEW);
 %>
 
 <liferay-ui:header
@@ -45,6 +47,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 
 	<liferay-ui:search-container-row
 		className="com.liferay.knowledgebase.model.KBArticle"
+		escapedModel="<%= true %>"
 		keyProperty="resourcePrimKey"
 		modelVar="kbArticle"
 	>
@@ -92,7 +95,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 			href="<%= rowURL %>"
 			name="status"
 			orderable="<%= true %>"
-			value='<%= kbArticle.getStatus() + " (" + LanguageUtil.get(pageContext, WorkflowConstants.getStatusLabel(kbArticle.getStatus())) + ")" %>'
+			value='<%= kbArticle.getStatus() + " (" + LanguageUtil.get(request, WorkflowConstants.getStatusLabel(kbArticle.getStatus())) + ")" %>'
 		/>
 
 		<liferay-ui:search-container-column-text
@@ -109,7 +112,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 		>
 
 			<%
-			String taglibOnClick = "opener." + PortalUtil.getPortletNamespace(PortletKeys.PORTLET_CONFIGURATION) + "selectConfigurationKBArticle('" + kbArticle.getResourcePrimKey() + "', '" + UnicodeFormatter.toString(kbArticle.getTitle()) + "'); window.close();";
+			String taglibOnClick = "opener." + PortalUtil.getPortletNamespace(portletId) + "selectConfigurationKBArticle('" + kbArticle.getResourcePrimKey() + "', '" + UnicodeFormatter.toString(kbArticle.getTitle()) + "'); window.close();";
 			%>
 
 			<aui:button onClick="<%= taglibOnClick %>" value="choose" />
@@ -119,13 +122,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 	<c:if test="<%= selResourcePrimKey > 0 %>">
 
 		<%
-		KBArticle selKBArticle = null;
-
-		try {
-			selKBArticle = KBArticleLocalServiceUtil.getLatestKBArticle(selResourcePrimKey, WorkflowConstants.STATUS_APPROVED);
-		}
-		catch (NoSuchArticleException nsae) {
-		}
+		KBArticle selKBArticle = KBArticleLocalServiceUtil.fetchLatestKBArticle(selResourcePrimKey, WorkflowConstants.STATUS_APPROVED);
 		%>
 
 		<c:if test="<%= selKBArticle != null %>">
@@ -133,7 +130,7 @@ String orderByType = ParamUtil.getString(request, "orderByType", "desc");
 				<%= selKBArticle.getTitle() %>
 
 				<%
-				String taglibOnClick = "opener." + PortalUtil.getPortletNamespace(PortletKeys.PORTLET_CONFIGURATION) + "selectConfigurationKBArticle('0', ''); window.close();";
+				String taglibOnClick = "opener." + PortalUtil.getPortletNamespace(portletId) + "selectConfigurationKBArticle('0', ''); window.close();";
 				%>
 
 				<aui:button onClick="<%= taglibOnClick %>" value="remove" />

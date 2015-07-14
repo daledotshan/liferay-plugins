@@ -14,12 +14,16 @@
 
 package com.liferay.sync.service.base;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.bean.IdentifiableBean;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Projection;
@@ -32,13 +36,13 @@ import com.liferay.portal.model.PersistedModel;
 import com.liferay.portal.service.BaseLocalServiceImpl;
 import com.liferay.portal.service.PersistedModelLocalServiceRegistryUtil;
 import com.liferay.portal.service.persistence.ClassNamePersistence;
+import com.liferay.portal.service.persistence.CompanyPersistence;
 import com.liferay.portal.service.persistence.UserPersistence;
 import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.sync.model.SyncDLFileVersionDiff;
 import com.liferay.sync.service.SyncDLFileVersionDiffLocalService;
 import com.liferay.sync.service.persistence.SyncDLFileVersionDiffPersistence;
-import com.liferay.sync.service.persistence.SyncDLObjectFinder;
 import com.liferay.sync.service.persistence.SyncDLObjectPersistence;
 
 import java.io.Serializable;
@@ -59,6 +63,7 @@ import javax.sql.DataSource;
  * @see com.liferay.sync.service.SyncDLFileVersionDiffLocalServiceUtil
  * @generated
  */
+@ProviderType
 public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 	extends BaseLocalServiceImpl implements SyncDLFileVersionDiffLocalService,
 		IdentifiableBean {
@@ -73,12 +78,11 @@ public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 	 *
 	 * @param syncDLFileVersionDiff the sync d l file version diff
 	 * @return the sync d l file version diff that was added
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public SyncDLFileVersionDiff addSyncDLFileVersionDiff(
-		SyncDLFileVersionDiff syncDLFileVersionDiff) throws SystemException {
+		SyncDLFileVersionDiff syncDLFileVersionDiff) {
 		syncDLFileVersionDiff.setNew(true);
 
 		return syncDLFileVersionDiffPersistence.update(syncDLFileVersionDiff);
@@ -102,12 +106,11 @@ public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 	 * @param syncDLFileVersionDiffId the primary key of the sync d l file version diff
 	 * @return the sync d l file version diff that was removed
 	 * @throws PortalException if a sync d l file version diff with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public SyncDLFileVersionDiff deleteSyncDLFileVersionDiff(
-		long syncDLFileVersionDiffId) throws PortalException, SystemException {
+		long syncDLFileVersionDiffId) throws PortalException {
 		return syncDLFileVersionDiffPersistence.remove(syncDLFileVersionDiffId);
 	}
 
@@ -116,12 +119,12 @@ public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 	 *
 	 * @param syncDLFileVersionDiff the sync d l file version diff
 	 * @return the sync d l file version diff that was removed
-	 * @throws SystemException if a system exception occurred
+	 * @throws PortalException
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public SyncDLFileVersionDiff deleteSyncDLFileVersionDiff(
-		SyncDLFileVersionDiff syncDLFileVersionDiff) throws SystemException {
+		SyncDLFileVersionDiff syncDLFileVersionDiff) throws PortalException {
 		return syncDLFileVersionDiffPersistence.remove(syncDLFileVersionDiff);
 	}
 
@@ -138,12 +141,9 @@ public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
 		return syncDLFileVersionDiffPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -158,12 +158,10 @@ public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end) {
 		return syncDLFileVersionDiffPersistence.findWithDynamicQuery(dynamicQuery,
 			start, end);
 	}
@@ -180,47 +178,42 @@ public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator orderByComparator) throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end, OrderByComparator<T> orderByComparator) {
 		return syncDLFileVersionDiffPersistence.findWithDynamicQuery(dynamicQuery,
 			start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
 		return syncDLFileVersionDiffPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) throws SystemException {
+		Projection projection) {
 		return syncDLFileVersionDiffPersistence.countWithDynamicQuery(dynamicQuery,
 			projection);
 	}
 
 	@Override
 	public SyncDLFileVersionDiff fetchSyncDLFileVersionDiff(
-		long syncDLFileVersionDiffId) throws SystemException {
+		long syncDLFileVersionDiffId) {
 		return syncDLFileVersionDiffPersistence.fetchByPrimaryKey(syncDLFileVersionDiffId);
 	}
 
@@ -230,17 +223,49 @@ public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 	 * @param syncDLFileVersionDiffId the primary key of the sync d l file version diff
 	 * @return the sync d l file version diff
 	 * @throws PortalException if a sync d l file version diff with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public SyncDLFileVersionDiff getSyncDLFileVersionDiff(
-		long syncDLFileVersionDiffId) throws PortalException, SystemException {
+		long syncDLFileVersionDiffId) throws PortalException {
 		return syncDLFileVersionDiffPersistence.findByPrimaryKey(syncDLFileVersionDiffId);
 	}
 
 	@Override
+	public ActionableDynamicQuery getActionableDynamicQuery() {
+		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
+
+		actionableDynamicQuery.setBaseLocalService(com.liferay.sync.service.SyncDLFileVersionDiffLocalServiceUtil.getService());
+		actionableDynamicQuery.setClass(SyncDLFileVersionDiff.class);
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName(
+			"syncDLFileVersionDiffId");
+
+		return actionableDynamicQuery;
+	}
+
+	protected void initActionableDynamicQuery(
+		ActionableDynamicQuery actionableDynamicQuery) {
+		actionableDynamicQuery.setBaseLocalService(com.liferay.sync.service.SyncDLFileVersionDiffLocalServiceUtil.getService());
+		actionableDynamicQuery.setClass(SyncDLFileVersionDiff.class);
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName(
+			"syncDLFileVersionDiffId");
+	}
+
+	/**
+	 * @throws PortalException
+	 */
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException {
+		return syncDLFileVersionDiffLocalService.deleteSyncDLFileVersionDiff((SyncDLFileVersionDiff)persistedModel);
+	}
+
+	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return syncDLFileVersionDiffPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
@@ -254,11 +279,10 @@ public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 	 * @param start the lower bound of the range of sync d l file version diffs
 	 * @param end the upper bound of the range of sync d l file version diffs (not inclusive)
 	 * @return the range of sync d l file version diffs
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<SyncDLFileVersionDiff> getSyncDLFileVersionDiffs(int start,
-		int end) throws SystemException {
+		int end) {
 		return syncDLFileVersionDiffPersistence.findAll(start, end);
 	}
 
@@ -266,10 +290,9 @@ public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 	 * Returns the number of sync d l file version diffs.
 	 *
 	 * @return the number of sync d l file version diffs
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getSyncDLFileVersionDiffsCount() throws SystemException {
+	public int getSyncDLFileVersionDiffsCount() {
 		return syncDLFileVersionDiffPersistence.countAll();
 	}
 
@@ -278,12 +301,11 @@ public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 	 *
 	 * @param syncDLFileVersionDiff the sync d l file version diff
 	 * @return the sync d l file version diff that was updated
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public SyncDLFileVersionDiff updateSyncDLFileVersionDiff(
-		SyncDLFileVersionDiff syncDLFileVersionDiff) throws SystemException {
+		SyncDLFileVersionDiff syncDLFileVersionDiff) {
 		return syncDLFileVersionDiffPersistence.update(syncDLFileVersionDiff);
 	}
 
@@ -292,7 +314,7 @@ public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 	 *
 	 * @return the sync d l file version diff local service
 	 */
-	public com.liferay.sync.service.SyncDLFileVersionDiffLocalService getSyncDLFileVersionDiffLocalService() {
+	public SyncDLFileVersionDiffLocalService getSyncDLFileVersionDiffLocalService() {
 		return syncDLFileVersionDiffLocalService;
 	}
 
@@ -302,7 +324,7 @@ public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 	 * @param syncDLFileVersionDiffLocalService the sync d l file version diff local service
 	 */
 	public void setSyncDLFileVersionDiffLocalService(
-		com.liferay.sync.service.SyncDLFileVersionDiffLocalService syncDLFileVersionDiffLocalService) {
+		SyncDLFileVersionDiffLocalService syncDLFileVersionDiffLocalService) {
 		this.syncDLFileVersionDiffLocalService = syncDLFileVersionDiffLocalService;
 	}
 
@@ -383,21 +405,22 @@ public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the sync d l object finder.
+	 * Returns the sync preferences local service.
 	 *
-	 * @return the sync d l object finder
+	 * @return the sync preferences local service
 	 */
-	public SyncDLObjectFinder getSyncDLObjectFinder() {
-		return syncDLObjectFinder;
+	public com.liferay.sync.service.SyncPreferencesLocalService getSyncPreferencesLocalService() {
+		return syncPreferencesLocalService;
 	}
 
 	/**
-	 * Sets the sync d l object finder.
+	 * Sets the sync preferences local service.
 	 *
-	 * @param syncDLObjectFinder the sync d l object finder
+	 * @param syncPreferencesLocalService the sync preferences local service
 	 */
-	public void setSyncDLObjectFinder(SyncDLObjectFinder syncDLObjectFinder) {
-		this.syncDLObjectFinder = syncDLObjectFinder;
+	public void setSyncPreferencesLocalService(
+		com.liferay.sync.service.SyncPreferencesLocalService syncPreferencesLocalService) {
+		this.syncPreferencesLocalService = syncPreferencesLocalService;
 	}
 
 	/**
@@ -474,6 +497,62 @@ public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 	public void setClassNamePersistence(
 		ClassNamePersistence classNamePersistence) {
 		this.classNamePersistence = classNamePersistence;
+	}
+
+	/**
+	 * Returns the company local service.
+	 *
+	 * @return the company local service
+	 */
+	public com.liferay.portal.service.CompanyLocalService getCompanyLocalService() {
+		return companyLocalService;
+	}
+
+	/**
+	 * Sets the company local service.
+	 *
+	 * @param companyLocalService the company local service
+	 */
+	public void setCompanyLocalService(
+		com.liferay.portal.service.CompanyLocalService companyLocalService) {
+		this.companyLocalService = companyLocalService;
+	}
+
+	/**
+	 * Returns the company remote service.
+	 *
+	 * @return the company remote service
+	 */
+	public com.liferay.portal.service.CompanyService getCompanyService() {
+		return companyService;
+	}
+
+	/**
+	 * Sets the company remote service.
+	 *
+	 * @param companyService the company remote service
+	 */
+	public void setCompanyService(
+		com.liferay.portal.service.CompanyService companyService) {
+		this.companyService = companyService;
+	}
+
+	/**
+	 * Returns the company persistence.
+	 *
+	 * @return the company persistence
+	 */
+	public CompanyPersistence getCompanyPersistence() {
+		return companyPersistence;
+	}
+
+	/**
+	 * Sets the company persistence.
+	 *
+	 * @param companyPersistence the company persistence
+	 */
+	public void setCompanyPersistence(CompanyPersistence companyPersistence) {
+		this.companyPersistence = companyPersistence;
 	}
 
 	/**
@@ -657,7 +736,7 @@ public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) throws SystemException {
+	protected void runSQL(String sql) {
 		try {
 			DataSource dataSource = syncDLFileVersionDiffPersistence.getDataSource();
 
@@ -676,8 +755,8 @@ public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.sync.service.SyncDLFileVersionDiffLocalService.class)
-	protected com.liferay.sync.service.SyncDLFileVersionDiffLocalService syncDLFileVersionDiffLocalService;
+	@BeanReference(type = SyncDLFileVersionDiffLocalService.class)
+	protected SyncDLFileVersionDiffLocalService syncDLFileVersionDiffLocalService;
 	@BeanReference(type = SyncDLFileVersionDiffPersistence.class)
 	protected SyncDLFileVersionDiffPersistence syncDLFileVersionDiffPersistence;
 	@BeanReference(type = com.liferay.sync.service.SyncDLObjectLocalService.class)
@@ -686,8 +765,8 @@ public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 	protected com.liferay.sync.service.SyncDLObjectService syncDLObjectService;
 	@BeanReference(type = SyncDLObjectPersistence.class)
 	protected SyncDLObjectPersistence syncDLObjectPersistence;
-	@BeanReference(type = SyncDLObjectFinder.class)
-	protected SyncDLObjectFinder syncDLObjectFinder;
+	@BeanReference(type = com.liferay.sync.service.SyncPreferencesLocalService.class)
+	protected com.liferay.sync.service.SyncPreferencesLocalService syncPreferencesLocalService;
 	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)
 	protected com.liferay.counter.service.CounterLocalService counterLocalService;
 	@BeanReference(type = com.liferay.portal.service.ClassNameLocalService.class)
@@ -696,6 +775,12 @@ public abstract class SyncDLFileVersionDiffLocalServiceBaseImpl
 	protected com.liferay.portal.service.ClassNameService classNameService;
 	@BeanReference(type = ClassNamePersistence.class)
 	protected ClassNamePersistence classNamePersistence;
+	@BeanReference(type = com.liferay.portal.service.CompanyLocalService.class)
+	protected com.liferay.portal.service.CompanyLocalService companyLocalService;
+	@BeanReference(type = com.liferay.portal.service.CompanyService.class)
+	protected com.liferay.portal.service.CompanyService companyService;
+	@BeanReference(type = CompanyPersistence.class)
+	protected CompanyPersistence companyPersistence;
 	@BeanReference(type = com.liferay.portal.service.ResourceLocalService.class)
 	protected com.liferay.portal.service.ResourceLocalService resourceLocalService;
 	@BeanReference(type = com.liferay.portal.service.UserLocalService.class)

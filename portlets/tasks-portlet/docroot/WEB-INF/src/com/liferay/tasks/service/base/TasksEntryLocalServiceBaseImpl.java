@@ -14,12 +14,16 @@
 
 package com.liferay.tasks.service.base;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.bean.IdentifiableBean;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Projection;
@@ -58,6 +62,7 @@ import javax.sql.DataSource;
  * @see com.liferay.tasks.service.TasksEntryLocalServiceUtil
  * @generated
  */
+@ProviderType
 public abstract class TasksEntryLocalServiceBaseImpl
 	extends BaseLocalServiceImpl implements TasksEntryLocalService,
 		IdentifiableBean {
@@ -72,12 +77,10 @@ public abstract class TasksEntryLocalServiceBaseImpl
 	 *
 	 * @param tasksEntry the tasks entry
 	 * @return the tasks entry that was added
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public TasksEntry addTasksEntry(TasksEntry tasksEntry)
-		throws SystemException {
+	public TasksEntry addTasksEntry(TasksEntry tasksEntry) {
 		tasksEntry.setNew(true);
 
 		return tasksEntryPersistence.update(tasksEntry);
@@ -100,12 +103,11 @@ public abstract class TasksEntryLocalServiceBaseImpl
 	 * @param tasksEntryId the primary key of the tasks entry
 	 * @return the tasks entry that was removed
 	 * @throws PortalException if a tasks entry with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public TasksEntry deleteTasksEntry(long tasksEntryId)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return tasksEntryPersistence.remove(tasksEntryId);
 	}
 
@@ -115,12 +117,11 @@ public abstract class TasksEntryLocalServiceBaseImpl
 	 * @param tasksEntry the tasks entry
 	 * @return the tasks entry that was removed
 	 * @throws PortalException
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public TasksEntry deleteTasksEntry(TasksEntry tasksEntry)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return tasksEntryPersistence.remove(tasksEntry);
 	}
 
@@ -137,12 +138,9 @@ public abstract class TasksEntryLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
 		return tasksEntryPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -157,12 +155,10 @@ public abstract class TasksEntryLocalServiceBaseImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end) {
 		return tasksEntryPersistence.findWithDynamicQuery(dynamicQuery, start,
 			end);
 	}
@@ -179,47 +175,41 @@ public abstract class TasksEntryLocalServiceBaseImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator orderByComparator) throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end, OrderByComparator<T> orderByComparator) {
 		return tasksEntryPersistence.findWithDynamicQuery(dynamicQuery, start,
 			end, orderByComparator);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
 		return tasksEntryPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) throws SystemException {
+		Projection projection) {
 		return tasksEntryPersistence.countWithDynamicQuery(dynamicQuery,
 			projection);
 	}
 
 	@Override
-	public TasksEntry fetchTasksEntry(long tasksEntryId)
-		throws SystemException {
+	public TasksEntry fetchTasksEntry(long tasksEntryId) {
 		return tasksEntryPersistence.fetchByPrimaryKey(tasksEntryId);
 	}
 
@@ -229,17 +219,47 @@ public abstract class TasksEntryLocalServiceBaseImpl
 	 * @param tasksEntryId the primary key of the tasks entry
 	 * @return the tasks entry
 	 * @throws PortalException if a tasks entry with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public TasksEntry getTasksEntry(long tasksEntryId)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return tasksEntryPersistence.findByPrimaryKey(tasksEntryId);
 	}
 
 	@Override
+	public ActionableDynamicQuery getActionableDynamicQuery() {
+		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
+
+		actionableDynamicQuery.setBaseLocalService(com.liferay.tasks.service.TasksEntryLocalServiceUtil.getService());
+		actionableDynamicQuery.setClass(TasksEntry.class);
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("tasksEntryId");
+
+		return actionableDynamicQuery;
+	}
+
+	protected void initActionableDynamicQuery(
+		ActionableDynamicQuery actionableDynamicQuery) {
+		actionableDynamicQuery.setBaseLocalService(com.liferay.tasks.service.TasksEntryLocalServiceUtil.getService());
+		actionableDynamicQuery.setClass(TasksEntry.class);
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("tasksEntryId");
+	}
+
+	/**
+	 * @throws PortalException
+	 */
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException {
+		return tasksEntryLocalService.deleteTasksEntry((TasksEntry)persistedModel);
+	}
+
+	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return tasksEntryPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
@@ -253,11 +273,9 @@ public abstract class TasksEntryLocalServiceBaseImpl
 	 * @param start the lower bound of the range of tasks entries
 	 * @param end the upper bound of the range of tasks entries (not inclusive)
 	 * @return the range of tasks entries
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<TasksEntry> getTasksEntries(int start, int end)
-		throws SystemException {
+	public List<TasksEntry> getTasksEntries(int start, int end) {
 		return tasksEntryPersistence.findAll(start, end);
 	}
 
@@ -265,10 +283,9 @@ public abstract class TasksEntryLocalServiceBaseImpl
 	 * Returns the number of tasks entries.
 	 *
 	 * @return the number of tasks entries
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getTasksEntriesCount() throws SystemException {
+	public int getTasksEntriesCount() {
 		return tasksEntryPersistence.countAll();
 	}
 
@@ -277,12 +294,10 @@ public abstract class TasksEntryLocalServiceBaseImpl
 	 *
 	 * @param tasksEntry the tasks entry
 	 * @return the tasks entry that was updated
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public TasksEntry updateTasksEntry(TasksEntry tasksEntry)
-		throws SystemException {
+	public TasksEntry updateTasksEntry(TasksEntry tasksEntry) {
 		return tasksEntryPersistence.update(tasksEntry);
 	}
 
@@ -291,7 +306,7 @@ public abstract class TasksEntryLocalServiceBaseImpl
 	 *
 	 * @return the tasks entry local service
 	 */
-	public com.liferay.tasks.service.TasksEntryLocalService getTasksEntryLocalService() {
+	public TasksEntryLocalService getTasksEntryLocalService() {
 		return tasksEntryLocalService;
 	}
 
@@ -301,7 +316,7 @@ public abstract class TasksEntryLocalServiceBaseImpl
 	 * @param tasksEntryLocalService the tasks entry local service
 	 */
 	public void setTasksEntryLocalService(
-		com.liferay.tasks.service.TasksEntryLocalService tasksEntryLocalService) {
+		TasksEntryLocalService tasksEntryLocalService) {
 		this.tasksEntryLocalService = tasksEntryLocalService;
 	}
 
@@ -580,7 +595,7 @@ public abstract class TasksEntryLocalServiceBaseImpl
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) throws SystemException {
+	protected void runSQL(String sql) {
 		try {
 			DataSource dataSource = tasksEntryPersistence.getDataSource();
 
@@ -599,8 +614,8 @@ public abstract class TasksEntryLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.liferay.tasks.service.TasksEntryLocalService.class)
-	protected com.liferay.tasks.service.TasksEntryLocalService tasksEntryLocalService;
+	@BeanReference(type = TasksEntryLocalService.class)
+	protected TasksEntryLocalService tasksEntryLocalService;
 	@BeanReference(type = com.liferay.tasks.service.TasksEntryService.class)
 	protected com.liferay.tasks.service.TasksEntryService tasksEntryService;
 	@BeanReference(type = TasksEntryPersistence.class)

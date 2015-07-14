@@ -14,7 +14,8 @@
 
 package com.liferay.portal.workflow.kaleo.model.impl;
 
-import com.liferay.portal.kernel.exception.SystemException;
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment;
 import com.liferay.portal.workflow.kaleo.service.KaleoTaskAssignmentLocalServiceUtil;
 
@@ -27,9 +28,10 @@ import com.liferay.portal.workflow.kaleo.service.KaleoTaskAssignmentLocalService
  *
  * @author Brian Wing Shun Chan
  * @see KaleoTaskAssignmentImpl
- * @see com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignment
+ * @see KaleoTaskAssignment
  * @generated
  */
+@ProviderType
 public abstract class KaleoTaskAssignmentBaseImpl
 	extends KaleoTaskAssignmentModelImpl implements KaleoTaskAssignment {
 	/*
@@ -38,7 +40,7 @@ public abstract class KaleoTaskAssignmentBaseImpl
 	 * Never modify or reference this class directly. All methods that expect a kaleo task assignment model instance should use the {@link KaleoTaskAssignment} interface instead.
 	 */
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			KaleoTaskAssignmentLocalServiceUtil.addKaleoTaskAssignment(this);
 		}

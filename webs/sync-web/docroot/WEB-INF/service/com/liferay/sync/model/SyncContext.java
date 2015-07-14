@@ -16,14 +16,28 @@ package com.liferay.sync.model;
 
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.model.Group;
+import com.liferay.portal.model.User;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Dennis Ju
  */
 @JSON
 public class SyncContext {
+
+	public String getAuthType() {
+		return _authType;
+	}
+
+	public String getOAuthConsumerKey() {
+		return _oAuthConsumerKey;
+	}
+
+	public String getOAuthConsumerSecret() {
+		return _oAuthConsumerSecret;
+	}
 
 	public String getPluginVersion() {
 		return _pluginVersion;
@@ -33,8 +47,14 @@ public class SyncContext {
 		return _portalBuildNumber;
 	}
 
-	public long getUserId() {
-		return _userId;
+	@JSON
+	public Map<String, String> getPortletPreferencesMap() {
+		return _portletPreferencesMap;
+	}
+
+	@JSON
+	public User getUser() {
+		return _user;
 	}
 
 	@JSON
@@ -42,8 +62,28 @@ public class SyncContext {
 		return _userSitesGroups;
 	}
 
+	public boolean isOAuthEnabled() {
+		return _oAuthEnabled;
+	}
+
 	public boolean isSocialOfficeInstalled() {
 		return _socialOfficeInstalled;
+	}
+
+	public void setAuthType(String authType) {
+		_authType = authType;
+	}
+
+	public void setOAuthConsumerKey(String oAuthConsumerKey) {
+		_oAuthConsumerKey = oAuthConsumerKey;
+	}
+
+	public void setOAuthConsumerSecret(String oAuthConsumerSecret) {
+		_oAuthConsumerSecret = oAuthConsumerSecret;
+	}
+
+	public void setOAuthEnabled(boolean oAuthEnabled) {
+		_oAuthEnabled = oAuthEnabled;
 	}
 
 	public void setPluginVersion(String pluginVersion) {
@@ -54,22 +94,33 @@ public class SyncContext {
 		_portalBuildNumber = portalBuildNumber;
 	}
 
+	public void setPortletPreferencesMap(
+		Map<String, String> portletPreferencesMap) {
+
+		_portletPreferencesMap = portletPreferencesMap;
+	}
+
 	public void setSocialOfficeInstalled(boolean socialOfficeInstalled) {
 		_socialOfficeInstalled = socialOfficeInstalled;
 	}
 
-	public void setUserId(long userId) {
-		_userId = userId;
+	public void setUser(User user) {
+		_user = user;
 	}
 
 	public void setUserSitesGroups(List<Group> userSitesGroups) {
 		_userSitesGroups = userSitesGroups;
 	}
 
+	private String _authType;
+	private String _oAuthConsumerKey;
+	private String _oAuthConsumerSecret;
+	private boolean _oAuthEnabled;
 	private String _pluginVersion;
 	private int _portalBuildNumber;
+	private Map<String, String> _portletPreferencesMap;
 	private boolean _socialOfficeInstalled;
-	private long _userId;
+	private User _user;
 	private List<Group> _userSitesGroups;
 
 }

@@ -14,8 +14,9 @@
 
 package com.liferay.testtransaction.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -35,6 +36,7 @@ import java.util.Map;
 /**
  * @author Brian Wing Shun Chan
  */
+@ProviderType
 public class BarClp extends BaseModelImpl<Bar> implements Bar {
 	public BarClp() {
 	}
@@ -196,7 +198,7 @@ public class BarClp extends BaseModelImpl<Bar> implements Bar {
 	}
 
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			BarLocalServiceUtil.addBar(this);
 		}
@@ -256,6 +258,10 @@ public class BarClp extends BaseModelImpl<Bar> implements Bar {
 		}
 	}
 
+	public Class<?> getClpSerializerClass() {
+		return _clpSerializerClass;
+	}
+
 	@Override
 	public int hashCode() {
 		return (int)getPrimaryKey();
@@ -309,6 +315,7 @@ public class BarClp extends BaseModelImpl<Bar> implements Bar {
 	private long _barId;
 	private String _text;
 	private BaseModel<?> _barRemoteModel;
+	private Class<?> _clpSerializerClass = ClpSerializer.class;
 	private boolean _entityCacheEnabled;
 	private boolean _finderCacheEnabled;
 }

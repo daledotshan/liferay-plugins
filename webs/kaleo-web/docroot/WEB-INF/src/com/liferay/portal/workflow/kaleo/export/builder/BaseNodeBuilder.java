@@ -16,7 +16,6 @@ package com.liferay.portal.workflow.kaleo.export.builder;
 
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -35,12 +34,14 @@ import com.liferay.portal.workflow.kaleo.definition.DelayDuration;
 import com.liferay.portal.workflow.kaleo.definition.DurationScale;
 import com.liferay.portal.workflow.kaleo.definition.Node;
 import com.liferay.portal.workflow.kaleo.definition.Notification;
+import com.liferay.portal.workflow.kaleo.definition.NotificationReceptionType;
 import com.liferay.portal.workflow.kaleo.definition.Recipient;
 import com.liferay.portal.workflow.kaleo.definition.RecipientType;
 import com.liferay.portal.workflow.kaleo.definition.ResourceActionAssignment;
 import com.liferay.portal.workflow.kaleo.definition.RoleAssignment;
 import com.liferay.portal.workflow.kaleo.definition.RoleRecipient;
 import com.liferay.portal.workflow.kaleo.definition.ScriptAssignment;
+import com.liferay.portal.workflow.kaleo.definition.ScriptRecipient;
 import com.liferay.portal.workflow.kaleo.definition.Timer;
 import com.liferay.portal.workflow.kaleo.definition.UserAssignment;
 import com.liferay.portal.workflow.kaleo.definition.UserRecipient;
@@ -62,9 +63,7 @@ public abstract class BaseNodeBuilder
 	extends BaseKaleoBean implements NodeBuilder {
 
 	@Override
-	public Node buildNode(KaleoNode kaleoNode)
-		throws PortalException, SystemException {
-
+	public Node buildNode(KaleoNode kaleoNode) throws PortalException {
 		Node node = createNode(kaleoNode);
 
 		Set<Action> actions = buildActions(
@@ -89,7 +88,7 @@ public abstract class BaseNodeBuilder
 
 	protected void addNotificationRecipients(
 			KaleoNotification kaleoNotification, Notification notification)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		List<KaleoNotificationRecipient> kaleoNotificationRecipients =
 			kaleoNotificationRecipientLocalService.
@@ -107,22 +106,31 @@ public abstract class BaseNodeBuilder
 
 			Recipient recipient = null;
 
-			if (recipientClassName.equals(RecipientType.ADDRESS.name())) {
+			if (recipientClassName.equals(RecipientType.ADDRESS.getValue())) {
 				recipient = new AddressRecipient(
 					kaleoNotificationRecipient.getAddress());
 			}
 			else if (recipientClassName.equals(
-						RecipientType.ASSIGNEES.name())) {
+						RecipientType.ASSIGNEES.getValue())) {
 
 				recipient = new AssigneesRecipient();
 			}
-			else if (recipientClassName.equals(Role.class.getName())) {
+			else if (recipientClassName.equals(RecipientType.ROLE.getValue())) {
 				Role role = _roleLocalService.fetchRole(recipientClassPK);
 
 				recipient = new RoleRecipient(
 					role.getName(), role.getTypeLabel());
 			}
-			else if (recipientClassName.equals(User.class.getName())) {
+			else if (recipientClassName.equals(
+						RecipientType.SCRIPT.getValue())) {
+
+				recipient = new ScriptRecipient(
+					kaleoNotificationRecipient.getRecipientScript(),
+					kaleoNotificationRecipient.getRecipientScriptLanguage(),
+					kaleoNotificationRecipient.
+						getRecipientScriptRequiredContexts());
+			}
+			else if (recipientClassName.equals(RecipientType.USER.getValue())) {
 				if (recipientClassPK > 0) {
 					User user = _userLocalService.getUser(recipientClassPK);
 
@@ -135,18 +143,22 @@ public abstract class BaseNodeBuilder
 				}
 			}
 
+			recipient.setNotificationReceptionType(
+				NotificationReceptionType.parse(
+					kaleoNotificationRecipient.getNotificationReceptionType()));
+
 			notification.addRecipients(recipient);
 		}
 	}
 
-	protected Set<Action> buildActions(String kaleoClassName, long kaleoClassPK)
-		throws SystemException {
+	protected Set<Action> buildActions(
+		String kaleoClassName, long kaleoClassPK) {
 
 		List<KaleoAction> kaleoActions =
 			kaleoActionLocalService.getKaleoActions(
 				kaleoClassName, kaleoClassPK);
 
-		Set<Action> actions = new HashSet<Action>(kaleoActions.size());
+		Set<Action> actions = new HashSet<>(kaleoActions.size());
 
 		for (KaleoAction kaleoAction : kaleoActions) {
 			Action action = new Action(
@@ -164,13 +176,13 @@ public abstract class BaseNodeBuilder
 
 	protected Set<Assignment> buildAssigments(
 			String kaleoClassName, long kaleoClassPK)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		List<KaleoTaskAssignment> kaleoTaskAssignments =
 			kaleoTaskAssignmentLocalService.getKaleoTaskAssignments(
 				kaleoClassName, kaleoClassPK);
 
-		Set<Assignment> assignments = new HashSet<Assignment>(
+		Set<Assignment> assignments = new HashSet<>(
 			kaleoTaskAssignments.size());
 
 		for (KaleoTaskAssignment kaleoTaskAssignment : kaleoTaskAssignments) {
@@ -218,13 +230,13 @@ public abstract class BaseNodeBuilder
 
 	protected Set<Notification> buildNotifications(
 			String kaleoClassName, long kaleoClassPK)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		List<KaleoNotification> kaleoNotifications =
 			kaleoNotificationLocalService.getKaleoNotifications(
 				kaleoClassName, kaleoClassPK);
 
-		Set<Notification> notifications = new HashSet<Notification>(
+		Set<Notification> notifications = new HashSet<>(
 			kaleoNotifications.size());
 
 		for (KaleoNotification kaleoNotification : kaleoNotifications) {
@@ -252,12 +264,12 @@ public abstract class BaseNodeBuilder
 	}
 
 	protected Set<Timer> buildTimers(String kaleoClassName, long kaleoClassPK)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		List<KaleoTimer> kaleoTimers = kaleoTimerLocalService.getKaleoTimers(
 			kaleoClassName, kaleoClassPK);
 
-		Set<Timer> timers = new HashSet<Timer>(kaleoTimers.size());
+		Set<Timer> timers = new HashSet<>(kaleoTimers.size());
 
 		for (KaleoTimer kaleoTimer : kaleoTimers) {
 			Timer timer = new Timer(
@@ -275,10 +287,9 @@ public abstract class BaseNodeBuilder
 			String recurrenceScale = kaleoTimer.getRecurrenceScale();
 
 			if (Validator.isNotNull(recurrenceScale)) {
-				DelayDuration recurrenceDelayDuration =
-					new DelayDuration(
-						kaleoTimer.getRecurrenceDuration(),
-						DurationScale.parse(recurrenceScale));
+				DelayDuration recurrenceDelayDuration = new DelayDuration(
+					kaleoTimer.getRecurrenceDuration(),
+					DurationScale.parse(recurrenceScale));
 
 				timer.setRecurrence(recurrenceDelayDuration);
 			}
@@ -303,7 +314,7 @@ public abstract class BaseNodeBuilder
 	}
 
 	protected abstract Node createNode(KaleoNode kaleoNode)
-		throws PortalException, SystemException;
+		throws PortalException;
 
 	@BeanReference(type = RoleLocalService.class)
 	private RoleLocalService _roleLocalService;

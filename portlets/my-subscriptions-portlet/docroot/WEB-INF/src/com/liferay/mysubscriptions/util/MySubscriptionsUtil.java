@@ -14,9 +14,10 @@
 
 package com.liferay.mysubscriptions.util;
 
+import com.liferay.bookmarks.model.BookmarksFolder;
+import com.liferay.journal.model.JournalFolder;
 import com.liferay.knowledgebase.util.PortletKeys;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -37,17 +38,16 @@ import com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil;
 import com.liferay.portlet.asset.model.AssetRenderer;
 import com.liferay.portlet.asset.model.AssetRendererFactory;
 import com.liferay.portlet.blogs.model.BlogsEntry;
-import com.liferay.portlet.bookmarks.model.BookmarksFolder;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalServiceUtil;
-import com.liferay.portlet.journal.model.JournalFolder;
 import com.liferay.portlet.messageboards.model.MBCategory;
 import com.liferay.portlet.messageboards.model.MBMessage;
 import com.liferay.portlet.messageboards.model.MBThread;
 import com.liferay.portlet.messageboards.service.MBThreadLocalServiceUtil;
-import com.liferay.portlet.wiki.model.WikiNode;
-import com.liferay.portlet.wiki.service.WikiNodeLocalServiceUtil;
+import com.liferay.wiki.constants.WikiPortletKeys;
+import com.liferay.wiki.model.WikiNode;
+import com.liferay.wiki.service.WikiNodeLocalServiceUtil;
 
 import java.util.Locale;
 
@@ -71,7 +71,7 @@ public class MySubscriptionsUtil {
 
 	public static String getAssetURLViewInContext(
 			ThemeDisplay themeDisplay, String className, long classPK)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		if (className.equals(BlogsEntry.class.getName())) {
 			return PortalUtil.getLayoutFullURL(classPK, PortletKeys.BLOGS);
@@ -99,7 +99,7 @@ public class MySubscriptionsUtil {
 
 		if (className.equals(WikiNode.class.getName())) {
 			long plid = PortalUtil.getPlidFromPortletId(
-				themeDisplay.getScopeGroupId(), PortletKeys.WIKI);
+				themeDisplay.getScopeGroupId(), WikiPortletKeys.WIKI);
 
 			if (plid == 0) {
 				return null;
@@ -127,7 +127,7 @@ public class MySubscriptionsUtil {
 
 	public static String getTitleText(
 			Locale locale, String className, long classPK, String title)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		if (Validator.isNotNull(title)) {
 			return title;

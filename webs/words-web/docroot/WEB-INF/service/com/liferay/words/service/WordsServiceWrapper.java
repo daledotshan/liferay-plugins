@@ -14,6 +14,8 @@
 
 package com.liferay.words.service;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.service.ServiceWrapper;
 
 /**
@@ -23,10 +25,17 @@ import com.liferay.portal.service.ServiceWrapper;
  * @see WordsService
  * @generated
  */
+@ProviderType
 public class WordsServiceWrapper implements WordsService,
 	ServiceWrapper<WordsService> {
 	public WordsServiceWrapper(WordsService wordsService) {
 		_wordsService = wordsService;
+	}
+
+	@Override
+	public java.util.List<java.lang.String> checkSpelling(java.lang.String text)
+		throws java.lang.Exception {
+		return _wordsService.checkSpelling(text);
 	}
 
 	/**
@@ -39,14 +48,10 @@ public class WordsServiceWrapper implements WordsService,
 		return _wordsService.getBeanIdentifier();
 	}
 
-	/**
-	* Sets the Spring bean ID for this bean.
-	*
-	* @param beanIdentifier the Spring bean ID for this bean
-	*/
 	@Override
-	public void setBeanIdentifier(java.lang.String beanIdentifier) {
-		_wordsService.setBeanIdentifier(beanIdentifier);
+	public java.util.List<java.lang.String> getSuggestions(
+		java.lang.String word) throws java.lang.Exception {
+		return _wordsService.getSuggestions(word);
 	}
 
 	@Override
@@ -56,16 +61,14 @@ public class WordsServiceWrapper implements WordsService,
 		return _wordsService.invokeMethod(name, parameterTypes, arguments);
 	}
 
+	/**
+	* Sets the Spring bean ID for this bean.
+	*
+	* @param beanIdentifier the Spring bean ID for this bean
+	*/
 	@Override
-	public java.util.List<java.lang.String> checkSpelling(java.lang.String text)
-		throws java.lang.Exception {
-		return _wordsService.checkSpelling(text);
-	}
-
-	@Override
-	public java.util.List<java.lang.String> getSuggestions(
-		java.lang.String word) throws java.lang.Exception {
-		return _wordsService.getSuggestions(word);
+	public void setBeanIdentifier(java.lang.String beanIdentifier) {
+		_wordsService.setBeanIdentifier(beanIdentifier);
 	}
 
 	/**
