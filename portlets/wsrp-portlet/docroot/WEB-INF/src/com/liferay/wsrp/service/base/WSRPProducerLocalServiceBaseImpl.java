@@ -14,14 +14,19 @@
 
 package com.liferay.wsrp.service.base;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.bean.IdentifiableBean;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -36,6 +41,12 @@ import com.liferay.portal.service.persistence.GroupPersistence;
 import com.liferay.portal.service.persistence.LayoutPersistence;
 import com.liferay.portal.service.persistence.UserPersistence;
 import com.liferay.portal.util.PortalUtil;
+
+import com.liferay.portlet.exportimport.lar.ExportImportHelperUtil;
+import com.liferay.portlet.exportimport.lar.ManifestSummary;
+import com.liferay.portlet.exportimport.lar.PortletDataContext;
+import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
+import com.liferay.portlet.exportimport.lar.StagedModelType;
 
 import com.liferay.wsrp.model.WSRPProducer;
 import com.liferay.wsrp.service.WSRPProducerLocalService;
@@ -61,6 +72,7 @@ import javax.sql.DataSource;
  * @see com.liferay.wsrp.service.WSRPProducerLocalServiceUtil
  * @generated
  */
+@ProviderType
 public abstract class WSRPProducerLocalServiceBaseImpl
 	extends BaseLocalServiceImpl implements WSRPProducerLocalService,
 		IdentifiableBean {
@@ -75,12 +87,10 @@ public abstract class WSRPProducerLocalServiceBaseImpl
 	 *
 	 * @param wsrpProducer the w s r p producer
 	 * @return the w s r p producer that was added
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public WSRPProducer addWSRPProducer(WSRPProducer wsrpProducer)
-		throws SystemException {
+	public WSRPProducer addWSRPProducer(WSRPProducer wsrpProducer) {
 		wsrpProducer.setNew(true);
 
 		return wsrpProducerPersistence.update(wsrpProducer);
@@ -103,12 +113,11 @@ public abstract class WSRPProducerLocalServiceBaseImpl
 	 * @param wsrpProducerId the primary key of the w s r p producer
 	 * @return the w s r p producer that was removed
 	 * @throws PortalException if a w s r p producer with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public WSRPProducer deleteWSRPProducer(long wsrpProducerId)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return wsrpProducerPersistence.remove(wsrpProducerId);
 	}
 
@@ -118,12 +127,11 @@ public abstract class WSRPProducerLocalServiceBaseImpl
 	 * @param wsrpProducer the w s r p producer
 	 * @return the w s r p producer that was removed
 	 * @throws PortalException
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public WSRPProducer deleteWSRPProducer(WSRPProducer wsrpProducer)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return wsrpProducerPersistence.remove(wsrpProducer);
 	}
 
@@ -140,12 +148,9 @@ public abstract class WSRPProducerLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
 		return wsrpProducerPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -160,12 +165,10 @@ public abstract class WSRPProducerLocalServiceBaseImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end) {
 		return wsrpProducerPersistence.findWithDynamicQuery(dynamicQuery,
 			start, end);
 	}
@@ -182,62 +185,42 @@ public abstract class WSRPProducerLocalServiceBaseImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator orderByComparator) throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end, OrderByComparator<T> orderByComparator) {
 		return wsrpProducerPersistence.findWithDynamicQuery(dynamicQuery,
 			start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
 		return wsrpProducerPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) throws SystemException {
+		Projection projection) {
 		return wsrpProducerPersistence.countWithDynamicQuery(dynamicQuery,
 			projection);
 	}
 
 	@Override
-	public WSRPProducer fetchWSRPProducer(long wsrpProducerId)
-		throws SystemException {
+	public WSRPProducer fetchWSRPProducer(long wsrpProducerId) {
 		return wsrpProducerPersistence.fetchByPrimaryKey(wsrpProducerId);
-	}
-
-	/**
-	 * Returns the w s r p producer with the matching UUID and company.
-	 *
-	 * @param uuid the w s r p producer's UUID
-	 * @param  companyId the primary key of the company
-	 * @return the matching w s r p producer, or <code>null</code> if a matching w s r p producer could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public WSRPProducer fetchWSRPProducerByUuidAndCompanyId(String uuid,
-		long companyId) throws SystemException {
-		return wsrpProducerPersistence.fetchByUuid_C_First(uuid, companyId, null);
 	}
 
 	/**
@@ -246,11 +229,10 @@ public abstract class WSRPProducerLocalServiceBaseImpl
 	 * @param uuid the w s r p producer's UUID
 	 * @param groupId the primary key of the group
 	 * @return the matching w s r p producer, or <code>null</code> if a matching w s r p producer could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public WSRPProducer fetchWSRPProducerByUuidAndGroupId(String uuid,
-		long groupId) throws SystemException {
+		long groupId) {
 		return wsrpProducerPersistence.fetchByUUID_G(uuid, groupId);
 	}
 
@@ -260,33 +242,130 @@ public abstract class WSRPProducerLocalServiceBaseImpl
 	 * @param wsrpProducerId the primary key of the w s r p producer
 	 * @return the w s r p producer
 	 * @throws PortalException if a w s r p producer with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public WSRPProducer getWSRPProducer(long wsrpProducerId)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return wsrpProducerPersistence.findByPrimaryKey(wsrpProducerId);
 	}
 
 	@Override
+	public ActionableDynamicQuery getActionableDynamicQuery() {
+		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
+
+		actionableDynamicQuery.setBaseLocalService(com.liferay.wsrp.service.WSRPProducerLocalServiceUtil.getService());
+		actionableDynamicQuery.setClass(WSRPProducer.class);
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("wsrpProducerId");
+
+		return actionableDynamicQuery;
+	}
+
+	protected void initActionableDynamicQuery(
+		ActionableDynamicQuery actionableDynamicQuery) {
+		actionableDynamicQuery.setBaseLocalService(com.liferay.wsrp.service.WSRPProducerLocalServiceUtil.getService());
+		actionableDynamicQuery.setClass(WSRPProducer.class);
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("wsrpProducerId");
+	}
+
+	@Override
+	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
+		final PortletDataContext portletDataContext) {
+		final ExportActionableDynamicQuery exportActionableDynamicQuery = new ExportActionableDynamicQuery() {
+				@Override
+				public long performCount() throws PortalException {
+					ManifestSummary manifestSummary = portletDataContext.getManifestSummary();
+
+					StagedModelType stagedModelType = getStagedModelType();
+
+					long modelAdditionCount = super.performCount();
+
+					manifestSummary.addModelAdditionCount(stagedModelType,
+						modelAdditionCount);
+
+					long modelDeletionCount = ExportImportHelperUtil.getModelDeletionCount(portletDataContext,
+							stagedModelType);
+
+					manifestSummary.addModelDeletionCount(stagedModelType,
+						modelDeletionCount);
+
+					return modelAdditionCount;
+				}
+			};
+
+		initActionableDynamicQuery(exportActionableDynamicQuery);
+
+		exportActionableDynamicQuery.setAddCriteriaMethod(new ActionableDynamicQuery.AddCriteriaMethod() {
+				@Override
+				public void addCriteria(DynamicQuery dynamicQuery) {
+					portletDataContext.addDateRangeCriteria(dynamicQuery,
+						"modifiedDate");
+				}
+			});
+
+		exportActionableDynamicQuery.setCompanyId(portletDataContext.getCompanyId());
+
+		exportActionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod<WSRPProducer>() {
+				@Override
+				public void performAction(WSRPProducer wsrpProducer)
+					throws PortalException {
+					StagedModelDataHandlerUtil.exportStagedModel(portletDataContext,
+						wsrpProducer);
+				}
+			});
+		exportActionableDynamicQuery.setStagedModelType(new StagedModelType(
+				PortalUtil.getClassNameId(WSRPProducer.class.getName())));
+
+		return exportActionableDynamicQuery;
+	}
+
+	/**
+	 * @throws PortalException
+	 */
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException {
+		return wsrpProducerLocalService.deleteWSRPProducer((WSRPProducer)persistedModel);
+	}
+
+	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return wsrpProducerPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
 	/**
-	 * Returns the w s r p producer with the matching UUID and company.
+	 * Returns all the w s r p producers matching the UUID and company.
 	 *
-	 * @param uuid the w s r p producer's UUID
-	 * @param  companyId the primary key of the company
-	 * @return the matching w s r p producer
-	 * @throws PortalException if a matching w s r p producer could not be found
-	 * @throws SystemException if a system exception occurred
+	 * @param uuid the UUID of the w s r p producers
+	 * @param companyId the primary key of the company
+	 * @return the matching w s r p producers, or an empty list if no matches were found
 	 */
 	@Override
-	public WSRPProducer getWSRPProducerByUuidAndCompanyId(String uuid,
-		long companyId) throws PortalException, SystemException {
-		return wsrpProducerPersistence.findByUuid_C_First(uuid, companyId, null);
+	public List<WSRPProducer> getWSRPProducersByUuidAndCompanyId(String uuid,
+		long companyId) {
+		return wsrpProducerPersistence.findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of w s r p producers matching the UUID and company.
+	 *
+	 * @param uuid the UUID of the w s r p producers
+	 * @param companyId the primary key of the company
+	 * @param start the lower bound of the range of w s r p producers
+	 * @param end the upper bound of the range of w s r p producers (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the range of matching w s r p producers, or an empty list if no matches were found
+	 */
+	@Override
+	public List<WSRPProducer> getWSRPProducersByUuidAndCompanyId(String uuid,
+		long companyId, int start, int end,
+		OrderByComparator<WSRPProducer> orderByComparator) {
+		return wsrpProducerPersistence.findByUuid_C(uuid, companyId, start,
+			end, orderByComparator);
 	}
 
 	/**
@@ -296,11 +375,10 @@ public abstract class WSRPProducerLocalServiceBaseImpl
 	 * @param groupId the primary key of the group
 	 * @return the matching w s r p producer
 	 * @throws PortalException if a matching w s r p producer could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public WSRPProducer getWSRPProducerByUuidAndGroupId(String uuid,
-		long groupId) throws PortalException, SystemException {
+		long groupId) throws PortalException {
 		return wsrpProducerPersistence.findByUUID_G(uuid, groupId);
 	}
 
@@ -314,11 +392,9 @@ public abstract class WSRPProducerLocalServiceBaseImpl
 	 * @param start the lower bound of the range of w s r p producers
 	 * @param end the upper bound of the range of w s r p producers (not inclusive)
 	 * @return the range of w s r p producers
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<WSRPProducer> getWSRPProducers(int start, int end)
-		throws SystemException {
+	public List<WSRPProducer> getWSRPProducers(int start, int end) {
 		return wsrpProducerPersistence.findAll(start, end);
 	}
 
@@ -326,10 +402,9 @@ public abstract class WSRPProducerLocalServiceBaseImpl
 	 * Returns the number of w s r p producers.
 	 *
 	 * @return the number of w s r p producers
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getWSRPProducersCount() throws SystemException {
+	public int getWSRPProducersCount() {
 		return wsrpProducerPersistence.countAll();
 	}
 
@@ -338,12 +413,10 @@ public abstract class WSRPProducerLocalServiceBaseImpl
 	 *
 	 * @param wsrpProducer the w s r p producer
 	 * @return the w s r p producer that was updated
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public WSRPProducer updateWSRPProducer(WSRPProducer wsrpProducer)
-		throws SystemException {
+	public WSRPProducer updateWSRPProducer(WSRPProducer wsrpProducer) {
 		return wsrpProducerPersistence.update(wsrpProducer);
 	}
 
@@ -428,7 +501,7 @@ public abstract class WSRPProducerLocalServiceBaseImpl
 	 *
 	 * @return the w s r p producer local service
 	 */
-	public com.liferay.wsrp.service.WSRPProducerLocalService getWSRPProducerLocalService() {
+	public WSRPProducerLocalService getWSRPProducerLocalService() {
 		return wsrpProducerLocalService;
 	}
 
@@ -438,7 +511,7 @@ public abstract class WSRPProducerLocalServiceBaseImpl
 	 * @param wsrpProducerLocalService the w s r p producer local service
 	 */
 	public void setWSRPProducerLocalService(
-		com.liferay.wsrp.service.WSRPProducerLocalService wsrpProducerLocalService) {
+		WSRPProducerLocalService wsrpProducerLocalService) {
 		this.wsrpProducerLocalService = wsrpProducerLocalService;
 	}
 
@@ -792,7 +865,7 @@ public abstract class WSRPProducerLocalServiceBaseImpl
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) throws SystemException {
+	protected void runSQL(String sql) {
 		try {
 			DataSource dataSource = wsrpProducerPersistence.getDataSource();
 
@@ -820,7 +893,7 @@ public abstract class WSRPProducerLocalServiceBaseImpl
 	@BeanReference(type = WSRPConsumerPortletPersistence.class)
 	protected WSRPConsumerPortletPersistence wsrpConsumerPortletPersistence;
 	@BeanReference(type = com.liferay.wsrp.service.WSRPProducerLocalService.class)
-	protected com.liferay.wsrp.service.WSRPProducerLocalService wsrpProducerLocalService;
+	protected WSRPProducerLocalService wsrpProducerLocalService;
 	@BeanReference(type = WSRPProducerPersistence.class)
 	protected WSRPProducerPersistence wsrpProducerPersistence;
 	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)

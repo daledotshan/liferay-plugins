@@ -76,15 +76,17 @@ else {
 	<ul class="directory-list"></ul>
 
 	<aui:button-row>
-		<div class="directory-navigation buttons-left">
+		<div class="buttons-left directory-navigation">
 			<span class="page-indicator">
-				<%= LanguageUtil.format(pageContext, "page-x-of-x", new String[] {"<span class=\"current\">1</span>", "<span class=\"total\">" + String.valueOf((int)Math.ceil(groupsCount / (float)maxResultSize)) + "</span>"}, false) %>
+				<%= LanguageUtil.format(request, "page-x-of-x", new String[] {"<span class=\"current\">1</span>", "<span class=\"total\">" + String.valueOf((int)Math.ceil(groupsCount / (float)maxResultSize)) + "</span>"}, false) %>
 			</span>
 		</div>
 	</aui:button-row>
 </div>
 
 <aui:script use="datatype-number,liferay-so-site-list">
+	var Lang = A.Lang;
+
 	var directoryContainer = A.one('#<portlet:namespace />directory');
 
 	var navigationContainer = directoryContainer.all('.directory-navigation');
@@ -109,7 +111,7 @@ else {
 					<portlet:namespace />keywords: query,
 					<portlet:namespace />searchTab: sitesTabsSelect.get('value'),
 					<portlet:namespace />start: 0
-				}
+				};
 			},
 			resultTextLocator: function(response) {
 				var result = '';
@@ -132,10 +134,10 @@ else {
 	directoryList.sendRequest();
 
 	var updateDirectoryList = function(event) {
-		var data = A.JSON.parse(event.data.responseText);
+		var data = JSON.parse(event.data.responseText);
 
-		var results = data.sites;
 		var count = data.count;
+		var results = data.sites;
 
 		var options = data.options;
 
@@ -143,18 +145,17 @@ else {
 
 		if (results.length == 0) {
 			buffer.push(
-				'<li class="empty"><liferay-ui:message key="there-are-no-results" unicode="<%= true %>" /></li>'
+				'<li class="empty"><liferay-ui:message key="there-are-no-results" /></li>'
 			);
 		}
 		else {
 			var getSiteActionHtml = function(actionClassNames, actionLinkClassName, actionTitle, actionURL) {
-				var siteActionTemplate =
-					'<span class="{actionClassNames}" title="{actionTitle}">' +
+				var siteActionTemplate = '<span class="{actionClassNames}" title="{actionTitle}">' +
 						'<a class="{actionLinkClassName}" href="{actionURL}">' +
 						'</a>' +
 					'</span>';
 
-				return A.Lang.sub(
+				return Lang.sub(
 					siteActionTemplate,
 					{
 						actionClassNames: actionClassNames,
@@ -165,8 +166,7 @@ else {
 				);
 			};
 
-			var siteTemplate =
-				'<li class="{classNames}">' +
+			var siteTemplate = '<li class="{classNames}">' +
 					'{favoriteHTML}' +
 					'{joinHTML}' +
 					'{leaveHTML}' +
@@ -174,12 +174,11 @@ else {
 					'{requestedHTML}' +
 					'{deleteHTML}' +
 					'<span class="name">{siteName}</span>' +
-					'<span class="description">{siteDescription}</span>'
+					'<span class="description">{siteDescription}</span>' +
 				'</li>';
 
 			buffer.push(
-				A.Array.map(
-					results,
+				results.map(
 					function(result, index) {
 						var classNames = [];
 						var joinHTML = '';
@@ -200,25 +199,23 @@ else {
 
 						if (result.deleteURL) {
 							if (result.deleteURL == '<%= StringPool.FALSE %>') {
-								deleteHTML = getSiteActionHtml('delete', 'disabled', Liferay.Language.get("you-cannot-delete-the-current-site"), '#')
+								deleteHTML = getSiteActionHtml('delete', 'disabled', '<liferay-ui:message key="you-cannot-delete-the-current-site" />', '#');
 							}
 							else {
-								deleteHTML = getSiteActionHtml('action delete', 'delete-site', Liferay.Language.get("delete-site"), result.deleteURL);
+								deleteHTML = getSiteActionHtml('action delete', 'delete-site', '<liferay-ui:message key="delete-site" />', result.deleteURL);
 							}
 						}
 
 						var favoriteHTML;
 
 						if (result.favoriteURL == '<%= StringPool.BLANK %>') {
-							favoriteHTML = getSiteActionHtml('favorite', 'disabled', Liferay.Language.get("you-must-be-a-member-of-the-site-to-add-to-favorites"), '#');
+							favoriteHTML = getSiteActionHtml('favorite', 'disabled', '<liferay-ui:message key="you-must-be-a-member-of-the-site-to-add-to-favorites" />', '#');
+						}
+						else if (result.favoriteURL) {
+							favoriteHTML = getSiteActionHtml('action favorite', '', '<liferay-ui:message key="add-to-favorites" />', result.favoriteURL);
 						}
 						else {
-							if (result.favoriteURL) {
-								favoriteHTML = getSiteActionHtml('action favorite', '', Liferay.Language.get("add-to-favorites"), result.favoriteURL);
-							}
-							else {
-								favoriteHTML = getSiteActionHtml('action unfavorite', '', Liferay.Language.get("remove-from-favorites"), result.unfavoriteURL);
-							}
+							favoriteHTML = getSiteActionHtml('action unfavorite', '', '<liferay-ui:message key="remove-from-favorites" />', result.unfavoriteURL);
 						}
 
 						var name = result.name;
@@ -240,23 +237,23 @@ else {
 
 						if (leaveURLOnly) {
 							if (result.leaveURL) {
-								leaveHTML = getSiteActionHtml('action leave', 'leave-site', Liferay.Language.get("leave-site"), result.leaveURL)
+								leaveHTML = getSiteActionHtml('action leave', 'leave-site', '<liferay-ui:message key="leave-site" />', result.leaveURL);
 							}
 							else {
-								leaveHTML = getSiteActionHtml('action leave', 'disabled', Liferay.Language.get("you-cannot-leave-the-site-as-a-user-group-member-or-organization-member"), '#');
+								leaveHTML = getSiteActionHtml('action leave', 'disabled', '<liferay-ui:message key="you-cannot-leave-the-site-as-a-user-group-member-or-organization-member" />', '#');
 							}
 						}
 
-						return A.Lang.sub(
+						return Lang.sub(
 							siteTemplate,
 							{
 								classNames: classNames.join(' '),
 								deleteHTML: deleteHTML,
 								favoriteHTML: favoriteHTML,
-								joinHTML: (result.joinURL ? getSiteActionHtml('action join', 'join-site', Liferay.Language.get("join-site"), result.joinURL) : ''),
+								joinHTML: result.joinURL ? getSiteActionHtml('action join', 'join-site', '<liferay-ui:message key="join-site" />', result.joinURL) : '',
 								leaveHTML: leaveHTML,
-								requestHTML: (result.requestUrl ? getSiteActionHtml('action request', 'request-site', Liferay.Language.get("request-membership"), result.requestUrl) : ''),
-								requestedHTML: (result.membershipRequested ? getSiteActionHtml('action requested', '', Liferay.Language.get("membership-requested"), '#') : ''),
+								requestedHTML: result.membershipRequested ? getSiteActionHtml('action requested', '', '<liferay-ui:message key="membership-requested" />', '#') : '',
+								requestHTML: result.requestUrl ? getSiteActionHtml('action request', 'request-site', '<liferay-ui:message key="request-membership" />', result.requestUrl) : '',
 								siteDescription: result.description,
 								siteName: name
 							}
@@ -268,8 +265,8 @@ else {
 
 		this._listNode.html(buffer.join(''));
 
-		var currentPage = Math.floor(options.start/<%= maxResultSize %>) + 1;
-		var totalPage = Math.ceil(count/<%= maxResultSize %>);
+		var currentPage = Math.floor(options.start / <%= maxResultSize %>) + 1;
+		var totalPage = Math.ceil(count / <%= maxResultSize %>);
 
 		currentPageNode.html(currentPage);
 		totalPageNode.html(totalPage);
@@ -293,6 +290,7 @@ else {
 
 	var getRequestTemplate = function(targetPage) {
 		var start = (targetPage - 1) * <%= maxResultSize %>;
+
 		var end = start + <%= maxResultSize %>;
 
 		return function(query) {
@@ -302,7 +300,7 @@ else {
 				<portlet:namespace />keywords: query,
 				<portlet:namespace />searchTab: sitesTabsSelect.get('value'),
 				<portlet:namespace />start: start
-			}
+			};
 		};
 	};
 
@@ -353,7 +351,7 @@ else {
 
 			var currentTargetClass = event.currentTarget.getAttribute('class');
 
-			if ((currentTargetClass == 'delete-site') || (currentTargetClass == "leave-site") || (currentTargetClass == "join-site") || (currentTargetClass == "request-site")) {
+			if ((currentTargetClass == 'delete-site') || (currentTargetClass == 'leave-site') || (currentTargetClass == 'join-site') || (currentTargetClass == 'request-site')) {
 				var confirmMessage = '';
 
 				var siteAction = '';
@@ -366,23 +364,23 @@ else {
 					siteName = siteNode.one('.name');
 				}
 
-				var unescapedSiteName = Liferay.Util.unescapeHTML(siteName.getContent());
+				var unescapedSiteName = Lang.String.unescapeHTML(siteName.getContent());
 
-				if (currentTargetClass == "leave-site") {
-					confirmMessage = '<%= LanguageUtil.format(pageContext, "are-you-sure-you-want-to-leave-x", "' + unescapedSiteName + '", false) %>';
-					siteAction = '<%= LanguageUtil.format(pageContext, "you-left-x", new String[] {"' + unescapedSiteName + '"}, false) %>';
+				if (currentTargetClass == 'leave-site') {
+					confirmMessage = Lang.sub('<liferay-ui:message key="are-you-sure-you-want-to-leave-x" />', [unescapedSiteName]);
+					siteAction = Lang.sub('<liferay-ui:message key="you-left-x" />', [unescapedSiteName]);
 				}
-				else if (currentTargetClass == "join-site") {
-					confirmMessage = '<%= LanguageUtil.format(pageContext, "are-you-sure-you-want-to-join-x", "' + unescapedSiteName + '", false) %>';
-					siteAction = '<%= LanguageUtil.format(pageContext, "you-joined-x", new String[] {"' + unescapedSiteName + '"}, false) %>';
+				else if (currentTargetClass == 'join-site') {
+					confirmMessage = Lang.sub('<liferay-ui:message key="are-you-sure-you-want-to-join-x" />', [unescapedSiteName]);
+					siteAction = Lang.sub('<liferay-ui:message key="you-joined-x" />', [unescapedSiteName]);
 				}
-				else if (currentTargetClass == "request-site") {
-					confirmMessage = '<%= LanguageUtil.format(pageContext, "this-is-a-restricted-site-do-you-want-to-send-a-membership-request-to-x", "' + unescapedSiteName + '", false) %>';
-					siteAction = '<%= LanguageUtil.get(pageContext, "your-membership-request-has-been-sent") %>';
+				else if (currentTargetClass == 'request-site') {
+					confirmMessage = Lang.sub('<liferay-ui:message key="this-is-a-restricted-site-do-you-want-to-send-a-membership-request-to-x" />', [unescapedSiteName]);
+					siteAction = '<liferay-ui:message key="your-membership-request-has-been-sent" />';
 				}
 				else {
-					confirmMessage = '<%= LanguageUtil.format(pageContext, "are-you-sure-you-want-to-delete-x", "' + unescapedSiteName + '", false) %>';
-					siteAction = '<%= LanguageUtil.format(pageContext, "you-deleted-x", new String[] {"' + unescapedSiteName + '"}, false) %>';
+					confirmMessage = Lang.sub('<liferay-ui:message key="are-you-sure-you-want-to-delete-x" />', [unescapedSiteName]);
+					siteAction = Lang.sub('<liferay-ui:message key="you-deleted-x" />', [unescapedSiteName]);
 				}
 
 				if (confirm(confirmMessage)) {
@@ -395,7 +393,7 @@ else {
 
 									var updateSites = function() {
 										Liferay.SO.Sites.updateSites(false, keywordsInput.get('value'), getRequestTemplate(currentPage));
-									}
+									};
 
 									setTimeout(updateSites, 2000);
 

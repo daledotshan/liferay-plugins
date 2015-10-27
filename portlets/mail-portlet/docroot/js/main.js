@@ -70,13 +70,13 @@ AUI.add(
 								folderId: folderId
 							}
 						),
-						dataType: 'json',
+						dataType: 'JSON',
 						method: 'POST',
 						on: {
 							success: function(event, id, obj) {
 								var responseData = this.get('responseData');
 
-								if ((responseData.status != 'success') || (responseData.value == 'false')) {
+								if (responseData.status != 'success' || responseData.value == 'false') {
 									return;
 								}
 
@@ -105,7 +105,7 @@ AUI.add(
 								messageIds: messageIds
 							}
 						),
-						dataType: 'json',
+						dataType: 'JSON',
 						method: 'POST',
 						on: {
 							failure: function(event, id, obj) {
@@ -169,7 +169,7 @@ AUI.add(
 								value: value
 							}
 						),
-						dataType: 'json',
+						dataType: 'JSON',
 						method: 'POST',
 						on: {
 							failure: function(event, id, obj) {
@@ -185,22 +185,6 @@ AUI.add(
 						}
 					}
 				);
-			},
-
-			loadAccounts: function(accountId) {
-				var instance = this;
-
-				instance.accountsContainer.io.set(
-					'data',
-					Liferay.Util.ns(
-						instance.namespace,
-						{
-							accountId: accountId
-						}
-					)
-				);
-
-				instance.accountsContainer.io.start();
 			},
 
 			loadAccount: function(accountId, inboxFolderId) {
@@ -242,6 +226,22 @@ AUI.add(
 				);
 
 				instance._hideWindow();
+			},
+
+			loadAccounts: function(accountId) {
+				var instance = this;
+
+				instance.accountsContainer.io.set(
+					'data',
+					Liferay.Util.ns(
+						instance.namespace,
+						{
+							accountId: accountId
+						}
+					)
+				);
+
+				instance.accountsContainer.io.start();
 			},
 
 			loadCompose: function(accountId, messageId, messageType, replyMessageId) {
@@ -321,10 +321,10 @@ AUI.add(
 						instance.namespace,
 						{
 							folderId: folderId,
+							keywords: keywords,
 							messageNumber: messageNumber,
 							orderByField: orderByField,
-							orderByType: orderByType,
-							keywords: keywords
+							orderByType: orderByType
 						}
 					)
 				);
@@ -380,12 +380,13 @@ AUI.add(
 					themeDisplay.getLayoutURL() + '/-/mail/move_messages',
 					{
 						data: Liferay.Util.ns(
-							instance.namespace, {
+							instance.namespace,
+							{
 								folderId: folderId,
 								messageIds: messageIds
 							}
 						),
-						dataType: 'json',
+						dataType: 'JSON',
 						method: 'POST',
 						on: {
 							failure: function(event, id, obj) {
@@ -541,9 +542,6 @@ AUI.add(
 				instance.messagesContainer.plug(
 					A.Plugin.IO,
 					{
-						autoLoad: false,
-						method: 'POST',
-						uri: themeDisplay.getLayoutURL() + '/-/mail/view_messages',
 						after: {
 							success: function() {
 								instance.messagesContainer.all('.flag-messages').on(
@@ -553,8 +551,8 @@ AUI.add(
 
 										var currentTarget = event.currentTarget;
 
-										var flagType = currentTarget.getData('flagType');
 										var flagToggle = currentTarget.getData('flagToggle');
+										var flagType = currentTarget.getData('flagType');
 
 										instance.flagMessages(flagType, flagToggle, messageIds);
 									}
@@ -563,7 +561,7 @@ AUI.add(
 								instance.messagesContainer.all('.move-messages').on(
 									'click',
 									function(event) {
-										var folderId = A.Lang.String.trim(event.currentTarget.text());
+										var folderId = event.currentTarget.text().trim();
 
 										var messageIds = instance._getSelectedMessageIds();
 
@@ -571,7 +569,10 @@ AUI.add(
 									}
 								);
 							}
-						}
+						},
+						autoLoad: false,
+						method: 'POST',
+						uri: themeDisplay.getLayoutURL() + '/-/mail/view_messages'
 					}
 				);
 
@@ -608,10 +609,10 @@ AUI.add(
 
 						if (!li || !li.hasClass('disabled')) {
 							var folderId = link.getData('folderId');
+							var keywords = link.getData('keywords');
 							var messageNumber = link.getData('messageNumber');
 							var orderByField = link.getData('orderByField');
 							var orderByType = link.getData('orderByType');
-							var keywords = link.getData('keywords');
 
 							instance.loadMessage(folderId, messageNumber, orderByField, orderByType, keywords);
 						}
@@ -626,7 +627,7 @@ AUI.add(
 
 						var messageId = link.getData('messageId');
 
-						instance.loadCompose(instance.accountId, messageId, "edit", 0);
+						instance.loadCompose(instance.accountId, messageId, 'edit', 0);
 					},
 					'.draft-link'
 				);
@@ -656,10 +657,10 @@ AUI.add(
 
 						if (!li || !li.hasClass('disabled')) {
 							var folderId = link.getData('folderId');
-							var pageNumber = link.getData('pageNumber');
+							var keywords = link.getData('keywords');
 							var orderByField = link.getData('orderByField');
 							var orderByType = link.getData('orderByType');
-							var keywords = link.getData('keywords');
+							var pageNumber = link.getData('pageNumber');
 
 							instance.loadMessages(folderId, pageNumber, orderByField, orderByType, keywords);
 						}

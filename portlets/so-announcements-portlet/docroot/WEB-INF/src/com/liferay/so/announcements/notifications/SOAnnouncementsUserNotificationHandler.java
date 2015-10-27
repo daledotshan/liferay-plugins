@@ -22,12 +22,12 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.notifications.BaseUserNotificationHandler;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.util.HtmlUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserNotificationEvent;
+import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.UserNotificationEventLocalServiceUtil;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -73,20 +73,19 @@ public class SOAnnouncementsUserNotificationHandler
 			return null;
 		}
 
-		StringBundler sb = new StringBundler(5);
+		String title = serviceContext.translate(
+			"x-sent-a-new-announcement",
+			HtmlUtil.escape(
+				PortalUtil.getUserName(
+					announcementEntry.getUserId(), StringPool.BLANK)));
 
-		sb.append("<div class=\"title\">");
-		sb.append(
-			serviceContext.translate(
-				"x-sent-a-new-announcement",
+		return StringUtil.replace(
+			getBodyTemplate(), new String[] {"[$BODY$]", "[$TITLE$]"},
+			new String[] {
 				HtmlUtil.escape(
-					PortalUtil.getUserName(
-						announcementEntry.getUserId(), StringPool.BLANK))));
-		sb.append("</div><div class=\"body\">");
-		sb.append(StringUtil.shorten(announcementEntry.getContent(), 50));
-		sb.append("</div>");
-
-		return sb.toString();
+					StringUtil.shorten(announcementEntry.getTitle(), 70)),
+				title
+			});
 	}
 
 	@Override
@@ -111,11 +110,21 @@ public class SOAnnouncementsUserNotificationHandler
 			return null;
 		}
 
-		ThemeDisplay themeDisplay = serviceContext.getThemeDisplay();
+		Group group = null;
 
-		User user = themeDisplay.getUser();
+		String entryClassName = announcementEntry.getClassName();
 
-		Group group = user.getGroup();
+		if (entryClassName.equals(Group.class.getName())) {
+			group = GroupLocalServiceUtil.getGroup(
+				announcementEntry.getClassPK());
+		}
+		else {
+			ThemeDisplay themeDisplay = serviceContext.getThemeDisplay();
+
+			User user = themeDisplay.getUser();
+
+			group = user.getGroup();
+		}
 
 		long portletPlid = PortalUtil.getPlidFromPortletId(
 			group.getGroupId(), true, PortletKeys.SO_ANNOUNCEMENTS);

@@ -49,14 +49,8 @@ catch (NoSuchRoleException nsre) {
 			Group group = user.getGroup();
 			%>
 
-			<liferay-portlet:actionURL portletName="<%= PortletKeys.SITE_REDIRECTOR %>" var="dashboardURL" windowState="<%= LiferayWindowState.NORMAL.toString() %>">
-				<portlet:param name="struts_action" value="/my_sites/view" />
-				<portlet:param name="groupId" value="<%= String.valueOf(group.getGroupId()) %>" />
-				<portlet:param name="privateLayout" value="<%= Boolean.TRUE.toString() %>" />
-			</liferay-portlet:actionURL>
-
-			<a class="so-logo" href="<%= dashboardURL %>">
-				<img alt="<liferay-ui:message key="social-office" /> <liferay-ui:message key="logo" />" height="32" src="<%= PortalUtil.getPathContext(request) + "/user_bar/images/so_logo.png" %>" width="32" />
+			<a class="so-logo" href="<%= group.getDisplayURL(themeDisplay, true) %>">
+				<img alt="<liferay-ui:message escapeAttribute="<%= true %>" key="social-office" /> <liferay-ui:message escapeAttribute="<%= true %>" key="logo" />" height="32" src='<%= PortalUtil.getPathContext(request) + "/user_bar/images/so_logo.png" %>' width="32" />
 			</a>
 
 			<nav>
@@ -87,78 +81,61 @@ catch (NoSuchRoleException nsre) {
 			</nav>
 		</div>
 	</liferay-util:body-top>
-</c:if>
 
-<aui:script>
-	function <portlet:namespace />openWindow() {
-		<liferay-portlet:renderURL portletName="<%= PortletKeys.SO_SITES %>" var="viewSitesURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
-			<portlet:param name="mvcPath" value="/sites/view_sites.jsp" />
-		</liferay-portlet:renderURL>
-
-		Liferay.Util.openWindow(
-			{
-				dialog: {
-					align: {
-						node: null,
-						points: ['tc', 'tc']
+	<aui:script>
+		function <portlet:namespace />openWindow() {
+			Liferay.Util.openWindow(
+				{
+					dialog: {
+						align: {
+							node: null,
+							points: ['tc', 'tc']
+						},
+						constrain2view: true,
+						cssClass: 'so-portlet-sites-dialog',
+						modal: true,
+						resizable: false,
+						width: 650
 					},
-					constrain2view: true,
-					cssClass: 'so-portlet-sites-dialog',
-					modal: true,
-					resizable: false,
-					width: 650
-				},
-				title: '<%= UnicodeLanguageUtil.get(pageContext, "sites-directory") %>',
-				uri: '<%= viewSitesURL %>'
-			}
-		);
-	}
-</aui:script>
+					title: '<%= UnicodeLanguageUtil.get(request, "sites-directory") %>',
 
-<aui:script use="aui-base">
-	if (!('placeholder' in document.createElement('input'))) {
-		var searchInput = A.one('#<%= PortalUtil.getPortletNamespace(PortletKeys.SO_SITES) %>name')
+					<liferay-portlet:renderURL portletName="<%= PortletKeys.SO_SITES %>" var="viewSitesURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+						<portlet:param name="mvcPath" value="/sites/view_sites.jsp" />
+					</liferay-portlet:renderURL>
 
-		if (searchInput) {
-			var placeholder = searchInput.getAttribute('placeholder');
-
-			searchInput.val(placeholder);
-
-			searchInput.on(
-				'click',
-				function(event) {
-					if (searchInput.val() == placeholder) {
-						searchInput.val('');
-					}
-				}
-			);
-
-			searchInput.on(
-				'blur',
-				function(event) {
-					if (!searchInput.val()) {
-						searchInput.val(placeholder);
-					}
+					uri: '<%= viewSitesURL %>'
 				}
 			);
 		}
-	}
+	</aui:script>
 
-	var mySites = A.one('.portlet-dockbar .my-sites');
+	<aui:script use="aui-base">
+		if (!('placeholder' in document.createElement('input'))) {
+			var searchInput = A.one('#<%= PortalUtil.getPortletNamespace(PortletKeys.SO_SITES) %>name');
 
-	if (mySites) {
-		mySites.delegate(
-			'click',
-			function(event) {
-				var sitesDirectory = mySites.one('.sites-directory');
+			if (searchInput) {
+				var placeholder = searchInput.getAttribute('placeholder');
 
-				if (!sitesDirectory) {
-					var mySitesMenu = mySites.one('.my-sites-menu');
+				searchInput.val(placeholder);
 
-					mySitesMenu.insert('<li class="sites-directory last"><a href="javascript:;" onclick="<portlet:namespace />openWindow()"><i class="icon-reorder"></i><span class="site-name"> ' + Liferay.Language.get('sites-directory') + '</span></a></li>')
-				}
-			},
-			'.dropdown-toggle'
-		);
-	}
-</aui:script>
+				searchInput.on(
+					'click',
+					function(event) {
+						if (searchInput.val() == placeholder) {
+							searchInput.val('');
+						}
+					}
+				);
+
+				searchInput.on(
+					'blur',
+					function(event) {
+						if (!searchInput.val()) {
+							searchInput.val(placeholder);
+						}
+					}
+				);
+			}
+		}
+	</aui:script>
+</c:if>

@@ -14,6 +14,9 @@
 
 package com.liferay.sync.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
@@ -34,16 +37,45 @@ import java.util.Date;
  * @see SyncDLObject
  * @generated
  */
+@ProviderType
 public class SyncDLObjectCacheModel implements CacheModel<SyncDLObject>,
 	Externalizable {
 	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof SyncDLObjectCacheModel)) {
+			return false;
+		}
+
+		SyncDLObjectCacheModel syncDLObjectCacheModel = (SyncDLObjectCacheModel)obj;
+
+		if (syncDLObjectId == syncDLObjectCacheModel.syncDLObjectId) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return HashUtil.hash(0, syncDLObjectId);
+	}
+
+	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(45);
+		StringBundler sb = new StringBundler(55);
 
 		sb.append("{syncDLObjectId=");
 		sb.append(syncDLObjectId);
 		sb.append(", companyId=");
 		sb.append(companyId);
+		sb.append(", userId=");
+		sb.append(userId);
+		sb.append(", userName=");
+		sb.append(userName);
 		sb.append(", createTime=");
 		sb.append(createTime);
 		sb.append(", modifiedTime=");
@@ -52,6 +84,8 @@ public class SyncDLObjectCacheModel implements CacheModel<SyncDLObject>,
 		sb.append(repositoryId);
 		sb.append(", parentFolderId=");
 		sb.append(parentFolderId);
+		sb.append(", treePath=");
+		sb.append(treePath);
 		sb.append(", name=");
 		sb.append(name);
 		sb.append(", extension=");
@@ -66,12 +100,16 @@ public class SyncDLObjectCacheModel implements CacheModel<SyncDLObject>,
 		sb.append(extraSettings);
 		sb.append(", version=");
 		sb.append(version);
+		sb.append(", versionId=");
+		sb.append(versionId);
 		sb.append(", size=");
 		sb.append(size);
 		sb.append(", checksum=");
 		sb.append(checksum);
 		sb.append(", event=");
 		sb.append(event);
+		sb.append(", lastPermissionChangeDate=");
+		sb.append(lastPermissionChangeDate);
 		sb.append(", lockExpirationDate=");
 		sb.append(lockExpirationDate);
 		sb.append(", lockUserId=");
@@ -95,10 +133,26 @@ public class SyncDLObjectCacheModel implements CacheModel<SyncDLObject>,
 
 		syncDLObjectImpl.setSyncDLObjectId(syncDLObjectId);
 		syncDLObjectImpl.setCompanyId(companyId);
+		syncDLObjectImpl.setUserId(userId);
+
+		if (userName == null) {
+			syncDLObjectImpl.setUserName(StringPool.BLANK);
+		}
+		else {
+			syncDLObjectImpl.setUserName(userName);
+		}
+
 		syncDLObjectImpl.setCreateTime(createTime);
 		syncDLObjectImpl.setModifiedTime(modifiedTime);
 		syncDLObjectImpl.setRepositoryId(repositoryId);
 		syncDLObjectImpl.setParentFolderId(parentFolderId);
+
+		if (treePath == null) {
+			syncDLObjectImpl.setTreePath(StringPool.BLANK);
+		}
+		else {
+			syncDLObjectImpl.setTreePath(treePath);
+		}
 
 		if (name == null) {
 			syncDLObjectImpl.setName(StringPool.BLANK);
@@ -149,6 +203,7 @@ public class SyncDLObjectCacheModel implements CacheModel<SyncDLObject>,
 			syncDLObjectImpl.setVersion(version);
 		}
 
+		syncDLObjectImpl.setVersionId(versionId);
 		syncDLObjectImpl.setSize(size);
 
 		if (checksum == null) {
@@ -163,6 +218,14 @@ public class SyncDLObjectCacheModel implements CacheModel<SyncDLObject>,
 		}
 		else {
 			syncDLObjectImpl.setEvent(event);
+		}
+
+		if (lastPermissionChangeDate == Long.MIN_VALUE) {
+			syncDLObjectImpl.setLastPermissionChangeDate(null);
+		}
+		else {
+			syncDLObjectImpl.setLastPermissionChangeDate(new Date(
+					lastPermissionChangeDate));
 		}
 
 		if (lockExpirationDate == Long.MIN_VALUE) {
@@ -206,10 +269,13 @@ public class SyncDLObjectCacheModel implements CacheModel<SyncDLObject>,
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		syncDLObjectId = objectInput.readLong();
 		companyId = objectInput.readLong();
+		userId = objectInput.readLong();
+		userName = objectInput.readUTF();
 		createTime = objectInput.readLong();
 		modifiedTime = objectInput.readLong();
 		repositoryId = objectInput.readLong();
 		parentFolderId = objectInput.readLong();
+		treePath = objectInput.readUTF();
 		name = objectInput.readUTF();
 		extension = objectInput.readUTF();
 		mimeType = objectInput.readUTF();
@@ -217,9 +283,11 @@ public class SyncDLObjectCacheModel implements CacheModel<SyncDLObject>,
 		changeLog = objectInput.readUTF();
 		extraSettings = objectInput.readUTF();
 		version = objectInput.readUTF();
+		versionId = objectInput.readLong();
 		size = objectInput.readLong();
 		checksum = objectInput.readUTF();
 		event = objectInput.readUTF();
+		lastPermissionChangeDate = objectInput.readLong();
 		lockExpirationDate = objectInput.readLong();
 		lockUserId = objectInput.readLong();
 		lockUserName = objectInput.readUTF();
@@ -233,10 +301,26 @@ public class SyncDLObjectCacheModel implements CacheModel<SyncDLObject>,
 		throws IOException {
 		objectOutput.writeLong(syncDLObjectId);
 		objectOutput.writeLong(companyId);
+		objectOutput.writeLong(userId);
+
+		if (userName == null) {
+			objectOutput.writeUTF(StringPool.BLANK);
+		}
+		else {
+			objectOutput.writeUTF(userName);
+		}
+
 		objectOutput.writeLong(createTime);
 		objectOutput.writeLong(modifiedTime);
 		objectOutput.writeLong(repositoryId);
 		objectOutput.writeLong(parentFolderId);
+
+		if (treePath == null) {
+			objectOutput.writeUTF(StringPool.BLANK);
+		}
+		else {
+			objectOutput.writeUTF(treePath);
+		}
 
 		if (name == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
@@ -287,6 +371,7 @@ public class SyncDLObjectCacheModel implements CacheModel<SyncDLObject>,
 			objectOutput.writeUTF(version);
 		}
 
+		objectOutput.writeLong(versionId);
 		objectOutput.writeLong(size);
 
 		if (checksum == null) {
@@ -303,6 +388,7 @@ public class SyncDLObjectCacheModel implements CacheModel<SyncDLObject>,
 			objectOutput.writeUTF(event);
 		}
 
+		objectOutput.writeLong(lastPermissionChangeDate);
 		objectOutput.writeLong(lockExpirationDate);
 		objectOutput.writeLong(lockUserId);
 
@@ -332,10 +418,13 @@ public class SyncDLObjectCacheModel implements CacheModel<SyncDLObject>,
 
 	public long syncDLObjectId;
 	public long companyId;
+	public long userId;
+	public String userName;
 	public long createTime;
 	public long modifiedTime;
 	public long repositoryId;
 	public long parentFolderId;
+	public String treePath;
 	public String name;
 	public String extension;
 	public String mimeType;
@@ -343,9 +432,11 @@ public class SyncDLObjectCacheModel implements CacheModel<SyncDLObject>,
 	public String changeLog;
 	public String extraSettings;
 	public String version;
+	public long versionId;
 	public long size;
 	public String checksum;
 	public String event;
+	public long lastPermissionChangeDate;
 	public long lockExpirationDate;
 	public long lockUserId;
 	public String lockUserName;
