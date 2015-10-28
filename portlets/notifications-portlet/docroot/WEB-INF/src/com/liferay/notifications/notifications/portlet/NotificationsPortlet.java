@@ -513,15 +513,15 @@ public class NotificationsPortlet extends MVCPortlet {
 				UserNotificationEventLocalServiceUtil.
 					getDeliveredUserNotificationEvents(
 						themeDisplay.getUserId(),
-						UserNotificationDeliveryConstants.TYPE_WEBSITE, true,
+						UserNotificationDeliveryConstants.TYPE_WEBSITE, false,
 						actionable, start, end);
 
 			total =
 				UserNotificationEventLocalServiceUtil.
-					getArchivedUserNotificationEventsCount(
+					getDeliveredUserNotificationEventsCount(
 						themeDisplay.getUserId(),
 						UserNotificationDeliveryConstants.TYPE_WEBSITE,
-						actionable, false);
+						false, actionable);
 		}
 		else {
 			userNotificationEvents =
