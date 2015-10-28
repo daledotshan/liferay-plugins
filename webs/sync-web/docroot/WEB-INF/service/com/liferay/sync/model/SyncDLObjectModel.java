@@ -14,8 +14,9 @@
 
 package com.liferay.sync.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.service.ServiceContext;
@@ -39,6 +40,7 @@ import java.util.Date;
  * @see com.liferay.sync.model.impl.SyncDLObjectModelImpl
  * @generated
  */
+@ProviderType
 public interface SyncDLObjectModel extends BaseModel<SyncDLObject> {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -87,6 +89,49 @@ public interface SyncDLObjectModel extends BaseModel<SyncDLObject> {
 	 * @param companyId the company ID of this sync d l object
 	 */
 	public void setCompanyId(long companyId);
+
+	/**
+	 * Returns the user ID of this sync d l object.
+	 *
+	 * @return the user ID of this sync d l object
+	 */
+	public long getUserId();
+
+	/**
+	 * Sets the user ID of this sync d l object.
+	 *
+	 * @param userId the user ID of this sync d l object
+	 */
+	public void setUserId(long userId);
+
+	/**
+	 * Returns the user uuid of this sync d l object.
+	 *
+	 * @return the user uuid of this sync d l object
+	 */
+	public String getUserUuid();
+
+	/**
+	 * Sets the user uuid of this sync d l object.
+	 *
+	 * @param userUuid the user uuid of this sync d l object
+	 */
+	public void setUserUuid(String userUuid);
+
+	/**
+	 * Returns the user name of this sync d l object.
+	 *
+	 * @return the user name of this sync d l object
+	 */
+	@AutoEscape
+	public String getUserName();
+
+	/**
+	 * Sets the user name of this sync d l object.
+	 *
+	 * @param userName the user name of this sync d l object
+	 */
+	public void setUserName(String userName);
 
 	/**
 	 * Returns the create time of this sync d l object.
@@ -143,6 +188,21 @@ public interface SyncDLObjectModel extends BaseModel<SyncDLObject> {
 	 * @param parentFolderId the parent folder ID of this sync d l object
 	 */
 	public void setParentFolderId(long parentFolderId);
+
+	/**
+	 * Returns the tree path of this sync d l object.
+	 *
+	 * @return the tree path of this sync d l object
+	 */
+	@AutoEscape
+	public String getTreePath();
+
+	/**
+	 * Sets the tree path of this sync d l object.
+	 *
+	 * @param treePath the tree path of this sync d l object
+	 */
+	public void setTreePath(String treePath);
 
 	/**
 	 * Returns the name of this sync d l object.
@@ -250,6 +310,20 @@ public interface SyncDLObjectModel extends BaseModel<SyncDLObject> {
 	public void setVersion(String version);
 
 	/**
+	 * Returns the version ID of this sync d l object.
+	 *
+	 * @return the version ID of this sync d l object
+	 */
+	public long getVersionId();
+
+	/**
+	 * Sets the version ID of this sync d l object.
+	 *
+	 * @param versionId the version ID of this sync d l object
+	 */
+	public void setVersionId(long versionId);
+
+	/**
 	 * Returns the size of this sync d l object.
 	 *
 	 * @return the size of this sync d l object
@@ -294,6 +368,20 @@ public interface SyncDLObjectModel extends BaseModel<SyncDLObject> {
 	public void setEvent(String event);
 
 	/**
+	 * Returns the last permission change date of this sync d l object.
+	 *
+	 * @return the last permission change date of this sync d l object
+	 */
+	public Date getLastPermissionChangeDate();
+
+	/**
+	 * Sets the last permission change date of this sync d l object.
+	 *
+	 * @param lastPermissionChangeDate the last permission change date of this sync d l object
+	 */
+	public void setLastPermissionChangeDate(Date lastPermissionChangeDate);
+
+	/**
 	 * Returns the lock expiration date of this sync d l object.
 	 *
 	 * @return the lock expiration date of this sync d l object
@@ -325,9 +413,8 @@ public interface SyncDLObjectModel extends BaseModel<SyncDLObject> {
 	 * Returns the lock user uuid of this sync d l object.
 	 *
 	 * @return the lock user uuid of this sync d l object
-	 * @throws SystemException if a system exception occurred
 	 */
-	public String getLockUserUuid() throws SystemException;
+	public String getLockUserUuid();
 
 	/**
 	 * Sets the lock user uuid of this sync d l object.
@@ -432,19 +519,19 @@ public interface SyncDLObjectModel extends BaseModel<SyncDLObject> {
 	public Object clone();
 
 	@Override
-	public int compareTo(SyncDLObject syncDLObject);
+	public int compareTo(com.liferay.sync.model.SyncDLObject syncDLObject);
 
 	@Override
 	public int hashCode();
 
 	@Override
-	public CacheModel<SyncDLObject> toCacheModel();
+	public CacheModel<com.liferay.sync.model.SyncDLObject> toCacheModel();
 
 	@Override
-	public SyncDLObject toEscapedModel();
+	public com.liferay.sync.model.SyncDLObject toEscapedModel();
 
 	@Override
-	public SyncDLObject toUnescapedModel();
+	public com.liferay.sync.model.SyncDLObject toUnescapedModel();
 
 	@Override
 	public String toString();
