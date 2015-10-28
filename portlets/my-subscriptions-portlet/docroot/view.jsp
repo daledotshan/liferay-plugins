@@ -24,7 +24,8 @@
 	<aui:input name="subscriptionIds" type="hidden" />
 
 	<liferay-ui:error exception="<%= NoSuchSubscriptionException.class %>" message="the-subscription-could-not-be-found" />
-	<liferay-ui:error exception="<%= PrincipalException.class %>" message="you-do-not-have-the-required-permissions" />
+
+	<liferay-ui:error-principal />
 
 	<aui:fieldset>
 		<liferay-portlet:renderURL varImpl="iteratorURL" />
@@ -98,6 +99,7 @@
 
 				<liferay-ui:search-container-column-jsp
 					align="right"
+					cssClass="entry-action"
 					path="/subscription_action.jsp"
 				/>
 			</liferay-ui:search-container-row>
@@ -143,8 +145,8 @@
 		window,
 		'<portlet:namespace />unsubscribe',
 		function() {
-			document.<portlet:namespace />fm.method = "post";
-			document.<portlet:namespace />fm.<portlet:namespace />subscriptionIds.value = Liferay.Util.listCheckedExcept(document.<portlet:namespace />fm, "<portlet:namespace />allRowIds");
+			document.<portlet:namespace />fm.method = 'post';
+			document.<portlet:namespace />fm.<portlet:namespace />subscriptionIds.value = Liferay.Util.listCheckedExcept(document.<portlet:namespace />fm, '<portlet:namespace />allRowIds');
 
 			submitForm(document.<portlet:namespace />fm);
 		},

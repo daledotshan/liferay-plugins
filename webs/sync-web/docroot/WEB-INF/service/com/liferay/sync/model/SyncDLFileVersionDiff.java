@@ -14,6 +14,9 @@
 
 package com.liferay.sync.model;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.model.PersistedModel;
 
 /**
@@ -25,6 +28,7 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.sync.model.impl.SyncDLFileVersionDiffModelImpl
  * @generated
  */
+@ProviderType
 public interface SyncDLFileVersionDiff extends SyncDLFileVersionDiffModel,
 	PersistedModel {
 	/*
@@ -32,4 +36,21 @@ public interface SyncDLFileVersionDiff extends SyncDLFileVersionDiffModel,
 	 *
 	 * Never modify this interface directly. Add methods to {@link com.liferay.sync.model.impl.SyncDLFileVersionDiffImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public static final Accessor<SyncDLFileVersionDiff, Long> SYNC_D_L_FILE_VERSION_DIFF_ID_ACCESSOR =
+		new Accessor<SyncDLFileVersionDiff, Long>() {
+			@Override
+			public Long get(SyncDLFileVersionDiff syncDLFileVersionDiff) {
+				return syncDLFileVersionDiff.getSyncDLFileVersionDiffId();
+			}
+
+			@Override
+			public Class<Long> getAttributeClass() {
+				return Long.class;
+			}
+
+			@Override
+			public Class<SyncDLFileVersionDiff> getTypeClass() {
+				return SyncDLFileVersionDiff.class;
+			}
+		};
 }

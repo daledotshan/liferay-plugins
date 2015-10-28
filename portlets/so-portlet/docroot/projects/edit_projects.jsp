@@ -38,7 +38,7 @@ int yearRangeEnd = curCal.get(Calendar.YEAR);
 
 int[] projectsEntriesIndexes = new int[projectsEntries.size()];
 
-for (int i = 0; i < projectsEntries.size() ; i++) {
+for (int i = 0; i < projectsEntries.size(); i++) {
 	projectsEntriesIndexes[i] = i;
 }
 
@@ -126,7 +126,7 @@ String namespace = PortalUtil.getPortletNamespace(PortletKeys.MY_ACCOUNT);
 						String fieldParam = "projectsEntryCurrent" + projectsEntriesIndex;
 						%>
 
-						<div class="field">
+						<div class="field project-current">
 							<label class="field-label" for="<%= namespace %><%= fieldParam %>"><liferay-ui:message key="current" /></label>
 
 							<liferay-ui:input-checkbox defaultValue="<%= current %>" param="<%= fieldParam %>" />

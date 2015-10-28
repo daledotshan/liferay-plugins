@@ -17,39 +17,43 @@
 <%@ include file="/admin/init.jsp" %>
 
 <%
-KBArticle kbArticle = (KBArticle)request.getAttribute(WebKeys.KNOWLEDGE_BASE_KB_ARTICLE);
+	KBArticle kbArticle = (KBArticle)request.getAttribute(WebKeys.KNOWLEDGE_BASE_KB_ARTICLE);
 
-List<FileEntry> attachmentsFileEntries = new ArrayList<FileEntry>();
+	List<FileEntry> attachmentsFileEntries = new ArrayList<FileEntry>();
 
-if (kbArticle != null) {
-	attachmentsFileEntries = kbArticle.getAttachmentsFileEntries();
-}
+	if (kbArticle != null) {
+		attachmentsFileEntries = kbArticle.getAttachmentsFileEntries();
+	}
 %>
 
-<c:if test="<%= attachmentsFileEntries.size() > 0 %>">
-	<div class="kb-article-attachments">
+<div class="kb-attachments">
+	<c:if test="<%= !attachmentsFileEntries.isEmpty() %>">
 
-		<%
-		for (FileEntry fileEntry : attachmentsFileEntries) {
-		%>
+		<div id="<portlet:namespace />existingAttachmentsContainer">
 
-			<div>
-				<liferay-portlet:resourceURL id="attachment" var="clipURL">
-					<portlet:param name="fileEntryId" value="<%= String.valueOf(fileEntry.getFileEntryId()) %>" />
-				</liferay-portlet:resourceURL>
+			<%
+				for (FileEntry fileEntry : attachmentsFileEntries) {
+			%>
+
+			<div id="<portlet:namespace />fileEntryIdWrapper<%= fileEntry.getFileEntryId() %>">
+
+				<%
+					String clipURL = DLUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), themeDisplay, StringPool.BLANK);
+				%>
 
 				<liferay-ui:icon
-					image="clip"
-					label="<%= true %>"
-					message='<%= fileEntry.getTitle() + " (" + TextFormatter.formatStorageSize(fileEntry.getSize(), locale) + ")" %>'
-					method="get"
-					url="<%= clipURL %>"
-				/>
+						iconCssClass="icon-paper-clip"
+						label="<%= true %>"
+						message='<%= fileEntry.getTitle() + " (" + TextFormatter.formatKB(fileEntry.getSize(), locale) + "k)" %>'
+						method="get"
+						url="<%= clipURL %>"
+						/>
 			</div>
 
-		<%
-		}
-		%>
+			<%
+				}
+			%>
 
-	</div>
-</c:if>
+		</div>
+	</c:if>
+</div>

@@ -14,6 +14,8 @@
 
 package com.liferay.sync.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -27,16 +29,20 @@ import java.util.List;
  * @see com.liferay.sync.service.http.SyncDLObjectServiceSoap
  * @generated
  */
+@ProviderType
 public class SyncDLObjectSoap implements Serializable {
 	public static SyncDLObjectSoap toSoapModel(SyncDLObject model) {
 		SyncDLObjectSoap soapModel = new SyncDLObjectSoap();
 
 		soapModel.setSyncDLObjectId(model.getSyncDLObjectId());
 		soapModel.setCompanyId(model.getCompanyId());
+		soapModel.setUserId(model.getUserId());
+		soapModel.setUserName(model.getUserName());
 		soapModel.setCreateTime(model.getCreateTime());
 		soapModel.setModifiedTime(model.getModifiedTime());
 		soapModel.setRepositoryId(model.getRepositoryId());
 		soapModel.setParentFolderId(model.getParentFolderId());
+		soapModel.setTreePath(model.getTreePath());
 		soapModel.setName(model.getName());
 		soapModel.setExtension(model.getExtension());
 		soapModel.setMimeType(model.getMimeType());
@@ -44,9 +50,11 @@ public class SyncDLObjectSoap implements Serializable {
 		soapModel.setChangeLog(model.getChangeLog());
 		soapModel.setExtraSettings(model.getExtraSettings());
 		soapModel.setVersion(model.getVersion());
+		soapModel.setVersionId(model.getVersionId());
 		soapModel.setSize(model.getSize());
 		soapModel.setChecksum(model.getChecksum());
 		soapModel.setEvent(model.getEvent());
+		soapModel.setLastPermissionChangeDate(model.getLastPermissionChangeDate());
 		soapModel.setLockExpirationDate(model.getLockExpirationDate());
 		soapModel.setLockUserId(model.getLockUserId());
 		soapModel.setLockUserName(model.getLockUserName());
@@ -121,6 +129,22 @@ public class SyncDLObjectSoap implements Serializable {
 		_companyId = companyId;
 	}
 
+	public long getUserId() {
+		return _userId;
+	}
+
+	public void setUserId(long userId) {
+		_userId = userId;
+	}
+
+	public String getUserName() {
+		return _userName;
+	}
+
+	public void setUserName(String userName) {
+		_userName = userName;
+	}
+
 	public long getCreateTime() {
 		return _createTime;
 	}
@@ -151,6 +175,14 @@ public class SyncDLObjectSoap implements Serializable {
 
 	public void setParentFolderId(long parentFolderId) {
 		_parentFolderId = parentFolderId;
+	}
+
+	public String getTreePath() {
+		return _treePath;
+	}
+
+	public void setTreePath(String treePath) {
+		_treePath = treePath;
 	}
 
 	public String getName() {
@@ -209,6 +241,14 @@ public class SyncDLObjectSoap implements Serializable {
 		_version = version;
 	}
 
+	public long getVersionId() {
+		return _versionId;
+	}
+
+	public void setVersionId(long versionId) {
+		_versionId = versionId;
+	}
+
 	public long getSize() {
 		return _size;
 	}
@@ -231,6 +271,14 @@ public class SyncDLObjectSoap implements Serializable {
 
 	public void setEvent(String event) {
 		_event = event;
+	}
+
+	public Date getLastPermissionChangeDate() {
+		return _lastPermissionChangeDate;
+	}
+
+	public void setLastPermissionChangeDate(Date lastPermissionChangeDate) {
+		_lastPermissionChangeDate = lastPermissionChangeDate;
 	}
 
 	public Date getLockExpirationDate() {
@@ -283,10 +331,13 @@ public class SyncDLObjectSoap implements Serializable {
 
 	private long _syncDLObjectId;
 	private long _companyId;
+	private long _userId;
+	private String _userName;
 	private long _createTime;
 	private long _modifiedTime;
 	private long _repositoryId;
 	private long _parentFolderId;
+	private String _treePath;
 	private String _name;
 	private String _extension;
 	private String _mimeType;
@@ -294,9 +345,11 @@ public class SyncDLObjectSoap implements Serializable {
 	private String _changeLog;
 	private String _extraSettings;
 	private String _version;
+	private long _versionId;
 	private long _size;
 	private String _checksum;
 	private String _event;
+	private Date _lastPermissionChangeDate;
 	private Date _lockExpirationDate;
 	private long _lockUserId;
 	private String _lockUserName;

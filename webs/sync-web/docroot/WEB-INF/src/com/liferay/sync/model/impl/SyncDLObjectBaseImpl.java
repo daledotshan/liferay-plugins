@@ -14,7 +14,7 @@
 
 package com.liferay.sync.model.impl;
 
-import com.liferay.portal.kernel.exception.SystemException;
+import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.sync.model.SyncDLObject;
 import com.liferay.sync.service.SyncDLObjectLocalServiceUtil;
@@ -28,9 +28,10 @@ import com.liferay.sync.service.SyncDLObjectLocalServiceUtil;
  *
  * @author Brian Wing Shun Chan
  * @see SyncDLObjectImpl
- * @see com.liferay.sync.model.SyncDLObject
+ * @see SyncDLObject
  * @generated
  */
+@ProviderType
 public abstract class SyncDLObjectBaseImpl extends SyncDLObjectModelImpl
 	implements SyncDLObject {
 	/*
@@ -39,12 +40,21 @@ public abstract class SyncDLObjectBaseImpl extends SyncDLObjectModelImpl
 	 * Never modify or reference this class directly. All methods that expect a sync d l object model instance should use the {@link SyncDLObject} interface instead.
 	 */
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			SyncDLObjectLocalServiceUtil.addSyncDLObject(this);
 		}
 		else {
 			SyncDLObjectLocalServiceUtil.updateSyncDLObject(this);
 		}
+	}
+
+	@Override
+	public void updateTreePath(String treePath) {
+		SyncDLObject syncDLObject = this;
+
+		syncDLObject.setTreePath(treePath);
+
+		SyncDLObjectLocalServiceUtil.updateSyncDLObject(syncDLObject);
 	}
 }
