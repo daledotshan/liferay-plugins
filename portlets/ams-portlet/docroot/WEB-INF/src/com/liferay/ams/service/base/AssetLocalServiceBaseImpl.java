@@ -14,6 +14,8 @@
 
 package com.liferay.ams.service.base;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.ams.model.Asset;
 import com.liferay.ams.service.AssetLocalService;
 import com.liferay.ams.service.persistence.AssetPersistence;
@@ -27,6 +29,8 @@ import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Projection;
@@ -60,6 +64,7 @@ import javax.sql.DataSource;
  * @see com.liferay.ams.service.AssetLocalServiceUtil
  * @generated
  */
+@ProviderType
 public abstract class AssetLocalServiceBaseImpl extends BaseLocalServiceImpl
 	implements AssetLocalService, IdentifiableBean {
 	/*
@@ -73,11 +78,10 @@ public abstract class AssetLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param asset the asset
 	 * @return the asset that was added
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public Asset addAsset(Asset asset) throws SystemException {
+	public Asset addAsset(Asset asset) {
 		asset.setNew(true);
 
 		return assetPersistence.update(asset);
@@ -100,12 +104,10 @@ public abstract class AssetLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param assetId the primary key of the asset
 	 * @return the asset that was removed
 	 * @throws PortalException if a asset with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public Asset deleteAsset(long assetId)
-		throws PortalException, SystemException {
+	public Asset deleteAsset(long assetId) throws PortalException {
 		return assetPersistence.remove(assetId);
 	}
 
@@ -114,11 +116,10 @@ public abstract class AssetLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param asset the asset
 	 * @return the asset that was removed
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public Asset deleteAsset(Asset asset) throws SystemException {
+	public Asset deleteAsset(Asset asset) {
 		return assetPersistence.remove(asset);
 	}
 
@@ -135,12 +136,9 @@ public abstract class AssetLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
 		return assetPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -155,12 +153,10 @@ public abstract class AssetLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end) {
 		return assetPersistence.findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -176,45 +172,40 @@ public abstract class AssetLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator orderByComparator) throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end, OrderByComparator<T> orderByComparator) {
 		return assetPersistence.findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
 		return assetPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) throws SystemException {
+		Projection projection) {
 		return assetPersistence.countWithDynamicQuery(dynamicQuery, projection);
 	}
 
 	@Override
-	public Asset fetchAsset(long assetId) throws SystemException {
+	public Asset fetchAsset(long assetId) {
 		return assetPersistence.fetchByPrimaryKey(assetId);
 	}
 
@@ -224,16 +215,46 @@ public abstract class AssetLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param assetId the primary key of the asset
 	 * @return the asset
 	 * @throws PortalException if a asset with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public Asset getAsset(long assetId) throws PortalException, SystemException {
+	public Asset getAsset(long assetId) throws PortalException {
 		return assetPersistence.findByPrimaryKey(assetId);
 	}
 
 	@Override
+	public ActionableDynamicQuery getActionableDynamicQuery() {
+		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
+
+		actionableDynamicQuery.setBaseLocalService(com.liferay.ams.service.AssetLocalServiceUtil.getService());
+		actionableDynamicQuery.setClass(Asset.class);
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("assetId");
+
+		return actionableDynamicQuery;
+	}
+
+	protected void initActionableDynamicQuery(
+		ActionableDynamicQuery actionableDynamicQuery) {
+		actionableDynamicQuery.setBaseLocalService(com.liferay.ams.service.AssetLocalServiceUtil.getService());
+		actionableDynamicQuery.setClass(Asset.class);
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("assetId");
+	}
+
+	/**
+	 * @throws PortalException
+	 */
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException {
+		return assetLocalService.deleteAsset((Asset)persistedModel);
+	}
+
+	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return assetPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
@@ -247,10 +268,9 @@ public abstract class AssetLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param start the lower bound of the range of assets
 	 * @param end the upper bound of the range of assets (not inclusive)
 	 * @return the range of assets
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<Asset> getAssets(int start, int end) throws SystemException {
+	public List<Asset> getAssets(int start, int end) {
 		return assetPersistence.findAll(start, end);
 	}
 
@@ -258,10 +278,9 @@ public abstract class AssetLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * Returns the number of assets.
 	 *
 	 * @return the number of assets
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getAssetsCount() throws SystemException {
+	public int getAssetsCount() {
 		return assetPersistence.countAll();
 	}
 
@@ -270,11 +289,10 @@ public abstract class AssetLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param asset the asset
 	 * @return the asset that was updated
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public Asset updateAsset(Asset asset) throws SystemException {
+	public Asset updateAsset(Asset asset) {
 		return assetPersistence.update(asset);
 	}
 
@@ -283,7 +301,7 @@ public abstract class AssetLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @return the asset local service
 	 */
-	public com.liferay.ams.service.AssetLocalService getAssetLocalService() {
+	public AssetLocalService getAssetLocalService() {
 		return assetLocalService;
 	}
 
@@ -292,8 +310,7 @@ public abstract class AssetLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param assetLocalService the asset local service
 	 */
-	public void setAssetLocalService(
-		com.liferay.ams.service.AssetLocalService assetLocalService) {
+	public void setAssetLocalService(AssetLocalService assetLocalService) {
 		this.assetLocalService = assetLocalService;
 	}
 
@@ -646,7 +663,7 @@ public abstract class AssetLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) throws SystemException {
+	protected void runSQL(String sql) {
 		try {
 			DataSource dataSource = assetPersistence.getDataSource();
 
@@ -666,7 +683,7 @@ public abstract class AssetLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	@BeanReference(type = com.liferay.ams.service.AssetLocalService.class)
-	protected com.liferay.ams.service.AssetLocalService assetLocalService;
+	protected AssetLocalService assetLocalService;
 	@BeanReference(type = AssetPersistence.class)
 	protected AssetPersistence assetPersistence;
 	@BeanReference(type = com.liferay.ams.service.CheckoutLocalService.class)
