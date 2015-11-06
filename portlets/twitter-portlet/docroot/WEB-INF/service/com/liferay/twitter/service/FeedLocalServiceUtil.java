@@ -14,6 +14,8 @@
 
 package com.liferay.twitter.service;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.PortletBeanLocatorUtil;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.InvokableLocalService;
@@ -32,6 +34,7 @@ import com.liferay.portal.service.InvokableLocalService;
  * @see com.liferay.twitter.service.impl.FeedLocalServiceImpl
  * @generated
  */
+@ProviderType
 public class FeedLocalServiceUtil {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -44,11 +47,9 @@ public class FeedLocalServiceUtil {
 	*
 	* @param feed the feed
 	* @return the feed that was added
-	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.twitter.model.Feed addFeed(
-		com.liferay.twitter.model.Feed feed)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		com.liferay.twitter.model.Feed feed) {
 		return getService().addFeed(feed);
 	}
 
@@ -63,30 +64,35 @@ public class FeedLocalServiceUtil {
 	}
 
 	/**
+	* Deletes the feed from the database. Also notifies the appropriate model listeners.
+	*
+	* @param feed the feed
+	* @return the feed that was removed
+	*/
+	public static com.liferay.twitter.model.Feed deleteFeed(
+		com.liferay.twitter.model.Feed feed) {
+		return getService().deleteFeed(feed);
+	}
+
+	/**
 	* Deletes the feed with the primary key from the database. Also notifies the appropriate model listeners.
 	*
 	* @param feedId the primary key of the feed
 	* @return the feed that was removed
 	* @throws PortalException if a feed with the primary key could not be found
-	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.twitter.model.Feed deleteFeed(long feedId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().deleteFeed(feedId);
 	}
 
 	/**
-	* Deletes the feed from the database. Also notifies the appropriate model listeners.
-	*
-	* @param feed the feed
-	* @return the feed that was removed
-	* @throws SystemException if a system exception occurred
+	* @throws PortalException
 	*/
-	public static com.liferay.twitter.model.Feed deleteFeed(
-		com.liferay.twitter.model.Feed feed)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return getService().deleteFeed(feed);
+	public static com.liferay.portal.model.PersistedModel deletePersistedModel(
+		com.liferay.portal.model.PersistedModel persistedModel)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().deletePersistedModel(persistedModel);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
@@ -98,12 +104,9 @@ public class FeedLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
-	* @throws SystemException if a system exception occurred
 	*/
-	@SuppressWarnings("rawtypes")
-	public static java.util.List dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static <T> java.util.List<T> dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
 		return getService().dynamicQuery(dynamicQuery);
 	}
 
@@ -118,12 +121,10 @@ public class FeedLocalServiceUtil {
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
-	* @throws SystemException if a system exception occurred
 	*/
-	@SuppressWarnings("rawtypes")
-	public static java.util.List dynamicQuery(
+	public static <T> java.util.List<T> dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) throws com.liferay.portal.kernel.exception.SystemException {
+		int end) {
 		return getService().dynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -139,49 +140,45 @@ public class FeedLocalServiceUtil {
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
-	* @throws SystemException if a system exception occurred
 	*/
-	@SuppressWarnings("rawtypes")
-	public static java.util.List dynamicQuery(
+	public static <T> java.util.List<T> dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
 		return getService()
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
 
 	/**
-	* Returns the number of rows that match the dynamic query.
+	* Returns the number of rows matching the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
-	* @return the number of rows that match the dynamic query
-	* @throws SystemException if a system exception occurred
+	* @return the number of rows matching the dynamic query
 	*/
 	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
 		return getService().dynamicQueryCount(dynamicQuery);
 	}
 
 	/**
-	* Returns the number of rows that match the dynamic query.
+	* Returns the number of rows matching the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
-	* @return the number of rows that match the dynamic query
-	* @throws SystemException if a system exception occurred
+	* @return the number of rows matching the dynamic query
 	*/
 	public static long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		com.liferay.portal.kernel.dao.orm.Projection projection) {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
-	public static com.liferay.twitter.model.Feed fetchFeed(long feedId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static com.liferay.twitter.model.Feed fetchFeed(long feedId) {
 		return getService().fetchFeed(feedId);
+	}
+
+	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
+		return getService().getActionableDynamicQuery();
 	}
 
 	/**
@@ -190,19 +187,10 @@ public class FeedLocalServiceUtil {
 	* @param feedId the primary key of the feed
 	* @return the feed
 	* @throws PortalException if a feed with the primary key could not be found
-	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.twitter.model.Feed getFeed(long feedId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getFeed(feedId);
-	}
-
-	public static com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		return getService().getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -215,11 +203,9 @@ public class FeedLocalServiceUtil {
 	* @param start the lower bound of the range of feeds
 	* @param end the upper bound of the range of feeds (not inclusive)
 	* @return the range of feeds
-	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.twitter.model.Feed> getFeeds(
-		int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		int start, int end) {
 		return getService().getFeeds(start, end);
 	}
 
@@ -227,42 +213,24 @@ public class FeedLocalServiceUtil {
 	* Returns the number of feeds.
 	*
 	* @return the number of feeds
-	* @throws SystemException if a system exception occurred
 	*/
-	public static int getFeedsCount()
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static int getFeedsCount() {
 		return getService().getFeedsCount();
 	}
 
 	/**
-	* Updates the feed in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	* Returns the OSGi service identifier.
 	*
-	* @param feed the feed
-	* @return the feed that was updated
-	* @throws SystemException if a system exception occurred
+	* @return the OSGi service identifier
 	*/
-	public static com.liferay.twitter.model.Feed updateFeed(
-		com.liferay.twitter.model.Feed feed)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return getService().updateFeed(feed);
+	public static java.lang.String getOSGiServiceIdentifier() {
+		return getService().getOSGiServiceIdentifier();
 	}
 
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	public static java.lang.String getBeanIdentifier() {
-		return getService().getBeanIdentifier();
-	}
-
-	/**
-	* Sets the Spring bean ID for this bean.
-	*
-	* @param beanIdentifier the Spring bean ID for this bean
-	*/
-	public static void setBeanIdentifier(java.lang.String beanIdentifier) {
-		getService().setBeanIdentifier(beanIdentifier);
+	public static com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getPersistedModel(primaryKeyObj);
 	}
 
 	public static java.lang.Object invokeMethod(java.lang.String name,
@@ -271,19 +239,27 @@ public class FeedLocalServiceUtil {
 		return getService().invokeMethod(name, parameterTypes, arguments);
 	}
 
+	/**
+	* Updates the feed in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param feed the feed
+	* @return the feed that was updated
+	*/
+	public static com.liferay.twitter.model.Feed updateFeed(
+		com.liferay.twitter.model.Feed feed) {
+		return getService().updateFeed(feed);
+	}
+
 	public static void updateFeed(long userId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 		getService().updateFeed(userId);
 	}
 
-	public static void updateFeeds()
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static void updateFeeds() {
 		getService().updateFeeds();
 	}
 
-	public static void updateFeeds(long companyId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static void updateFeeds(long companyId) {
 		getService().updateFeeds(companyId);
 	}
 

@@ -20,7 +20,6 @@ package com.liferay.so.messaging;
 import com.liferay.deploylistener.messaging.BaseDeployListenerMessageListener;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Message;
@@ -39,7 +38,6 @@ import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.LayoutSetLocalServiceUtil;
 import com.liferay.portal.service.LayoutSetPrototypeLocalServiceUtil;
 import com.liferay.portal.service.RoleLocalServiceUtil;
-import com.liferay.portal.service.persistence.GroupActionableDynamicQuery;
 import com.liferay.portlet.expando.model.ExpandoColumn;
 import com.liferay.portlet.expando.model.ExpandoTableConstants;
 import com.liferay.portlet.expando.service.ExpandoColumnLocalServiceUtil;
@@ -155,54 +153,51 @@ public class SODeployListenerMessageListener
 		}
 	}
 
-	protected void updateGroups(long companyId)
-		throws PortalException, SystemException {
-
+	protected void updateGroups(long companyId) throws PortalException {
 		ActionableDynamicQuery actionableDynamicQuery =
-			new GroupActionableDynamicQuery() {
-
-			@Override
-			protected void performAction(Object object)
-				throws PortalException, SystemException {
-
-				Group group = (Group)object;
-
-				if (!group.isRegularSite()) {
-					return;
-				}
-
-				if (!SocialOfficeServiceUtil.isSocialOfficeGroup(
-						group.getGroupId())) {
-
-					return;
-				}
-
-				if (group.hasPrivateLayouts()) {
-					updateLayoutSetPrototype(group.getGroupId(), true);
-				}
-
-				if (group.hasPublicLayouts()) {
-					updateLayoutSetPrototype(group.getGroupId(), false);
-				}
-
-				UnicodeProperties typeSettingsProperties =
-					group.getTypeSettingsProperties();
-
-				typeSettingsProperties.remove("customJspServletContextName");
-
-				GroupLocalServiceUtil.updateGroup(
-					group.getGroupId(), typeSettingsProperties.toString());
-			}
-
-		};
+			GroupLocalServiceUtil.getActionableDynamicQuery();
 
 		actionableDynamicQuery.setCompanyId(companyId);
+		actionableDynamicQuery.setPerformActionMethod(
+			new ActionableDynamicQuery.PerformActionMethod<Group>() {
+
+				@Override
+				public void performAction(Group group) throws PortalException {
+					if (!group.isRegularSite()) {
+						return;
+					}
+
+					if (!SocialOfficeServiceUtil.isSocialOfficeGroup(
+							group.getGroupId())) {
+
+						return;
+					}
+
+					if (group.hasPrivateLayouts()) {
+						updateLayoutSetPrototype(group.getGroupId(), true);
+					}
+
+					if (group.hasPublicLayouts()) {
+						updateLayoutSetPrototype(group.getGroupId(), false);
+					}
+
+					UnicodeProperties typeSettingsProperties =
+						group.getTypeSettingsProperties();
+
+					typeSettingsProperties.remove(
+						"customJspServletContextName");
+
+					GroupLocalServiceUtil.updateGroup(
+						group.getGroupId(), typeSettingsProperties.toString());
+				}
+
+			});
 
 		actionableDynamicQuery.performActions();
 	}
 
 	protected void updateLayoutSetPrototype(long groupId, boolean privateLayout)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		// Layout
 
