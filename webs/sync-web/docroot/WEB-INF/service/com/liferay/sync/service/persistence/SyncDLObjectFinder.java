@@ -14,11 +14,18 @@
 
 package com.liferay.sync.service.persistence;
 
+import aQute.bnd.annotation.ProviderType;
+
 /**
  * @author Brian Wing Shun Chan
+ * @generated
  */
+@ProviderType
 public interface SyncDLObjectFinder {
-	public java.util.List<com.liferay.sync.model.SyncDLObject> filterFindByC_M_R(
-		long companyId, long modifiedTime, long repositoryId)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	public java.util.List<java.lang.Long> filterFindByR_U_T(long groupId,
+		long userId, long[] typePKs);
+
+	public java.util.List<com.liferay.sync.model.SyncDLObject> findByModifiedTime(
+		long modifiedTime, long repositoryId, long parentFolderId,
+		java.lang.String type, int start, int end);
 }
