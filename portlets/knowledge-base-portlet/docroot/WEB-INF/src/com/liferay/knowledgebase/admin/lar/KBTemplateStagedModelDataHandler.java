@@ -16,14 +16,16 @@ package com.liferay.knowledgebase.admin.lar;
 
 import com.liferay.knowledgebase.model.KBTemplate;
 import com.liferay.knowledgebase.service.KBTemplateLocalServiceUtil;
-import com.liferay.knowledgebase.service.persistence.KBTemplateUtil;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
-import com.liferay.portal.kernel.lar.ExportImportPathUtil;
-import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portlet.exportimport.lar.BaseStagedModelDataHandler;
+import com.liferay.portlet.exportimport.lar.ExportImportPathUtil;
+import com.liferay.portlet.exportimport.lar.PortletDataContext;
+import com.liferay.portlet.exportimport.lar.StagedModelModifiedDateComparator;
+
+import java.util.List;
 
 /**
  * @author Daniel Kocsis
@@ -34,17 +36,39 @@ public class KBTemplateStagedModelDataHandler
 	public static final String[] CLASS_NAMES = {KBTemplate.class.getName()};
 
 	@Override
+	public void deleteStagedModel(KBTemplate kbTemplate)
+		throws PortalException {
+
+		KBTemplateLocalServiceUtil.deleteKBTemplate(kbTemplate);
+	}
+
+	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException, SystemException {
+		throws PortalException {
 
-		KBTemplate kbTemplate =
-			KBTemplateLocalServiceUtil.fetchKBTemplateByUuidAndGroupId(
-				uuid, groupId);
+		KBTemplate kbTemplate = fetchStagedModelByUuidAndGroupId(uuid, groupId);
 
 		if (kbTemplate != null) {
-			KBTemplateLocalServiceUtil.deleteKBTemplate(kbTemplate);
+			deleteStagedModel(kbTemplate);
 		}
+	}
+
+	@Override
+	public KBTemplate fetchStagedModelByUuidAndGroupId(
+		String uuid, long groupId) {
+
+		return KBTemplateLocalServiceUtil.fetchKBTemplateByUuidAndGroupId(
+			uuid, groupId);
+	}
+
+	@Override
+	public List<KBTemplate> fetchStagedModelsByUuidAndCompanyId(
+		String uuid, long companyId) {
+
+		return KBTemplateLocalServiceUtil.getKBTemplatesByUuidAndCompanyId(
+			uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+			new StagedModelModifiedDateComparator<KBTemplate>());
 	}
 
 	@Override
@@ -83,7 +107,7 @@ public class KBTemplateStagedModelDataHandler
 		KBTemplate importedKBTemplate = null;
 
 		if (portletDataContext.isDataStrategyMirror()) {
-			KBTemplate existingKBTemplate = KBTemplateUtil.fetchByUUID_G(
+			KBTemplate existingKBTemplate = fetchStagedModelByUuidAndGroupId(
 				kbTemplate.getUuid(), portletDataContext.getScopeGroupId());
 
 			if (existingKBTemplate == null) {

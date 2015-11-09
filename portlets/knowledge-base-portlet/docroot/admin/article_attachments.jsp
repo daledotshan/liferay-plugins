@@ -26,30 +26,33 @@ if (kbArticle != null) {
 }
 %>
 
-<c:if test="<%= attachmentsFileEntries.size() > 0 %>">
-	<div class="kb-article-attachments">
+<div class="kb-attachments">
+	<c:if test="<%= !attachmentsFileEntries.isEmpty() %>">
+		<div id="<portlet:namespace />existingAttachmentsContainer">
 
-		<%
-		for (FileEntry fileEntry : attachmentsFileEntries) {
-		%>
+			<%
+			for (FileEntry fileEntry : attachmentsFileEntries) {
+			%>
 
-			<div>
-				<liferay-portlet:resourceURL id="attachment" var="clipURL">
-					<portlet:param name="fileEntryId" value="<%= String.valueOf(fileEntry.getFileEntryId()) %>" />
-				</liferay-portlet:resourceURL>
+				<div id="<portlet:namespace />fileEntryIdWrapper<%= fileEntry.getFileEntryId() %>">
 
-				<liferay-ui:icon
-					image="clip"
-					label="<%= true %>"
-					message='<%= fileEntry.getTitle() + " (" + TextFormatter.formatStorageSize(fileEntry.getSize(), locale) + ")" %>'
-					method="get"
-					url="<%= clipURL %>"
-				/>
-			</div>
+					<%
+					String clipURL = DLUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), themeDisplay, StringPool.BLANK);
+					%>
 
-		<%
-		}
-		%>
+					<liferay-ui:icon
+						iconCssClass="icon-paper-clip"
+						label="<%= true %>"
+						message='<%= HtmlUtil.escape(fileEntry.getTitle() + " (" + TextFormatter.formatStorageSize(fileEntry.getSize(), locale) + ")") %>'
+						method="get"
+						url="<%= clipURL %>"
+					/>
+				</div>
 
-	</div>
-</c:if>
+			<%
+			}
+			%>
+
+		</div>
+	</c:if>
+</div>
