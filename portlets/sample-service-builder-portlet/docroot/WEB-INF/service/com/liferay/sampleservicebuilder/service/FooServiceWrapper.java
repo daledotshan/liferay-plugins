@@ -14,6 +14,8 @@
 
 package com.liferay.sampleservicebuilder.service;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.service.ServiceWrapper;
 
 /**
@@ -23,6 +25,7 @@ import com.liferay.portal.service.ServiceWrapper;
  * @see FooService
  * @generated
  */
+@ProviderType
 public class FooServiceWrapper implements FooService,
 	ServiceWrapper<FooService> {
 	public FooServiceWrapper(FooService fooService) {
@@ -30,23 +33,25 @@ public class FooServiceWrapper implements FooService,
 	}
 
 	/**
-	* Returns the Spring bean ID for this bean.
+	* Returns the OSGi service identifier.
 	*
-	* @return the Spring bean ID for this bean
+	* @return the OSGi service identifier
 	*/
 	@Override
-	public java.lang.String getBeanIdentifier() {
-		return _fooService.getBeanIdentifier();
+	public java.lang.String getOSGiServiceIdentifier() {
+		return _fooService.getOSGiServiceIdentifier();
 	}
 
-	/**
-	* Sets the Spring bean ID for this bean.
-	*
-	* @param beanIdentifier the Spring bean ID for this bean
-	*/
 	@Override
-	public void setBeanIdentifier(java.lang.String beanIdentifier) {
-		_fooService.setBeanIdentifier(beanIdentifier);
+	public com.liferay.portal.model.User getUser(long userId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _fooService.getUser(userId);
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.model.Group> getUserSitesGroups()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _fooService.getUserSitesGroups();
 	}
 
 	@Override
@@ -54,20 +59,6 @@ public class FooServiceWrapper implements FooService,
 		java.lang.String[] parameterTypes, java.lang.Object[] arguments)
 		throws java.lang.Throwable {
 		return _fooService.invokeMethod(name, parameterTypes, arguments);
-	}
-
-	@Override
-	public com.liferay.portal.model.User getUser(long userId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		return _fooService.getUser(userId);
-	}
-
-	@Override
-	public java.util.List<com.liferay.portal.model.Group> getUserSitesGroups()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		return _fooService.getUserSitesGroups();
 	}
 
 	/**

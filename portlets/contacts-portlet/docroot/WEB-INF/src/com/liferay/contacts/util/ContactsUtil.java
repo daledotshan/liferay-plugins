@@ -19,7 +19,6 @@ package com.liferay.contacts.util;
 
 import com.liferay.contacts.model.Entry;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -103,7 +102,7 @@ public class ContactsUtil {
 	}
 
 	public static JSONObject getUserJSONObject(long userId, User user)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
@@ -196,7 +195,7 @@ public class ContactsUtil {
 
 			ListType listType = address.getType();
 
-			sb.append(StringUtil.toUpperCase(listType.getName()));
+			sb.append(StringUtil.toUpperCase(_getVCardListTypeName(listType)));
 
 			sb.append(StringPool.COLON);
 			sb.append(StringPool.SEMICOLON);
@@ -292,39 +291,15 @@ public class ContactsUtil {
 	private static String _getInstantMessaging(Contact contact) {
 		StringBundler sb = new StringBundler(18);
 
-		if (Validator.isNotNull(contact.getAimSn())) {
-			sb.append("X-AIM;type=OTHER;type=pref:");
-			sb.append(contact.getAimSn());
-			sb.append(StringPool.NEW_LINE);
-		}
-
-		if (Validator.isNotNull(contact.getIcqSn())) {
-			sb.append("X-ICQ;type=OTHER;type=pref:");
-			sb.append(contact.getAimSn());
-			sb.append(StringPool.NEW_LINE);
-		}
-
 		if (Validator.isNotNull(contact.getJabberSn())) {
 			sb.append("X-JABBER;type=OTHER;type=pref:");
 			sb.append(contact.getJabberSn());
 			sb.append(StringPool.NEW_LINE);
 		}
 
-		if (Validator.isNotNull(contact.getMsnSn())) {
-			sb.append("X-MSN;type=OTHER;type=pref:");
-			sb.append(contact.getMsnSn());
-			sb.append(StringPool.NEW_LINE);
-		}
-
 		if (Validator.isNotNull(contact.getSkypeSn())) {
 			sb.append("X-SKYPE;type=OTHER;type=pref:");
 			sb.append(contact.getSkypeSn());
-			sb.append(StringPool.NEW_LINE);
-		}
-
-		if (Validator.isNotNull(contact.getYmSn())) {
-			sb.append("X-YM;type=OTHER;type=pref:");
-			sb.append(contact.getYmSn());
 			sb.append(StringPool.NEW_LINE);
 		}
 
@@ -354,7 +329,7 @@ public class ContactsUtil {
 		sb.append(user.getMiddleName());
 		sb.append(StringPool.SEMICOLON);
 
-		int prefixId = contact.getPrefixId();
+		long prefixId = contact.getPrefixId();
 
 		if (prefixId > 0) {
 			ListType listType = ListTypeServiceUtil.getListType(prefixId);
@@ -364,7 +339,7 @@ public class ContactsUtil {
 
 		sb.append(StringPool.SEMICOLON);
 
-		int suffixId = contact.getSuffixId();
+		long suffixId = contact.getSuffixId();
 
 		if (suffixId > 0) {
 			ListType listType = ListTypeServiceUtil.getListType(suffixId);
@@ -391,7 +366,7 @@ public class ContactsUtil {
 
 			ListType listType = phone.getType();
 
-			sb.append(StringUtil.toUpperCase(listType.getName()));
+			sb.append(StringUtil.toUpperCase(_getVCardListTypeName(listType)));
 
 			sb.append(StringPool.COLON);
 			sb.append(phone.getNumber());
@@ -401,6 +376,19 @@ public class ContactsUtil {
 		}
 
 		return sb.toString();
+	}
+
+	private static String _getVCardListTypeName(ListType listType) {
+		String listTypeName = listType.getName();
+
+		if (StringUtil.equalsIgnoreCase(listTypeName, "business")) {
+			listTypeName = "work";
+		}
+		else if (StringUtil.equalsIgnoreCase(listTypeName, "personal")) {
+			listTypeName = "home";
+		}
+
+		return listTypeName;
 	}
 
 	private static String _getWebsites(User user) throws Exception {
@@ -414,7 +402,7 @@ public class ContactsUtil {
 
 			ListType listType = website.getType();
 
-			sb.append(StringUtil.toUpperCase(listType.getName()));
+			sb.append(StringUtil.toUpperCase(_getVCardListTypeName(listType)));
 
 			sb.append(StringPool.COLON);
 

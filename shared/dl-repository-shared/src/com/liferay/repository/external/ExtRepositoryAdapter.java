@@ -18,11 +18,14 @@ import com.liferay.portal.NoSuchRepositoryEntryException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.BaseRepositoryImpl;
 import com.liferay.portal.kernel.repository.RepositoryException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.repository.model.FileShortcut;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.search.Document;
@@ -34,22 +37,21 @@ import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.model.Company;
 import com.liferay.portal.model.CompanyConstants;
-import com.liferay.portal.model.Lock;
 import com.liferay.portal.model.RepositoryEntry;
 import com.liferay.portal.model.User;
 import com.liferay.portal.security.auth.PrincipalThreadLocal;
-import com.liferay.portal.service.RepositoryEntryLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.persistence.RepositoryEntryUtil;
 import com.liferay.portlet.documentlibrary.NoSuchFileEntryException;
 import com.liferay.portlet.documentlibrary.NoSuchFileVersionException;
 import com.liferay.portlet.documentlibrary.NoSuchFolderException;
@@ -79,10 +81,10 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 
 	@Override
 	public FileEntry addFileEntry(
-			long folderId, String sourceFileName, String mimeType, String title,
-			String description, String changeLog, InputStream inputStream,
-			long size, ServiceContext serviceContext)
-		throws PortalException, SystemException {
+			long userId, long folderId, String sourceFileName, String mimeType,
+			String title, String description, String changeLog,
+			InputStream inputStream, long size, ServiceContext serviceContext)
+		throws PortalException {
 
 		String fileName = null;
 
@@ -105,26 +107,32 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	}
 
 	@Override
+	public FileShortcut addFileShortcut(
+		long userId, long folderId, long toFileEntryId,
+		ServiceContext serviceContext) {
+
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public ExtRepositoryFolderAdapter addFolder(
-			long parentFolderId, String title, String description,
+			long userId, long parentFolderId, String name, String description,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		String extRepositoryParentFolderKey = getExtRepositoryObjectKey(
 			parentFolderId);
 
 		ExtRepositoryFolder extRepositoryFolder =
 			_extRepository.addExtRepositoryFolder(
-				extRepositoryParentFolderKey, title, description);
+				extRepositoryParentFolderKey, name, description);
 
 		return _toExtRepositoryObjectAdapter(
 			ExtRepositoryObjectAdapterType.FOLDER, extRepositoryFolder);
 	}
 
 	@Override
-	public FileVersion cancelCheckOut(long fileEntryId)
-		throws PortalException, SystemException {
-
+	public FileVersion cancelCheckOut(long fileEntryId) throws PortalException {
 		String extRepositoryFileEntryKey = getExtRepositoryObjectKey(
 			fileEntryId);
 
@@ -144,9 +152,9 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 
 	@Override
 	public void checkInFileEntry(
-			long fileEntryId, boolean major, String changeLog,
+			long userId, long fileEntryId, boolean major, String changeLog,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		String extRepositoryFileEntryKey = getExtRepositoryObjectKey(
 			fileEntryId);
@@ -157,16 +165,18 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 
 	@Override
 	public void checkInFileEntry(
-			long fileEntryId, String lockUuid, ServiceContext serviceContext)
-		throws PortalException, SystemException {
+			long userId, long fileEntryId, String lockUuid,
+			ServiceContext serviceContext)
+		throws PortalException {
 
-		checkInFileEntry(fileEntryId, false, StringPool.BLANK, serviceContext);
+		checkInFileEntry(
+			userId, fileEntryId, false, StringPool.BLANK, serviceContext);
 	}
 
 	@Override
 	public FileEntry checkOutFileEntry(
 			long fileEntryId, ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		String extRepositoryFileEntryKey = getExtRepositoryObjectKey(
 			fileEntryId);
@@ -179,21 +189,23 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 			ExtRepositoryObjectAdapterType.FILE, extRepositoryFileEntry);
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
-	@SuppressWarnings("unused")
 	public FileEntry checkOutFileEntry(
 			long fileEntryId, String owner, long expirationTime,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public FileEntry copyFileEntry(
-			long groupId, long fileEntryId, long destFolderId,
+			long userId, long groupId, long fileEntryId, long destFolderId,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		String extRepositoryFileEntryKey = getExtRepositoryObjectKey(
 			fileEntryId);
@@ -215,9 +227,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	}
 
 	@Override
-	public void deleteFileEntry(long fileEntryId)
-		throws PortalException, SystemException {
-
+	public void deleteFileEntry(long fileEntryId) throws PortalException {
 		String extRepositoryFileEntryKey = getExtRepositoryObjectKey(
 			fileEntryId);
 
@@ -231,9 +241,17 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	}
 
 	@Override
-	public void deleteFolder(long folderId)
-		throws PortalException, SystemException {
+	public void deleteFileShortcut(long fileShortcutId) {
+		throw new UnsupportedOperationException();
+	}
 
+	@Override
+	public void deleteFileShortcuts(long toFileEntryId) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void deleteFolder(long folderId) throws PortalException {
 		String extRepositoryFolderKey = getExtRepositoryObjectKey(folderId);
 
 		_extRepository.deleteExtRepositoryObject(
@@ -251,7 +269,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 
 	public InputStream getContentStream(
 			ExtRepositoryFileEntryAdapter extRepositoryFileEntryAdapter)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		return _extRepository.getContentStream(
 			extRepositoryFileEntryAdapter.getExtRepositoryModel());
@@ -259,7 +277,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 
 	public InputStream getContentStream(
 			ExtRepositoryFileVersionAdapter extRepositoryFileVersionAdapter)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		return _extRepository.getContentStream(
 			extRepositoryFileVersionAdapter.getExtRepositoryModel());
@@ -268,7 +286,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	public List<ExtRepositoryFileVersionAdapter>
 			getExtRepositoryFileVersionAdapters(
 				ExtRepositoryFileEntryAdapter extRepositoryFileEntryAdapter)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		List<ExtRepositoryFileVersion> extRepositoryFileVersions =
 			_extRepository.getExtRepositoryFileVersions(
@@ -279,10 +297,18 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
 	public List<FileEntry> getFileEntries(
-			long folderId, int start, int end, OrderByComparator obc)
-		throws PortalException, SystemException {
+			long folderId, int status, int start, int end,
+			OrderByComparator<FileEntry> obc)
+		throws PortalException {
+
+		return getFileEntries(folderId, start, end, obc);
+	}
+
+	@Override
+	public List<FileEntry> getFileEntries(
+			long folderId, int start, int end, OrderByComparator<FileEntry> obc)
+		throws PortalException {
 
 		String extRepositoryFolderKey = getExtRepositoryObjectKey(folderId);
 
@@ -294,14 +320,14 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 			_toExtRepositoryObjectAdapters(
 				ExtRepositoryObjectAdapterType.FILE, extRepositoryFileEntries);
 
-		return (List)_subList(extRepositoryFileEntryAdapters, start, end, obc);
+		return _subList(extRepositoryFileEntryAdapters, start, end, obc);
 	}
 
 	@Override
 	public List<FileEntry> getFileEntries(
 			long folderId, long fileEntryTypeId, int start, int end,
-			OrderByComparator obc)
-		throws PortalException, SystemException {
+			OrderByComparator<FileEntry> obc)
+		throws PortalException {
 
 		if (fileEntryTypeId ==
 				DLFileEntryTypeConstants.FILE_ENTRY_TYPE_ID_BASIC_DOCUMENT) {
@@ -314,11 +340,10 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
 	public List<FileEntry> getFileEntries(
 			long folderId, String[] mimeTypes, int start, int end,
-			OrderByComparator obc)
-		throws PortalException, SystemException {
+			OrderByComparator<FileEntry> obc)
+		throws PortalException {
 
 		String extRepositoryFolderKey = getExtRepositoryObjectKey(folderId);
 
@@ -333,13 +358,11 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 		extRepositoryFileEntryAdapters = _filterByMimeType(
 			extRepositoryFileEntryAdapters, mimeTypes);
 
-		return (List)_subList(extRepositoryFileEntryAdapters, start, end, obc);
+		return _subList(extRepositoryFileEntryAdapters, start, end, obc);
 	}
 
 	@Override
-	public int getFileEntriesCount(long folderId)
-		throws PortalException, SystemException {
-
+	public int getFileEntriesCount(long folderId) throws PortalException {
 		String extRepositoryFolderKey = getExtRepositoryObjectKey(folderId);
 
 		return _extRepository.getExtRepositoryObjectsCount(
@@ -347,8 +370,15 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	}
 
 	@Override
+	public int getFileEntriesCount(long folderId, int status)
+		throws PortalException {
+
+		return getFileEntriesCount(folderId);
+	}
+
+	@Override
 	public int getFileEntriesCount(long folderId, long fileEntryTypeId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		if (fileEntryTypeId ==
 				DLFileEntryTypeConstants.FILE_ENTRY_TYPE_ID_BASIC_DOCUMENT) {
@@ -364,7 +394,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 
 	@Override
 	public int getFileEntriesCount(long folderId, String[] mimeTypes)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		String extRepositoryFolderKey = getExtRepositoryObjectKey(folderId);
 
@@ -374,7 +404,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 
 	@Override
 	public ExtRepositoryFileEntryAdapter getFileEntry(long fileEntryId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		String extRepositoryFileEntryKey = getExtRepositoryObjectKey(
 			fileEntryId);
@@ -389,7 +419,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 
 	@Override
 	public FileEntry getFileEntry(long folderId, String title)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		String extRepositoryFolderKey = getExtRepositoryObjectKey(folderId);
 
@@ -402,9 +432,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	}
 
 	@Override
-	public FileEntry getFileEntryByUuid(String uuid)
-		throws PortalException, SystemException {
-
+	public FileEntry getFileEntryByUuid(String uuid) throws PortalException {
 		String extRepositoryFileEntryKey = _getExtRepositoryObjectKey(uuid);
 
 		ExtRepositoryFileEntry extRepositoryFileEntry =
@@ -416,8 +444,13 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	}
 
 	@Override
+	public FileShortcut getFileShortcut(long fileShortcutId) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public FileVersion getFileVersion(long fileVersionId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		String extRepositoryFileVersionKey = getExtRepositoryObjectKey(
 			fileVersionId);
@@ -453,7 +486,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 
 	@Override
 	public ExtRepositoryFolderAdapter getFolder(long folderId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		String extRepositoryFolderKey = getExtRepositoryObjectKey(folderId);
 
@@ -467,8 +500,8 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 
 	@Override
 	public ExtRepositoryFolderAdapter getFolder(
-			long parentFolderId, String title)
-		throws PortalException, SystemException {
+			long parentFolderId, String name)
+		throws PortalException {
 
 		String extRepositoryParentFolderKey = getExtRepositoryObjectKey(
 			parentFolderId);
@@ -476,18 +509,17 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 		ExtRepositoryFolder extRepositoryFolder =
 			_extRepository.getExtRepositoryObject(
 				ExtRepositoryObjectType.FOLDER, extRepositoryParentFolderKey,
-				title);
+				name);
 
 		return _toExtRepositoryObjectAdapter(
 			ExtRepositoryObjectAdapterType.FOLDER, extRepositoryFolder);
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
 	public List<Folder> getFolders(
 			long parentFolderId, boolean includeMountFolders, int start,
-			int end, OrderByComparator obc)
-		throws PortalException, SystemException {
+			int end, OrderByComparator<Folder> obc)
+		throws PortalException {
 
 		String extRepositoryParentFolderKey = getExtRepositoryObjectKey(
 			parentFolderId);
@@ -500,14 +532,12 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 			_toExtRepositoryObjectAdapters(
 				ExtRepositoryObjectAdapterType.FOLDER, extRepositoryFolders);
 
-		return (List)_subList(extRepositoryFolderAdapters, start, end, obc);
+		return _subList(extRepositoryFolderAdapters, start, end, obc);
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List getFoldersAndFileEntries(
-			long folderId, int start, int end, OrderByComparator obc)
-		throws SystemException {
+	public List<Object> getFoldersAndFileEntries(
+		long folderId, int start, int end, OrderByComparator<?> obc) {
 
 		try {
 			String extRepositoryFolderKey = getExtRepositoryObjectKey(folderId);
@@ -521,7 +551,9 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 					ExtRepositoryObjectAdapterType.OBJECT,
 					extRepositoryObjects);
 
-			return _subList(extRepositoryObjectAdapters, start, end, obc);
+			return _subList(
+				extRepositoryObjectAdapters, start, end,
+				(OrderByComparator<Object>)obc);
 		}
 		catch (Exception e) {
 			throw new RepositoryException(e);
@@ -529,11 +561,10 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
 	public List<Object> getFoldersAndFileEntries(
 			long folderId, String[] mimeTypes, int start, int end,
-			OrderByComparator obc)
-		throws PortalException, SystemException {
+			OrderByComparator<?> obc)
+		throws PortalException {
 
 		String extRepositoryFolderKey = getExtRepositoryObjectKey(folderId);
 
@@ -548,27 +579,27 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 		extRepositoryObjectAdapters = _filterByMimeType(
 			extRepositoryObjectAdapters, mimeTypes);
 
-		return (List)_subList(extRepositoryObjectAdapters, start, end, obc);
+		return _subList(
+			extRepositoryObjectAdapters, start, end,
+			(OrderByComparator<Object>)obc);
 	}
 
 	@Override
-	public int getFoldersAndFileEntriesCount(long folderId)
-		throws SystemException {
-
+	public int getFoldersAndFileEntriesCount(long folderId) {
 		try {
 			String extRepositoryFolderKey = getExtRepositoryObjectKey(folderId);
 
 			return _extRepository.getExtRepositoryObjectsCount(
 				ExtRepositoryObjectType.OBJECT, extRepositoryFolderKey);
 		}
-		catch (PortalException e) {
-			throw new SystemException(e);
+		catch (PortalException pe) {
+			throw new SystemException(pe);
 		}
 	}
 
 	@Override
 	public int getFoldersAndFileEntriesCount(long folderId, String[] mimeTypes)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		List<Object> extRepositoryObjects = getFoldersAndFileEntries(
 			folderId, mimeTypes, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
@@ -578,7 +609,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 
 	@Override
 	public int getFoldersCount(long parentFolderId, boolean includeMountfolders)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		String extRepositoryParentFolderKey = getExtRepositoryObjectKey(
 			parentFolderId);
@@ -589,7 +620,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 
 	@Override
 	public int getFoldersFileEntriesCount(List<Long> folderIds, int status)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		int count = 0;
 
@@ -597,7 +628,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 			String extRepositoryFolderKey = getExtRepositoryObjectKey(folderId);
 
 			count += _extRepository.getExtRepositoryObjectsCount(
-				ExtRepositoryObjectType.OBJECT, extRepositoryFolderKey);
+				ExtRepositoryObjectType.FILE, extRepositoryFolderKey);
 		}
 
 		return count;
@@ -610,8 +641,9 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	@Override
 	@SuppressWarnings("unused")
 	public List<Folder> getMountFolders(
-			long parentFolderId, int start, int end, OrderByComparator obc)
-		throws PortalException, SystemException {
+			long parentFolderId, int start, int end,
+			OrderByComparator<Folder> obc)
+		throws PortalException {
 
 		return Collections.emptyList();
 	}
@@ -619,14 +651,14 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	@Override
 	@SuppressWarnings("unused")
 	public int getMountFoldersCount(long parentFolderId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		return 0;
 	}
 
 	public ExtRepositoryFolderAdapter getParentFolder(
 			ExtRepositoryObjectAdapter<?> extRepositoryObjectAdapter)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		ExtRepositoryFolder parentFolder =
 			_extRepository.getExtRepositoryParentFolder(
@@ -636,34 +668,29 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 			ExtRepositoryObjectAdapterType.FOLDER, parentFolder);
 	}
 
-	public String getRootFolderId() throws PortalException, SystemException {
-		return _extRepository.getRootFolderKey();
-	}
-
 	@Override
 	public void getSubfolderIds(List<Long> folderIds, long folderId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		folderIds.addAll(getSubfolderIds(folderId, true));
 	}
 
 	@Override
 	public List<Long> getSubfolderIds(long folderId, boolean recurse)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		String extRepositoryFolderKey = getExtRepositoryObjectKey(folderId);
 
 		List<String> extRepositorySubfolderKeys =
 			_extRepository.getSubfolderKeys(extRepositoryFolderKey, recurse);
 
-		List<Long> subfolderIds = new ArrayList<Long>();
+		List<Long> subfolderIds = new ArrayList<>();
 
 		for (String extRepositorySubfolderKey : extRepositorySubfolderKeys) {
-			Object[] ids = getRepositoryEntryIds(extRepositorySubfolderKey);
+			RepositoryEntry repositoryEntry = getRepositoryEntry(
+				extRepositorySubfolderKey);
 
-			long repositoryEntryId = (Long)ids[0];
-
-			subfolderIds.add(repositoryEntryId);
+			subfolderIds.add(repositoryEntry.getRepositoryEntryId());
 		}
 
 		return subfolderIds;
@@ -680,7 +707,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	}
 
 	@Override
-	public void initRepository() throws PortalException, SystemException {
+	public void initRepository() throws PortalException {
 		try {
 			CredentialsProvider credentialsProvider =
 				new CredentialsProvider() {
@@ -700,29 +727,19 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 			_extRepository.initRepository(
 				getTypeSettingsProperties(), credentialsProvider);
 		}
-		catch (PortalException pe) {
+		catch (PortalException | SystemException e) {
 			if (_log.isWarnEnabled()) {
 				_log.warn(
-					"Unable to initialize repository " + _extRepository, pe);
+					"Unable to initialize repository " + _extRepository, e);
 			}
 
-			throw pe;
-		}
-		catch (SystemException se) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(
-					"Unable to initialize repository " + _extRepository, se);
-			}
-
-			throw se;
+			throw e;
 		}
 	}
 
 	@Override
 	@SuppressWarnings("unused")
-	public Lock lockFolder(long folderId)
-		throws PortalException, SystemException {
-
+	public Lock lockFolder(long folderId) throws PortalException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -731,15 +748,16 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	public Lock lockFolder(
 			long folderId, String owner, boolean inheritable,
 			long expirationTime)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public FileEntry moveFileEntry(
-			long fileEntryId, long newFolderId, ServiceContext serviceContext)
-		throws PortalException, SystemException {
+			long userId, long fileEntryId, long newFolderId,
+			ServiceContext serviceContext)
+		throws PortalException {
 
 		String extRepositoryFileEntryKey = getExtRepositoryObjectKey(
 			fileEntryId);
@@ -762,9 +780,9 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 
 	@Override
 	public ExtRepositoryFolderAdapter moveFolder(
-			long folderId, long newParentFolderId,
+			long userId, long folderId, long newParentFolderId,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		String extRepositoryFolderKey = getExtRepositoryObjectKey(folderId);
 
@@ -788,7 +806,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	@SuppressWarnings("unused")
 	public Lock refreshFileEntryLock(
 			String lockUuid, long companyId, long expirationTime)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		throw new UnsupportedOperationException();
 	}
@@ -797,15 +815,16 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	@SuppressWarnings("unused")
 	public Lock refreshFolderLock(
 			String lockUuid, long companyId, long expirationTime)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void revertFileEntry(
-			long fileEntryId, String version, ServiceContext serviceContext)
-		throws PortalException, SystemException {
+			long userId, long fileEntryId, String version,
+			ServiceContext serviceContext)
+		throws PortalException {
 
 		String extRepositoryFileEntryKey = getExtRepositoryObjectKey(
 			fileEntryId);
@@ -835,24 +854,33 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 			InputStream inputStream = _extRepository.getContentStream(
 				extRepositoryFileVersion);
 
-			try {
-				_extRepository.checkOutExtRepositoryFileEntry(
-					extRepositoryFileEntryKey);
-			}
-			catch (UnsupportedOperationException uoe) {
+			boolean needsCheckIn = false;
+
+			if (!isCheckedOut(extRepositoryFileEntry)) {
+				try {
+					_extRepository.checkOutExtRepositoryFileEntry(
+						extRepositoryFileEntryKey);
+
+					needsCheckIn = true;
+				}
+				catch (UnsupportedOperationException uoe) {
+				}
 			}
 
 			_extRepository.updateExtRepositoryFileEntry(
 				extRepositoryFileEntryKey,
 				extRepositoryFileVersion.getMimeType(), inputStream);
 
-			String changeLog = "Reverted to " + version;
+			String changeLog = LanguageUtil.format(
+				serviceContext.getLocale(), "reverted-to-x", version, false);
 
-			try {
-				_extRepository.checkInExtRepositoryFileEntry(
-					extRepositoryFileEntryKey, true, changeLog);
-			}
-			catch (UnsupportedOperationException uoe) {
+			if (needsCheckIn) {
+				try {
+					_extRepository.checkInExtRepositoryFileEntry(
+						extRepositoryFileEntryKey, true, changeLog);
+				}
+				catch (UnsupportedOperationException uoe) {
+				}
 			}
 		}
 		else {
@@ -866,7 +894,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	@Override
 	@SuppressWarnings("unused")
 	public Hits search(long creatorUserId, int status, int start, int end)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		throw new UnsupportedOperationException();
 	}
@@ -876,7 +904,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	public Hits search(
 			long creatorUserId, long folderId, String[] mimeTypes, int status,
 			int start, int end)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		throw new UnsupportedOperationException();
 	}
@@ -893,18 +921,15 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 			extRepositorySearchResults = _extRepository.search(
 				searchContext, query, new ExtRepositoryQueryMapperImpl(this));
 		}
-		catch (PortalException pe) {
-			throw new SearchException("Unable to perform search", pe);
-		}
-		catch (SystemException se) {
-			throw new SearchException("Unable to perform search", se);
+		catch (PortalException | SystemException e) {
+			throw new SearchException("Unable to perform search", e);
 		}
 
 		QueryConfig queryConfig = searchContext.getQueryConfig();
 
-		List<Document> documents = new ArrayList<Document>();
-		List<String> snippets = new ArrayList<String>();
-		List<Float> scores = new ArrayList<Float>();
+		List<Document> documents = new ArrayList<>();
+		List<String> snippets = new ArrayList<>();
+		List<Float> scores = new ArrayList<>();
 
 		int total = 0;
 
@@ -941,14 +966,9 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 
 				total++;
 			}
-			catch (SystemException se) {
+			catch (PortalException | SystemException e) {
 				if (_log.isWarnEnabled()) {
-					_log.warn("Invalid entry returned from search", se);
-				}
-			}
-			catch (PortalException pe) {
-				if (_log.isWarnEnabled()) {
-					_log.warn("Invalid entry returned from search", pe);
+					_log.warn("Invalid entry returned from search", e);
 				}
 			}
 		}
@@ -961,7 +981,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 		hits.setDocs(documents.toArray(new Document[documents.size()]));
 		hits.setLength(total);
 		hits.setQueryTerms(new String[0]);
-		hits.setScores(scores.toArray(new Float[scores.size()]));
+		hits.setScores(ArrayUtil.toFloatArray(scores));
 		hits.setSearchTime(searchTime);
 		hits.setSnippets(snippets.toArray(new String[snippets.size()]));
 		hits.setStart(startTime);
@@ -972,46 +992,39 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	@Override
 	@SuppressWarnings("unused")
 	public void unlockFolder(long folderId, String lockUuid)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public FileEntry updateFileEntry(
-			long fileEntryId, String sourceFileName, String mimeType,
-			String title, String description, String changeLog,
+			long userId, long fileEntryId, String sourceFileName,
+			String mimeType, String title, String description, String changeLog,
 			boolean majorVersion, InputStream inputStream, long size,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		String extRepositoryFileEntryKey = getExtRepositoryObjectKey(
 			fileEntryId);
 
-		ExtRepositoryFileEntry extRepositoryFileEntry = null;
-
-		if (inputStream == null) {
-			extRepositoryFileEntry = _extRepository.getExtRepositoryObject(
+		ExtRepositoryFileEntry extRepositoryFileEntry =
+			_extRepository.getExtRepositoryObject(
 				ExtRepositoryObjectType.FILE, extRepositoryFileEntryKey);
-		}
-		else {
-			try {
-				_extRepository.checkOutExtRepositoryFileEntry(
-					extRepositoryFileEntryKey);
-			}
-			catch (UnsupportedOperationException uoe) {
-			}
 
+		boolean needsCheckIn = false;
+
+		if (!isCheckedOut(extRepositoryFileEntry)) {
+			_extRepository.checkOutExtRepositoryFileEntry(
+				extRepositoryFileEntryKey);
+
+			needsCheckIn = true;
+		}
+
+		if (inputStream != null) {
 			extRepositoryFileEntry =
 				_extRepository.updateExtRepositoryFileEntry(
 					extRepositoryFileEntryKey, mimeType, inputStream);
-
-			try {
-				_extRepository.checkInExtRepositoryFileEntry(
-					extRepositoryFileEntryKey, majorVersion, changeLog);
-			}
-			catch (UnsupportedOperationException uoe) {
-			}
 		}
 
 		if (!title.equals(extRepositoryFileEntry.getTitle())) {
@@ -1022,6 +1035,16 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 			extRepositoryFileEntry = _extRepository.moveExtRepositoryObject(
 				ExtRepositoryObjectType.FILE, extRepositoryFileEntryKey,
 				folder.getExtRepositoryModelKey(), title);
+
+			ExtRepositoryAdapterCache extRepositoryAdapterCache =
+				ExtRepositoryAdapterCache.getInstance();
+
+			extRepositoryAdapterCache.remove(extRepositoryFileEntryKey);
+		}
+
+		if (needsCheckIn) {
+			_extRepository.checkInExtRepositoryFileEntry(
+				extRepositoryFileEntryKey, majorVersion, changeLog);
 		}
 
 		return _toExtRepositoryObjectAdapter(
@@ -1029,10 +1052,25 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	}
 
 	@Override
+	public FileShortcut updateFileShortcut(
+		long userId, long fileShortcutId, long folderId, long toFileEntryId,
+		ServiceContext serviceContext) {
+
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void updateFileShortcuts(
+		long oldToFileEntryId, long newToFileEntryId) {
+
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public ExtRepositoryFolderAdapter updateFolder(
-			long folderId, String title, String description,
+			long folderId, String name, String description,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		String extRepositoryFolderKey = getExtRepositoryObjectKey(folderId);
 
@@ -1046,7 +1084,12 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 		ExtRepositoryFolder newExtRepositoryFolder =
 			_extRepository.moveExtRepositoryObject(
 				ExtRepositoryObjectType.FOLDER, extRepositoryFolderKey,
-				parentExtRepositoryFolder.getExtRepositoryModelKey(), title);
+				parentExtRepositoryFolder.getExtRepositoryModelKey(), name);
+
+		ExtRepositoryAdapterCache extRepositoryAdapterCache =
+			ExtRepositoryAdapterCache.getInstance();
+
+		extRepositoryAdapterCache.remove(extRepositoryFolderKey);
 
 		return _toExtRepositoryObjectAdapter(
 			ExtRepositoryObjectAdapterType.FOLDER, newExtRepositoryFolder);
@@ -1055,7 +1098,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	@Override
 	@SuppressWarnings("unused")
 	public boolean verifyFileEntryCheckOut(long fileEntryId, String lockUuid)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		throw new UnsupportedOperationException();
 	}
@@ -1063,20 +1106,24 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	@Override
 	@SuppressWarnings("unused")
 	public boolean verifyInheritableLock(long folderId, String lockUuid)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		throw new UnsupportedOperationException();
 	}
 
 	protected ExtRepositoryAdapter(ExtRepository extRepository) {
+		if (extRepository == null) {
+			extRepository = (ExtRepository)this;
+		}
+
 		_extRepository = extRepository;
 	}
 
 	protected String getExtRepositoryObjectKey(long repositoryEntryId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
-		RepositoryEntry repositoryEntry = RepositoryEntryUtil.fetchByPrimaryKey(
-			repositoryEntryId);
+		RepositoryEntry repositoryEntry =
+			repositoryEntryLocalService.fetchRepositoryEntry(repositoryEntryId);
 
 		if (repositoryEntry != null) {
 			return repositoryEntry.getMappedId();
@@ -1090,17 +1137,49 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 		return repositoryEntry.getMappedId();
 	}
 
+	protected boolean isCheckedOut(
+		ExtRepositoryFileEntry extRepositoryFileEntry) {
+
+		String checkedOutBy = extRepositoryFileEntry.getCheckedOutBy();
+
+		if (Validator.isNull(checkedOutBy)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private void _checkAssetEntry(
+			ExtRepositoryFileEntryAdapter extRepositoryFileEntryAdapter)
+		throws PortalException {
+
+		dlAppHelperLocalService.checkAssetEntry(
+			PrincipalThreadLocal.getUserId(), extRepositoryFileEntryAdapter,
+			extRepositoryFileEntryAdapter.getFileVersion() );
+	}
+
+	private User _fetchDefaultUser() {
+		try {
+			return userLocalService.getDefaultUser(getCompanyId());
+		}
+		catch (PortalException e) {
+			_log.error(
+				"Unable to get default user for company " + getCompanyId(), e);
+
+			return null;
+		}
+	}
+
 	private <T extends ExtRepositoryObjectAdapter<?>> List<T> _filterByMimeType(
 		List<T> extRepositoryObjects, String[] mimeTypes) {
 
-		if (mimeTypes == null) {
+		if (ArrayUtil.isEmpty(mimeTypes)) {
 			return extRepositoryObjects;
 		}
 
-		Set<String> allowedMimeTypes = new HashSet<String>(
-			Arrays.asList(mimeTypes));
+		Set<String> allowedMimeTypes = new HashSet<>(Arrays.asList(mimeTypes));
 
-		List<T> filteredExtRepositoryObjects = new ArrayList<T>();
+		List<T> filteredExtRepositoryObjects = new ArrayList<>();
 
 		for (T extRepositoryObject : extRepositoryObjects) {
 			if (extRepositoryObject instanceof ExtRepositoryFileEntryAdapter) {
@@ -1118,19 +1197,19 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 		return filteredExtRepositoryObjects;
 	}
 
-	private void _forceGetVersions(
-			ExtRepositoryFileEntryAdapter extRepositoryFileEntryAdapter)
-		throws SystemException {
+	private void _forceGetFileVersions(
+		ExtRepositoryFileEntryAdapter extRepositoryFileEntryAdapter) {
 
 		extRepositoryFileEntryAdapter.getFileVersions(
 			WorkflowConstants.STATUS_ANY);
 	}
 
 	private String _getExtRepositoryObjectKey(String uuid)
-		throws PortalException, SystemException {
+		throws PortalException {
 
-		RepositoryEntry repositoryEntry = RepositoryEntryUtil.fetchByUUID_G(
-			uuid, getGroupId(), true);
+		RepositoryEntry repositoryEntry =
+			repositoryEntryLocalService.fetchRepositoryEntryByUuidAndGroupId(
+				uuid, getGroupId());
 
 		if (repositoryEntry == null) {
 			throw new NoSuchRepositoryEntryException(
@@ -1143,14 +1222,12 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	private String _getLogin() {
 		String login = PrincipalThreadLocal.getName();
 
-		if (Validator.isNull(login)) {
-			return login;
+		if (Validator.isNull(login) || _isDefaultUser(login)) {
+			return PropsUtil.get(PropsKeys.DL_REPOSITORY_GUEST_USERNAME);
 		}
 
 		try {
-			Company company = companyLocalService.getCompany(getCompanyId());
-
-			String authType = company.getAuthType();
+			String authType = getAuthType();
 
 			if (!authType.equals(CompanyConstants.AUTH_TYPE_ID)) {
 				User user = userLocalService.getUser(GetterUtil.getLong(login));
@@ -1163,17 +1240,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 				}
 			}
 		}
-		catch (PortalException e) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(
-					"Unable to get login to connect to external repository " +
-						_extRepository,
-					e);
-			}
-
-			login = null;
-		}
-		catch (SystemException e) {
+		catch (PortalException | SystemException e) {
 			if (_log.isWarnEnabled()) {
 				_log.warn(
 					"Unable to get login to connect to external repository " +
@@ -1188,47 +1255,49 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 	}
 
 	private String _getPassword() {
+		String login = PrincipalThreadLocal.getName();
+
+		if (Validator.isNull(login) || _isDefaultUser(login)) {
+			return PropsUtil.get(PropsKeys.DL_REPOSITORY_GUEST_PASSWORD);
+		}
+
 		return PrincipalThreadLocal.getPassword();
 	}
 
 	private RepositoryEntry _getRootRepositoryEntry(DLFolder rootMountFolder)
-		throws PortalException, SystemException {
+		throws PortalException {
 
-		RepositoryEntry repositoryEntry = RepositoryEntryUtil.fetchByR_M(
-			getRepositoryId(), _extRepository.getRootFolderKey());
-
-		if (repositoryEntry == null) {
-			try {
-				repositoryEntry =
-					RepositoryEntryLocalServiceUtil.addRepositoryEntry(
-						rootMountFolder.getUserId(), getGroupId(),
-						getRepositoryId(), _extRepository.getRootFolderKey(),
-						new ServiceContext());
-			}
-			catch (PortalException pe) {
-				throw new SystemException(
-					"Unable to create root folder entry", pe);
-			}
-		}
-
-		return repositoryEntry;
+		return repositoryEntryLocalService.getRepositoryEntry(
+			rootMountFolder.getUserId(), getGroupId(), getRepositoryId(),
+			_extRepository.getRootFolderKey());
 	}
 
-	@SuppressWarnings("unchecked")
-	private <T extends ExtRepositoryObjectAdapter<?>> List<T> _subList(
-		List<T> list, int start, int end, OrderByComparator obc) {
+	private boolean _isDefaultUser(String login) {
+		User defaultUser = _fetchDefaultUser();
+
+		if ((defaultUser != null) &&
+			login.equals(defaultUser.getScreenName())) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private <T, V extends T> List<T> _subList(
+		List<V> list, int start, int end, OrderByComparator<T> obc) {
 
 		if (obc != null) {
 			list = ListUtil.sort(list, obc);
 		}
 
-		return ListUtil.subList(list, start, end);
+		return (List<T>)ListUtil.toList(ListUtil.subList(list, start, end));
 	}
 
 	private ExtRepositoryFileVersionAdapter _toExtRepositoryFileVersionAdapter(
 			ExtRepositoryFileEntryAdapter extRepositoryFileEntryAdapter,
 			ExtRepositoryFileVersion extRepositoryFileVersion)
-		throws SystemException {
+		throws PortalException {
 
 		ExtRepositoryAdapterCache extRepositoryAdapterCache =
 			ExtRepositoryAdapterCache.getInstance();
@@ -1240,16 +1309,13 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 			extRepositoryAdapterCache.get(extRepositoryModelKey);
 
 		if (extRepositoryVersionAdapter == null) {
-			Object[] repositoryEntryIds = getRepositoryEntryIds(
+			RepositoryEntry repositoryEntry = getRepositoryEntry(
 				extRepositoryModelKey);
 
-			long extRepositoryObjectId = (Long)repositoryEntryIds[0];
-
-			String uuid = (String)repositoryEntryIds[1];
-
 			extRepositoryVersionAdapter = new ExtRepositoryFileVersionAdapter(
-				this, extRepositoryObjectId, uuid,
-				extRepositoryFileEntryAdapter, extRepositoryFileVersion);
+				this, repositoryEntry.getRepositoryEntryId(),
+				repositoryEntry.getUuid(), extRepositoryFileEntryAdapter,
+				extRepositoryFileVersion);
 
 			extRepositoryAdapterCache.put(extRepositoryVersionAdapter);
 		}
@@ -1261,10 +1327,10 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 			_toExtRepositoryFileVersionAdapters(
 				ExtRepositoryFileEntryAdapter extRepositoryFileEntryAdapter,
 				List<ExtRepositoryFileVersion> extRepositoryFileVersions)
-		throws SystemException {
+		throws PortalException {
 
 		List<ExtRepositoryFileVersionAdapter> extRepositoryFileVersionAdapters =
-			new ArrayList<ExtRepositoryFileVersionAdapter>();
+			new ArrayList<>();
 
 		for (ExtRepositoryFileVersion extRepositoryFileVersion :
 				extRepositoryFileVersions) {
@@ -1286,7 +1352,7 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 				ExtRepositoryObjectAdapterType<T>
 					extRepositoryObjectAdapterType,
 				ExtRepositoryObject extRepositoryObject)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		ExtRepositoryAdapterCache extRepositoryAdapterCache =
 			ExtRepositoryAdapterCache.getInstance();
@@ -1298,28 +1364,29 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 			extRepositoryAdapterCache.get(extRepositoryModelKey);
 
 		if (extRepositoryObjectAdapter == null) {
-			Object[] repositoryEntryIds = getRepositoryEntryIds(
+			RepositoryEntry repositoryEntry = getRepositoryEntry(
 				extRepositoryModelKey);
-
-			long extRepositoryObjectId = (Long)repositoryEntryIds[0];
-
-			String uuid = (String)repositoryEntryIds[1];
 
 			if (extRepositoryObject instanceof ExtRepositoryFolder) {
 				ExtRepositoryFolder extRepositoryFolder =
 					(ExtRepositoryFolder)extRepositoryObject;
 
 				extRepositoryObjectAdapter = new ExtRepositoryFolderAdapter(
-					this, extRepositoryObjectId, uuid, extRepositoryFolder);
+					this, repositoryEntry.getRepositoryEntryId(),
+					repositoryEntry.getUuid(), extRepositoryFolder);
 			}
 			else {
 				ExtRepositoryFileEntry extRepositoryFileEntry =
 					(ExtRepositoryFileEntry)extRepositoryObject;
 
 				extRepositoryObjectAdapter = new ExtRepositoryFileEntryAdapter(
-					this, extRepositoryObjectId, uuid, extRepositoryFileEntry);
+					this, repositoryEntry.getRepositoryEntryId(),
+					repositoryEntry.getUuid(), extRepositoryFileEntry);
 
-				_forceGetVersions(
+				_forceGetFileVersions(
+					(ExtRepositoryFileEntryAdapter)extRepositoryObjectAdapter);
+
+				_checkAssetEntry(
 					(ExtRepositoryFileEntryAdapter)extRepositoryObjectAdapter);
 			}
 
@@ -1364,9 +1431,9 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 				ExtRepositoryObjectAdapterType<T>
 					extRepositoryObjectAdapterType,
 				List<? extends ExtRepositoryObject> extRepositoryObjects)
-		throws PortalException, SystemException {
+		throws PortalException {
 
-		List<T> extRepositoryObjectAdapters = new ArrayList<T>();
+		List<T> extRepositoryObjectAdapters = new ArrayList<>();
 
 		for (ExtRepositoryObject extRepositoryObject : extRepositoryObjects) {
 			extRepositoryObjectAdapters.add(

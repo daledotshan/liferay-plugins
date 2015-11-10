@@ -14,6 +14,8 @@
 
 package com.liferay.knowledgebase.service;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.PortletBeanLocatorUtil;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.InvokableService;
@@ -32,29 +34,65 @@ import com.liferay.portal.service.InvokableService;
  * @see com.liferay.knowledgebase.service.impl.KBCommentServiceImpl
  * @generated
  */
+@ProviderType
 public class KBCommentServiceUtil {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.knowledgebase.service.impl.KBCommentServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static com.liferay.knowledgebase.model.KBComment deleteKBComment(
+		com.liferay.knowledgebase.model.KBComment kbComment)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().deleteKBComment(kbComment);
+	}
 
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	public static java.lang.String getBeanIdentifier() {
-		return getService().getBeanIdentifier();
+	public static com.liferay.knowledgebase.model.KBComment deleteKBComment(
+		long kbCommentId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().deleteKBComment(kbCommentId);
+	}
+
+	public static com.liferay.knowledgebase.model.KBComment getKBComment(
+		long kbCommentId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getKBComment(kbCommentId);
+	}
+
+	public static java.util.List<com.liferay.knowledgebase.model.KBComment> getKBComments(
+		long groupId, java.lang.String className, long classPK, int status,
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .getKBComments(groupId, className, classPK, status, start,
+			end);
+	}
+
+	public static java.util.List<com.liferay.knowledgebase.model.KBComment> getKBComments(
+		long groupId, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getKBComments(groupId, status, start, end);
+	}
+
+	public static int getKBCommentsCount(long groupId,
+		java.lang.String className, long classPK, int status)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .getKBCommentsCount(groupId, className, classPK, status);
+	}
+
+	public static int getKBCommentsCount(long groupId, int status)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getKBCommentsCount(groupId, status);
 	}
 
 	/**
-	* Sets the Spring bean ID for this bean.
+	* Returns the OSGi service identifier.
 	*
-	* @param beanIdentifier the Spring bean ID for this bean
+	* @return the OSGi service identifier
 	*/
-	public static void setBeanIdentifier(java.lang.String beanIdentifier) {
-		getService().setBeanIdentifier(beanIdentifier);
+	public static java.lang.String getOSGiServiceIdentifier() {
+		return getService().getOSGiServiceIdentifier();
 	}
 
 	public static java.lang.Object invokeMethod(java.lang.String name,
@@ -63,29 +101,31 @@ public class KBCommentServiceUtil {
 		return getService().invokeMethod(name, parameterTypes, arguments);
 	}
 
-	public static com.liferay.knowledgebase.model.KBComment deleteKBComment(
-		com.liferay.knowledgebase.model.KBComment kbComment)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		return getService().deleteKBComment(kbComment);
-	}
-
-	public static com.liferay.knowledgebase.model.KBComment deleteKBComment(
-		long kbCommentId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		return getService().deleteKBComment(kbCommentId);
+	public static com.liferay.knowledgebase.model.KBComment updateKBComment(
+		long kbCommentId, long classNameId, long classPK,
+		java.lang.String content,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateKBComment(kbCommentId, classNameId, classPK, content,
+			serviceContext);
 	}
 
 	public static com.liferay.knowledgebase.model.KBComment updateKBComment(
 		long kbCommentId, long classNameId, long classPK,
-		java.lang.String content, boolean helpful,
+		java.lang.String content, int status,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .updateKBComment(kbCommentId, classNameId, classPK, content,
-			helpful, serviceContext);
+			status, serviceContext);
+	}
+
+	public static com.liferay.knowledgebase.model.KBComment updateStatus(
+		long kbCommentId, int status,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().updateStatus(kbCommentId, status, serviceContext);
 	}
 
 	public static void clearService() {
