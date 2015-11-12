@@ -17,8 +17,8 @@
 
 package com.liferay.privatemessaging.hook.upgrade.v1_0_1;
 
+import com.liferay.message.boards.web.constants.MBPortletKeys;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.model.Group;
@@ -33,7 +33,6 @@ import com.liferay.portal.service.RepositoryLocalServiceUtil;
 import com.liferay.portal.service.ResourceLocalServiceUtil;
 import com.liferay.portal.service.ResourcePermissionLocalServiceUtil;
 import com.liferay.portal.service.RoleLocalServiceUtil;
-import com.liferay.portal.util.PortletKeys;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
 
 import java.util.List;
@@ -57,10 +56,10 @@ public class UpgradeResourcePermission extends UpgradeProcess {
 	}
 
 	private void upgradeDLFolderResourcePermission(Company company, Group group)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		Repository repository = RepositoryLocalServiceUtil.fetchRepository(
-			group.getGroupId(), PortletKeys.MESSAGE_BOARDS);
+			group.getGroupId(), MBPortletKeys.MESSAGE_BOARDS);
 
 		if (repository == null) {
 			return;
@@ -85,7 +84,7 @@ public class UpgradeResourcePermission extends UpgradeProcess {
 	}
 
 	private void upgradeDLResourcePermission(Company company, Group group)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		int count =
 			ResourcePermissionLocalServiceUtil.getResourcePermissionsCount(

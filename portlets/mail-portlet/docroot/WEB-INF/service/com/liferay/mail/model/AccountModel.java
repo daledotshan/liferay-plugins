@@ -14,11 +14,13 @@
 
 package com.liferay.mail.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.AuditedModel;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
+import com.liferay.portal.model.ShardedModel;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -40,7 +42,9 @@ import java.util.Date;
  * @see com.liferay.mail.model.impl.AccountModelImpl
  * @generated
  */
-public interface AccountModel extends AuditedModel, BaseModel<Account> {
+@ProviderType
+public interface AccountModel extends AuditedModel, BaseModel<Account>,
+	ShardedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -111,10 +115,9 @@ public interface AccountModel extends AuditedModel, BaseModel<Account> {
 	 * Returns the user uuid of this account.
 	 *
 	 * @return the user uuid of this account
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid() throws SystemException;
+	public String getUserUuid();
 
 	/**
 	 * Sets the user uuid of this account.
@@ -534,19 +537,19 @@ public interface AccountModel extends AuditedModel, BaseModel<Account> {
 	public Object clone();
 
 	@Override
-	public int compareTo(Account account);
+	public int compareTo(com.liferay.mail.model.Account account);
 
 	@Override
 	public int hashCode();
 
 	@Override
-	public CacheModel<Account> toCacheModel();
+	public CacheModel<com.liferay.mail.model.Account> toCacheModel();
 
 	@Override
-	public Account toEscapedModel();
+	public com.liferay.mail.model.Account toEscapedModel();
 
 	@Override
-	public Account toUnescapedModel();
+	public com.liferay.mail.model.Account toUnescapedModel();
 
 	@Override
 	public String toString();
