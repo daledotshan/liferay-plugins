@@ -56,37 +56,6 @@
 </p>
 
 <p>
-	EntityCacheUtil#setEntityCache=
-
-		<%
-		new SecurityExceptionTest(out, themeDisplay, true) {
-
-			protected void test() throws Exception {
-				EntityCacheUtil entityCacheUtil = new EntityCacheUtil();
-
-				EntityCache entityCache = EntityCacheUtil.getEntityCache();
-
-				entityCacheUtil.setEntityCache(entityCache);
-			}
-
-		};
-		%>
-
-	FinderCacheUtil#setFinderCache=
-
-		<%
-		new SecurityExceptionTest(out, themeDisplay, true) {
-
-			protected void test() throws Exception {
-				FinderCacheUtil finderCacheUtil = new FinderCacheUtil();
-
-				FinderCache finderCache = FinderCacheUtil.getFinderCache();
-
-				finderCacheUtil.setFinderCache(finderCache);
-			}
-
-		};
-		%>
 
 	PortalCustomSQLUtil#setPortalCustomSQL=
 
@@ -2815,7 +2784,9 @@ String dbType = db.getType();
 		new SecurityExceptionTest(out, themeDisplay, true) {
 
 			protected void test() throws Exception {
-				PortalExecutorManagerUtil.shutdown("liferay/hot_deploy");
+				ThreadPoolExecutor threadPoolExecutor = PortalExecutorManagerUtil.getPortalExecutor("liferay/hot_deploy");
+
+				threadPoolExecutor.shutdown();
 			}
 
 		};
