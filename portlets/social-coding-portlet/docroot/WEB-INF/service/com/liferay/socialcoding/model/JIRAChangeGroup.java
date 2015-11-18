@@ -14,6 +14,9 @@
 
 package com.liferay.socialcoding.model;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.model.PersistedModel;
 
 /**
@@ -25,10 +28,28 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.socialcoding.model.impl.JIRAChangeGroupModelImpl
  * @generated
  */
+@ProviderType
 public interface JIRAChangeGroup extends JIRAChangeGroupModel, PersistedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never modify this interface directly. Add methods to {@link com.liferay.socialcoding.model.impl.JIRAChangeGroupImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public static final Accessor<JIRAChangeGroup, Long> JIRA_CHANGE_GROUP_ID_ACCESSOR =
+		new Accessor<JIRAChangeGroup, Long>() {
+			@Override
+			public Long get(JIRAChangeGroup jiraChangeGroup) {
+				return jiraChangeGroup.getJiraChangeGroupId();
+			}
+
+			@Override
+			public Class<Long> getAttributeClass() {
+				return Long.class;
+			}
+
+			@Override
+			public Class<JIRAChangeGroup> getTypeClass() {
+				return JIRAChangeGroup.class;
+			}
+		};
 }

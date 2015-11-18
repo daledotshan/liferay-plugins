@@ -13,10 +13,15 @@
 	<model name="com.liferay.sync.model.SyncDLObject">
 		<field name="syncDLObjectId" type="long" />
 		<field name="companyId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
 		<field name="createTime" type="long" />
 		<field name="modifiedTime" type="long" />
 		<field name="repositoryId" type="long" />
 		<field name="parentFolderId" type="long" />
+		<field name="treePath" type="String">
+			<hint name="max-length">4000</hint>
+		</field>
 		<field name="name" type="String">
 			<hint name="max-length">255</hint>
 		</field>
@@ -30,9 +35,11 @@
 			<hint-collection name="CLOB" />
 		</field>
 		<field name="version" type="String" />
+		<field name="versionId" type="long" />
 		<field name="size" type="long" />
 		<field name="checksum" type="String" />
 		<field name="event" type="String" />
+		<field name="lastPermissionChangeDate" type="Date" />
 		<field name="lockExpirationDate" type="Date" />
 		<field name="lockUserId" type="long" />
 		<field name="lockUserName" type="String" />
