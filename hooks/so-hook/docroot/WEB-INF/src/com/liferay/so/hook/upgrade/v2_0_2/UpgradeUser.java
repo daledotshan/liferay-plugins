@@ -17,7 +17,9 @@
 
 package com.liferay.so.hook.upgrade.v2_0_2;
 
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.ClassResolverUtil;
 import com.liferay.portal.kernel.util.MethodKey;
@@ -47,38 +49,49 @@ public class UpgradeUser extends UpgradeProcess {
 
 	@Override
 	protected void doUpgrade() throws Exception {
-		List<User> users = UserLocalServiceUtil.getUsers(
-			QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+		ActionableDynamicQuery actionableDynamicQuery =
+			UserLocalServiceUtil.getActionableDynamicQuery();
 
-		for (User user : users) {
-			try {
-				if (user.isDefaultUser()) {
-					continue;
+		actionableDynamicQuery.setPerformActionMethod(
+			new ActionableDynamicQuery.PerformActionMethod<User>() {
+
+				@Override
+				public void performAction(User user) throws PortalException {
+
+					try {
+						if (user.isDefaultUser()) {
+							return;
+						}
+
+						Group group = user.getGroup();
+
+						LayoutSet layoutSet =
+							LayoutSetLocalServiceUtil.getLayoutSet(
+								group.getGroupId(), false);
+
+						String themeId = layoutSet.getThemeId();
+
+						if (!themeId.equals("so_WAR_sotheme")) {
+							return;
+						}
+
+						Role role = RoleLocalServiceUtil.getRole(
+							user.getCompanyId(),
+							RoleConstants.SOCIAL_OFFICE_USER);
+
+						UserLocalServiceUtil.addRoleUsers(
+							role.getRoleId(), new long[] {user.getUserId()});
+
+						updateUserGroup(group);
+						updateSocialRelations(user);
+					}
+					catch (Exception e) {
+					}
 				}
 
-				Group group = user.getGroup();
+			});
 
-				LayoutSet layoutSet = LayoutSetLocalServiceUtil.getLayoutSet(
-					group.getGroupId(), false);
-
-				String themeId = layoutSet.getThemeId();
-
-				if (!themeId.equals("so_WAR_sotheme")) {
-					return;
-				}
-
-				Role role = RoleLocalServiceUtil.getRole(
-					user.getCompanyId(), RoleConstants.SOCIAL_OFFICE_USER);
-
-				UserLocalServiceUtil.addRoleUsers(
-					role.getRoleId(), new long[] {user.getUserId()});
-
-				updateUserGroup(group);
-				updateSocialRelations(user);
-			}
-			catch (Exception e) {
-			}
-		}
+		actionableDynamicQuery.performActions();
 	}
 
 	protected void updateSocialRelations(User user) throws Exception {
