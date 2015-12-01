@@ -14,22 +14,27 @@
 
 package com.liferay.microblogs.service.base;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.microblogs.model.MicroblogsEntry;
 import com.liferay.microblogs.service.MicroblogsEntryLocalService;
 import com.liferay.microblogs.service.persistence.MicroblogsEntryFinder;
 import com.liferay.microblogs.service.persistence.MicroblogsEntryPersistence;
 
 import com.liferay.portal.kernel.bean.BeanReference;
-import com.liferay.portal.kernel.bean.IdentifiableBean;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiService;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -58,9 +63,10 @@ import javax.sql.DataSource;
  * @see com.liferay.microblogs.service.MicroblogsEntryLocalServiceUtil
  * @generated
  */
+@ProviderType
 public abstract class MicroblogsEntryLocalServiceBaseImpl
 	extends BaseLocalServiceImpl implements MicroblogsEntryLocalService,
-		IdentifiableBean {
+		IdentifiableOSGiService {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -72,12 +78,10 @@ public abstract class MicroblogsEntryLocalServiceBaseImpl
 	 *
 	 * @param microblogsEntry the microblogs entry
 	 * @return the microblogs entry that was added
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public MicroblogsEntry addMicroblogsEntry(MicroblogsEntry microblogsEntry)
-		throws SystemException {
+	public MicroblogsEntry addMicroblogsEntry(MicroblogsEntry microblogsEntry) {
 		microblogsEntry.setNew(true);
 
 		return microblogsEntryPersistence.update(microblogsEntry);
@@ -100,12 +104,11 @@ public abstract class MicroblogsEntryLocalServiceBaseImpl
 	 * @param microblogsEntryId the primary key of the microblogs entry
 	 * @return the microblogs entry that was removed
 	 * @throws PortalException if a microblogs entry with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public MicroblogsEntry deleteMicroblogsEntry(long microblogsEntryId)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return microblogsEntryPersistence.remove(microblogsEntryId);
 	}
 
@@ -115,13 +118,11 @@ public abstract class MicroblogsEntryLocalServiceBaseImpl
 	 * @param microblogsEntry the microblogs entry
 	 * @return the microblogs entry that was removed
 	 * @throws PortalException
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public MicroblogsEntry deleteMicroblogsEntry(
-		MicroblogsEntry microblogsEntry)
-		throws PortalException, SystemException {
+		MicroblogsEntry microblogsEntry) throws PortalException {
 		return microblogsEntryPersistence.remove(microblogsEntry);
 	}
 
@@ -138,12 +139,9 @@ public abstract class MicroblogsEntryLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
 		return microblogsEntryPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -158,12 +156,10 @@ public abstract class MicroblogsEntryLocalServiceBaseImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end) {
 		return microblogsEntryPersistence.findWithDynamicQuery(dynamicQuery,
 			start, end);
 	}
@@ -180,47 +176,41 @@ public abstract class MicroblogsEntryLocalServiceBaseImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator orderByComparator) throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end, OrderByComparator<T> orderByComparator) {
 		return microblogsEntryPersistence.findWithDynamicQuery(dynamicQuery,
 			start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
 		return microblogsEntryPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) throws SystemException {
+		Projection projection) {
 		return microblogsEntryPersistence.countWithDynamicQuery(dynamicQuery,
 			projection);
 	}
 
 	@Override
-	public MicroblogsEntry fetchMicroblogsEntry(long microblogsEntryId)
-		throws SystemException {
+	public MicroblogsEntry fetchMicroblogsEntry(long microblogsEntryId) {
 		return microblogsEntryPersistence.fetchByPrimaryKey(microblogsEntryId);
 	}
 
@@ -230,17 +220,61 @@ public abstract class MicroblogsEntryLocalServiceBaseImpl
 	 * @param microblogsEntryId the primary key of the microblogs entry
 	 * @return the microblogs entry
 	 * @throws PortalException if a microblogs entry with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public MicroblogsEntry getMicroblogsEntry(long microblogsEntryId)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return microblogsEntryPersistence.findByPrimaryKey(microblogsEntryId);
 	}
 
 	@Override
+	public ActionableDynamicQuery getActionableDynamicQuery() {
+		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
+
+		actionableDynamicQuery.setBaseLocalService(com.liferay.microblogs.service.MicroblogsEntryLocalServiceUtil.getService());
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+		actionableDynamicQuery.setModelClass(MicroblogsEntry.class);
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("microblogsEntryId");
+
+		return actionableDynamicQuery;
+	}
+
+	@Override
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
+
+		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.microblogs.service.MicroblogsEntryLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
+		indexableActionableDynamicQuery.setModelClass(MicroblogsEntry.class);
+
+		indexableActionableDynamicQuery.setPrimaryKeyPropertyName(
+			"microblogsEntryId");
+
+		return indexableActionableDynamicQuery;
+	}
+
+	protected void initActionableDynamicQuery(
+		ActionableDynamicQuery actionableDynamicQuery) {
+		actionableDynamicQuery.setBaseLocalService(com.liferay.microblogs.service.MicroblogsEntryLocalServiceUtil.getService());
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+		actionableDynamicQuery.setModelClass(MicroblogsEntry.class);
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("microblogsEntryId");
+	}
+
+	/**
+	 * @throws PortalException
+	 */
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException {
+		return microblogsEntryLocalService.deleteMicroblogsEntry((MicroblogsEntry)persistedModel);
+	}
+
+	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return microblogsEntryPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
@@ -254,11 +288,9 @@ public abstract class MicroblogsEntryLocalServiceBaseImpl
 	 * @param start the lower bound of the range of microblogs entries
 	 * @param end the upper bound of the range of microblogs entries (not inclusive)
 	 * @return the range of microblogs entries
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<MicroblogsEntry> getMicroblogsEntries(int start, int end)
-		throws SystemException {
+	public List<MicroblogsEntry> getMicroblogsEntries(int start, int end) {
 		return microblogsEntryPersistence.findAll(start, end);
 	}
 
@@ -266,10 +298,9 @@ public abstract class MicroblogsEntryLocalServiceBaseImpl
 	 * Returns the number of microblogs entries.
 	 *
 	 * @return the number of microblogs entries
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getMicroblogsEntriesCount() throws SystemException {
+	public int getMicroblogsEntriesCount() {
 		return microblogsEntryPersistence.countAll();
 	}
 
@@ -278,12 +309,11 @@ public abstract class MicroblogsEntryLocalServiceBaseImpl
 	 *
 	 * @param microblogsEntry the microblogs entry
 	 * @return the microblogs entry that was updated
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public MicroblogsEntry updateMicroblogsEntry(
-		MicroblogsEntry microblogsEntry) throws SystemException {
+		MicroblogsEntry microblogsEntry) {
 		return microblogsEntryPersistence.update(microblogsEntry);
 	}
 
@@ -292,7 +322,7 @@ public abstract class MicroblogsEntryLocalServiceBaseImpl
 	 *
 	 * @return the microblogs entry local service
 	 */
-	public com.liferay.microblogs.service.MicroblogsEntryLocalService getMicroblogsEntryLocalService() {
+	public MicroblogsEntryLocalService getMicroblogsEntryLocalService() {
 		return microblogsEntryLocalService;
 	}
 
@@ -302,27 +332,8 @@ public abstract class MicroblogsEntryLocalServiceBaseImpl
 	 * @param microblogsEntryLocalService the microblogs entry local service
 	 */
 	public void setMicroblogsEntryLocalService(
-		com.liferay.microblogs.service.MicroblogsEntryLocalService microblogsEntryLocalService) {
+		MicroblogsEntryLocalService microblogsEntryLocalService) {
 		this.microblogsEntryLocalService = microblogsEntryLocalService;
-	}
-
-	/**
-	 * Returns the microblogs entry remote service.
-	 *
-	 * @return the microblogs entry remote service
-	 */
-	public com.liferay.microblogs.service.MicroblogsEntryService getMicroblogsEntryService() {
-		return microblogsEntryService;
-	}
-
-	/**
-	 * Sets the microblogs entry remote service.
-	 *
-	 * @param microblogsEntryService the microblogs entry remote service
-	 */
-	public void setMicroblogsEntryService(
-		com.liferay.microblogs.service.MicroblogsEntryService microblogsEntryService) {
-		this.microblogsEntryService = microblogsEntryService;
 	}
 
 	/**
@@ -402,25 +413,6 @@ public abstract class MicroblogsEntryLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the class name remote service.
-	 *
-	 * @return the class name remote service
-	 */
-	public com.liferay.portal.service.ClassNameService getClassNameService() {
-		return classNameService;
-	}
-
-	/**
-	 * Sets the class name remote service.
-	 *
-	 * @param classNameService the class name remote service
-	 */
-	public void setClassNameService(
-		com.liferay.portal.service.ClassNameService classNameService) {
-		this.classNameService = classNameService;
-	}
-
-	/**
 	 * Returns the class name persistence.
 	 *
 	 * @return the class name persistence
@@ -478,25 +470,6 @@ public abstract class MicroblogsEntryLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the user remote service.
-	 *
-	 * @return the user remote service
-	 */
-	public com.liferay.portal.service.UserService getUserService() {
-		return userService;
-	}
-
-	/**
-	 * Sets the user remote service.
-	 *
-	 * @param userService the user remote service
-	 */
-	public void setUserService(
-		com.liferay.portal.service.UserService userService) {
-		this.userService = userService;
-	}
-
-	/**
 	 * Returns the user persistence.
 	 *
 	 * @return the user persistence
@@ -529,23 +502,13 @@ public abstract class MicroblogsEntryLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the Spring bean ID for this bean.
+	 * Returns the OSGi service identifier.
 	 *
-	 * @return the Spring bean ID for this bean
+	 * @return the OSGi service identifier
 	 */
 	@Override
-	public String getBeanIdentifier() {
-		return _beanIdentifier;
-	}
-
-	/**
-	 * Sets the Spring bean ID for this bean.
-	 *
-	 * @param beanIdentifier the Spring bean ID for this bean
-	 */
-	@Override
-	public void setBeanIdentifier(String beanIdentifier) {
-		_beanIdentifier = beanIdentifier;
+	public String getOSGiServiceIdentifier() {
+		return MicroblogsEntryLocalService.class.getName();
 	}
 
 	@Override
@@ -582,7 +545,7 @@ public abstract class MicroblogsEntryLocalServiceBaseImpl
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) throws SystemException {
+	protected void runSQL(String sql) {
 		try {
 			DataSource dataSource = microblogsEntryPersistence.getDataSource();
 
@@ -602,9 +565,7 @@ public abstract class MicroblogsEntryLocalServiceBaseImpl
 	}
 
 	@BeanReference(type = com.liferay.microblogs.service.MicroblogsEntryLocalService.class)
-	protected com.liferay.microblogs.service.MicroblogsEntryLocalService microblogsEntryLocalService;
-	@BeanReference(type = com.liferay.microblogs.service.MicroblogsEntryService.class)
-	protected com.liferay.microblogs.service.MicroblogsEntryService microblogsEntryService;
+	protected MicroblogsEntryLocalService microblogsEntryLocalService;
 	@BeanReference(type = MicroblogsEntryPersistence.class)
 	protected MicroblogsEntryPersistence microblogsEntryPersistence;
 	@BeanReference(type = MicroblogsEntryFinder.class)
@@ -613,19 +574,14 @@ public abstract class MicroblogsEntryLocalServiceBaseImpl
 	protected com.liferay.counter.service.CounterLocalService counterLocalService;
 	@BeanReference(type = com.liferay.portal.service.ClassNameLocalService.class)
 	protected com.liferay.portal.service.ClassNameLocalService classNameLocalService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameService.class)
-	protected com.liferay.portal.service.ClassNameService classNameService;
 	@BeanReference(type = ClassNamePersistence.class)
 	protected ClassNamePersistence classNamePersistence;
 	@BeanReference(type = com.liferay.portal.service.ResourceLocalService.class)
 	protected com.liferay.portal.service.ResourceLocalService resourceLocalService;
 	@BeanReference(type = com.liferay.portal.service.UserLocalService.class)
 	protected com.liferay.portal.service.UserLocalService userLocalService;
-	@BeanReference(type = com.liferay.portal.service.UserService.class)
-	protected com.liferay.portal.service.UserService userService;
 	@BeanReference(type = UserPersistence.class)
 	protected UserPersistence userPersistence;
-	private String _beanIdentifier;
 	private ClassLoader _classLoader;
 	private MicroblogsEntryLocalServiceClpInvoker _clpInvoker = new MicroblogsEntryLocalServiceClpInvoker();
 }

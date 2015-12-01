@@ -17,20 +17,22 @@ package com.liferay.opensocial.service.persistence;
 import com.liferay.opensocial.model.Gadget;
 import com.liferay.opensocial.service.GadgetLocalServiceUtil;
 
-import com.liferay.portal.kernel.dao.orm.BaseActionableDynamicQuery;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 
 /**
  * @author Brian Wing Shun Chan
+ * @deprecated As of 7.0.0, replaced by {@link GadgetLocalServiceUtil#getActionableDynamicQuery()}
  * @generated
  */
+@Deprecated
 public abstract class GadgetActionableDynamicQuery
-	extends BaseActionableDynamicQuery {
-	public GadgetActionableDynamicQuery() throws SystemException {
+	extends DefaultActionableDynamicQuery {
+	public GadgetActionableDynamicQuery() {
 		setBaseLocalService(GadgetLocalServiceUtil.getService());
-		setClass(Gadget.class);
 
 		setClassLoader(com.liferay.opensocial.service.ClpSerializer.class.getClassLoader());
+
+		setModelClass(Gadget.class);
 
 		setPrimaryKeyPropertyName("gadgetId");
 	}

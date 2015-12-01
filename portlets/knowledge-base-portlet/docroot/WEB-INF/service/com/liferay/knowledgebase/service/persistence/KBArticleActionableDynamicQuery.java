@@ -17,20 +17,22 @@ package com.liferay.knowledgebase.service.persistence;
 import com.liferay.knowledgebase.model.KBArticle;
 import com.liferay.knowledgebase.service.KBArticleLocalServiceUtil;
 
-import com.liferay.portal.kernel.dao.orm.BaseActionableDynamicQuery;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 
 /**
  * @author Brian Wing Shun Chan
+ * @deprecated As of 7.0.0, replaced by {@link KBArticleLocalServiceUtil#getActionableDynamicQuery()}
  * @generated
  */
+@Deprecated
 public abstract class KBArticleActionableDynamicQuery
-	extends BaseActionableDynamicQuery {
-	public KBArticleActionableDynamicQuery() throws SystemException {
+	extends DefaultActionableDynamicQuery {
+	public KBArticleActionableDynamicQuery() {
 		setBaseLocalService(KBArticleLocalServiceUtil.getService());
-		setClass(KBArticle.class);
 
 		setClassLoader(com.liferay.knowledgebase.service.ClpSerializer.class.getClassLoader());
+
+		setModelClass(KBArticle.class);
 
 		setPrimaryKeyPropertyName("kbArticleId");
 	}

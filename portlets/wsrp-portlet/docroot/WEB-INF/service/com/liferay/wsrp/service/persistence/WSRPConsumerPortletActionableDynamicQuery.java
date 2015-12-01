@@ -14,24 +14,25 @@
 
 package com.liferay.wsrp.service.persistence;
 
-import com.liferay.portal.kernel.dao.orm.BaseActionableDynamicQuery;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 
 import com.liferay.wsrp.model.WSRPConsumerPortlet;
 import com.liferay.wsrp.service.WSRPConsumerPortletLocalServiceUtil;
 
 /**
  * @author Brian Wing Shun Chan
+ * @deprecated As of 7.0.0, replaced by {@link WSRPConsumerPortletLocalServiceUtil#getActionableDynamicQuery()}
  * @generated
  */
+@Deprecated
 public abstract class WSRPConsumerPortletActionableDynamicQuery
-	extends BaseActionableDynamicQuery {
-	public WSRPConsumerPortletActionableDynamicQuery()
-		throws SystemException {
+	extends DefaultActionableDynamicQuery {
+	public WSRPConsumerPortletActionableDynamicQuery() {
 		setBaseLocalService(WSRPConsumerPortletLocalServiceUtil.getService());
-		setClass(WSRPConsumerPortlet.class);
 
 		setClassLoader(com.liferay.wsrp.service.ClpSerializer.class.getClassLoader());
+
+		setModelClass(WSRPConsumerPortlet.class);
 
 		setPrimaryKeyPropertyName("wsrpConsumerPortletId");
 	}

@@ -23,7 +23,6 @@ import com.liferay.knowledgebase.util.ActionKeys;
 import com.liferay.knowledgebase.util.PortletKeys;
 import com.liferay.knowledgebase.util.WebKeys;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -39,13 +38,19 @@ import javax.portlet.PortletURL;
 /**
  * @author Peter Shin
  */
-public class KBArticleAssetRendererFactory extends BaseAssetRendererFactory {
+public class KBArticleAssetRendererFactory
+	extends BaseAssetRendererFactory<KBArticle> {
 
 	public static final String TYPE = "article";
 
+	public KBArticleAssetRendererFactory() {
+		setLinkable(true);
+		setSearchable(true);
+	}
+
 	@Override
-	public AssetRenderer getAssetRenderer(long classPK, int type)
-		throws PortalException, SystemException {
+	public AssetRenderer<KBArticle> getAssetRenderer(long classPK, int type)
+		throws PortalException {
 
 		KBArticle kbArticle = null;
 
@@ -77,6 +82,11 @@ public class KBArticleAssetRendererFactory extends BaseAssetRendererFactory {
 	}
 
 	@Override
+	public String getIconCssClass() {
+		return "icon-file";
+	}
+
+	@Override
 	public String getPortletId() {
 		return PortletKeys.KNOWLEDGE_BASE_DISPLAY;
 	}
@@ -90,7 +100,7 @@ public class KBArticleAssetRendererFactory extends BaseAssetRendererFactory {
 	public PortletURL getURLAdd(
 			LiferayPortletRequest liferayPortletRequest,
 			LiferayPortletResponse liferayPortletResponse)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay)liferayPortletRequest.getAttribute(

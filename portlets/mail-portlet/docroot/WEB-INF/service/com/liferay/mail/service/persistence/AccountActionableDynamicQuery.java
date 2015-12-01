@@ -17,20 +17,22 @@ package com.liferay.mail.service.persistence;
 import com.liferay.mail.model.Account;
 import com.liferay.mail.service.AccountLocalServiceUtil;
 
-import com.liferay.portal.kernel.dao.orm.BaseActionableDynamicQuery;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 
 /**
  * @author Brian Wing Shun Chan
+ * @deprecated As of 7.0.0, replaced by {@link AccountLocalServiceUtil#getActionableDynamicQuery()}
  * @generated
  */
+@Deprecated
 public abstract class AccountActionableDynamicQuery
-	extends BaseActionableDynamicQuery {
-	public AccountActionableDynamicQuery() throws SystemException {
+	extends DefaultActionableDynamicQuery {
+	public AccountActionableDynamicQuery() {
 		setBaseLocalService(AccountLocalServiceUtil.getService());
-		setClass(Account.class);
 
 		setClassLoader(com.liferay.mail.service.ClpSerializer.class.getClassLoader());
+
+		setModelClass(Account.class);
 
 		setPrimaryKeyPropertyName("accountId");
 	}

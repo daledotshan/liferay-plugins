@@ -14,17 +14,22 @@
 
 package com.liferay.so.service.base;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.BeanReference;
-import com.liferay.portal.kernel.bean.IdentifiableBean;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiService;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -63,9 +68,10 @@ import javax.sql.DataSource;
  * @see com.liferay.so.service.MemberRequestLocalServiceUtil
  * @generated
  */
+@ProviderType
 public abstract class MemberRequestLocalServiceBaseImpl
 	extends BaseLocalServiceImpl implements MemberRequestLocalService,
-		IdentifiableBean {
+		IdentifiableOSGiService {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -77,12 +83,10 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	 *
 	 * @param memberRequest the member request
 	 * @return the member request that was added
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public MemberRequest addMemberRequest(MemberRequest memberRequest)
-		throws SystemException {
+	public MemberRequest addMemberRequest(MemberRequest memberRequest) {
 		memberRequest.setNew(true);
 
 		return memberRequestPersistence.update(memberRequest);
@@ -105,12 +109,11 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	 * @param memberRequestId the primary key of the member request
 	 * @return the member request that was removed
 	 * @throws PortalException if a member request with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public MemberRequest deleteMemberRequest(long memberRequestId)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return memberRequestPersistence.remove(memberRequestId);
 	}
 
@@ -119,12 +122,10 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	 *
 	 * @param memberRequest the member request
 	 * @return the member request that was removed
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public MemberRequest deleteMemberRequest(MemberRequest memberRequest)
-		throws SystemException {
+	public MemberRequest deleteMemberRequest(MemberRequest memberRequest) {
 		return memberRequestPersistence.remove(memberRequest);
 	}
 
@@ -141,12 +142,9 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
 		return memberRequestPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -161,12 +159,10 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end) {
 		return memberRequestPersistence.findWithDynamicQuery(dynamicQuery,
 			start, end);
 	}
@@ -183,47 +179,41 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator orderByComparator) throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end, OrderByComparator<T> orderByComparator) {
 		return memberRequestPersistence.findWithDynamicQuery(dynamicQuery,
 			start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
 		return memberRequestPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) throws SystemException {
+		Projection projection) {
 		return memberRequestPersistence.countWithDynamicQuery(dynamicQuery,
 			projection);
 	}
 
 	@Override
-	public MemberRequest fetchMemberRequest(long memberRequestId)
-		throws SystemException {
+	public MemberRequest fetchMemberRequest(long memberRequestId) {
 		return memberRequestPersistence.fetchByPrimaryKey(memberRequestId);
 	}
 
@@ -233,17 +223,61 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	 * @param memberRequestId the primary key of the member request
 	 * @return the member request
 	 * @throws PortalException if a member request with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public MemberRequest getMemberRequest(long memberRequestId)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return memberRequestPersistence.findByPrimaryKey(memberRequestId);
 	}
 
 	@Override
+	public ActionableDynamicQuery getActionableDynamicQuery() {
+		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
+
+		actionableDynamicQuery.setBaseLocalService(com.liferay.so.service.MemberRequestLocalServiceUtil.getService());
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+		actionableDynamicQuery.setModelClass(MemberRequest.class);
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("memberRequestId");
+
+		return actionableDynamicQuery;
+	}
+
+	@Override
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
+
+		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.so.service.MemberRequestLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
+		indexableActionableDynamicQuery.setModelClass(MemberRequest.class);
+
+		indexableActionableDynamicQuery.setPrimaryKeyPropertyName(
+			"memberRequestId");
+
+		return indexableActionableDynamicQuery;
+	}
+
+	protected void initActionableDynamicQuery(
+		ActionableDynamicQuery actionableDynamicQuery) {
+		actionableDynamicQuery.setBaseLocalService(com.liferay.so.service.MemberRequestLocalServiceUtil.getService());
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+		actionableDynamicQuery.setModelClass(MemberRequest.class);
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("memberRequestId");
+	}
+
+	/**
+	 * @throws PortalException
+	 */
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException {
+		return memberRequestLocalService.deleteMemberRequest((MemberRequest)persistedModel);
+	}
+
+	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return memberRequestPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
@@ -257,11 +291,9 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	 * @param start the lower bound of the range of member requests
 	 * @param end the upper bound of the range of member requests (not inclusive)
 	 * @return the range of member requests
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<MemberRequest> getMemberRequests(int start, int end)
-		throws SystemException {
+	public List<MemberRequest> getMemberRequests(int start, int end) {
 		return memberRequestPersistence.findAll(start, end);
 	}
 
@@ -269,10 +301,9 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	 * Returns the number of member requests.
 	 *
 	 * @return the number of member requests
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getMemberRequestsCount() throws SystemException {
+	public int getMemberRequestsCount() {
 		return memberRequestPersistence.countAll();
 	}
 
@@ -281,12 +312,10 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	 *
 	 * @param memberRequest the member request
 	 * @return the member request that was updated
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public MemberRequest updateMemberRequest(MemberRequest memberRequest)
-		throws SystemException {
+	public MemberRequest updateMemberRequest(MemberRequest memberRequest) {
 		return memberRequestPersistence.update(memberRequest);
 	}
 
@@ -351,7 +380,7 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	 *
 	 * @return the member request local service
 	 */
-	public com.liferay.so.service.MemberRequestLocalService getMemberRequestLocalService() {
+	public MemberRequestLocalService getMemberRequestLocalService() {
 		return memberRequestLocalService;
 	}
 
@@ -361,7 +390,7 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	 * @param memberRequestLocalService the member request local service
 	 */
 	public void setMemberRequestLocalService(
-		com.liferay.so.service.MemberRequestLocalService memberRequestLocalService) {
+		MemberRequestLocalService memberRequestLocalService) {
 		this.memberRequestLocalService = memberRequestLocalService;
 	}
 
@@ -423,25 +452,6 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the social office remote service.
-	 *
-	 * @return the social office remote service
-	 */
-	public com.liferay.so.service.SocialOfficeService getSocialOfficeService() {
-		return socialOfficeService;
-	}
-
-	/**
-	 * Sets the social office remote service.
-	 *
-	 * @param socialOfficeService the social office remote service
-	 */
-	public void setSocialOfficeService(
-		com.liferay.so.service.SocialOfficeService socialOfficeService) {
-		this.socialOfficeService = socialOfficeService;
-	}
-
-	/**
 	 * Returns the counter local service.
 	 *
 	 * @return the counter local service
@@ -477,25 +487,6 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	public void setClassNameLocalService(
 		com.liferay.portal.service.ClassNameLocalService classNameLocalService) {
 		this.classNameLocalService = classNameLocalService;
-	}
-
-	/**
-	 * Returns the class name remote service.
-	 *
-	 * @return the class name remote service
-	 */
-	public com.liferay.portal.service.ClassNameService getClassNameService() {
-		return classNameService;
-	}
-
-	/**
-	 * Sets the class name remote service.
-	 *
-	 * @param classNameService the class name remote service
-	 */
-	public void setClassNameService(
-		com.liferay.portal.service.ClassNameService classNameService) {
-		this.classNameService = classNameService;
 	}
 
 	/**
@@ -537,25 +528,6 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the group remote service.
-	 *
-	 * @return the group remote service
-	 */
-	public com.liferay.portal.service.GroupService getGroupService() {
-		return groupService;
-	}
-
-	/**
-	 * Sets the group remote service.
-	 *
-	 * @param groupService the group remote service
-	 */
-	public void setGroupService(
-		com.liferay.portal.service.GroupService groupService) {
-		this.groupService = groupService;
-	}
-
-	/**
 	 * Returns the group persistence.
 	 *
 	 * @return the group persistence
@@ -590,25 +562,6 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	public void setLayoutLocalService(
 		com.liferay.portal.service.LayoutLocalService layoutLocalService) {
 		this.layoutLocalService = layoutLocalService;
-	}
-
-	/**
-	 * Returns the layout remote service.
-	 *
-	 * @return the layout remote service
-	 */
-	public com.liferay.portal.service.LayoutService getLayoutService() {
-		return layoutService;
-	}
-
-	/**
-	 * Sets the layout remote service.
-	 *
-	 * @param layoutService the layout remote service
-	 */
-	public void setLayoutService(
-		com.liferay.portal.service.LayoutService layoutService) {
-		this.layoutService = layoutService;
 	}
 
 	/**
@@ -668,25 +621,6 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the user remote service.
-	 *
-	 * @return the user remote service
-	 */
-	public com.liferay.portal.service.UserService getUserService() {
-		return userService;
-	}
-
-	/**
-	 * Sets the user remote service.
-	 *
-	 * @param userService the user remote service
-	 */
-	public void setUserService(
-		com.liferay.portal.service.UserService userService) {
-		this.userService = userService;
-	}
-
-	/**
 	 * Returns the user persistence.
 	 *
 	 * @return the user persistence
@@ -724,25 +658,6 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the user group role remote service.
-	 *
-	 * @return the user group role remote service
-	 */
-	public com.liferay.portal.service.UserGroupRoleService getUserGroupRoleService() {
-		return userGroupRoleService;
-	}
-
-	/**
-	 * Sets the user group role remote service.
-	 *
-	 * @param userGroupRoleService the user group role remote service
-	 */
-	public void setUserGroupRoleService(
-		com.liferay.portal.service.UserGroupRoleService userGroupRoleService) {
-		this.userGroupRoleService = userGroupRoleService;
-	}
-
-	/**
 	 * Returns the user group role persistence.
 	 *
 	 * @return the user group role persistence
@@ -776,23 +691,13 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the Spring bean ID for this bean.
+	 * Returns the OSGi service identifier.
 	 *
-	 * @return the Spring bean ID for this bean
+	 * @return the OSGi service identifier
 	 */
 	@Override
-	public String getBeanIdentifier() {
-		return _beanIdentifier;
-	}
-
-	/**
-	 * Sets the Spring bean ID for this bean.
-	 *
-	 * @param beanIdentifier the Spring bean ID for this bean
-	 */
-	@Override
-	public void setBeanIdentifier(String beanIdentifier) {
-		_beanIdentifier = beanIdentifier;
+	public String getOSGiServiceIdentifier() {
+		return MemberRequestLocalService.class.getName();
 	}
 
 	@Override
@@ -829,7 +734,7 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) throws SystemException {
+	protected void runSQL(String sql) {
 		try {
 			DataSource dataSource = memberRequestPersistence.getDataSource();
 
@@ -855,50 +760,37 @@ public abstract class MemberRequestLocalServiceBaseImpl
 	@BeanReference(type = FavoriteSiteFinder.class)
 	protected FavoriteSiteFinder favoriteSiteFinder;
 	@BeanReference(type = com.liferay.so.service.MemberRequestLocalService.class)
-	protected com.liferay.so.service.MemberRequestLocalService memberRequestLocalService;
+	protected MemberRequestLocalService memberRequestLocalService;
 	@BeanReference(type = MemberRequestPersistence.class)
 	protected MemberRequestPersistence memberRequestPersistence;
 	@BeanReference(type = com.liferay.so.service.ProjectsEntryLocalService.class)
 	protected com.liferay.so.service.ProjectsEntryLocalService projectsEntryLocalService;
 	@BeanReference(type = ProjectsEntryPersistence.class)
 	protected ProjectsEntryPersistence projectsEntryPersistence;
-	@BeanReference(type = com.liferay.so.service.SocialOfficeService.class)
-	protected com.liferay.so.service.SocialOfficeService socialOfficeService;
 	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)
 	protected com.liferay.counter.service.CounterLocalService counterLocalService;
 	@BeanReference(type = com.liferay.portal.service.ClassNameLocalService.class)
 	protected com.liferay.portal.service.ClassNameLocalService classNameLocalService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameService.class)
-	protected com.liferay.portal.service.ClassNameService classNameService;
 	@BeanReference(type = ClassNamePersistence.class)
 	protected ClassNamePersistence classNamePersistence;
 	@BeanReference(type = com.liferay.portal.service.GroupLocalService.class)
 	protected com.liferay.portal.service.GroupLocalService groupLocalService;
-	@BeanReference(type = com.liferay.portal.service.GroupService.class)
-	protected com.liferay.portal.service.GroupService groupService;
 	@BeanReference(type = GroupPersistence.class)
 	protected GroupPersistence groupPersistence;
 	@BeanReference(type = com.liferay.portal.service.LayoutLocalService.class)
 	protected com.liferay.portal.service.LayoutLocalService layoutLocalService;
-	@BeanReference(type = com.liferay.portal.service.LayoutService.class)
-	protected com.liferay.portal.service.LayoutService layoutService;
 	@BeanReference(type = LayoutPersistence.class)
 	protected LayoutPersistence layoutPersistence;
 	@BeanReference(type = com.liferay.portal.service.ResourceLocalService.class)
 	protected com.liferay.portal.service.ResourceLocalService resourceLocalService;
 	@BeanReference(type = com.liferay.portal.service.UserLocalService.class)
 	protected com.liferay.portal.service.UserLocalService userLocalService;
-	@BeanReference(type = com.liferay.portal.service.UserService.class)
-	protected com.liferay.portal.service.UserService userService;
 	@BeanReference(type = UserPersistence.class)
 	protected UserPersistence userPersistence;
 	@BeanReference(type = com.liferay.portal.service.UserGroupRoleLocalService.class)
 	protected com.liferay.portal.service.UserGroupRoleLocalService userGroupRoleLocalService;
-	@BeanReference(type = com.liferay.portal.service.UserGroupRoleService.class)
-	protected com.liferay.portal.service.UserGroupRoleService userGroupRoleService;
 	@BeanReference(type = UserGroupRolePersistence.class)
 	protected UserGroupRolePersistence userGroupRolePersistence;
-	private String _beanIdentifier;
 	private ClassLoader _classLoader;
 	private MemberRequestLocalServiceClpInvoker _clpInvoker = new MemberRequestLocalServiceClpInvoker();
 }

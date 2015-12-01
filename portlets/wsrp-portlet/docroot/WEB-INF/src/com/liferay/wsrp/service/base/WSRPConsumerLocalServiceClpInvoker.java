@@ -14,6 +14,8 @@
 
 package com.liferay.wsrp.service.base;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.wsrp.service.WSRPConsumerLocalServiceUtil;
 
 import java.util.Arrays;
@@ -22,6 +24,7 @@ import java.util.Arrays;
  * @author Brian Wing Shun Chan
  * @generated
  */
+@ProviderType
 public class WSRPConsumerLocalServiceClpInvoker {
 	public WSRPConsumerLocalServiceClpInvoker() {
 		_methodName0 = "addWSRPConsumer";
@@ -92,35 +95,51 @@ public class WSRPConsumerLocalServiceClpInvoker {
 
 		_methodParameterTypes12 = new String[] { "long" };
 
-		_methodName13 = "getPersistedModel";
+		_methodName13 = "getActionableDynamicQuery";
 
-		_methodParameterTypes13 = new String[] { "java.io.Serializable" };
+		_methodParameterTypes13 = new String[] {  };
 
-		_methodName14 = "getWSRPConsumerByUuidAndCompanyId";
+		_methodName14 = "getIndexableActionableDynamicQuery";
 
-		_methodParameterTypes14 = new String[] { "java.lang.String", "long" };
+		_methodParameterTypes14 = new String[] {  };
 
-		_methodName15 = "getWSRPConsumers";
+		_methodName16 = "getExportActionableDynamicQuery";
 
-		_methodParameterTypes15 = new String[] { "int", "int" };
+		_methodParameterTypes16 = new String[] {
+				"com.liferay.portlet.exportimport.lar.PortletDataContext"
+			};
 
-		_methodName16 = "getWSRPConsumersCount";
-
-		_methodParameterTypes16 = new String[] {  };
-
-		_methodName17 = "updateWSRPConsumer";
+		_methodName17 = "deletePersistedModel";
 
 		_methodParameterTypes17 = new String[] {
+				"com.liferay.portal.model.PersistedModel"
+			};
+
+		_methodName18 = "getPersistedModel";
+
+		_methodParameterTypes18 = new String[] { "java.io.Serializable" };
+
+		_methodName19 = "getWSRPConsumerByUuidAndCompanyId";
+
+		_methodParameterTypes19 = new String[] { "java.lang.String", "long" };
+
+		_methodName20 = "getWSRPConsumers";
+
+		_methodParameterTypes20 = new String[] { "int", "int" };
+
+		_methodName21 = "getWSRPConsumersCount";
+
+		_methodParameterTypes21 = new String[] {  };
+
+		_methodName22 = "updateWSRPConsumer";
+
+		_methodParameterTypes22 = new String[] {
 				"com.liferay.wsrp.model.WSRPConsumer"
 			};
 
-		_methodName48 = "getBeanIdentifier";
+		_methodName49 = "getOSGiServiceIdentifier";
 
-		_methodParameterTypes48 = new String[] {  };
-
-		_methodName49 = "setBeanIdentifier";
-
-		_methodParameterTypes49 = new String[] { "java.lang.String" };
+		_methodParameterTypes49 = new String[] {  };
 
 		_methodName54 = "addWSRPConsumer";
 
@@ -225,7 +244,7 @@ public class WSRPConsumerLocalServiceClpInvoker {
 			return WSRPConsumerLocalServiceUtil.dynamicQuery((com.liferay.portal.kernel.dao.orm.DynamicQuery)arguments[0],
 				((Integer)arguments[1]).intValue(),
 				((Integer)arguments[2]).intValue(),
-				(com.liferay.portal.kernel.util.OrderByComparator)arguments[3]);
+				(com.liferay.portal.kernel.util.OrderByComparator<?>)arguments[3]);
 		}
 
 		if (_methodName8.equals(name) &&
@@ -257,41 +276,54 @@ public class WSRPConsumerLocalServiceClpInvoker {
 
 		if (_methodName13.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes13, parameterTypes)) {
-			return WSRPConsumerLocalServiceUtil.getPersistedModel((java.io.Serializable)arguments[0]);
+			return WSRPConsumerLocalServiceUtil.getActionableDynamicQuery();
 		}
 
 		if (_methodName14.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes14, parameterTypes)) {
-			return WSRPConsumerLocalServiceUtil.getWSRPConsumerByUuidAndCompanyId((java.lang.String)arguments[0],
-				((Long)arguments[1]).longValue());
-		}
-
-		if (_methodName15.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes15, parameterTypes)) {
-			return WSRPConsumerLocalServiceUtil.getWSRPConsumers(((Integer)arguments[0]).intValue(),
-				((Integer)arguments[1]).intValue());
+			return WSRPConsumerLocalServiceUtil.getIndexableActionableDynamicQuery();
 		}
 
 		if (_methodName16.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes16, parameterTypes)) {
-			return WSRPConsumerLocalServiceUtil.getWSRPConsumersCount();
+			return WSRPConsumerLocalServiceUtil.getExportActionableDynamicQuery((com.liferay.portlet.exportimport.lar.PortletDataContext)arguments[0]);
 		}
 
 		if (_methodName17.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes17, parameterTypes)) {
-			return WSRPConsumerLocalServiceUtil.updateWSRPConsumer((com.liferay.wsrp.model.WSRPConsumer)arguments[0]);
+			return WSRPConsumerLocalServiceUtil.deletePersistedModel((com.liferay.portal.model.PersistedModel)arguments[0]);
 		}
 
-		if (_methodName48.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes48, parameterTypes)) {
-			return WSRPConsumerLocalServiceUtil.getBeanIdentifier();
+		if (_methodName18.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes18, parameterTypes)) {
+			return WSRPConsumerLocalServiceUtil.getPersistedModel((java.io.Serializable)arguments[0]);
+		}
+
+		if (_methodName19.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes19, parameterTypes)) {
+			return WSRPConsumerLocalServiceUtil.getWSRPConsumerByUuidAndCompanyId((java.lang.String)arguments[0],
+				((Long)arguments[1]).longValue());
+		}
+
+		if (_methodName20.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes20, parameterTypes)) {
+			return WSRPConsumerLocalServiceUtil.getWSRPConsumers(((Integer)arguments[0]).intValue(),
+				((Integer)arguments[1]).intValue());
+		}
+
+		if (_methodName21.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes21, parameterTypes)) {
+			return WSRPConsumerLocalServiceUtil.getWSRPConsumersCount();
+		}
+
+		if (_methodName22.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes22, parameterTypes)) {
+			return WSRPConsumerLocalServiceUtil.updateWSRPConsumer((com.liferay.wsrp.model.WSRPConsumer)arguments[0]);
 		}
 
 		if (_methodName49.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes49, parameterTypes)) {
-			WSRPConsumerLocalServiceUtil.setBeanIdentifier((java.lang.String)arguments[0]);
-
-			return null;
+			return WSRPConsumerLocalServiceUtil.getOSGiServiceIdentifier();
 		}
 
 		if (_methodName54.equals(name) &&
@@ -400,14 +432,20 @@ public class WSRPConsumerLocalServiceClpInvoker {
 	private String[] _methodParameterTypes13;
 	private String _methodName14;
 	private String[] _methodParameterTypes14;
-	private String _methodName15;
-	private String[] _methodParameterTypes15;
 	private String _methodName16;
 	private String[] _methodParameterTypes16;
 	private String _methodName17;
 	private String[] _methodParameterTypes17;
-	private String _methodName48;
-	private String[] _methodParameterTypes48;
+	private String _methodName18;
+	private String[] _methodParameterTypes18;
+	private String _methodName19;
+	private String[] _methodParameterTypes19;
+	private String _methodName20;
+	private String[] _methodParameterTypes20;
+	private String _methodName21;
+	private String[] _methodParameterTypes21;
+	private String _methodName22;
+	private String[] _methodParameterTypes22;
 	private String _methodName49;
 	private String[] _methodParameterTypes49;
 	private String _methodName54;

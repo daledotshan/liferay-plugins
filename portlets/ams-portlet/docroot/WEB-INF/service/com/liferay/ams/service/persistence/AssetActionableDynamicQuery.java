@@ -17,20 +17,22 @@ package com.liferay.ams.service.persistence;
 import com.liferay.ams.model.Asset;
 import com.liferay.ams.service.AssetLocalServiceUtil;
 
-import com.liferay.portal.kernel.dao.orm.BaseActionableDynamicQuery;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 
 /**
  * @author Brian Wing Shun Chan
+ * @deprecated As of 7.0.0, replaced by {@link AssetLocalServiceUtil#getActionableDynamicQuery()}
  * @generated
  */
+@Deprecated
 public abstract class AssetActionableDynamicQuery
-	extends BaseActionableDynamicQuery {
-	public AssetActionableDynamicQuery() throws SystemException {
+	extends DefaultActionableDynamicQuery {
+	public AssetActionableDynamicQuery() {
 		setBaseLocalService(AssetLocalServiceUtil.getService());
-		setClass(Asset.class);
 
 		setClassLoader(com.liferay.ams.service.ClpSerializer.class.getClassLoader());
+
+		setModelClass(Asset.class);
 
 		setPrimaryKeyPropertyName("assetId");
 	}

@@ -19,32 +19,76 @@
 <%
 int status = (Integer)request.getAttribute(WebKeys.KNOWLEDGE_BASE_STATUS);
 
-KBArticle kbArticle = (KBArticle)request.getAttribute(WebKeys.KNOWLEDGE_BASE_KB_ARTICLE);
+long kbArticleClassNameId = PortalUtil.getClassNameId(KBArticleConstants.getClassName());
 
-long resourcePrimKey = BeanParamUtil.getLong(kbArticle, request, "resourcePrimKey");
+long resourceClassNameId = ParamUtil.getLong(request, "resourceClassNameId");
+long resourcePrimKey = ParamUtil.getLong(request, "resourcePrimKey");
+long parentResourceClassNameId = PortalUtil.getClassNameId(KBFolderConstants.getClassName());
+long parentResourcePrimKey = KBFolderConstants.DEFAULT_PARENT_FOLDER_ID;
 
-long parentResourcePrimKey = BeanParamUtil.getLong(kbArticle, request, "parentResourcePrimKey");
-double priority = BeanParamUtil.getDouble(kbArticle, request, "priority");
+double priority = KBArticleConstants.DEFAULT_PRIORITY;
+
+String parentTitle = null;
+
+if (resourceClassNameId == kbArticleClassNameId) {
+	KBArticle kbArticle = KBArticleServiceUtil.getLatestKBArticle(resourcePrimKey, status);
+
+	parentResourceClassNameId = kbArticle.getParentResourceClassNameId();
+	parentResourcePrimKey = kbArticle.getParentResourcePrimKey();
+	parentTitle = kbArticle.getParentTitle(locale, status);
+	priority = kbArticle.getPriority();
+}
+else {
+	KBFolder kbFolder = KBFolderServiceUtil.getKBFolder(resourcePrimKey);
+
+	parentResourcePrimKey = kbFolder.getParentKBFolderId();
+	parentTitle = kbFolder.getParentTitle(locale);
+}
 %>
 
-<div class="input-append kb-new-parent">
-	<liferay-ui:input-resource url='<%= parentResourcePrimKey != KBArticleConstants.DEFAULT_PARENT_RESOURCE_PRIM_KEY ? BeanPropertiesUtil.getString(KBArticleServiceUtil.getLatestKBArticle(parentResourcePrimKey, status), "title") : "(" + LanguageUtil.get(pageContext, "none") + ")" %>' />
+<aui:field-wrapper label="new-parent">
+	<div id="<portlet:namespace />newParent">
+		<aui:input label="" name="parentTitle" readonly="<%= true %>" value="<%= parentTitle %>" />
 
-	<aui:input cssClass="input-mini kb-priority" inlineField="<%= true %>" label="" name="priority" type="text" value="<%= BigDecimal.valueOf(priority).toPlainString() %>" />
+		<aui:input cssClass="input-mini" id="parentPriority" label="priority" name="priority" type="text" value="<%= BigDecimal.valueOf(priority).toPlainString() %>" />
+	</div>
 
-	<liferay-portlet:renderURL var="selectKBArticleURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
-		<portlet:param name="mvcPath" value='<%= templatePath + "select_article.jsp" %>' />
+	<aui:button name="selectKBObjectButton" value="select" />
+</aui:field-wrapper>
+
+<aui:script use="aui-base">
+	<liferay-portlet:renderURL var="selectKBObjectURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+		<portlet:param name="mvcPath" value='<%= templatePath + "select_parent.jsp" %>' />
+		<portlet:param name="resourceClassNameId" value="<%= String.valueOf(resourceClassNameId) %>" />
 		<portlet:param name="resourcePrimKey" value="<%= String.valueOf(resourcePrimKey) %>" />
-		<portlet:param name="parentResourcePrimKey" value="<%= String.valueOf(KBArticleConstants.DEFAULT_PARENT_RESOURCE_PRIM_KEY) %>" />
+		<portlet:param name="parentResourceClassNameId" value="<%= String.valueOf(PortalUtil.getClassNameId(KBFolderConstants.getClassName())) %>" />
+		<portlet:param name="parentResourcePrimKey" value="<%= String.valueOf(KBFolderConstants.DEFAULT_PARENT_FOLDER_ID) %>" />
+		<portlet:param name="originalParentResourceClassNameId" value="<%= String.valueOf(parentResourceClassNameId) %>" />
+		<portlet:param name="originalParentResourcePrimKey" value="<%= String.valueOf(parentResourcePrimKey) %>" />
 		<portlet:param name="status" value="<%= String.valueOf(status) %>" />
 	</liferay-portlet:renderURL>
 
-	<%
-	String taglibOnClick = "var selectKBArticleWindow = window.open('" + selectKBArticleURL + "&" + renderResponse.getNamespace() + "oldParentResourcePrimKey=' + document." + renderResponse.getNamespace() + "fm." + renderResponse.getNamespace() + "parentResourcePrimKey.value, 'selectKBArticle', 'directories=no,height=640,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no,width=680'); void(''); selectKBArticleWindow.focus();";
-	%>
-
-</div>
-
-<div class="kb-edit-link">
-	<aui:a href="javascript:;" onClick="<%= taglibOnClick %>"><liferay-ui:message key="select-article" /> &raquo;</aui:a>
-</div>
+	A.one('#<portlet:namespace />selectKBObjectButton').on(
+		'click',
+		function(event) {
+			Liferay.Util.selectEntity(
+				{
+					dialog: {
+						constrain: true,
+						destroyOnHide: true,
+						modal: true
+					},
+					id: '<portlet:namespace />selectKBObject',
+					title: '<liferay-ui:message key="select-parent" />',
+					uri: '<%= selectKBObjectURL %>'
+				},
+				function(event) {
+					document.<portlet:namespace />fm.<portlet:namespace />parentPriority.value = event.priority;
+					document.<portlet:namespace />fm.<portlet:namespace />parentResourceClassNameId.value = event.resourceclassnameid;
+					document.<portlet:namespace />fm.<portlet:namespace />parentResourcePrimKey.value = event.resourceprimkey;
+					document.<portlet:namespace />fm.<portlet:namespace />parentTitle.value = A.Lang.String.unescapeEntities(event.title);
+				}
+			);
+		}
+	);
+</aui:script>

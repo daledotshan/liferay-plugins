@@ -14,17 +14,23 @@
 
 package com.liferay.sampleservicebuilder.service.base;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.BeanReference;
-import com.liferay.portal.kernel.bean.IdentifiableBean;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiService;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -37,6 +43,11 @@ import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.asset.service.persistence.AssetEntryPersistence;
 import com.liferay.portlet.asset.service.persistence.AssetTagPersistence;
+import com.liferay.portlet.exportimport.lar.ExportImportHelperUtil;
+import com.liferay.portlet.exportimport.lar.ManifestSummary;
+import com.liferay.portlet.exportimport.lar.PortletDataContext;
+import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
+import com.liferay.portlet.exportimport.lar.StagedModelType;
 
 import com.liferay.sampleservicebuilder.model.Foo;
 import com.liferay.sampleservicebuilder.service.FooLocalService;
@@ -60,8 +71,9 @@ import javax.sql.DataSource;
  * @see com.liferay.sampleservicebuilder.service.FooLocalServiceUtil
  * @generated
  */
+@ProviderType
 public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
-	implements FooLocalService, IdentifiableBean {
+	implements FooLocalService, IdentifiableOSGiService {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -73,11 +85,10 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param foo the foo
 	 * @return the foo that was added
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public Foo addFoo(Foo foo) throws SystemException {
+	public Foo addFoo(Foo foo) {
 		foo.setNew(true);
 
 		return fooPersistence.update(foo);
@@ -100,11 +111,10 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param fooId the primary key of the foo
 	 * @return the foo that was removed
 	 * @throws PortalException if a foo with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public Foo deleteFoo(long fooId) throws PortalException, SystemException {
+	public Foo deleteFoo(long fooId) throws PortalException {
 		return fooPersistence.remove(fooId);
 	}
 
@@ -113,11 +123,10 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param foo the foo
 	 * @return the foo that was removed
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public Foo deleteFoo(Foo foo) throws SystemException {
+	public Foo deleteFoo(Foo foo) {
 		return fooPersistence.remove(foo);
 	}
 
@@ -134,12 +143,9 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
 		return fooPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -154,12 +160,10 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end) {
 		return fooPersistence.findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -175,60 +179,41 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator orderByComparator) throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end, OrderByComparator<T> orderByComparator) {
 		return fooPersistence.findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
 		return fooPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) throws SystemException {
+		Projection projection) {
 		return fooPersistence.countWithDynamicQuery(dynamicQuery, projection);
 	}
 
 	@Override
-	public Foo fetchFoo(long fooId) throws SystemException {
+	public Foo fetchFoo(long fooId) {
 		return fooPersistence.fetchByPrimaryKey(fooId);
-	}
-
-	/**
-	 * Returns the foo with the matching UUID and company.
-	 *
-	 * @param uuid the foo's UUID
-	 * @param  companyId the primary key of the company
-	 * @return the matching foo, or <code>null</code> if a matching foo could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public Foo fetchFooByUuidAndCompanyId(String uuid, long companyId)
-		throws SystemException {
-		return fooPersistence.fetchByUuid_C_First(uuid, companyId, null);
 	}
 
 	/**
@@ -237,11 +222,9 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param uuid the foo's UUID
 	 * @param groupId the primary key of the group
 	 * @return the matching foo, or <code>null</code> if a matching foo could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public Foo fetchFooByUuidAndGroupId(String uuid, long groupId)
-		throws SystemException {
+	public Foo fetchFooByUuidAndGroupId(String uuid, long groupId) {
 		return fooPersistence.fetchByUUID_G(uuid, groupId);
 	}
 
@@ -251,32 +234,139 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param fooId the primary key of the foo
 	 * @return the foo
 	 * @throws PortalException if a foo with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public Foo getFoo(long fooId) throws PortalException, SystemException {
+	public Foo getFoo(long fooId) throws PortalException {
 		return fooPersistence.findByPrimaryKey(fooId);
 	}
 
 	@Override
+	public ActionableDynamicQuery getActionableDynamicQuery() {
+		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
+
+		actionableDynamicQuery.setBaseLocalService(com.liferay.sampleservicebuilder.service.FooLocalServiceUtil.getService());
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+		actionableDynamicQuery.setModelClass(Foo.class);
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("fooId");
+
+		return actionableDynamicQuery;
+	}
+
+	@Override
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
+
+		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.sampleservicebuilder.service.FooLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
+		indexableActionableDynamicQuery.setModelClass(Foo.class);
+
+		indexableActionableDynamicQuery.setPrimaryKeyPropertyName("fooId");
+
+		return indexableActionableDynamicQuery;
+	}
+
+	protected void initActionableDynamicQuery(
+		ActionableDynamicQuery actionableDynamicQuery) {
+		actionableDynamicQuery.setBaseLocalService(com.liferay.sampleservicebuilder.service.FooLocalServiceUtil.getService());
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+		actionableDynamicQuery.setModelClass(Foo.class);
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("fooId");
+	}
+
+	@Override
+	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
+		final PortletDataContext portletDataContext) {
+		final ExportActionableDynamicQuery exportActionableDynamicQuery = new ExportActionableDynamicQuery() {
+				@Override
+				public long performCount() throws PortalException {
+					ManifestSummary manifestSummary = portletDataContext.getManifestSummary();
+
+					StagedModelType stagedModelType = getStagedModelType();
+
+					long modelAdditionCount = super.performCount();
+
+					manifestSummary.addModelAdditionCount(stagedModelType,
+						modelAdditionCount);
+
+					long modelDeletionCount = ExportImportHelperUtil.getModelDeletionCount(portletDataContext,
+							stagedModelType);
+
+					manifestSummary.addModelDeletionCount(stagedModelType,
+						modelDeletionCount);
+
+					return modelAdditionCount;
+				}
+			};
+
+		initActionableDynamicQuery(exportActionableDynamicQuery);
+
+		exportActionableDynamicQuery.setAddCriteriaMethod(new ActionableDynamicQuery.AddCriteriaMethod() {
+				@Override
+				public void addCriteria(DynamicQuery dynamicQuery) {
+					portletDataContext.addDateRangeCriteria(dynamicQuery,
+						"modifiedDate");
+				}
+			});
+
+		exportActionableDynamicQuery.setCompanyId(portletDataContext.getCompanyId());
+
+		exportActionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod<Foo>() {
+				@Override
+				public void performAction(Foo foo) throws PortalException {
+					StagedModelDataHandlerUtil.exportStagedModel(portletDataContext,
+						foo);
+				}
+			});
+		exportActionableDynamicQuery.setStagedModelType(new StagedModelType(
+				PortalUtil.getClassNameId(Foo.class.getName())));
+
+		return exportActionableDynamicQuery;
+	}
+
+	/**
+	 * @throws PortalException
+	 */
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException {
+		return fooLocalService.deleteFoo((Foo)persistedModel);
+	}
+
+	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return fooPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
 	/**
-	 * Returns the foo with the matching UUID and company.
+	 * Returns all the foos matching the UUID and company.
 	 *
-	 * @param uuid the foo's UUID
-	 * @param  companyId the primary key of the company
-	 * @return the matching foo
-	 * @throws PortalException if a matching foo could not be found
-	 * @throws SystemException if a system exception occurred
+	 * @param uuid the UUID of the foos
+	 * @param companyId the primary key of the company
+	 * @return the matching foos, or an empty list if no matches were found
 	 */
 	@Override
-	public Foo getFooByUuidAndCompanyId(String uuid, long companyId)
-		throws PortalException, SystemException {
-		return fooPersistence.findByUuid_C_First(uuid, companyId, null);
+	public List<Foo> getFoosByUuidAndCompanyId(String uuid, long companyId) {
+		return fooPersistence.findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of foos matching the UUID and company.
+	 *
+	 * @param uuid the UUID of the foos
+	 * @param companyId the primary key of the company
+	 * @param start the lower bound of the range of foos
+	 * @param end the upper bound of the range of foos (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the range of matching foos, or an empty list if no matches were found
+	 */
+	@Override
+	public List<Foo> getFoosByUuidAndCompanyId(String uuid, long companyId,
+		int start, int end, OrderByComparator<Foo> orderByComparator) {
+		return fooPersistence.findByUuid_C(uuid, companyId, start, end,
+			orderByComparator);
 	}
 
 	/**
@@ -286,11 +376,10 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param groupId the primary key of the group
 	 * @return the matching foo
 	 * @throws PortalException if a matching foo could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public Foo getFooByUuidAndGroupId(String uuid, long groupId)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return fooPersistence.findByUUID_G(uuid, groupId);
 	}
 
@@ -304,10 +393,9 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param start the lower bound of the range of foos
 	 * @param end the upper bound of the range of foos (not inclusive)
 	 * @return the range of foos
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<Foo> getFoos(int start, int end) throws SystemException {
+	public List<Foo> getFoos(int start, int end) {
 		return fooPersistence.findAll(start, end);
 	}
 
@@ -315,10 +403,9 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * Returns the number of foos.
 	 *
 	 * @return the number of foos
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getFoosCount() throws SystemException {
+	public int getFoosCount() {
 		return fooPersistence.countAll();
 	}
 
@@ -327,11 +414,10 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param foo the foo
 	 * @return the foo that was updated
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public Foo updateFoo(Foo foo) throws SystemException {
+	public Foo updateFoo(Foo foo) {
 		return fooPersistence.update(foo);
 	}
 
@@ -340,7 +426,7 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @return the foo local service
 	 */
-	public com.liferay.sampleservicebuilder.service.FooLocalService getFooLocalService() {
+	public FooLocalService getFooLocalService() {
 		return fooLocalService;
 	}
 
@@ -349,28 +435,8 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param fooLocalService the foo local service
 	 */
-	public void setFooLocalService(
-		com.liferay.sampleservicebuilder.service.FooLocalService fooLocalService) {
+	public void setFooLocalService(FooLocalService fooLocalService) {
 		this.fooLocalService = fooLocalService;
-	}
-
-	/**
-	 * Returns the foo remote service.
-	 *
-	 * @return the foo remote service
-	 */
-	public com.liferay.sampleservicebuilder.service.FooService getFooService() {
-		return fooService;
-	}
-
-	/**
-	 * Sets the foo remote service.
-	 *
-	 * @param fooService the foo remote service
-	 */
-	public void setFooService(
-		com.liferay.sampleservicebuilder.service.FooService fooService) {
-		this.fooService = fooService;
 	}
 
 	/**
@@ -427,25 +493,6 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	public void setClassNameLocalService(
 		com.liferay.portal.service.ClassNameLocalService classNameLocalService) {
 		this.classNameLocalService = classNameLocalService;
-	}
-
-	/**
-	 * Returns the class name remote service.
-	 *
-	 * @return the class name remote service
-	 */
-	public com.liferay.portal.service.ClassNameService getClassNameService() {
-		return classNameService;
-	}
-
-	/**
-	 * Sets the class name remote service.
-	 *
-	 * @param classNameService the class name remote service
-	 */
-	public void setClassNameService(
-		com.liferay.portal.service.ClassNameService classNameService) {
-		this.classNameService = classNameService;
 	}
 
 	/**
@@ -506,25 +553,6 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Returns the user remote service.
-	 *
-	 * @return the user remote service
-	 */
-	public com.liferay.portal.service.UserService getUserService() {
-		return userService;
-	}
-
-	/**
-	 * Sets the user remote service.
-	 *
-	 * @param userService the user remote service
-	 */
-	public void setUserService(
-		com.liferay.portal.service.UserService userService) {
-		this.userService = userService;
-	}
-
-	/**
 	 * Returns the user persistence.
 	 *
 	 * @return the user persistence
@@ -559,25 +587,6 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	public void setAssetEntryLocalService(
 		com.liferay.portlet.asset.service.AssetEntryLocalService assetEntryLocalService) {
 		this.assetEntryLocalService = assetEntryLocalService;
-	}
-
-	/**
-	 * Returns the asset entry remote service.
-	 *
-	 * @return the asset entry remote service
-	 */
-	public com.liferay.portlet.asset.service.AssetEntryService getAssetEntryService() {
-		return assetEntryService;
-	}
-
-	/**
-	 * Sets the asset entry remote service.
-	 *
-	 * @param assetEntryService the asset entry remote service
-	 */
-	public void setAssetEntryService(
-		com.liferay.portlet.asset.service.AssetEntryService assetEntryService) {
-		this.assetEntryService = assetEntryService;
 	}
 
 	/**
@@ -619,25 +628,6 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Returns the asset tag remote service.
-	 *
-	 * @return the asset tag remote service
-	 */
-	public com.liferay.portlet.asset.service.AssetTagService getAssetTagService() {
-		return assetTagService;
-	}
-
-	/**
-	 * Sets the asset tag remote service.
-	 *
-	 * @param assetTagService the asset tag remote service
-	 */
-	public void setAssetTagService(
-		com.liferay.portlet.asset.service.AssetTagService assetTagService) {
-		this.assetTagService = assetTagService;
-	}
-
-	/**
 	 * Returns the asset tag persistence.
 	 *
 	 * @return the asset tag persistence
@@ -670,23 +660,13 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Returns the Spring bean ID for this bean.
+	 * Returns the OSGi service identifier.
 	 *
-	 * @return the Spring bean ID for this bean
+	 * @return the OSGi service identifier
 	 */
 	@Override
-	public String getBeanIdentifier() {
-		return _beanIdentifier;
-	}
-
-	/**
-	 * Sets the Spring bean ID for this bean.
-	 *
-	 * @param beanIdentifier the Spring bean ID for this bean
-	 */
-	@Override
-	public void setBeanIdentifier(String beanIdentifier) {
-		_beanIdentifier = beanIdentifier;
+	public String getOSGiServiceIdentifier() {
+		return FooLocalService.class.getName();
 	}
 
 	@Override
@@ -723,7 +703,7 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) throws SystemException {
+	protected void runSQL(String sql) {
 		try {
 			DataSource dataSource = fooPersistence.getDataSource();
 
@@ -743,40 +723,29 @@ public abstract class FooLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	@BeanReference(type = com.liferay.sampleservicebuilder.service.FooLocalService.class)
-	protected com.liferay.sampleservicebuilder.service.FooLocalService fooLocalService;
-	@BeanReference(type = com.liferay.sampleservicebuilder.service.FooService.class)
-	protected com.liferay.sampleservicebuilder.service.FooService fooService;
+	protected FooLocalService fooLocalService;
 	@BeanReference(type = FooPersistence.class)
 	protected FooPersistence fooPersistence;
 	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)
 	protected com.liferay.counter.service.CounterLocalService counterLocalService;
 	@BeanReference(type = com.liferay.portal.service.ClassNameLocalService.class)
 	protected com.liferay.portal.service.ClassNameLocalService classNameLocalService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameService.class)
-	protected com.liferay.portal.service.ClassNameService classNameService;
 	@BeanReference(type = ClassNamePersistence.class)
 	protected ClassNamePersistence classNamePersistence;
 	@BeanReference(type = com.liferay.portal.service.ResourceLocalService.class)
 	protected com.liferay.portal.service.ResourceLocalService resourceLocalService;
 	@BeanReference(type = com.liferay.portal.service.UserLocalService.class)
 	protected com.liferay.portal.service.UserLocalService userLocalService;
-	@BeanReference(type = com.liferay.portal.service.UserService.class)
-	protected com.liferay.portal.service.UserService userService;
 	@BeanReference(type = UserPersistence.class)
 	protected UserPersistence userPersistence;
 	@BeanReference(type = com.liferay.portlet.asset.service.AssetEntryLocalService.class)
 	protected com.liferay.portlet.asset.service.AssetEntryLocalService assetEntryLocalService;
-	@BeanReference(type = com.liferay.portlet.asset.service.AssetEntryService.class)
-	protected com.liferay.portlet.asset.service.AssetEntryService assetEntryService;
 	@BeanReference(type = AssetEntryPersistence.class)
 	protected AssetEntryPersistence assetEntryPersistence;
 	@BeanReference(type = com.liferay.portlet.asset.service.AssetTagLocalService.class)
 	protected com.liferay.portlet.asset.service.AssetTagLocalService assetTagLocalService;
-	@BeanReference(type = com.liferay.portlet.asset.service.AssetTagService.class)
-	protected com.liferay.portlet.asset.service.AssetTagService assetTagService;
 	@BeanReference(type = AssetTagPersistence.class)
 	protected AssetTagPersistence assetTagPersistence;
-	private String _beanIdentifier;
 	private ClassLoader _classLoader;
 	private FooLocalServiceClpInvoker _clpInvoker = new FooLocalServiceClpInvoker();
 }
