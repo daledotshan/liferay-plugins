@@ -14,6 +14,8 @@
 
 package com.liferay.ams.service.base;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.ams.service.AssetLocalServiceUtil;
 
 import java.util.Arrays;
@@ -22,6 +24,7 @@ import java.util.Arrays;
  * @author Brian Wing Shun Chan
  * @generated
  */
+@ProviderType
 public class AssetLocalServiceClpInvoker {
 	public AssetLocalServiceClpInvoker() {
 		_methodName0 = "addAsset";
@@ -84,29 +87,39 @@ public class AssetLocalServiceClpInvoker {
 
 		_methodParameterTypes11 = new String[] { "long" };
 
-		_methodName12 = "getPersistedModel";
+		_methodName12 = "getActionableDynamicQuery";
 
-		_methodParameterTypes12 = new String[] { "java.io.Serializable" };
+		_methodParameterTypes12 = new String[] {  };
 
-		_methodName13 = "getAssets";
+		_methodName13 = "getIndexableActionableDynamicQuery";
 
-		_methodParameterTypes13 = new String[] { "int", "int" };
+		_methodParameterTypes13 = new String[] {  };
 
-		_methodName14 = "getAssetsCount";
+		_methodName15 = "deletePersistedModel";
 
-		_methodParameterTypes14 = new String[] {  };
+		_methodParameterTypes15 = new String[] {
+				"com.liferay.portal.model.PersistedModel"
+			};
 
-		_methodName15 = "updateAsset";
+		_methodName16 = "getPersistedModel";
 
-		_methodParameterTypes15 = new String[] { "com.liferay.ams.model.Asset" };
+		_methodParameterTypes16 = new String[] { "java.io.Serializable" };
 
-		_methodName50 = "getBeanIdentifier";
+		_methodName17 = "getAssets";
+
+		_methodParameterTypes17 = new String[] { "int", "int" };
+
+		_methodName18 = "getAssetsCount";
+
+		_methodParameterTypes18 = new String[] {  };
+
+		_methodName19 = "updateAsset";
+
+		_methodParameterTypes19 = new String[] { "com.liferay.ams.model.Asset" };
+
+		_methodName50 = "getOSGiServiceIdentifier";
 
 		_methodParameterTypes50 = new String[] {  };
-
-		_methodName51 = "setBeanIdentifier";
-
-		_methodParameterTypes51 = new String[] { "java.lang.String" };
 	}
 
 	public Object invokeMethod(String name, String[] parameterTypes,
@@ -153,7 +166,7 @@ public class AssetLocalServiceClpInvoker {
 			return AssetLocalServiceUtil.dynamicQuery((com.liferay.portal.kernel.dao.orm.DynamicQuery)arguments[0],
 				((Integer)arguments[1]).intValue(),
 				((Integer)arguments[2]).intValue(),
-				(com.liferay.portal.kernel.util.OrderByComparator)arguments[3]);
+				(com.liferay.portal.kernel.util.OrderByComparator<?>)arguments[3]);
 		}
 
 		if (_methodName8.equals(name) &&
@@ -179,35 +192,43 @@ public class AssetLocalServiceClpInvoker {
 
 		if (_methodName12.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes12, parameterTypes)) {
-			return AssetLocalServiceUtil.getPersistedModel((java.io.Serializable)arguments[0]);
+			return AssetLocalServiceUtil.getActionableDynamicQuery();
 		}
 
 		if (_methodName13.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes13, parameterTypes)) {
-			return AssetLocalServiceUtil.getAssets(((Integer)arguments[0]).intValue(),
-				((Integer)arguments[1]).intValue());
-		}
-
-		if (_methodName14.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes14, parameterTypes)) {
-			return AssetLocalServiceUtil.getAssetsCount();
+			return AssetLocalServiceUtil.getIndexableActionableDynamicQuery();
 		}
 
 		if (_methodName15.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes15, parameterTypes)) {
+			return AssetLocalServiceUtil.deletePersistedModel((com.liferay.portal.model.PersistedModel)arguments[0]);
+		}
+
+		if (_methodName16.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes16, parameterTypes)) {
+			return AssetLocalServiceUtil.getPersistedModel((java.io.Serializable)arguments[0]);
+		}
+
+		if (_methodName17.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes17, parameterTypes)) {
+			return AssetLocalServiceUtil.getAssets(((Integer)arguments[0]).intValue(),
+				((Integer)arguments[1]).intValue());
+		}
+
+		if (_methodName18.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes18, parameterTypes)) {
+			return AssetLocalServiceUtil.getAssetsCount();
+		}
+
+		if (_methodName19.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes19, parameterTypes)) {
 			return AssetLocalServiceUtil.updateAsset((com.liferay.ams.model.Asset)arguments[0]);
 		}
 
 		if (_methodName50.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes50, parameterTypes)) {
-			return AssetLocalServiceUtil.getBeanIdentifier();
-		}
-
-		if (_methodName51.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes51, parameterTypes)) {
-			AssetLocalServiceUtil.setBeanIdentifier((java.lang.String)arguments[0]);
-
-			return null;
+			return AssetLocalServiceUtil.getOSGiServiceIdentifier();
 		}
 
 		throw new UnsupportedOperationException();
@@ -241,12 +262,16 @@ public class AssetLocalServiceClpInvoker {
 	private String[] _methodParameterTypes12;
 	private String _methodName13;
 	private String[] _methodParameterTypes13;
-	private String _methodName14;
-	private String[] _methodParameterTypes14;
 	private String _methodName15;
 	private String[] _methodParameterTypes15;
+	private String _methodName16;
+	private String[] _methodParameterTypes16;
+	private String _methodName17;
+	private String[] _methodParameterTypes17;
+	private String _methodName18;
+	private String[] _methodParameterTypes18;
+	private String _methodName19;
+	private String[] _methodParameterTypes19;
 	private String _methodName50;
 	private String[] _methodParameterTypes50;
-	private String _methodName51;
-	private String[] _methodParameterTypes51;
 }

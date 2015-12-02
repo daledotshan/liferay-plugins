@@ -14,23 +14,25 @@
 
 package com.liferay.testpacl.service.persistence;
 
-import com.liferay.portal.kernel.dao.orm.BaseActionableDynamicQuery;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 
 import com.liferay.testpacl.model.Foo;
 import com.liferay.testpacl.service.FooLocalServiceUtil;
 
 /**
  * @author Brian Wing Shun Chan
+ * @deprecated As of 7.0.0, replaced by {@link FooLocalServiceUtil#getActionableDynamicQuery()}
  * @generated
  */
+@Deprecated
 public abstract class FooActionableDynamicQuery
-	extends BaseActionableDynamicQuery {
-	public FooActionableDynamicQuery() throws SystemException {
+	extends DefaultActionableDynamicQuery {
+	public FooActionableDynamicQuery() {
 		setBaseLocalService(FooLocalServiceUtil.getService());
-		setClass(Foo.class);
 
 		setClassLoader(com.liferay.testpacl.service.ClpSerializer.class.getClassLoader());
+
+		setModelClass(Foo.class);
 
 		setPrimaryKeyPropertyName("fooId");
 	}

@@ -17,20 +17,22 @@ package com.liferay.microblogs.service.persistence;
 import com.liferay.microblogs.model.MicroblogsEntry;
 import com.liferay.microblogs.service.MicroblogsEntryLocalServiceUtil;
 
-import com.liferay.portal.kernel.dao.orm.BaseActionableDynamicQuery;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 
 /**
  * @author Brian Wing Shun Chan
+ * @deprecated As of 7.0.0, replaced by {@link MicroblogsEntryLocalServiceUtil#getActionableDynamicQuery()}
  * @generated
  */
+@Deprecated
 public abstract class MicroblogsEntryActionableDynamicQuery
-	extends BaseActionableDynamicQuery {
-	public MicroblogsEntryActionableDynamicQuery() throws SystemException {
+	extends DefaultActionableDynamicQuery {
+	public MicroblogsEntryActionableDynamicQuery() {
 		setBaseLocalService(MicroblogsEntryLocalServiceUtil.getService());
-		setClass(MicroblogsEntry.class);
 
 		setClassLoader(com.liferay.microblogs.service.ClpSerializer.class.getClassLoader());
+
+		setModelClass(MicroblogsEntry.class);
 
 		setPrimaryKeyPropertyName("microblogsEntryId");
 	}

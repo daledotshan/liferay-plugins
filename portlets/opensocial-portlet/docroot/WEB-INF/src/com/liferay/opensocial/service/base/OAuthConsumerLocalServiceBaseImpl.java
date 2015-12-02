@@ -14,6 +14,8 @@
 
 package com.liferay.opensocial.service.base;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.opensocial.model.OAuthConsumer;
 import com.liferay.opensocial.service.OAuthConsumerLocalService;
 import com.liferay.opensocial.service.persistence.GadgetPersistence;
@@ -21,16 +23,19 @@ import com.liferay.opensocial.service.persistence.OAuthConsumerPersistence;
 import com.liferay.opensocial.service.persistence.OAuthTokenPersistence;
 
 import com.liferay.portal.kernel.bean.BeanReference;
-import com.liferay.portal.kernel.bean.IdentifiableBean;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiService;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -59,9 +64,10 @@ import javax.sql.DataSource;
  * @see com.liferay.opensocial.service.OAuthConsumerLocalServiceUtil
  * @generated
  */
+@ProviderType
 public abstract class OAuthConsumerLocalServiceBaseImpl
 	extends BaseLocalServiceImpl implements OAuthConsumerLocalService,
-		IdentifiableBean {
+		IdentifiableOSGiService {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -73,12 +79,10 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 	 *
 	 * @param oAuthConsumer the o auth consumer
 	 * @return the o auth consumer that was added
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public OAuthConsumer addOAuthConsumer(OAuthConsumer oAuthConsumer)
-		throws SystemException {
+	public OAuthConsumer addOAuthConsumer(OAuthConsumer oAuthConsumer) {
 		oAuthConsumer.setNew(true);
 
 		return oAuthConsumerPersistence.update(oAuthConsumer);
@@ -101,12 +105,11 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 	 * @param oAuthConsumerId the primary key of the o auth consumer
 	 * @return the o auth consumer that was removed
 	 * @throws PortalException if a o auth consumer with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public OAuthConsumer deleteOAuthConsumer(long oAuthConsumerId)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return oAuthConsumerPersistence.remove(oAuthConsumerId);
 	}
 
@@ -115,12 +118,10 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 	 *
 	 * @param oAuthConsumer the o auth consumer
 	 * @return the o auth consumer that was removed
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public OAuthConsumer deleteOAuthConsumer(OAuthConsumer oAuthConsumer)
-		throws SystemException {
+	public OAuthConsumer deleteOAuthConsumer(OAuthConsumer oAuthConsumer) {
 		return oAuthConsumerPersistence.remove(oAuthConsumer);
 	}
 
@@ -137,12 +138,9 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
 		return oAuthConsumerPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -157,12 +155,10 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end) {
 		return oAuthConsumerPersistence.findWithDynamicQuery(dynamicQuery,
 			start, end);
 	}
@@ -179,47 +175,41 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator orderByComparator) throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end, OrderByComparator<T> orderByComparator) {
 		return oAuthConsumerPersistence.findWithDynamicQuery(dynamicQuery,
 			start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
 		return oAuthConsumerPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) throws SystemException {
+		Projection projection) {
 		return oAuthConsumerPersistence.countWithDynamicQuery(dynamicQuery,
 			projection);
 	}
 
 	@Override
-	public OAuthConsumer fetchOAuthConsumer(long oAuthConsumerId)
-		throws SystemException {
+	public OAuthConsumer fetchOAuthConsumer(long oAuthConsumerId) {
 		return oAuthConsumerPersistence.fetchByPrimaryKey(oAuthConsumerId);
 	}
 
@@ -229,17 +219,61 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 	 * @param oAuthConsumerId the primary key of the o auth consumer
 	 * @return the o auth consumer
 	 * @throws PortalException if a o auth consumer with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public OAuthConsumer getOAuthConsumer(long oAuthConsumerId)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return oAuthConsumerPersistence.findByPrimaryKey(oAuthConsumerId);
 	}
 
 	@Override
+	public ActionableDynamicQuery getActionableDynamicQuery() {
+		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
+
+		actionableDynamicQuery.setBaseLocalService(com.liferay.opensocial.service.OAuthConsumerLocalServiceUtil.getService());
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+		actionableDynamicQuery.setModelClass(OAuthConsumer.class);
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("oAuthConsumerId");
+
+		return actionableDynamicQuery;
+	}
+
+	@Override
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
+
+		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.opensocial.service.OAuthConsumerLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
+		indexableActionableDynamicQuery.setModelClass(OAuthConsumer.class);
+
+		indexableActionableDynamicQuery.setPrimaryKeyPropertyName(
+			"oAuthConsumerId");
+
+		return indexableActionableDynamicQuery;
+	}
+
+	protected void initActionableDynamicQuery(
+		ActionableDynamicQuery actionableDynamicQuery) {
+		actionableDynamicQuery.setBaseLocalService(com.liferay.opensocial.service.OAuthConsumerLocalServiceUtil.getService());
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+		actionableDynamicQuery.setModelClass(OAuthConsumer.class);
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("oAuthConsumerId");
+	}
+
+	/**
+	 * @throws PortalException
+	 */
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException {
+		return oAuthConsumerLocalService.deleteOAuthConsumer((OAuthConsumer)persistedModel);
+	}
+
+	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return oAuthConsumerPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
@@ -253,11 +287,9 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 	 * @param start the lower bound of the range of o auth consumers
 	 * @param end the upper bound of the range of o auth consumers (not inclusive)
 	 * @return the range of o auth consumers
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<OAuthConsumer> getOAuthConsumers(int start, int end)
-		throws SystemException {
+	public List<OAuthConsumer> getOAuthConsumers(int start, int end) {
 		return oAuthConsumerPersistence.findAll(start, end);
 	}
 
@@ -265,10 +297,9 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 	 * Returns the number of o auth consumers.
 	 *
 	 * @return the number of o auth consumers
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getOAuthConsumersCount() throws SystemException {
+	public int getOAuthConsumersCount() {
 		return oAuthConsumerPersistence.countAll();
 	}
 
@@ -277,12 +308,10 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 	 *
 	 * @param oAuthConsumer the o auth consumer
 	 * @return the o auth consumer that was updated
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public OAuthConsumer updateOAuthConsumer(OAuthConsumer oAuthConsumer)
-		throws SystemException {
+	public OAuthConsumer updateOAuthConsumer(OAuthConsumer oAuthConsumer) {
 		return oAuthConsumerPersistence.update(oAuthConsumer);
 	}
 
@@ -303,25 +332,6 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 	public void setGadgetLocalService(
 		com.liferay.opensocial.service.GadgetLocalService gadgetLocalService) {
 		this.gadgetLocalService = gadgetLocalService;
-	}
-
-	/**
-	 * Returns the gadget remote service.
-	 *
-	 * @return the gadget remote service
-	 */
-	public com.liferay.opensocial.service.GadgetService getGadgetService() {
-		return gadgetService;
-	}
-
-	/**
-	 * Sets the gadget remote service.
-	 *
-	 * @param gadgetService the gadget remote service
-	 */
-	public void setGadgetService(
-		com.liferay.opensocial.service.GadgetService gadgetService) {
-		this.gadgetService = gadgetService;
 	}
 
 	/**
@@ -347,7 +357,7 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 	 *
 	 * @return the o auth consumer local service
 	 */
-	public com.liferay.opensocial.service.OAuthConsumerLocalService getOAuthConsumerLocalService() {
+	public OAuthConsumerLocalService getOAuthConsumerLocalService() {
 		return oAuthConsumerLocalService;
 	}
 
@@ -357,7 +367,7 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 	 * @param oAuthConsumerLocalService the o auth consumer local service
 	 */
 	public void setOAuthConsumerLocalService(
-		com.liferay.opensocial.service.OAuthConsumerLocalService oAuthConsumerLocalService) {
+		OAuthConsumerLocalService oAuthConsumerLocalService) {
 		this.oAuthConsumerLocalService = oAuthConsumerLocalService;
 	}
 
@@ -457,25 +467,6 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the class name remote service.
-	 *
-	 * @return the class name remote service
-	 */
-	public com.liferay.portal.service.ClassNameService getClassNameService() {
-		return classNameService;
-	}
-
-	/**
-	 * Sets the class name remote service.
-	 *
-	 * @param classNameService the class name remote service
-	 */
-	public void setClassNameService(
-		com.liferay.portal.service.ClassNameService classNameService) {
-		this.classNameService = classNameService;
-	}
-
-	/**
 	 * Returns the class name persistence.
 	 *
 	 * @return the class name persistence
@@ -533,25 +524,6 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the user remote service.
-	 *
-	 * @return the user remote service
-	 */
-	public com.liferay.portal.service.UserService getUserService() {
-		return userService;
-	}
-
-	/**
-	 * Sets the user remote service.
-	 *
-	 * @param userService the user remote service
-	 */
-	public void setUserService(
-		com.liferay.portal.service.UserService userService) {
-		this.userService = userService;
-	}
-
-	/**
 	 * Returns the user persistence.
 	 *
 	 * @return the user persistence
@@ -584,23 +556,13 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the Spring bean ID for this bean.
+	 * Returns the OSGi service identifier.
 	 *
-	 * @return the Spring bean ID for this bean
+	 * @return the OSGi service identifier
 	 */
 	@Override
-	public String getBeanIdentifier() {
-		return _beanIdentifier;
-	}
-
-	/**
-	 * Sets the Spring bean ID for this bean.
-	 *
-	 * @param beanIdentifier the Spring bean ID for this bean
-	 */
-	@Override
-	public void setBeanIdentifier(String beanIdentifier) {
-		_beanIdentifier = beanIdentifier;
+	public String getOSGiServiceIdentifier() {
+		return OAuthConsumerLocalService.class.getName();
 	}
 
 	@Override
@@ -637,7 +599,7 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) throws SystemException {
+	protected void runSQL(String sql) {
 		try {
 			DataSource dataSource = oAuthConsumerPersistence.getDataSource();
 
@@ -658,12 +620,10 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 
 	@BeanReference(type = com.liferay.opensocial.service.GadgetLocalService.class)
 	protected com.liferay.opensocial.service.GadgetLocalService gadgetLocalService;
-	@BeanReference(type = com.liferay.opensocial.service.GadgetService.class)
-	protected com.liferay.opensocial.service.GadgetService gadgetService;
 	@BeanReference(type = GadgetPersistence.class)
 	protected GadgetPersistence gadgetPersistence;
 	@BeanReference(type = com.liferay.opensocial.service.OAuthConsumerLocalService.class)
-	protected com.liferay.opensocial.service.OAuthConsumerLocalService oAuthConsumerLocalService;
+	protected OAuthConsumerLocalService oAuthConsumerLocalService;
 	@BeanReference(type = OAuthConsumerPersistence.class)
 	protected OAuthConsumerPersistence oAuthConsumerPersistence;
 	@BeanReference(type = com.liferay.opensocial.service.OAuthTokenLocalService.class)
@@ -674,19 +634,14 @@ public abstract class OAuthConsumerLocalServiceBaseImpl
 	protected com.liferay.counter.service.CounterLocalService counterLocalService;
 	@BeanReference(type = com.liferay.portal.service.ClassNameLocalService.class)
 	protected com.liferay.portal.service.ClassNameLocalService classNameLocalService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameService.class)
-	protected com.liferay.portal.service.ClassNameService classNameService;
 	@BeanReference(type = ClassNamePersistence.class)
 	protected ClassNamePersistence classNamePersistence;
 	@BeanReference(type = com.liferay.portal.service.ResourceLocalService.class)
 	protected com.liferay.portal.service.ResourceLocalService resourceLocalService;
 	@BeanReference(type = com.liferay.portal.service.UserLocalService.class)
 	protected com.liferay.portal.service.UserLocalService userLocalService;
-	@BeanReference(type = com.liferay.portal.service.UserService.class)
-	protected com.liferay.portal.service.UserService userService;
 	@BeanReference(type = UserPersistence.class)
 	protected UserPersistence userPersistence;
-	private String _beanIdentifier;
 	private ClassLoader _classLoader;
 	private OAuthConsumerLocalServiceClpInvoker _clpInvoker = new OAuthConsumerLocalServiceClpInvoker();
 }

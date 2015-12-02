@@ -14,6 +14,8 @@
 
 package com.liferay.opensocial.service;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.PortletBeanLocatorUtil;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.InvokableLocalService;
@@ -32,6 +34,7 @@ import com.liferay.portal.service.InvokableLocalService;
  * @see com.liferay.opensocial.service.impl.OAuthTokenLocalServiceImpl
  * @generated
  */
+@ProviderType
 public class OAuthTokenLocalServiceUtil {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -44,12 +47,21 @@ public class OAuthTokenLocalServiceUtil {
 	*
 	* @param oAuthToken the o auth token
 	* @return the o auth token that was added
-	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.opensocial.model.OAuthToken addOAuthToken(
-		com.liferay.opensocial.model.OAuthToken oAuthToken)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		com.liferay.opensocial.model.OAuthToken oAuthToken) {
 		return getService().addOAuthToken(oAuthToken);
+	}
+
+	public static com.liferay.opensocial.model.OAuthToken addOAuthToken(
+		long userId, java.lang.String gadgetKey, java.lang.String serviceName,
+		long moduleId, java.lang.String accessToken,
+		java.lang.String tokenName, java.lang.String tokenSecret,
+		java.lang.String sessionHandle, long expiration)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .addOAuthToken(userId, gadgetKey, serviceName, moduleId,
+			accessToken, tokenName, tokenSecret, sessionHandle, expiration);
 	}
 
 	/**
@@ -64,31 +76,50 @@ public class OAuthTokenLocalServiceUtil {
 	}
 
 	/**
+	* Deletes the o auth token from the database. Also notifies the appropriate model listeners.
+	*
+	* @param oAuthToken the o auth token
+	* @return the o auth token that was removed
+	*/
+	public static com.liferay.opensocial.model.OAuthToken deleteOAuthToken(
+		com.liferay.opensocial.model.OAuthToken oAuthToken) {
+		return getService().deleteOAuthToken(oAuthToken);
+	}
+
+	/**
 	* Deletes the o auth token with the primary key from the database. Also notifies the appropriate model listeners.
 	*
 	* @param oAuthTokenId the primary key of the o auth token
 	* @return the o auth token that was removed
 	* @throws PortalException if a o auth token with the primary key could not be found
-	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.opensocial.model.OAuthToken deleteOAuthToken(
 		long oAuthTokenId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().deleteOAuthToken(oAuthTokenId);
 	}
 
+	public static void deleteOAuthToken(long userId,
+		java.lang.String gadgetKey, java.lang.String serviceName,
+		long moduleId, java.lang.String tokenName)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService()
+			.deleteOAuthToken(userId, gadgetKey, serviceName, moduleId,
+			tokenName);
+	}
+
+	public static void deleteOAuthTokens(java.lang.String gadgetKey,
+		java.lang.String serviceName) {
+		getService().deleteOAuthTokens(gadgetKey, serviceName);
+	}
+
 	/**
-	* Deletes the o auth token from the database. Also notifies the appropriate model listeners.
-	*
-	* @param oAuthToken the o auth token
-	* @return the o auth token that was removed
-	* @throws SystemException if a system exception occurred
+	* @throws PortalException
 	*/
-	public static com.liferay.opensocial.model.OAuthToken deleteOAuthToken(
-		com.liferay.opensocial.model.OAuthToken oAuthToken)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return getService().deleteOAuthToken(oAuthToken);
+	public static com.liferay.portal.model.PersistedModel deletePersistedModel(
+		com.liferay.portal.model.PersistedModel persistedModel)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().deletePersistedModel(persistedModel);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
@@ -100,12 +131,9 @@ public class OAuthTokenLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
-	* @throws SystemException if a system exception occurred
 	*/
-	@SuppressWarnings("rawtypes")
-	public static java.util.List dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static <T> java.util.List<T> dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
 		return getService().dynamicQuery(dynamicQuery);
 	}
 
@@ -120,12 +148,10 @@ public class OAuthTokenLocalServiceUtil {
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
-	* @throws SystemException if a system exception occurred
 	*/
-	@SuppressWarnings("rawtypes")
-	public static java.util.List dynamicQuery(
+	public static <T> java.util.List<T> dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) throws com.liferay.portal.kernel.exception.SystemException {
+		int end) {
 		return getService().dynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -141,50 +167,58 @@ public class OAuthTokenLocalServiceUtil {
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
-	* @throws SystemException if a system exception occurred
 	*/
-	@SuppressWarnings("rawtypes")
-	public static java.util.List dynamicQuery(
+	public static <T> java.util.List<T> dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
 		return getService()
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
 
 	/**
-	* Returns the number of rows that match the dynamic query.
+	* Returns the number of rows matching the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
-	* @return the number of rows that match the dynamic query
-	* @throws SystemException if a system exception occurred
+	* @return the number of rows matching the dynamic query
 	*/
 	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
 		return getService().dynamicQueryCount(dynamicQuery);
 	}
 
 	/**
-	* Returns the number of rows that match the dynamic query.
+	* Returns the number of rows matching the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
-	* @return the number of rows that match the dynamic query
-	* @throws SystemException if a system exception occurred
+	* @return the number of rows matching the dynamic query
 	*/
 	public static long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		com.liferay.portal.kernel.dao.orm.Projection projection) {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
 	public static com.liferay.opensocial.model.OAuthToken fetchOAuthToken(
-		long oAuthTokenId)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		long oAuthTokenId) {
 		return getService().fetchOAuthToken(oAuthTokenId);
+	}
+
+	public static com.liferay.opensocial.model.OAuthToken fetchOAuthToken(
+		long userId, java.lang.String gadgetKey, java.lang.String serviceName,
+		long moduleId, java.lang.String tokenName) {
+		return getService()
+				   .fetchOAuthToken(userId, gadgetKey, serviceName, moduleId,
+			tokenName);
+	}
+
+	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
+		return getService().getActionableDynamicQuery();
+	}
+
+	public static com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		return getService().getIndexableActionableDynamicQuery();
 	}
 
 	/**
@@ -193,20 +227,25 @@ public class OAuthTokenLocalServiceUtil {
 	* @param oAuthTokenId the primary key of the o auth token
 	* @return the o auth token
 	* @throws PortalException if a o auth token with the primary key could not be found
-	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.opensocial.model.OAuthToken getOAuthToken(
 		long oAuthTokenId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getOAuthToken(oAuthTokenId);
 	}
 
-	public static com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		return getService().getPersistedModel(primaryKeyObj);
+	public static com.liferay.opensocial.model.OAuthToken getOAuthToken(
+		long userId, java.lang.String gadgetKey, java.lang.String serviceName,
+		long moduleId, java.lang.String tokenName)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .getOAuthToken(userId, gadgetKey, serviceName, moduleId,
+			tokenName);
+	}
+
+	public static java.util.List<com.liferay.opensocial.model.OAuthToken> getOAuthTokens(
+		java.lang.String gadgetKey, java.lang.String serviceName) {
+		return getService().getOAuthTokens(gadgetKey, serviceName);
 	}
 
 	/**
@@ -219,11 +258,9 @@ public class OAuthTokenLocalServiceUtil {
 	* @param start the lower bound of the range of o auth tokens
 	* @param end the upper bound of the range of o auth tokens (not inclusive)
 	* @return the range of o auth tokens
-	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.opensocial.model.OAuthToken> getOAuthTokens(
-		int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		int start, int end) {
 		return getService().getOAuthTokens(start, end);
 	}
 
@@ -231,42 +268,24 @@ public class OAuthTokenLocalServiceUtil {
 	* Returns the number of o auth tokens.
 	*
 	* @return the number of o auth tokens
-	* @throws SystemException if a system exception occurred
 	*/
-	public static int getOAuthTokensCount()
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static int getOAuthTokensCount() {
 		return getService().getOAuthTokensCount();
 	}
 
 	/**
-	* Updates the o auth token in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	* Returns the OSGi service identifier.
 	*
-	* @param oAuthToken the o auth token
-	* @return the o auth token that was updated
-	* @throws SystemException if a system exception occurred
+	* @return the OSGi service identifier
 	*/
-	public static com.liferay.opensocial.model.OAuthToken updateOAuthToken(
-		com.liferay.opensocial.model.OAuthToken oAuthToken)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return getService().updateOAuthToken(oAuthToken);
+	public static java.lang.String getOSGiServiceIdentifier() {
+		return getService().getOSGiServiceIdentifier();
 	}
 
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	public static java.lang.String getBeanIdentifier() {
-		return getService().getBeanIdentifier();
-	}
-
-	/**
-	* Sets the Spring bean ID for this bean.
-	*
-	* @param beanIdentifier the Spring bean ID for this bean
-	*/
-	public static void setBeanIdentifier(java.lang.String beanIdentifier) {
-		getService().setBeanIdentifier(beanIdentifier);
+	public static com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getPersistedModel(primaryKeyObj);
 	}
 
 	public static java.lang.Object invokeMethod(java.lang.String name,
@@ -275,57 +294,15 @@ public class OAuthTokenLocalServiceUtil {
 		return getService().invokeMethod(name, parameterTypes, arguments);
 	}
 
-	public static com.liferay.opensocial.model.OAuthToken addOAuthToken(
-		long userId, java.lang.String gadgetKey, java.lang.String serviceName,
-		long moduleId, java.lang.String accessToken,
-		java.lang.String tokenName, java.lang.String tokenSecret,
-		java.lang.String sessionHandle, long expiration)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		return getService()
-				   .addOAuthToken(userId, gadgetKey, serviceName, moduleId,
-			accessToken, tokenName, tokenSecret, sessionHandle, expiration);
-	}
-
-	public static void deleteOAuthToken(long userId,
-		java.lang.String gadgetKey, java.lang.String serviceName,
-		long moduleId, java.lang.String tokenName)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		getService()
-			.deleteOAuthToken(userId, gadgetKey, serviceName, moduleId,
-			tokenName);
-	}
-
-	public static void deleteOAuthTokens(java.lang.String gadgetKey,
-		java.lang.String serviceName)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		getService().deleteOAuthTokens(gadgetKey, serviceName);
-	}
-
-	public static com.liferay.opensocial.model.OAuthToken fetchOAuthToken(
-		long userId, java.lang.String gadgetKey, java.lang.String serviceName,
-		long moduleId, java.lang.String tokenName)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return getService()
-				   .fetchOAuthToken(userId, gadgetKey, serviceName, moduleId,
-			tokenName);
-	}
-
-	public static com.liferay.opensocial.model.OAuthToken getOAuthToken(
-		long userId, java.lang.String gadgetKey, java.lang.String serviceName,
-		long moduleId, java.lang.String tokenName)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		return getService()
-				   .getOAuthToken(userId, gadgetKey, serviceName, moduleId,
-			tokenName);
-	}
-
-	public static java.util.List<com.liferay.opensocial.model.OAuthToken> getOAuthTokens(
-		java.lang.String gadgetKey, java.lang.String serviceName)
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return getService().getOAuthTokens(gadgetKey, serviceName);
+	/**
+	* Updates the o auth token in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param oAuthToken the o auth token
+	* @return the o auth token that was updated
+	*/
+	public static com.liferay.opensocial.model.OAuthToken updateOAuthToken(
+		com.liferay.opensocial.model.OAuthToken oAuthToken) {
+		return getService().updateOAuthToken(oAuthToken);
 	}
 
 	public static void clearService() {

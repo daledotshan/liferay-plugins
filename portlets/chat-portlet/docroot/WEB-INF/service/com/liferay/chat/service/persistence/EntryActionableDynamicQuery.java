@@ -17,20 +17,22 @@ package com.liferay.chat.service.persistence;
 import com.liferay.chat.model.Entry;
 import com.liferay.chat.service.EntryLocalServiceUtil;
 
-import com.liferay.portal.kernel.dao.orm.BaseActionableDynamicQuery;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 
 /**
  * @author Brian Wing Shun Chan
+ * @deprecated As of 7.0.0, replaced by {@link EntryLocalServiceUtil#getActionableDynamicQuery()}
  * @generated
  */
+@Deprecated
 public abstract class EntryActionableDynamicQuery
-	extends BaseActionableDynamicQuery {
-	public EntryActionableDynamicQuery() throws SystemException {
+	extends DefaultActionableDynamicQuery {
+	public EntryActionableDynamicQuery() {
 		setBaseLocalService(EntryLocalServiceUtil.getService());
-		setClass(Entry.class);
 
 		setClassLoader(com.liferay.chat.service.ClpSerializer.class.getClassLoader());
+
+		setModelClass(Entry.class);
 
 		setPrimaryKeyPropertyName("entryId");
 	}

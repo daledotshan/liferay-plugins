@@ -14,24 +14,25 @@
 
 package com.liferay.sync.service.persistence;
 
-import com.liferay.portal.kernel.dao.orm.BaseActionableDynamicQuery;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 
 import com.liferay.sync.model.SyncDLFileVersionDiff;
 import com.liferay.sync.service.SyncDLFileVersionDiffLocalServiceUtil;
 
 /**
  * @author Brian Wing Shun Chan
+ * @deprecated As of 7.0.0, replaced by {@link SyncDLFileVersionDiffLocalServiceUtil#getActionableDynamicQuery()}
  * @generated
  */
+@Deprecated
 public abstract class SyncDLFileVersionDiffActionableDynamicQuery
-	extends BaseActionableDynamicQuery {
-	public SyncDLFileVersionDiffActionableDynamicQuery()
-		throws SystemException {
+	extends DefaultActionableDynamicQuery {
+	public SyncDLFileVersionDiffActionableDynamicQuery() {
 		setBaseLocalService(SyncDLFileVersionDiffLocalServiceUtil.getService());
-		setClass(SyncDLFileVersionDiff.class);
 
 		setClassLoader(com.liferay.sync.service.ClpSerializer.class.getClassLoader());
+
+		setModelClass(SyncDLFileVersionDiff.class);
 
 		setPrimaryKeyPropertyName("syncDLFileVersionDiffId");
 	}

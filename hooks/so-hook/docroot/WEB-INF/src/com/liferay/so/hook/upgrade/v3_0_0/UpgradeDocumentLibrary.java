@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.util.PortalUtil;
@@ -35,7 +34,7 @@ import com.liferay.portlet.expando.model.ExpandoColumn;
 import com.liferay.portlet.expando.model.ExpandoTableConstants;
 import com.liferay.portlet.expando.model.ExpandoValue;
 import com.liferay.portlet.expando.service.ExpandoColumnLocalServiceUtil;
-import com.liferay.portlet.expando.service.persistence.ExpandoValueActionableDynamicQuery;
+import com.liferay.portlet.expando.service.ExpandoValueLocalServiceUtil;
 
 /**
  * @author Matthew Kong
@@ -63,10 +62,13 @@ public class UpgradeDocumentLibrary extends UpgradeProcess {
 		}
 
 		ActionableDynamicQuery actionableDynamicQuery =
-			new ExpandoValueActionableDynamicQuery() {
+			ExpandoValueLocalServiceUtil.getActionableDynamicQuery();
+
+		actionableDynamicQuery.setAddCriteriaMethod(
+			new ActionableDynamicQuery.AddCriteriaMethod() {
 
 				@Override
-				protected void addCriteria(DynamicQuery dynamicQuery) {
+				public void addCriteria(DynamicQuery dynamicQuery) {
 					Property columnIdProperty = PropertyFactoryUtil.forName(
 						"columnId");
 
@@ -78,11 +80,13 @@ public class UpgradeDocumentLibrary extends UpgradeProcess {
 					dynamicQuery.add(dataProperty.eq(StringPool.TRUE));
 				}
 
-				@Override
-				protected void performAction(Object object)
-					throws PortalException, SystemException {
+			});
+		actionableDynamicQuery.setPerformActionMethod(
+			new ActionableDynamicQuery.PerformActionMethod<ExpandoValue>() {
 
-					ExpandoValue expandoValue = (ExpandoValue)object;
+				@Override
+				public void performAction(ExpandoValue expandoValue)
+					throws PortalException {
 
 					DLFileVersion dlFileVersion =
 						DLFileVersionLocalServiceUtil.fetchDLFileVersion(
@@ -99,7 +103,7 @@ public class UpgradeDocumentLibrary extends UpgradeProcess {
 					DLFileEntryLocalServiceUtil.updateDLFileEntry(dlFileEntry);
 				}
 
-			};
+			});
 
 		actionableDynamicQuery.performActions();
 

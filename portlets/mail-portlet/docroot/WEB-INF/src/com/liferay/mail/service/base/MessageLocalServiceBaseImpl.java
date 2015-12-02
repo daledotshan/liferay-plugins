@@ -14,6 +14,8 @@
 
 package com.liferay.mail.service.base;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.mail.model.Message;
 import com.liferay.mail.service.MessageLocalService;
 import com.liferay.mail.service.persistence.AccountPersistence;
@@ -22,16 +24,19 @@ import com.liferay.mail.service.persistence.FolderPersistence;
 import com.liferay.mail.service.persistence.MessagePersistence;
 
 import com.liferay.portal.kernel.bean.BeanReference;
-import com.liferay.portal.kernel.bean.IdentifiableBean;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiService;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -60,8 +65,9 @@ import javax.sql.DataSource;
  * @see com.liferay.mail.service.MessageLocalServiceUtil
  * @generated
  */
+@ProviderType
 public abstract class MessageLocalServiceBaseImpl extends BaseLocalServiceImpl
-	implements MessageLocalService, IdentifiableBean {
+	implements MessageLocalService, IdentifiableOSGiService {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -73,11 +79,10 @@ public abstract class MessageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param message the message
 	 * @return the message that was added
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public Message addMessage(Message message) throws SystemException {
+	public Message addMessage(Message message) {
 		message.setNew(true);
 
 		return messagePersistence.update(message);
@@ -100,12 +105,10 @@ public abstract class MessageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param messageId the primary key of the message
 	 * @return the message that was removed
 	 * @throws PortalException if a message with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public Message deleteMessage(long messageId)
-		throws PortalException, SystemException {
+	public Message deleteMessage(long messageId) throws PortalException {
 		return messagePersistence.remove(messageId);
 	}
 
@@ -115,12 +118,10 @@ public abstract class MessageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param message the message
 	 * @return the message that was removed
 	 * @throws PortalException
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public Message deleteMessage(Message message)
-		throws PortalException, SystemException {
+	public Message deleteMessage(Message message) throws PortalException {
 		return messagePersistence.remove(message);
 	}
 
@@ -137,12 +138,9 @@ public abstract class MessageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
 		return messagePersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -157,12 +155,10 @@ public abstract class MessageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end) {
 		return messagePersistence.findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -178,45 +174,40 @@ public abstract class MessageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator orderByComparator) throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end, OrderByComparator<T> orderByComparator) {
 		return messagePersistence.findWithDynamicQuery(dynamicQuery, start,
 			end, orderByComparator);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
 		return messagePersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) throws SystemException {
+		Projection projection) {
 		return messagePersistence.countWithDynamicQuery(dynamicQuery, projection);
 	}
 
 	@Override
-	public Message fetchMessage(long messageId) throws SystemException {
+	public Message fetchMessage(long messageId) {
 		return messagePersistence.fetchByPrimaryKey(messageId);
 	}
 
@@ -226,17 +217,59 @@ public abstract class MessageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param messageId the primary key of the message
 	 * @return the message
 	 * @throws PortalException if a message with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public Message getMessage(long messageId)
-		throws PortalException, SystemException {
+	public Message getMessage(long messageId) throws PortalException {
 		return messagePersistence.findByPrimaryKey(messageId);
 	}
 
 	@Override
+	public ActionableDynamicQuery getActionableDynamicQuery() {
+		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
+
+		actionableDynamicQuery.setBaseLocalService(com.liferay.mail.service.MessageLocalServiceUtil.getService());
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+		actionableDynamicQuery.setModelClass(Message.class);
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("messageId");
+
+		return actionableDynamicQuery;
+	}
+
+	@Override
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
+
+		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.mail.service.MessageLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
+		indexableActionableDynamicQuery.setModelClass(Message.class);
+
+		indexableActionableDynamicQuery.setPrimaryKeyPropertyName("messageId");
+
+		return indexableActionableDynamicQuery;
+	}
+
+	protected void initActionableDynamicQuery(
+		ActionableDynamicQuery actionableDynamicQuery) {
+		actionableDynamicQuery.setBaseLocalService(com.liferay.mail.service.MessageLocalServiceUtil.getService());
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+		actionableDynamicQuery.setModelClass(Message.class);
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("messageId");
+	}
+
+	/**
+	 * @throws PortalException
+	 */
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException {
+		return messageLocalService.deleteMessage((Message)persistedModel);
+	}
+
+	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return messagePersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
@@ -250,11 +283,9 @@ public abstract class MessageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param start the lower bound of the range of messages
 	 * @param end the upper bound of the range of messages (not inclusive)
 	 * @return the range of messages
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<Message> getMessages(int start, int end)
-		throws SystemException {
+	public List<Message> getMessages(int start, int end) {
 		return messagePersistence.findAll(start, end);
 	}
 
@@ -262,10 +293,9 @@ public abstract class MessageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * Returns the number of messages.
 	 *
 	 * @return the number of messages
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getMessagesCount() throws SystemException {
+	public int getMessagesCount() {
 		return messagePersistence.countAll();
 	}
 
@@ -274,11 +304,10 @@ public abstract class MessageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param message the message
 	 * @return the message that was updated
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public Message updateMessage(Message message) throws SystemException {
+	public Message updateMessage(Message message) {
 		return messagePersistence.update(message);
 	}
 
@@ -399,7 +428,7 @@ public abstract class MessageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @return the message local service
 	 */
-	public com.liferay.mail.service.MessageLocalService getMessageLocalService() {
+	public MessageLocalService getMessageLocalService() {
 		return messageLocalService;
 	}
 
@@ -408,8 +437,7 @@ public abstract class MessageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param messageLocalService the message local service
 	 */
-	public void setMessageLocalService(
-		com.liferay.mail.service.MessageLocalService messageLocalService) {
+	public void setMessageLocalService(MessageLocalService messageLocalService) {
 		this.messageLocalService = messageLocalService;
 	}
 
@@ -470,25 +498,6 @@ public abstract class MessageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Returns the class name remote service.
-	 *
-	 * @return the class name remote service
-	 */
-	public com.liferay.portal.service.ClassNameService getClassNameService() {
-		return classNameService;
-	}
-
-	/**
-	 * Sets the class name remote service.
-	 *
-	 * @param classNameService the class name remote service
-	 */
-	public void setClassNameService(
-		com.liferay.portal.service.ClassNameService classNameService) {
-		this.classNameService = classNameService;
-	}
-
-	/**
 	 * Returns the class name persistence.
 	 *
 	 * @return the class name persistence
@@ -546,25 +555,6 @@ public abstract class MessageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Returns the user remote service.
-	 *
-	 * @return the user remote service
-	 */
-	public com.liferay.portal.service.UserService getUserService() {
-		return userService;
-	}
-
-	/**
-	 * Sets the user remote service.
-	 *
-	 * @param userService the user remote service
-	 */
-	public void setUserService(
-		com.liferay.portal.service.UserService userService) {
-		this.userService = userService;
-	}
-
-	/**
 	 * Returns the user persistence.
 	 *
 	 * @return the user persistence
@@ -597,23 +587,13 @@ public abstract class MessageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Returns the Spring bean ID for this bean.
+	 * Returns the OSGi service identifier.
 	 *
-	 * @return the Spring bean ID for this bean
+	 * @return the OSGi service identifier
 	 */
 	@Override
-	public String getBeanIdentifier() {
-		return _beanIdentifier;
-	}
-
-	/**
-	 * Sets the Spring bean ID for this bean.
-	 *
-	 * @param beanIdentifier the Spring bean ID for this bean
-	 */
-	@Override
-	public void setBeanIdentifier(String beanIdentifier) {
-		_beanIdentifier = beanIdentifier;
+	public String getOSGiServiceIdentifier() {
+		return MessageLocalService.class.getName();
 	}
 
 	@Override
@@ -650,7 +630,7 @@ public abstract class MessageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) throws SystemException {
+	protected void runSQL(String sql) {
 		try {
 			DataSource dataSource = messagePersistence.getDataSource();
 
@@ -682,26 +662,21 @@ public abstract class MessageLocalServiceBaseImpl extends BaseLocalServiceImpl
 	@BeanReference(type = FolderPersistence.class)
 	protected FolderPersistence folderPersistence;
 	@BeanReference(type = com.liferay.mail.service.MessageLocalService.class)
-	protected com.liferay.mail.service.MessageLocalService messageLocalService;
+	protected MessageLocalService messageLocalService;
 	@BeanReference(type = MessagePersistence.class)
 	protected MessagePersistence messagePersistence;
 	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)
 	protected com.liferay.counter.service.CounterLocalService counterLocalService;
 	@BeanReference(type = com.liferay.portal.service.ClassNameLocalService.class)
 	protected com.liferay.portal.service.ClassNameLocalService classNameLocalService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameService.class)
-	protected com.liferay.portal.service.ClassNameService classNameService;
 	@BeanReference(type = ClassNamePersistence.class)
 	protected ClassNamePersistence classNamePersistence;
 	@BeanReference(type = com.liferay.portal.service.ResourceLocalService.class)
 	protected com.liferay.portal.service.ResourceLocalService resourceLocalService;
 	@BeanReference(type = com.liferay.portal.service.UserLocalService.class)
 	protected com.liferay.portal.service.UserLocalService userLocalService;
-	@BeanReference(type = com.liferay.portal.service.UserService.class)
-	protected com.liferay.portal.service.UserService userService;
 	@BeanReference(type = UserPersistence.class)
 	protected UserPersistence userPersistence;
-	private String _beanIdentifier;
 	private ClassLoader _classLoader;
 	private MessageLocalServiceClpInvoker _clpInvoker = new MessageLocalServiceClpInvoker();
 }

@@ -17,20 +17,22 @@ package com.liferay.ams.service.persistence;
 import com.liferay.ams.model.Type;
 import com.liferay.ams.service.TypeLocalServiceUtil;
 
-import com.liferay.portal.kernel.dao.orm.BaseActionableDynamicQuery;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 
 /**
  * @author Brian Wing Shun Chan
+ * @deprecated As of 7.0.0, replaced by {@link TypeLocalServiceUtil#getActionableDynamicQuery()}
  * @generated
  */
+@Deprecated
 public abstract class TypeActionableDynamicQuery
-	extends BaseActionableDynamicQuery {
-	public TypeActionableDynamicQuery() throws SystemException {
+	extends DefaultActionableDynamicQuery {
+	public TypeActionableDynamicQuery() {
 		setBaseLocalService(TypeLocalServiceUtil.getService());
-		setClass(Type.class);
 
 		setClassLoader(com.liferay.ams.service.ClpSerializer.class.getClassLoader());
+
+		setModelClass(Type.class);
 
 		setPrimaryKeyPropertyName("typeId");
 	}

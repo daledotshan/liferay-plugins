@@ -14,23 +14,33 @@
 
 package com.liferay.knowledgebase.service.base;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.knowledgebase.model.KBComment;
 import com.liferay.knowledgebase.service.KBCommentLocalService;
+import com.liferay.knowledgebase.service.persistence.KBArticleFinder;
 import com.liferay.knowledgebase.service.persistence.KBArticlePersistence;
 import com.liferay.knowledgebase.service.persistence.KBCommentPersistence;
+import com.liferay.knowledgebase.service.persistence.KBFolderPersistence;
 import com.liferay.knowledgebase.service.persistence.KBTemplatePersistence;
 
 import com.liferay.portal.kernel.bean.BeanReference;
-import com.liferay.portal.kernel.bean.IdentifiableBean;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
+import com.liferay.portal.kernel.dao.orm.Property;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiService;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -38,9 +48,16 @@ import com.liferay.portal.model.PersistedModel;
 import com.liferay.portal.service.BaseLocalServiceImpl;
 import com.liferay.portal.service.PersistedModelLocalServiceRegistryUtil;
 import com.liferay.portal.service.persistence.ClassNamePersistence;
+import com.liferay.portal.service.persistence.PortletPreferencesPersistence;
 import com.liferay.portal.service.persistence.UserPersistence;
 import com.liferay.portal.util.PortalUtil;
 
+import com.liferay.portlet.exportimport.lar.ExportImportHelperUtil;
+import com.liferay.portlet.exportimport.lar.ManifestSummary;
+import com.liferay.portlet.exportimport.lar.PortletDataContext;
+import com.liferay.portlet.exportimport.lar.StagedModelDataHandlerUtil;
+import com.liferay.portlet.exportimport.lar.StagedModelType;
+import com.liferay.portlet.ratings.service.persistence.RatingsEntryPersistence;
 import com.liferay.portlet.social.service.persistence.SocialActivityPersistence;
 
 import java.io.Serializable;
@@ -61,8 +78,9 @@ import javax.sql.DataSource;
  * @see com.liferay.knowledgebase.service.KBCommentLocalServiceUtil
  * @generated
  */
+@ProviderType
 public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
-	implements KBCommentLocalService, IdentifiableBean {
+	implements KBCommentLocalService, IdentifiableOSGiService {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -74,12 +92,10 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param kbComment the k b comment
 	 * @return the k b comment that was added
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public KBComment addKBComment(KBComment kbComment)
-		throws SystemException {
+	public KBComment addKBComment(KBComment kbComment) {
 		kbComment.setNew(true);
 
 		return kbCommentPersistence.update(kbComment);
@@ -102,12 +118,11 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param kbCommentId the primary key of the k b comment
 	 * @return the k b comment that was removed
 	 * @throws PortalException if a k b comment with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public KBComment deleteKBComment(long kbCommentId)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return kbCommentPersistence.remove(kbCommentId);
 	}
 
@@ -117,12 +132,11 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param kbComment the k b comment
 	 * @return the k b comment that was removed
 	 * @throws PortalException
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public KBComment deleteKBComment(KBComment kbComment)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return kbCommentPersistence.remove(kbComment);
 	}
 
@@ -139,12 +153,9 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
 		return kbCommentPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -159,12 +170,10 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end) {
 		return kbCommentPersistence.findWithDynamicQuery(dynamicQuery, start,
 			end);
 	}
@@ -181,61 +190,42 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator orderByComparator) throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end, OrderByComparator<T> orderByComparator) {
 		return kbCommentPersistence.findWithDynamicQuery(dynamicQuery, start,
 			end, orderByComparator);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
 		return kbCommentPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) throws SystemException {
+		Projection projection) {
 		return kbCommentPersistence.countWithDynamicQuery(dynamicQuery,
 			projection);
 	}
 
 	@Override
-	public KBComment fetchKBComment(long kbCommentId) throws SystemException {
+	public KBComment fetchKBComment(long kbCommentId) {
 		return kbCommentPersistence.fetchByPrimaryKey(kbCommentId);
-	}
-
-	/**
-	 * Returns the k b comment with the matching UUID and company.
-	 *
-	 * @param uuid the k b comment's UUID
-	 * @param  companyId the primary key of the company
-	 * @return the matching k b comment, or <code>null</code> if a matching k b comment could not be found
-	 * @throws SystemException if a system exception occurred
-	 */
-	@Override
-	public KBComment fetchKBCommentByUuidAndCompanyId(String uuid,
-		long companyId) throws SystemException {
-		return kbCommentPersistence.fetchByUuid_C_First(uuid, companyId, null);
 	}
 
 	/**
@@ -244,11 +234,9 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param uuid the k b comment's UUID
 	 * @param groupId the primary key of the group
 	 * @return the matching k b comment, or <code>null</code> if a matching k b comment could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public KBComment fetchKBCommentByUuidAndGroupId(String uuid, long groupId)
-		throws SystemException {
+	public KBComment fetchKBCommentByUuidAndGroupId(String uuid, long groupId) {
 		return kbCommentPersistence.fetchByUUID_G(uuid, groupId);
 	}
 
@@ -258,33 +246,161 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param kbCommentId the primary key of the k b comment
 	 * @return the k b comment
 	 * @throws PortalException if a k b comment with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public KBComment getKBComment(long kbCommentId)
-		throws PortalException, SystemException {
+	public KBComment getKBComment(long kbCommentId) throws PortalException {
 		return kbCommentPersistence.findByPrimaryKey(kbCommentId);
 	}
 
 	@Override
+	public ActionableDynamicQuery getActionableDynamicQuery() {
+		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
+
+		actionableDynamicQuery.setBaseLocalService(com.liferay.knowledgebase.service.KBCommentLocalServiceUtil.getService());
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+		actionableDynamicQuery.setModelClass(KBComment.class);
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("kbCommentId");
+
+		return actionableDynamicQuery;
+	}
+
+	@Override
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
+
+		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.knowledgebase.service.KBCommentLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
+		indexableActionableDynamicQuery.setModelClass(KBComment.class);
+
+		indexableActionableDynamicQuery.setPrimaryKeyPropertyName("kbCommentId");
+
+		return indexableActionableDynamicQuery;
+	}
+
+	protected void initActionableDynamicQuery(
+		ActionableDynamicQuery actionableDynamicQuery) {
+		actionableDynamicQuery.setBaseLocalService(com.liferay.knowledgebase.service.KBCommentLocalServiceUtil.getService());
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+		actionableDynamicQuery.setModelClass(KBComment.class);
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("kbCommentId");
+	}
+
+	@Override
+	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
+		final PortletDataContext portletDataContext) {
+		final ExportActionableDynamicQuery exportActionableDynamicQuery = new ExportActionableDynamicQuery() {
+				@Override
+				public long performCount() throws PortalException {
+					ManifestSummary manifestSummary = portletDataContext.getManifestSummary();
+
+					StagedModelType stagedModelType = getStagedModelType();
+
+					long modelAdditionCount = super.performCount();
+
+					manifestSummary.addModelAdditionCount(stagedModelType,
+						modelAdditionCount);
+
+					long modelDeletionCount = ExportImportHelperUtil.getModelDeletionCount(portletDataContext,
+							stagedModelType);
+
+					manifestSummary.addModelDeletionCount(stagedModelType,
+						modelDeletionCount);
+
+					return modelAdditionCount;
+				}
+			};
+
+		initActionableDynamicQuery(exportActionableDynamicQuery);
+
+		exportActionableDynamicQuery.setAddCriteriaMethod(new ActionableDynamicQuery.AddCriteriaMethod() {
+				@Override
+				public void addCriteria(DynamicQuery dynamicQuery) {
+					portletDataContext.addDateRangeCriteria(dynamicQuery,
+						"modifiedDate");
+
+					StagedModelType stagedModelType = exportActionableDynamicQuery.getStagedModelType();
+
+					long referrerClassNameId = stagedModelType.getReferrerClassNameId();
+
+					Property classNameIdProperty = PropertyFactoryUtil.forName(
+							"classNameId");
+
+					if ((referrerClassNameId != StagedModelType.REFERRER_CLASS_NAME_ID_ALL) &&
+							(referrerClassNameId != StagedModelType.REFERRER_CLASS_NAME_ID_ANY)) {
+						dynamicQuery.add(classNameIdProperty.eq(
+								stagedModelType.getReferrerClassNameId()));
+					}
+					else if (referrerClassNameId == StagedModelType.REFERRER_CLASS_NAME_ID_ANY) {
+						dynamicQuery.add(classNameIdProperty.isNotNull());
+					}
+				}
+			});
+
+		exportActionableDynamicQuery.setCompanyId(portletDataContext.getCompanyId());
+
+		exportActionableDynamicQuery.setGroupId(portletDataContext.getScopeGroupId());
+
+		exportActionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod<KBComment>() {
+				@Override
+				public void performAction(KBComment kbComment)
+					throws PortalException {
+					StagedModelDataHandlerUtil.exportStagedModel(portletDataContext,
+						kbComment);
+				}
+			});
+		exportActionableDynamicQuery.setStagedModelType(new StagedModelType(
+				PortalUtil.getClassNameId(KBComment.class.getName()),
+				StagedModelType.REFERRER_CLASS_NAME_ID_ALL));
+
+		return exportActionableDynamicQuery;
+	}
+
+	/**
+	 * @throws PortalException
+	 */
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException {
+		return kbCommentLocalService.deleteKBComment((KBComment)persistedModel);
+	}
+
+	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return kbCommentPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
 	/**
-	 * Returns the k b comment with the matching UUID and company.
+	 * Returns all the k b comments matching the UUID and company.
 	 *
-	 * @param uuid the k b comment's UUID
-	 * @param  companyId the primary key of the company
-	 * @return the matching k b comment
-	 * @throws PortalException if a matching k b comment could not be found
-	 * @throws SystemException if a system exception occurred
+	 * @param uuid the UUID of the k b comments
+	 * @param companyId the primary key of the company
+	 * @return the matching k b comments, or an empty list if no matches were found
 	 */
 	@Override
-	public KBComment getKBCommentByUuidAndCompanyId(String uuid, long companyId)
-		throws PortalException, SystemException {
-		return kbCommentPersistence.findByUuid_C_First(uuid, companyId, null);
+	public List<KBComment> getKBCommentsByUuidAndCompanyId(String uuid,
+		long companyId) {
+		return kbCommentPersistence.findByUuid_C(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of k b comments matching the UUID and company.
+	 *
+	 * @param uuid the UUID of the k b comments
+	 * @param companyId the primary key of the company
+	 * @param start the lower bound of the range of k b comments
+	 * @param end the upper bound of the range of k b comments (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the range of matching k b comments, or an empty list if no matches were found
+	 */
+	@Override
+	public List<KBComment> getKBCommentsByUuidAndCompanyId(String uuid,
+		long companyId, int start, int end,
+		OrderByComparator<KBComment> orderByComparator) {
+		return kbCommentPersistence.findByUuid_C(uuid, companyId, start, end,
+			orderByComparator);
 	}
 
 	/**
@@ -294,11 +410,10 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param groupId the primary key of the group
 	 * @return the matching k b comment
 	 * @throws PortalException if a matching k b comment could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public KBComment getKBCommentByUuidAndGroupId(String uuid, long groupId)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return kbCommentPersistence.findByUUID_G(uuid, groupId);
 	}
 
@@ -312,11 +427,9 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param start the lower bound of the range of k b comments
 	 * @param end the upper bound of the range of k b comments (not inclusive)
 	 * @return the range of k b comments
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<KBComment> getKBComments(int start, int end)
-		throws SystemException {
+	public List<KBComment> getKBComments(int start, int end) {
 		return kbCommentPersistence.findAll(start, end);
 	}
 
@@ -324,10 +437,9 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * Returns the number of k b comments.
 	 *
 	 * @return the number of k b comments
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getKBCommentsCount() throws SystemException {
+	public int getKBCommentsCount() {
 		return kbCommentPersistence.countAll();
 	}
 
@@ -336,12 +448,10 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param kbComment the k b comment
 	 * @return the k b comment that was updated
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public KBComment updateKBComment(KBComment kbComment)
-		throws SystemException {
+	public KBComment updateKBComment(KBComment kbComment) {
 		return kbCommentPersistence.update(kbComment);
 	}
 
@@ -365,25 +475,6 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Returns the k b article remote service.
-	 *
-	 * @return the k b article remote service
-	 */
-	public com.liferay.knowledgebase.service.KBArticleService getKBArticleService() {
-		return kbArticleService;
-	}
-
-	/**
-	 * Sets the k b article remote service.
-	 *
-	 * @param kbArticleService the k b article remote service
-	 */
-	public void setKBArticleService(
-		com.liferay.knowledgebase.service.KBArticleService kbArticleService) {
-		this.kbArticleService = kbArticleService;
-	}
-
-	/**
 	 * Returns the k b article persistence.
 	 *
 	 * @return the k b article persistence
@@ -403,11 +494,29 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
+	 * Returns the k b article finder.
+	 *
+	 * @return the k b article finder
+	 */
+	public KBArticleFinder getKBArticleFinder() {
+		return kbArticleFinder;
+	}
+
+	/**
+	 * Sets the k b article finder.
+	 *
+	 * @param kbArticleFinder the k b article finder
+	 */
+	public void setKBArticleFinder(KBArticleFinder kbArticleFinder) {
+		this.kbArticleFinder = kbArticleFinder;
+	}
+
+	/**
 	 * Returns the k b comment local service.
 	 *
 	 * @return the k b comment local service
 	 */
-	public com.liferay.knowledgebase.service.KBCommentLocalService getKBCommentLocalService() {
+	public KBCommentLocalService getKBCommentLocalService() {
 		return kbCommentLocalService;
 	}
 
@@ -417,27 +526,8 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param kbCommentLocalService the k b comment local service
 	 */
 	public void setKBCommentLocalService(
-		com.liferay.knowledgebase.service.KBCommentLocalService kbCommentLocalService) {
+		KBCommentLocalService kbCommentLocalService) {
 		this.kbCommentLocalService = kbCommentLocalService;
-	}
-
-	/**
-	 * Returns the k b comment remote service.
-	 *
-	 * @return the k b comment remote service
-	 */
-	public com.liferay.knowledgebase.service.KBCommentService getKBCommentService() {
-		return kbCommentService;
-	}
-
-	/**
-	 * Sets the k b comment remote service.
-	 *
-	 * @param kbCommentService the k b comment remote service
-	 */
-	public void setKBCommentService(
-		com.liferay.knowledgebase.service.KBCommentService kbCommentService) {
-		this.kbCommentService = kbCommentService;
 	}
 
 	/**
@@ -460,6 +550,43 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
+	 * Returns the k b folder local service.
+	 *
+	 * @return the k b folder local service
+	 */
+	public com.liferay.knowledgebase.service.KBFolderLocalService getKBFolderLocalService() {
+		return kbFolderLocalService;
+	}
+
+	/**
+	 * Sets the k b folder local service.
+	 *
+	 * @param kbFolderLocalService the k b folder local service
+	 */
+	public void setKBFolderLocalService(
+		com.liferay.knowledgebase.service.KBFolderLocalService kbFolderLocalService) {
+		this.kbFolderLocalService = kbFolderLocalService;
+	}
+
+	/**
+	 * Returns the k b folder persistence.
+	 *
+	 * @return the k b folder persistence
+	 */
+	public KBFolderPersistence getKBFolderPersistence() {
+		return kbFolderPersistence;
+	}
+
+	/**
+	 * Sets the k b folder persistence.
+	 *
+	 * @param kbFolderPersistence the k b folder persistence
+	 */
+	public void setKBFolderPersistence(KBFolderPersistence kbFolderPersistence) {
+		this.kbFolderPersistence = kbFolderPersistence;
+	}
+
+	/**
 	 * Returns the k b template local service.
 	 *
 	 * @return the k b template local service
@@ -476,25 +603,6 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	public void setKBTemplateLocalService(
 		com.liferay.knowledgebase.service.KBTemplateLocalService kbTemplateLocalService) {
 		this.kbTemplateLocalService = kbTemplateLocalService;
-	}
-
-	/**
-	 * Returns the k b template remote service.
-	 *
-	 * @return the k b template remote service
-	 */
-	public com.liferay.knowledgebase.service.KBTemplateService getKBTemplateService() {
-		return kbTemplateService;
-	}
-
-	/**
-	 * Sets the k b template remote service.
-	 *
-	 * @param kbTemplateService the k b template remote service
-	 */
-	public void setKBTemplateService(
-		com.liferay.knowledgebase.service.KBTemplateService kbTemplateService) {
-		this.kbTemplateService = kbTemplateService;
 	}
 
 	/**
@@ -555,25 +663,6 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Returns the class name remote service.
-	 *
-	 * @return the class name remote service
-	 */
-	public com.liferay.portal.service.ClassNameService getClassNameService() {
-		return classNameService;
-	}
-
-	/**
-	 * Sets the class name remote service.
-	 *
-	 * @param classNameService the class name remote service
-	 */
-	public void setClassNameService(
-		com.liferay.portal.service.ClassNameService classNameService) {
-		this.classNameService = classNameService;
-	}
-
-	/**
 	 * Returns the class name persistence.
 	 *
 	 * @return the class name persistence
@@ -590,6 +679,44 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	public void setClassNamePersistence(
 		ClassNamePersistence classNamePersistence) {
 		this.classNamePersistence = classNamePersistence;
+	}
+
+	/**
+	 * Returns the portlet preferences local service.
+	 *
+	 * @return the portlet preferences local service
+	 */
+	public com.liferay.portal.service.PortletPreferencesLocalService getPortletPreferencesLocalService() {
+		return portletPreferencesLocalService;
+	}
+
+	/**
+	 * Sets the portlet preferences local service.
+	 *
+	 * @param portletPreferencesLocalService the portlet preferences local service
+	 */
+	public void setPortletPreferencesLocalService(
+		com.liferay.portal.service.PortletPreferencesLocalService portletPreferencesLocalService) {
+		this.portletPreferencesLocalService = portletPreferencesLocalService;
+	}
+
+	/**
+	 * Returns the portlet preferences persistence.
+	 *
+	 * @return the portlet preferences persistence
+	 */
+	public PortletPreferencesPersistence getPortletPreferencesPersistence() {
+		return portletPreferencesPersistence;
+	}
+
+	/**
+	 * Sets the portlet preferences persistence.
+	 *
+	 * @param portletPreferencesPersistence the portlet preferences persistence
+	 */
+	public void setPortletPreferencesPersistence(
+		PortletPreferencesPersistence portletPreferencesPersistence) {
+		this.portletPreferencesPersistence = portletPreferencesPersistence;
 	}
 
 	/**
@@ -631,25 +758,6 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Returns the user remote service.
-	 *
-	 * @return the user remote service
-	 */
-	public com.liferay.portal.service.UserService getUserService() {
-		return userService;
-	}
-
-	/**
-	 * Sets the user remote service.
-	 *
-	 * @param userService the user remote service
-	 */
-	public void setUserService(
-		com.liferay.portal.service.UserService userService) {
-		this.userService = userService;
-	}
-
-	/**
 	 * Returns the user persistence.
 	 *
 	 * @return the user persistence
@@ -665,6 +773,44 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 */
 	public void setUserPersistence(UserPersistence userPersistence) {
 		this.userPersistence = userPersistence;
+	}
+
+	/**
+	 * Returns the ratings entry local service.
+	 *
+	 * @return the ratings entry local service
+	 */
+	public com.liferay.portlet.ratings.service.RatingsEntryLocalService getRatingsEntryLocalService() {
+		return ratingsEntryLocalService;
+	}
+
+	/**
+	 * Sets the ratings entry local service.
+	 *
+	 * @param ratingsEntryLocalService the ratings entry local service
+	 */
+	public void setRatingsEntryLocalService(
+		com.liferay.portlet.ratings.service.RatingsEntryLocalService ratingsEntryLocalService) {
+		this.ratingsEntryLocalService = ratingsEntryLocalService;
+	}
+
+	/**
+	 * Returns the ratings entry persistence.
+	 *
+	 * @return the ratings entry persistence
+	 */
+	public RatingsEntryPersistence getRatingsEntryPersistence() {
+		return ratingsEntryPersistence;
+	}
+
+	/**
+	 * Sets the ratings entry persistence.
+	 *
+	 * @param ratingsEntryPersistence the ratings entry persistence
+	 */
+	public void setRatingsEntryPersistence(
+		RatingsEntryPersistence ratingsEntryPersistence) {
+		this.ratingsEntryPersistence = ratingsEntryPersistence;
 	}
 
 	/**
@@ -684,25 +830,6 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	public void setSocialActivityLocalService(
 		com.liferay.portlet.social.service.SocialActivityLocalService socialActivityLocalService) {
 		this.socialActivityLocalService = socialActivityLocalService;
-	}
-
-	/**
-	 * Returns the social activity remote service.
-	 *
-	 * @return the social activity remote service
-	 */
-	public com.liferay.portlet.social.service.SocialActivityService getSocialActivityService() {
-		return socialActivityService;
-	}
-
-	/**
-	 * Sets the social activity remote service.
-	 *
-	 * @param socialActivityService the social activity remote service
-	 */
-	public void setSocialActivityService(
-		com.liferay.portlet.social.service.SocialActivityService socialActivityService) {
-		this.socialActivityService = socialActivityService;
 	}
 
 	/**
@@ -739,23 +866,13 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Returns the Spring bean ID for this bean.
+	 * Returns the OSGi service identifier.
 	 *
-	 * @return the Spring bean ID for this bean
+	 * @return the OSGi service identifier
 	 */
 	@Override
-	public String getBeanIdentifier() {
-		return _beanIdentifier;
-	}
-
-	/**
-	 * Sets the Spring bean ID for this bean.
-	 *
-	 * @param beanIdentifier the Spring bean ID for this bean
-	 */
-	@Override
-	public void setBeanIdentifier(String beanIdentifier) {
-		_beanIdentifier = beanIdentifier;
+	public String getOSGiServiceIdentifier() {
+		return KBCommentLocalService.class.getName();
 	}
 
 	@Override
@@ -792,7 +909,7 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) throws SystemException {
+	protected void runSQL(String sql) {
 		try {
 			DataSource dataSource = kbCommentPersistence.getDataSource();
 
@@ -813,45 +930,46 @@ public abstract class KBCommentLocalServiceBaseImpl extends BaseLocalServiceImpl
 
 	@BeanReference(type = com.liferay.knowledgebase.service.KBArticleLocalService.class)
 	protected com.liferay.knowledgebase.service.KBArticleLocalService kbArticleLocalService;
-	@BeanReference(type = com.liferay.knowledgebase.service.KBArticleService.class)
-	protected com.liferay.knowledgebase.service.KBArticleService kbArticleService;
 	@BeanReference(type = KBArticlePersistence.class)
 	protected KBArticlePersistence kbArticlePersistence;
+	@BeanReference(type = KBArticleFinder.class)
+	protected KBArticleFinder kbArticleFinder;
 	@BeanReference(type = com.liferay.knowledgebase.service.KBCommentLocalService.class)
-	protected com.liferay.knowledgebase.service.KBCommentLocalService kbCommentLocalService;
-	@BeanReference(type = com.liferay.knowledgebase.service.KBCommentService.class)
-	protected com.liferay.knowledgebase.service.KBCommentService kbCommentService;
+	protected KBCommentLocalService kbCommentLocalService;
 	@BeanReference(type = KBCommentPersistence.class)
 	protected KBCommentPersistence kbCommentPersistence;
+	@BeanReference(type = com.liferay.knowledgebase.service.KBFolderLocalService.class)
+	protected com.liferay.knowledgebase.service.KBFolderLocalService kbFolderLocalService;
+	@BeanReference(type = KBFolderPersistence.class)
+	protected KBFolderPersistence kbFolderPersistence;
 	@BeanReference(type = com.liferay.knowledgebase.service.KBTemplateLocalService.class)
 	protected com.liferay.knowledgebase.service.KBTemplateLocalService kbTemplateLocalService;
-	@BeanReference(type = com.liferay.knowledgebase.service.KBTemplateService.class)
-	protected com.liferay.knowledgebase.service.KBTemplateService kbTemplateService;
 	@BeanReference(type = KBTemplatePersistence.class)
 	protected KBTemplatePersistence kbTemplatePersistence;
 	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)
 	protected com.liferay.counter.service.CounterLocalService counterLocalService;
 	@BeanReference(type = com.liferay.portal.service.ClassNameLocalService.class)
 	protected com.liferay.portal.service.ClassNameLocalService classNameLocalService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameService.class)
-	protected com.liferay.portal.service.ClassNameService classNameService;
 	@BeanReference(type = ClassNamePersistence.class)
 	protected ClassNamePersistence classNamePersistence;
+	@BeanReference(type = com.liferay.portal.service.PortletPreferencesLocalService.class)
+	protected com.liferay.portal.service.PortletPreferencesLocalService portletPreferencesLocalService;
+	@BeanReference(type = PortletPreferencesPersistence.class)
+	protected PortletPreferencesPersistence portletPreferencesPersistence;
 	@BeanReference(type = com.liferay.portal.service.ResourceLocalService.class)
 	protected com.liferay.portal.service.ResourceLocalService resourceLocalService;
 	@BeanReference(type = com.liferay.portal.service.UserLocalService.class)
 	protected com.liferay.portal.service.UserLocalService userLocalService;
-	@BeanReference(type = com.liferay.portal.service.UserService.class)
-	protected com.liferay.portal.service.UserService userService;
 	@BeanReference(type = UserPersistence.class)
 	protected UserPersistence userPersistence;
+	@BeanReference(type = com.liferay.portlet.ratings.service.RatingsEntryLocalService.class)
+	protected com.liferay.portlet.ratings.service.RatingsEntryLocalService ratingsEntryLocalService;
+	@BeanReference(type = RatingsEntryPersistence.class)
+	protected RatingsEntryPersistence ratingsEntryPersistence;
 	@BeanReference(type = com.liferay.portlet.social.service.SocialActivityLocalService.class)
 	protected com.liferay.portlet.social.service.SocialActivityLocalService socialActivityLocalService;
-	@BeanReference(type = com.liferay.portlet.social.service.SocialActivityService.class)
-	protected com.liferay.portlet.social.service.SocialActivityService socialActivityService;
 	@BeanReference(type = SocialActivityPersistence.class)
 	protected SocialActivityPersistence socialActivityPersistence;
-	private String _beanIdentifier;
 	private ClassLoader _classLoader;
 	private KBCommentLocalServiceClpInvoker _clpInvoker = new KBCommentLocalServiceClpInvoker();
 }
