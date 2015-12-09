@@ -17,20 +17,22 @@ package com.liferay.mail.service.persistence;
 import com.liferay.mail.model.Folder;
 import com.liferay.mail.service.FolderLocalServiceUtil;
 
-import com.liferay.portal.kernel.dao.orm.BaseActionableDynamicQuery;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 
 /**
  * @author Brian Wing Shun Chan
+ * @deprecated As of 7.0.0, replaced by {@link FolderLocalServiceUtil#getActionableDynamicQuery()}
  * @generated
  */
+@Deprecated
 public abstract class FolderActionableDynamicQuery
-	extends BaseActionableDynamicQuery {
-	public FolderActionableDynamicQuery() throws SystemException {
+	extends DefaultActionableDynamicQuery {
+	public FolderActionableDynamicQuery() {
 		setBaseLocalService(FolderLocalServiceUtil.getService());
-		setClass(Folder.class);
 
 		setClassLoader(com.liferay.mail.service.ClpSerializer.class.getClassLoader());
+
+		setModelClass(Folder.class);
 
 		setPrimaryKeyPropertyName("folderId");
 	}

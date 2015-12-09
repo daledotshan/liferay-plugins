@@ -14,17 +14,22 @@
 
 package com.liferay.sync.service.base;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.BeanReference;
-import com.liferay.portal.kernel.bean.IdentifiableBean;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiService;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -33,6 +38,7 @@ import com.liferay.portal.service.BaseLocalServiceImpl;
 import com.liferay.portal.service.PersistedModelLocalServiceRegistryUtil;
 import com.liferay.portal.service.persistence.ClassNamePersistence;
 import com.liferay.portal.service.persistence.GroupPersistence;
+import com.liferay.portal.service.persistence.OrganizationPersistence;
 import com.liferay.portal.service.persistence.RepositoryPersistence;
 import com.liferay.portal.service.persistence.UserPersistence;
 import com.liferay.portal.util.PortalUtil;
@@ -64,9 +70,10 @@ import javax.sql.DataSource;
  * @see com.liferay.sync.service.SyncDLObjectLocalServiceUtil
  * @generated
  */
+@ProviderType
 public abstract class SyncDLObjectLocalServiceBaseImpl
 	extends BaseLocalServiceImpl implements SyncDLObjectLocalService,
-		IdentifiableBean {
+		IdentifiableOSGiService {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -78,12 +85,10 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	 *
 	 * @param syncDLObject the sync d l object
 	 * @return the sync d l object that was added
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public SyncDLObject addSyncDLObject(SyncDLObject syncDLObject)
-		throws SystemException {
+	public SyncDLObject addSyncDLObject(SyncDLObject syncDLObject) {
 		syncDLObject.setNew(true);
 
 		return syncDLObjectPersistence.update(syncDLObject);
@@ -106,12 +111,11 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	 * @param syncDLObjectId the primary key of the sync d l object
 	 * @return the sync d l object that was removed
 	 * @throws PortalException if a sync d l object with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public SyncDLObject deleteSyncDLObject(long syncDLObjectId)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return syncDLObjectPersistence.remove(syncDLObjectId);
 	}
 
@@ -120,12 +124,10 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	 *
 	 * @param syncDLObject the sync d l object
 	 * @return the sync d l object that was removed
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public SyncDLObject deleteSyncDLObject(SyncDLObject syncDLObject)
-		throws SystemException {
+	public SyncDLObject deleteSyncDLObject(SyncDLObject syncDLObject) {
 		return syncDLObjectPersistence.remove(syncDLObject);
 	}
 
@@ -142,12 +144,9 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
 		return syncDLObjectPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -162,12 +161,10 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end) {
 		return syncDLObjectPersistence.findWithDynamicQuery(dynamicQuery,
 			start, end);
 	}
@@ -184,47 +181,41 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator orderByComparator) throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end, OrderByComparator<T> orderByComparator) {
 		return syncDLObjectPersistence.findWithDynamicQuery(dynamicQuery,
 			start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
 		return syncDLObjectPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) throws SystemException {
+		Projection projection) {
 		return syncDLObjectPersistence.countWithDynamicQuery(dynamicQuery,
 			projection);
 	}
 
 	@Override
-	public SyncDLObject fetchSyncDLObject(long syncDLObjectId)
-		throws SystemException {
+	public SyncDLObject fetchSyncDLObject(long syncDLObjectId) {
 		return syncDLObjectPersistence.fetchByPrimaryKey(syncDLObjectId);
 	}
 
@@ -234,17 +225,61 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	 * @param syncDLObjectId the primary key of the sync d l object
 	 * @return the sync d l object
 	 * @throws PortalException if a sync d l object with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public SyncDLObject getSyncDLObject(long syncDLObjectId)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return syncDLObjectPersistence.findByPrimaryKey(syncDLObjectId);
 	}
 
 	@Override
+	public ActionableDynamicQuery getActionableDynamicQuery() {
+		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
+
+		actionableDynamicQuery.setBaseLocalService(com.liferay.sync.service.SyncDLObjectLocalServiceUtil.getService());
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+		actionableDynamicQuery.setModelClass(SyncDLObject.class);
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("syncDLObjectId");
+
+		return actionableDynamicQuery;
+	}
+
+	@Override
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
+
+		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.sync.service.SyncDLObjectLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
+		indexableActionableDynamicQuery.setModelClass(SyncDLObject.class);
+
+		indexableActionableDynamicQuery.setPrimaryKeyPropertyName(
+			"syncDLObjectId");
+
+		return indexableActionableDynamicQuery;
+	}
+
+	protected void initActionableDynamicQuery(
+		ActionableDynamicQuery actionableDynamicQuery) {
+		actionableDynamicQuery.setBaseLocalService(com.liferay.sync.service.SyncDLObjectLocalServiceUtil.getService());
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+		actionableDynamicQuery.setModelClass(SyncDLObject.class);
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("syncDLObjectId");
+	}
+
+	/**
+	 * @throws PortalException
+	 */
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException {
+		return syncDLObjectLocalService.deleteSyncDLObject((SyncDLObject)persistedModel);
+	}
+
+	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return syncDLObjectPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
@@ -258,11 +293,9 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	 * @param start the lower bound of the range of sync d l objects
 	 * @param end the upper bound of the range of sync d l objects (not inclusive)
 	 * @return the range of sync d l objects
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<SyncDLObject> getSyncDLObjects(int start, int end)
-		throws SystemException {
+	public List<SyncDLObject> getSyncDLObjects(int start, int end) {
 		return syncDLObjectPersistence.findAll(start, end);
 	}
 
@@ -270,10 +303,9 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	 * Returns the number of sync d l objects.
 	 *
 	 * @return the number of sync d l objects
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getSyncDLObjectsCount() throws SystemException {
+	public int getSyncDLObjectsCount() {
 		return syncDLObjectPersistence.countAll();
 	}
 
@@ -282,12 +314,10 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	 *
 	 * @param syncDLObject the sync d l object
 	 * @return the sync d l object that was updated
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public SyncDLObject updateSyncDLObject(SyncDLObject syncDLObject)
-		throws SystemException {
+	public SyncDLObject updateSyncDLObject(SyncDLObject syncDLObject) {
 		return syncDLObjectPersistence.update(syncDLObject);
 	}
 
@@ -334,7 +364,7 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	 *
 	 * @return the sync d l object local service
 	 */
-	public com.liferay.sync.service.SyncDLObjectLocalService getSyncDLObjectLocalService() {
+	public SyncDLObjectLocalService getSyncDLObjectLocalService() {
 		return syncDLObjectLocalService;
 	}
 
@@ -344,27 +374,8 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	 * @param syncDLObjectLocalService the sync d l object local service
 	 */
 	public void setSyncDLObjectLocalService(
-		com.liferay.sync.service.SyncDLObjectLocalService syncDLObjectLocalService) {
+		SyncDLObjectLocalService syncDLObjectLocalService) {
 		this.syncDLObjectLocalService = syncDLObjectLocalService;
-	}
-
-	/**
-	 * Returns the sync d l object remote service.
-	 *
-	 * @return the sync d l object remote service
-	 */
-	public com.liferay.sync.service.SyncDLObjectService getSyncDLObjectService() {
-		return syncDLObjectService;
-	}
-
-	/**
-	 * Sets the sync d l object remote service.
-	 *
-	 * @param syncDLObjectService the sync d l object remote service
-	 */
-	public void setSyncDLObjectService(
-		com.liferay.sync.service.SyncDLObjectService syncDLObjectService) {
-		this.syncDLObjectService = syncDLObjectService;
 	}
 
 	/**
@@ -402,6 +413,25 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	 */
 	public void setSyncDLObjectFinder(SyncDLObjectFinder syncDLObjectFinder) {
 		this.syncDLObjectFinder = syncDLObjectFinder;
+	}
+
+	/**
+	 * Returns the sync preferences local service.
+	 *
+	 * @return the sync preferences local service
+	 */
+	public com.liferay.sync.service.SyncPreferencesLocalService getSyncPreferencesLocalService() {
+		return syncPreferencesLocalService;
+	}
+
+	/**
+	 * Sets the sync preferences local service.
+	 *
+	 * @param syncPreferencesLocalService the sync preferences local service
+	 */
+	public void setSyncPreferencesLocalService(
+		com.liferay.sync.service.SyncPreferencesLocalService syncPreferencesLocalService) {
+		this.syncPreferencesLocalService = syncPreferencesLocalService;
 	}
 
 	/**
@@ -443,25 +473,6 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the class name remote service.
-	 *
-	 * @return the class name remote service
-	 */
-	public com.liferay.portal.service.ClassNameService getClassNameService() {
-		return classNameService;
-	}
-
-	/**
-	 * Sets the class name remote service.
-	 *
-	 * @param classNameService the class name remote service
-	 */
-	public void setClassNameService(
-		com.liferay.portal.service.ClassNameService classNameService) {
-		this.classNameService = classNameService;
-	}
-
-	/**
 	 * Returns the class name persistence.
 	 *
 	 * @return the class name persistence
@@ -500,25 +511,6 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the group remote service.
-	 *
-	 * @return the group remote service
-	 */
-	public com.liferay.portal.service.GroupService getGroupService() {
-		return groupService;
-	}
-
-	/**
-	 * Sets the group remote service.
-	 *
-	 * @param groupService the group remote service
-	 */
-	public void setGroupService(
-		com.liferay.portal.service.GroupService groupService) {
-		this.groupService = groupService;
-	}
-
-	/**
 	 * Returns the group persistence.
 	 *
 	 * @return the group persistence
@@ -534,6 +526,44 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	 */
 	public void setGroupPersistence(GroupPersistence groupPersistence) {
 		this.groupPersistence = groupPersistence;
+	}
+
+	/**
+	 * Returns the organization local service.
+	 *
+	 * @return the organization local service
+	 */
+	public com.liferay.portal.service.OrganizationLocalService getOrganizationLocalService() {
+		return organizationLocalService;
+	}
+
+	/**
+	 * Sets the organization local service.
+	 *
+	 * @param organizationLocalService the organization local service
+	 */
+	public void setOrganizationLocalService(
+		com.liferay.portal.service.OrganizationLocalService organizationLocalService) {
+		this.organizationLocalService = organizationLocalService;
+	}
+
+	/**
+	 * Returns the organization persistence.
+	 *
+	 * @return the organization persistence
+	 */
+	public OrganizationPersistence getOrganizationPersistence() {
+		return organizationPersistence;
+	}
+
+	/**
+	 * Sets the organization persistence.
+	 *
+	 * @param organizationPersistence the organization persistence
+	 */
+	public void setOrganizationPersistence(
+		OrganizationPersistence organizationPersistence) {
+		this.organizationPersistence = organizationPersistence;
 	}
 
 	/**
@@ -553,25 +583,6 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	public void setRepositoryLocalService(
 		com.liferay.portal.service.RepositoryLocalService repositoryLocalService) {
 		this.repositoryLocalService = repositoryLocalService;
-	}
-
-	/**
-	 * Returns the repository remote service.
-	 *
-	 * @return the repository remote service
-	 */
-	public com.liferay.portal.service.RepositoryService getRepositoryService() {
-		return repositoryService;
-	}
-
-	/**
-	 * Sets the repository remote service.
-	 *
-	 * @param repositoryService the repository remote service
-	 */
-	public void setRepositoryService(
-		com.liferay.portal.service.RepositoryService repositoryService) {
-		this.repositoryService = repositoryService;
 	}
 
 	/**
@@ -632,25 +643,6 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the user remote service.
-	 *
-	 * @return the user remote service
-	 */
-	public com.liferay.portal.service.UserService getUserService() {
-		return userService;
-	}
-
-	/**
-	 * Sets the user remote service.
-	 *
-	 * @param userService the user remote service
-	 */
-	public void setUserService(
-		com.liferay.portal.service.UserService userService) {
-		this.userService = userService;
-	}
-
-	/**
 	 * Returns the user persistence.
 	 *
 	 * @return the user persistence
@@ -688,25 +680,6 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the d l app remote service.
-	 *
-	 * @return the d l app remote service
-	 */
-	public com.liferay.portlet.documentlibrary.service.DLAppService getDLAppService() {
-		return dlAppService;
-	}
-
-	/**
-	 * Sets the d l app remote service.
-	 *
-	 * @param dlAppService the d l app remote service
-	 */
-	public void setDLAppService(
-		com.liferay.portlet.documentlibrary.service.DLAppService dlAppService) {
-		this.dlAppService = dlAppService;
-	}
-
-	/**
 	 * Returns the document library file entry local service.
 	 *
 	 * @return the document library file entry local service
@@ -723,25 +696,6 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	public void setDLFileEntryLocalService(
 		com.liferay.portlet.documentlibrary.service.DLFileEntryLocalService dlFileEntryLocalService) {
 		this.dlFileEntryLocalService = dlFileEntryLocalService;
-	}
-
-	/**
-	 * Returns the document library file entry remote service.
-	 *
-	 * @return the document library file entry remote service
-	 */
-	public com.liferay.portlet.documentlibrary.service.DLFileEntryService getDLFileEntryService() {
-		return dlFileEntryService;
-	}
-
-	/**
-	 * Sets the document library file entry remote service.
-	 *
-	 * @param dlFileEntryService the document library file entry remote service
-	 */
-	public void setDLFileEntryService(
-		com.liferay.portlet.documentlibrary.service.DLFileEntryService dlFileEntryService) {
-		this.dlFileEntryService = dlFileEntryService;
 	}
 
 	/**
@@ -783,25 +737,6 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the document library file version remote service.
-	 *
-	 * @return the document library file version remote service
-	 */
-	public com.liferay.portlet.documentlibrary.service.DLFileVersionService getDLFileVersionService() {
-		return dlFileVersionService;
-	}
-
-	/**
-	 * Sets the document library file version remote service.
-	 *
-	 * @param dlFileVersionService the document library file version remote service
-	 */
-	public void setDLFileVersionService(
-		com.liferay.portlet.documentlibrary.service.DLFileVersionService dlFileVersionService) {
-		this.dlFileVersionService = dlFileVersionService;
-	}
-
-	/**
 	 * Returns the document library file version persistence.
 	 *
 	 * @return the document library file version persistence
@@ -835,23 +770,13 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	}
 
 	/**
-	 * Returns the Spring bean ID for this bean.
+	 * Returns the OSGi service identifier.
 	 *
-	 * @return the Spring bean ID for this bean
+	 * @return the OSGi service identifier
 	 */
 	@Override
-	public String getBeanIdentifier() {
-		return _beanIdentifier;
-	}
-
-	/**
-	 * Sets the Spring bean ID for this bean.
-	 *
-	 * @param beanIdentifier the Spring bean ID for this bean
-	 */
-	@Override
-	public void setBeanIdentifier(String beanIdentifier) {
-		_beanIdentifier = beanIdentifier;
+	public String getOSGiServiceIdentifier() {
+		return SyncDLObjectLocalService.class.getName();
 	}
 
 	@Override
@@ -888,7 +813,7 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) throws SystemException {
+	protected void runSQL(String sql) {
 		try {
 			DataSource dataSource = syncDLObjectPersistence.getDataSource();
 
@@ -912,58 +837,47 @@ public abstract class SyncDLObjectLocalServiceBaseImpl
 	@BeanReference(type = SyncDLFileVersionDiffPersistence.class)
 	protected SyncDLFileVersionDiffPersistence syncDLFileVersionDiffPersistence;
 	@BeanReference(type = com.liferay.sync.service.SyncDLObjectLocalService.class)
-	protected com.liferay.sync.service.SyncDLObjectLocalService syncDLObjectLocalService;
-	@BeanReference(type = com.liferay.sync.service.SyncDLObjectService.class)
-	protected com.liferay.sync.service.SyncDLObjectService syncDLObjectService;
+	protected SyncDLObjectLocalService syncDLObjectLocalService;
 	@BeanReference(type = SyncDLObjectPersistence.class)
 	protected SyncDLObjectPersistence syncDLObjectPersistence;
 	@BeanReference(type = SyncDLObjectFinder.class)
 	protected SyncDLObjectFinder syncDLObjectFinder;
+	@BeanReference(type = com.liferay.sync.service.SyncPreferencesLocalService.class)
+	protected com.liferay.sync.service.SyncPreferencesLocalService syncPreferencesLocalService;
 	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)
 	protected com.liferay.counter.service.CounterLocalService counterLocalService;
 	@BeanReference(type = com.liferay.portal.service.ClassNameLocalService.class)
 	protected com.liferay.portal.service.ClassNameLocalService classNameLocalService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameService.class)
-	protected com.liferay.portal.service.ClassNameService classNameService;
 	@BeanReference(type = ClassNamePersistence.class)
 	protected ClassNamePersistence classNamePersistence;
 	@BeanReference(type = com.liferay.portal.service.GroupLocalService.class)
 	protected com.liferay.portal.service.GroupLocalService groupLocalService;
-	@BeanReference(type = com.liferay.portal.service.GroupService.class)
-	protected com.liferay.portal.service.GroupService groupService;
 	@BeanReference(type = GroupPersistence.class)
 	protected GroupPersistence groupPersistence;
+	@BeanReference(type = com.liferay.portal.service.OrganizationLocalService.class)
+	protected com.liferay.portal.service.OrganizationLocalService organizationLocalService;
+	@BeanReference(type = OrganizationPersistence.class)
+	protected OrganizationPersistence organizationPersistence;
 	@BeanReference(type = com.liferay.portal.service.RepositoryLocalService.class)
 	protected com.liferay.portal.service.RepositoryLocalService repositoryLocalService;
-	@BeanReference(type = com.liferay.portal.service.RepositoryService.class)
-	protected com.liferay.portal.service.RepositoryService repositoryService;
 	@BeanReference(type = RepositoryPersistence.class)
 	protected RepositoryPersistence repositoryPersistence;
 	@BeanReference(type = com.liferay.portal.service.ResourceLocalService.class)
 	protected com.liferay.portal.service.ResourceLocalService resourceLocalService;
 	@BeanReference(type = com.liferay.portal.service.UserLocalService.class)
 	protected com.liferay.portal.service.UserLocalService userLocalService;
-	@BeanReference(type = com.liferay.portal.service.UserService.class)
-	protected com.liferay.portal.service.UserService userService;
 	@BeanReference(type = UserPersistence.class)
 	protected UserPersistence userPersistence;
 	@BeanReference(type = com.liferay.portlet.documentlibrary.service.DLAppLocalService.class)
 	protected com.liferay.portlet.documentlibrary.service.DLAppLocalService dlAppLocalService;
-	@BeanReference(type = com.liferay.portlet.documentlibrary.service.DLAppService.class)
-	protected com.liferay.portlet.documentlibrary.service.DLAppService dlAppService;
 	@BeanReference(type = com.liferay.portlet.documentlibrary.service.DLFileEntryLocalService.class)
 	protected com.liferay.portlet.documentlibrary.service.DLFileEntryLocalService dlFileEntryLocalService;
-	@BeanReference(type = com.liferay.portlet.documentlibrary.service.DLFileEntryService.class)
-	protected com.liferay.portlet.documentlibrary.service.DLFileEntryService dlFileEntryService;
 	@BeanReference(type = DLFileEntryPersistence.class)
 	protected DLFileEntryPersistence dlFileEntryPersistence;
 	@BeanReference(type = com.liferay.portlet.documentlibrary.service.DLFileVersionLocalService.class)
 	protected com.liferay.portlet.documentlibrary.service.DLFileVersionLocalService dlFileVersionLocalService;
-	@BeanReference(type = com.liferay.portlet.documentlibrary.service.DLFileVersionService.class)
-	protected com.liferay.portlet.documentlibrary.service.DLFileVersionService dlFileVersionService;
 	@BeanReference(type = DLFileVersionPersistence.class)
 	protected DLFileVersionPersistence dlFileVersionPersistence;
-	private String _beanIdentifier;
 	private ClassLoader _classLoader;
 	private SyncDLObjectLocalServiceClpInvoker _clpInvoker = new SyncDLObjectLocalServiceClpInvoker();
 }

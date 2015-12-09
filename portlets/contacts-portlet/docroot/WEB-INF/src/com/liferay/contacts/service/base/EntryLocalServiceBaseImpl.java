@@ -14,22 +14,27 @@
 
 package com.liferay.contacts.service.base;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.contacts.model.Entry;
 import com.liferay.contacts.service.EntryLocalService;
 import com.liferay.contacts.service.persistence.EntryFinder;
 import com.liferay.contacts.service.persistence.EntryPersistence;
 
 import com.liferay.portal.kernel.bean.BeanReference;
-import com.liferay.portal.kernel.bean.IdentifiableBean;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiService;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -58,8 +63,9 @@ import javax.sql.DataSource;
  * @see com.liferay.contacts.service.EntryLocalServiceUtil
  * @generated
  */
+@ProviderType
 public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
-	implements EntryLocalService, IdentifiableBean {
+	implements EntryLocalService, IdentifiableOSGiService {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -71,11 +77,10 @@ public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param entry the entry
 	 * @return the entry that was added
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public Entry addEntry(Entry entry) throws SystemException {
+	public Entry addEntry(Entry entry) {
 		entry.setNew(true);
 
 		return entryPersistence.update(entry);
@@ -98,12 +103,10 @@ public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param entryId the primary key of the entry
 	 * @return the entry that was removed
 	 * @throws PortalException if a entry with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public Entry deleteEntry(long entryId)
-		throws PortalException, SystemException {
+	public Entry deleteEntry(long entryId) throws PortalException {
 		return entryPersistence.remove(entryId);
 	}
 
@@ -112,11 +115,10 @@ public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param entry the entry
 	 * @return the entry that was removed
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public Entry deleteEntry(Entry entry) throws SystemException {
+	public Entry deleteEntry(Entry entry) {
 		return entryPersistence.remove(entry);
 	}
 
@@ -133,12 +135,9 @@ public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
 		return entryPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -153,12 +152,10 @@ public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
-		throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end) {
 		return entryPersistence.findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -174,45 +171,40 @@ public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator orderByComparator) throws SystemException {
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end, OrderByComparator<T> orderByComparator) {
 		return entryPersistence.findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery)
-		throws SystemException {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
 		return entryPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
-	 * Returns the number of rows that match the dynamic query.
+	 * Returns the number of rows matching the dynamic query.
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
-	 * @return the number of rows that match the dynamic query
-	 * @throws SystemException if a system exception occurred
+	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) throws SystemException {
+		Projection projection) {
 		return entryPersistence.countWithDynamicQuery(dynamicQuery, projection);
 	}
 
 	@Override
-	public Entry fetchEntry(long entryId) throws SystemException {
+	public Entry fetchEntry(long entryId) {
 		return entryPersistence.fetchByPrimaryKey(entryId);
 	}
 
@@ -222,16 +214,59 @@ public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param entryId the primary key of the entry
 	 * @return the entry
 	 * @throws PortalException if a entry with the primary key could not be found
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public Entry getEntry(long entryId) throws PortalException, SystemException {
+	public Entry getEntry(long entryId) throws PortalException {
 		return entryPersistence.findByPrimaryKey(entryId);
 	}
 
 	@Override
+	public ActionableDynamicQuery getActionableDynamicQuery() {
+		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
+
+		actionableDynamicQuery.setBaseLocalService(com.liferay.contacts.service.EntryLocalServiceUtil.getService());
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+		actionableDynamicQuery.setModelClass(Entry.class);
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("entryId");
+
+		return actionableDynamicQuery;
+	}
+
+	@Override
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
+		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
+
+		indexableActionableDynamicQuery.setBaseLocalService(com.liferay.contacts.service.EntryLocalServiceUtil.getService());
+		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
+		indexableActionableDynamicQuery.setModelClass(Entry.class);
+
+		indexableActionableDynamicQuery.setPrimaryKeyPropertyName("entryId");
+
+		return indexableActionableDynamicQuery;
+	}
+
+	protected void initActionableDynamicQuery(
+		ActionableDynamicQuery actionableDynamicQuery) {
+		actionableDynamicQuery.setBaseLocalService(com.liferay.contacts.service.EntryLocalServiceUtil.getService());
+		actionableDynamicQuery.setClassLoader(getClassLoader());
+		actionableDynamicQuery.setModelClass(Entry.class);
+
+		actionableDynamicQuery.setPrimaryKeyPropertyName("entryId");
+	}
+
+	/**
+	 * @throws PortalException
+	 */
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException {
+		return entryLocalService.deleteEntry((Entry)persistedModel);
+	}
+
+	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException, SystemException {
+		throws PortalException {
 		return entryPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
@@ -245,10 +280,9 @@ public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param start the lower bound of the range of entries
 	 * @param end the upper bound of the range of entries (not inclusive)
 	 * @return the range of entries
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<Entry> getEntries(int start, int end) throws SystemException {
+	public List<Entry> getEntries(int start, int end) {
 		return entryPersistence.findAll(start, end);
 	}
 
@@ -256,10 +290,9 @@ public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * Returns the number of entries.
 	 *
 	 * @return the number of entries
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getEntriesCount() throws SystemException {
+	public int getEntriesCount() {
 		return entryPersistence.countAll();
 	}
 
@@ -268,11 +301,10 @@ public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param entry the entry
 	 * @return the entry that was updated
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public Entry updateEntry(Entry entry) throws SystemException {
+	public Entry updateEntry(Entry entry) {
 		return entryPersistence.update(entry);
 	}
 
@@ -281,7 +313,7 @@ public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @return the entry local service
 	 */
-	public com.liferay.contacts.service.EntryLocalService getEntryLocalService() {
+	public EntryLocalService getEntryLocalService() {
 		return entryLocalService;
 	}
 
@@ -290,28 +322,8 @@ public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param entryLocalService the entry local service
 	 */
-	public void setEntryLocalService(
-		com.liferay.contacts.service.EntryLocalService entryLocalService) {
+	public void setEntryLocalService(EntryLocalService entryLocalService) {
 		this.entryLocalService = entryLocalService;
-	}
-
-	/**
-	 * Returns the entry remote service.
-	 *
-	 * @return the entry remote service
-	 */
-	public com.liferay.contacts.service.EntryService getEntryService() {
-		return entryService;
-	}
-
-	/**
-	 * Sets the entry remote service.
-	 *
-	 * @param entryService the entry remote service
-	 */
-	public void setEntryService(
-		com.liferay.contacts.service.EntryService entryService) {
-		this.entryService = entryService;
 	}
 
 	/**
@@ -389,25 +401,6 @@ public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Returns the class name remote service.
-	 *
-	 * @return the class name remote service
-	 */
-	public com.liferay.portal.service.ClassNameService getClassNameService() {
-		return classNameService;
-	}
-
-	/**
-	 * Sets the class name remote service.
-	 *
-	 * @param classNameService the class name remote service
-	 */
-	public void setClassNameService(
-		com.liferay.portal.service.ClassNameService classNameService) {
-		this.classNameService = classNameService;
-	}
-
-	/**
 	 * Returns the class name persistence.
 	 *
 	 * @return the class name persistence
@@ -465,25 +458,6 @@ public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Returns the user remote service.
-	 *
-	 * @return the user remote service
-	 */
-	public com.liferay.portal.service.UserService getUserService() {
-		return userService;
-	}
-
-	/**
-	 * Sets the user remote service.
-	 *
-	 * @param userService the user remote service
-	 */
-	public void setUserService(
-		com.liferay.portal.service.UserService userService) {
-		this.userService = userService;
-	}
-
-	/**
 	 * Returns the user persistence.
 	 *
 	 * @return the user persistence
@@ -516,23 +490,13 @@ public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Returns the Spring bean ID for this bean.
+	 * Returns the OSGi service identifier.
 	 *
-	 * @return the Spring bean ID for this bean
+	 * @return the OSGi service identifier
 	 */
 	@Override
-	public String getBeanIdentifier() {
-		return _beanIdentifier;
-	}
-
-	/**
-	 * Sets the Spring bean ID for this bean.
-	 *
-	 * @param beanIdentifier the Spring bean ID for this bean
-	 */
-	@Override
-	public void setBeanIdentifier(String beanIdentifier) {
-		_beanIdentifier = beanIdentifier;
+	public String getOSGiServiceIdentifier() {
+		return EntryLocalService.class.getName();
 	}
 
 	@Override
@@ -569,7 +533,7 @@ public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) throws SystemException {
+	protected void runSQL(String sql) {
 		try {
 			DataSource dataSource = entryPersistence.getDataSource();
 
@@ -589,9 +553,7 @@ public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	@BeanReference(type = com.liferay.contacts.service.EntryLocalService.class)
-	protected com.liferay.contacts.service.EntryLocalService entryLocalService;
-	@BeanReference(type = com.liferay.contacts.service.EntryService.class)
-	protected com.liferay.contacts.service.EntryService entryService;
+	protected EntryLocalService entryLocalService;
 	@BeanReference(type = EntryPersistence.class)
 	protected EntryPersistence entryPersistence;
 	@BeanReference(type = EntryFinder.class)
@@ -600,19 +562,14 @@ public abstract class EntryLocalServiceBaseImpl extends BaseLocalServiceImpl
 	protected com.liferay.counter.service.CounterLocalService counterLocalService;
 	@BeanReference(type = com.liferay.portal.service.ClassNameLocalService.class)
 	protected com.liferay.portal.service.ClassNameLocalService classNameLocalService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameService.class)
-	protected com.liferay.portal.service.ClassNameService classNameService;
 	@BeanReference(type = ClassNamePersistence.class)
 	protected ClassNamePersistence classNamePersistence;
 	@BeanReference(type = com.liferay.portal.service.ResourceLocalService.class)
 	protected com.liferay.portal.service.ResourceLocalService resourceLocalService;
 	@BeanReference(type = com.liferay.portal.service.UserLocalService.class)
 	protected com.liferay.portal.service.UserLocalService userLocalService;
-	@BeanReference(type = com.liferay.portal.service.UserService.class)
-	protected com.liferay.portal.service.UserService userService;
 	@BeanReference(type = UserPersistence.class)
 	protected UserPersistence userPersistence;
-	private String _beanIdentifier;
 	private ClassLoader _classLoader;
 	private EntryLocalServiceClpInvoker _clpInvoker = new EntryLocalServiceClpInvoker();
 }

@@ -14,23 +14,25 @@
 
 package com.liferay.testtransaction.service.persistence;
 
-import com.liferay.portal.kernel.dao.orm.BaseActionableDynamicQuery;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 
 import com.liferay.testtransaction.model.Bar;
 import com.liferay.testtransaction.service.BarLocalServiceUtil;
 
 /**
  * @author Brian Wing Shun Chan
+ * @deprecated As of 7.0.0, replaced by {@link BarLocalServiceUtil#getActionableDynamicQuery()}
  * @generated
  */
+@Deprecated
 public abstract class BarActionableDynamicQuery
-	extends BaseActionableDynamicQuery {
-	public BarActionableDynamicQuery() throws SystemException {
+	extends DefaultActionableDynamicQuery {
+	public BarActionableDynamicQuery() {
 		setBaseLocalService(BarLocalServiceUtil.getService());
-		setClass(Bar.class);
 
 		setClassLoader(com.liferay.testtransaction.service.ClpSerializer.class.getClassLoader());
+
+		setModelClass(Bar.class);
 
 		setPrimaryKeyPropertyName("barId");
 	}

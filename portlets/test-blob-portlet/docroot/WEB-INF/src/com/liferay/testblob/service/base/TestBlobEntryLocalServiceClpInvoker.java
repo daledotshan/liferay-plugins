@@ -14,6 +14,8 @@
 
 package com.liferay.testblob.service.base;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.testblob.service.TestBlobEntryLocalServiceUtil;
 
 import java.util.Arrays;
@@ -22,6 +24,7 @@ import java.util.Arrays;
  * @author Brian Wing Shun Chan
  * @generated
  */
+@ProviderType
 public class TestBlobEntryLocalServiceClpInvoker {
 	public TestBlobEntryLocalServiceClpInvoker() {
 		_methodName0 = "addTestBlobEntry";
@@ -88,35 +91,45 @@ public class TestBlobEntryLocalServiceClpInvoker {
 
 		_methodParameterTypes11 = new String[] { "long" };
 
-		_methodName12 = "getPersistedModel";
+		_methodName12 = "getActionableDynamicQuery";
 
-		_methodParameterTypes12 = new String[] { "java.io.Serializable" };
+		_methodParameterTypes12 = new String[] {  };
 
-		_methodName13 = "getTestBlobEntries";
+		_methodName13 = "getIndexableActionableDynamicQuery";
 
-		_methodParameterTypes13 = new String[] { "int", "int" };
+		_methodParameterTypes13 = new String[] {  };
 
-		_methodName14 = "getTestBlobEntriesCount";
-
-		_methodParameterTypes14 = new String[] {  };
-
-		_methodName15 = "updateTestBlobEntry";
+		_methodName15 = "deletePersistedModel";
 
 		_methodParameterTypes15 = new String[] {
-				"com.liferay.testblob.model.TestBlobEntry"
+				"com.liferay.portal.model.PersistedModel"
 			};
 
-		_methodName16 = "getBlobFieldBlobModel";
+		_methodName16 = "getPersistedModel";
 
 		_methodParameterTypes16 = new String[] { "java.io.Serializable" };
 
-		_methodName39 = "getBeanIdentifier";
+		_methodName17 = "getTestBlobEntries";
+
+		_methodParameterTypes17 = new String[] { "int", "int" };
+
+		_methodName18 = "getTestBlobEntriesCount";
+
+		_methodParameterTypes18 = new String[] {  };
+
+		_methodName19 = "updateTestBlobEntry";
+
+		_methodParameterTypes19 = new String[] {
+				"com.liferay.testblob.model.TestBlobEntry"
+			};
+
+		_methodName20 = "getBlobFieldBlobModel";
+
+		_methodParameterTypes20 = new String[] { "java.io.Serializable" };
+
+		_methodName39 = "getOSGiServiceIdentifier";
 
 		_methodParameterTypes39 = new String[] {  };
-
-		_methodName40 = "setBeanIdentifier";
-
-		_methodParameterTypes40 = new String[] { "java.lang.String" };
 	}
 
 	public Object invokeMethod(String name, String[] parameterTypes,
@@ -163,7 +176,7 @@ public class TestBlobEntryLocalServiceClpInvoker {
 			return TestBlobEntryLocalServiceUtil.dynamicQuery((com.liferay.portal.kernel.dao.orm.DynamicQuery)arguments[0],
 				((Integer)arguments[1]).intValue(),
 				((Integer)arguments[2]).intValue(),
-				(com.liferay.portal.kernel.util.OrderByComparator)arguments[3]);
+				(com.liferay.portal.kernel.util.OrderByComparator<?>)arguments[3]);
 		}
 
 		if (_methodName8.equals(name) &&
@@ -189,40 +202,48 @@ public class TestBlobEntryLocalServiceClpInvoker {
 
 		if (_methodName12.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes12, parameterTypes)) {
-			return TestBlobEntryLocalServiceUtil.getPersistedModel((java.io.Serializable)arguments[0]);
+			return TestBlobEntryLocalServiceUtil.getActionableDynamicQuery();
 		}
 
 		if (_methodName13.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes13, parameterTypes)) {
-			return TestBlobEntryLocalServiceUtil.getTestBlobEntries(((Integer)arguments[0]).intValue(),
-				((Integer)arguments[1]).intValue());
-		}
-
-		if (_methodName14.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes14, parameterTypes)) {
-			return TestBlobEntryLocalServiceUtil.getTestBlobEntriesCount();
+			return TestBlobEntryLocalServiceUtil.getIndexableActionableDynamicQuery();
 		}
 
 		if (_methodName15.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes15, parameterTypes)) {
-			return TestBlobEntryLocalServiceUtil.updateTestBlobEntry((com.liferay.testblob.model.TestBlobEntry)arguments[0]);
+			return TestBlobEntryLocalServiceUtil.deletePersistedModel((com.liferay.portal.model.PersistedModel)arguments[0]);
 		}
 
 		if (_methodName16.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes16, parameterTypes)) {
+			return TestBlobEntryLocalServiceUtil.getPersistedModel((java.io.Serializable)arguments[0]);
+		}
+
+		if (_methodName17.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes17, parameterTypes)) {
+			return TestBlobEntryLocalServiceUtil.getTestBlobEntries(((Integer)arguments[0]).intValue(),
+				((Integer)arguments[1]).intValue());
+		}
+
+		if (_methodName18.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes18, parameterTypes)) {
+			return TestBlobEntryLocalServiceUtil.getTestBlobEntriesCount();
+		}
+
+		if (_methodName19.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes19, parameterTypes)) {
+			return TestBlobEntryLocalServiceUtil.updateTestBlobEntry((com.liferay.testblob.model.TestBlobEntry)arguments[0]);
+		}
+
+		if (_methodName20.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes20, parameterTypes)) {
 			return TestBlobEntryLocalServiceUtil.getBlobFieldBlobModel((java.io.Serializable)arguments[0]);
 		}
 
 		if (_methodName39.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes39, parameterTypes)) {
-			return TestBlobEntryLocalServiceUtil.getBeanIdentifier();
-		}
-
-		if (_methodName40.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes40, parameterTypes)) {
-			TestBlobEntryLocalServiceUtil.setBeanIdentifier((java.lang.String)arguments[0]);
-
-			return null;
+			return TestBlobEntryLocalServiceUtil.getOSGiServiceIdentifier();
 		}
 
 		throw new UnsupportedOperationException();
@@ -256,14 +277,18 @@ public class TestBlobEntryLocalServiceClpInvoker {
 	private String[] _methodParameterTypes12;
 	private String _methodName13;
 	private String[] _methodParameterTypes13;
-	private String _methodName14;
-	private String[] _methodParameterTypes14;
 	private String _methodName15;
 	private String[] _methodParameterTypes15;
 	private String _methodName16;
 	private String[] _methodParameterTypes16;
+	private String _methodName17;
+	private String[] _methodParameterTypes17;
+	private String _methodName18;
+	private String[] _methodParameterTypes18;
+	private String _methodName19;
+	private String[] _methodParameterTypes19;
+	private String _methodName20;
+	private String[] _methodParameterTypes20;
 	private String _methodName39;
 	private String[] _methodParameterTypes39;
-	private String _methodName40;
-	private String[] _methodParameterTypes40;
 }
