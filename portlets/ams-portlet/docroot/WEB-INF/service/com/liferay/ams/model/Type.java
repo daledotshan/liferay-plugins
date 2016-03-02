@@ -14,7 +14,11 @@
 
 package com.liferay.ams.model;
 
-import com.liferay.portal.model.PersistedModel;
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
+import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.util.Accessor;
 
 /**
  * The extended model interface for the Type service. Represents a row in the &quot;AMS_Type&quot; database table, with each column mapped to a property of this class.
@@ -25,10 +29,28 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.ams.model.impl.TypeModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.ams.model.impl.TypeImpl")
+@ProviderType
 public interface Type extends TypeModel, PersistedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never modify this interface directly. Add methods to {@link com.liferay.ams.model.impl.TypeImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public static final Accessor<Type, Long> TYPE_ID_ACCESSOR = new Accessor<Type, Long>() {
+			@Override
+			public Long get(Type type) {
+				return type.getTypeId();
+			}
+
+			@Override
+			public Class<Long> getAttributeClass() {
+				return Long.class;
+			}
+
+			@Override
+			public Class<Type> getTypeClass() {
+				return Type.class;
+			}
+		};
 }

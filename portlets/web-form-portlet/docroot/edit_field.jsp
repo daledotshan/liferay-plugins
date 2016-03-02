@@ -20,12 +20,19 @@
 int index = ParamUtil.getInteger(renderRequest, "index", GetterUtil.getInteger((String)request.getAttribute("configuration.jsp-index")));
 int formFieldsIndex = GetterUtil.getInteger((String)request.getAttribute("configuration.jsp-formFieldsIndex"));
 boolean fieldsEditingDisabled = GetterUtil.getBoolean((String)request.getAttribute("configuration.jsp-fieldsEditingDisabled"));
-String fieldLabelXml = LocalizationUtil.getLocalizationXmlFromPreferences(portletPreferences, renderRequest, "fieldLabel" + formFieldsIndex);
+String fieldLabelXml = GetterUtil.getString(LocalizationUtil.getLocalizationXmlFromPreferences(portletPreferences, renderRequest, "fieldLabel" + formFieldsIndex), StringPool.BLANK);
 String fieldLabel = LocalizationUtil.getLocalization(fieldLabelXml, themeDisplay.getLanguageId());
 String fieldType = PrefsParamUtil.getString(portletPreferences, renderRequest, "fieldType" + formFieldsIndex);
 boolean fieldOptional = PrefsParamUtil.getBoolean(portletPreferences, renderRequest, "fieldOptional" + formFieldsIndex);
-String fieldOptionsXml = LocalizationUtil.getLocalizationXmlFromPreferences(portletPreferences, renderRequest, "fieldOptions" + formFieldsIndex);
+
+String fieldOptionsXml = GetterUtil.getString(LocalizationUtil.getLocalizationXmlFromPreferences(portletPreferences, renderRequest, "fieldOptions" + formFieldsIndex), StringPool.BLANK);
+
 String fieldOptions = LocalizationUtil.getLocalization(fieldOptionsXml, themeDisplay.getLanguageId());
+
+String fieldParagraphXml = GetterUtil.getString(LocalizationUtil.getLocalizationXmlFromPreferences(portletPreferences, renderRequest, "fieldParagraph" + formFieldsIndex), StringPool.BLANK);
+
+String fieldParagraph = LocalizationUtil.getLocalization(fieldParagraphXml, themeDisplay.getLanguageId());
+
 String fieldValidationScript = PrefsParamUtil.getString(portletPreferences, request, "fieldValidationScript" + formFieldsIndex);
 String fieldValidationErrorMessage = PrefsParamUtil.getString(portletPreferences, request, "fieldValidationErrorMessage" + formFieldsIndex);
 
@@ -41,7 +48,7 @@ boolean ignoreRequestValue = (index != formFieldsIndex);
 				<span class="field-label"><liferay-ui:message key="paragraph" /></span>
 			</c:when>
 			<c:when test="<%= Validator.isNotNull(fieldLabel) %>">
-				<span class="field-label"><%= fieldLabel %></span>
+				<span class="field-label"><%= HtmlUtil.escape(fieldLabel) %></span>
 			</c:when>
 			<c:otherwise>
 				<liferay-ui:message key="new-item" />
@@ -63,7 +70,7 @@ boolean ignoreRequestValue = (index != formFieldsIndex);
 					<liferay-ui:message key="name" />
 				</dt>
 				<dd>
-					<%= fieldLabel %>
+					<%= HtmlUtil.escape(fieldLabel) %>
 				</dd>
 		</c:otherwise>
 	</c:choose>
@@ -114,12 +121,28 @@ boolean ignoreRequestValue = (index != formFieldsIndex);
 					<liferay-ui:message key="options" />
 				</dt>
 				<dd>
-					<%= fieldOptions %>
+					<%= HtmlUtil.escape(fieldOptions) %>
 				</dd>
 		</c:when>
 	</c:choose>
 
-	<c:if test="<%= true %>">
+	<c:choose>
+		<c:when test="<%= !fieldsEditingDisabled %>">
+			<aui:field-wrapper cssClass='<%= "paragraph" + (Validator.isNull(fieldType) || !fieldType.equals("paragraph") ? " hide" : StringPool.BLANK) %>' label="paragraph">
+				<liferay-ui:input-localized cssClass="lfr-editor-textarea" ignoreRequestValue="<%= ignoreRequestValue %>" name='<%= "fieldParagraph" + index %>' type="textarea" xml="<%= fieldParagraphXml %>" />
+			</aui:field-wrapper>
+		</c:when>
+		<c:when test="<%= Validator.isNotNull(fieldParagraph) %>">
+				<dt>
+					<liferay-ui:message key="paragraph" />
+				</dt>
+				<dd>
+					<%= HtmlUtil.escape(fieldParagraph) %>
+				</dd>
+		</c:when>
+	</c:choose>
+
+	<c:if test="<%= PortletPropsValues.VALIDATION_SCRIPT_ENABLED %>">
 		<c:choose>
 			<c:when test="<%= !fieldsEditingDisabled %>">
 				<div class="validation">
@@ -128,40 +151,41 @@ boolean ignoreRequestValue = (index != formFieldsIndex);
 					<aui:a cssClass="validation-link" href="javascript:;"><liferay-ui:message key="validation" /> &raquo;</aui:a>
 
 					<div class='validation-input <%= Validator.isNull(fieldValidationScript) ? "hide" : "" %>'>
-						<aui:column columnWidth="50">
+						<aui:col width="<%= 50 %>">
 							<aui:input cols="80" cssClass="validation-script" ignoreRequestValue="<%= ignoreRequestValue %>" label="validation-script" name='<%= "fieldValidationScript" + index %>' style="width: 95%" type="textarea" value="<%= fieldValidationScript %>" wrap="off" />
 
-							<aui:input cols="80" cssClass="lfr-input-text-container" ignoreRequestValue="<%= ignoreRequestValue %>" label="validation-error-message" name='<%= "fieldValidationErrorMessage" + index %>' size="80" value="<%= fieldValidationErrorMessage %>" />
-						</aui:column>
-						<aui:column columnWidth="50">
+							<aui:input cols="80" ignoreRequestValue="<%= ignoreRequestValue %>" label="validation-error-message" name='<%= "fieldValidationErrorMessage" + index %>' size="80" value="<%= fieldValidationErrorMessage %>" wrapperCssClass="lfr-input-text-container" />
+						</aui:col>
+
+						<aui:col width="<%= 50 %>">
 							<div class="syntax-help">
 								<liferay-util:include page="/script_help.jsp" servletContext="<%= application %>" />
 							</div>
-						</aui:column>
+						</aui:col>
 					</div>
 				</div>
 			</c:when>
 			<c:when test="<%= Validator.isNotNull(fieldValidationScript) %>">
-					<dt class="optional">
-						<liferay-ui:message key="validation" />
-					</dt>
-					<dd>
-						<pre><%= fieldValidationScript %></pre>
-					</dd>
-					<dt class="optional">
-						<liferay-ui:message key="validation-error-message" />
-					</dt>
-					<dd>
-						<%= fieldValidationErrorMessage %>
-					</dd>
+				<dt class="optional">
+					<liferay-ui:message key="validation" />
+				</dt>
+				<dd>
+					<pre><%= fieldValidationScript %></pre>
+				</dd>
+				<dt class="optional">
+					<liferay-ui:message key="validation-error-message" />
+				</dt>
+				<dd>
+					<%= fieldValidationErrorMessage %>
+				</dd>
 			</c:when>
 			<c:otherwise>
-					<dt class="optional">
-						<liferay-ui:message key="validation" />
-					</dt>
-					<dd>
-						<liferay-ui:message key="this-field-does-not-have-any-specific-validation" />
-					</dd>
+				<dt class="optional">
+					<liferay-ui:message key="validation" />
+				</dt>
+				<dd>
+					<liferay-ui:message key="this-field-does-not-have-any-specific-validation" />
+				</dd>
 			</c:otherwise>
 		</c:choose>
 	</c:if>

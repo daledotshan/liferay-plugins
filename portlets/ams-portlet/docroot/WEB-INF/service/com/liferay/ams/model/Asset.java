@@ -14,7 +14,11 @@
 
 package com.liferay.ams.model;
 
-import com.liferay.portal.model.PersistedModel;
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
+import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.util.Accessor;
 
 /**
  * The extended model interface for the Asset service. Represents a row in the &quot;AMS_Asset&quot; database table, with each column mapped to a property of this class.
@@ -25,10 +29,28 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.ams.model.impl.AssetModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.ams.model.impl.AssetImpl")
+@ProviderType
 public interface Asset extends AssetModel, PersistedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never modify this interface directly. Add methods to {@link com.liferay.ams.model.impl.AssetImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public static final Accessor<Asset, Long> ASSET_ID_ACCESSOR = new Accessor<Asset, Long>() {
+			@Override
+			public Long get(Asset asset) {
+				return asset.getAssetId();
+			}
+
+			@Override
+			public Class<Long> getAttributeClass() {
+				return Long.class;
+			}
+
+			@Override
+			public Class<Asset> getTypeClass() {
+				return Asset.class;
+			}
+		};
 }

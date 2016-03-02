@@ -14,6 +14,8 @@
 
 package com.liferay.weather.portlet;
 
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.weather.model.Weather;
 import com.liferay.weather.util.WeatherUtil;
 
@@ -33,12 +35,18 @@ public class WeatherPreferencesValidator implements PreferencesValidator {
 	public void validate(PortletPreferences preferences)
 		throws ValidatorException {
 
-		List<String> badZips = new ArrayList<String>();
+		List<String> badZips = new ArrayList<>();
+
+		String apiKey = preferences.getValue("apiKey", StringPool.BLANK);
+
+		if (Validator.isNull(apiKey)) {
+			return;
+		}
 
 		String[] zips = preferences.getValues("zips", new String[0]);
 
 		for (String zip : zips) {
-			Weather weather = WeatherUtil.getWeather(zip);
+			Weather weather = WeatherUtil.getWeather(zip, apiKey);
 
 			if (weather == null) {
 				badZips.add(zip);

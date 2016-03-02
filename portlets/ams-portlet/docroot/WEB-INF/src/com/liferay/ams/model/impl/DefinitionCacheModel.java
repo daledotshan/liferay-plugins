@@ -14,11 +14,14 @@
 
 package com.liferay.ams.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.ams.model.Definition;
 
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -34,8 +37,33 @@ import java.util.Date;
  * @see Definition
  * @generated
  */
+@ProviderType
 public class DefinitionCacheModel implements CacheModel<Definition>,
 	Externalizable {
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof DefinitionCacheModel)) {
+			return false;
+		}
+
+		DefinitionCacheModel definitionCacheModel = (DefinitionCacheModel)obj;
+
+		if (definitionId == definitionCacheModel.definitionId) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return HashUtil.hash(0, definitionId);
+	}
+
 	@Override
 	public String toString() {
 		StringBundler sb = new StringBundler(27);
@@ -135,17 +163,23 @@ public class DefinitionCacheModel implements CacheModel<Definition>,
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		definitionId = objectInput.readLong();
+
 		groupId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+
 		typeId = objectInput.readLong();
 		manufacturer = objectInput.readUTF();
 		model = objectInput.readUTF();
 		orderDate = objectInput.readLong();
+
 		quantity = objectInput.readInt();
+
 		price = objectInput.readDouble();
 	}
 
@@ -153,8 +187,11 @@ public class DefinitionCacheModel implements CacheModel<Definition>,
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(definitionId);
+
 		objectOutput.writeLong(groupId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
@@ -166,6 +203,7 @@ public class DefinitionCacheModel implements CacheModel<Definition>,
 
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
+
 		objectOutput.writeLong(typeId);
 
 		if (manufacturer == null) {
@@ -183,7 +221,9 @@ public class DefinitionCacheModel implements CacheModel<Definition>,
 		}
 
 		objectOutput.writeLong(orderDate);
+
 		objectOutput.writeInt(quantity);
+
 		objectOutput.writeDouble(price);
 	}
 

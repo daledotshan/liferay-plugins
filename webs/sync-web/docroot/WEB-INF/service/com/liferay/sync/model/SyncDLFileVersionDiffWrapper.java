@@ -14,8 +14,15 @@
 
 package com.liferay.sync.model;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +37,7 @@ import java.util.Map;
  * @see SyncDLFileVersionDiff
  * @generated
  */
+@ProviderType
 public class SyncDLFileVersionDiffWrapper implements SyncDLFileVersionDiff,
 	ModelWrapper<SyncDLFileVersionDiff> {
 	public SyncDLFileVersionDiffWrapper(
@@ -108,44 +116,40 @@ public class SyncDLFileVersionDiffWrapper implements SyncDLFileVersionDiff,
 		}
 	}
 
-	/**
-	* Returns the primary key of this sync d l file version diff.
-	*
-	* @return the primary key of this sync d l file version diff
-	*/
 	@Override
-	public long getPrimaryKey() {
-		return _syncDLFileVersionDiff.getPrimaryKey();
+	public java.lang.Object clone() {
+		return new SyncDLFileVersionDiffWrapper((SyncDLFileVersionDiff)_syncDLFileVersionDiff.clone());
+	}
+
+	@Override
+	public int compareTo(
+		com.liferay.sync.model.SyncDLFileVersionDiff syncDLFileVersionDiff) {
+		return _syncDLFileVersionDiff.compareTo(syncDLFileVersionDiff);
 	}
 
 	/**
-	* Sets the primary key of this sync d l file version diff.
+	* Returns the data file entry ID of this sync d l file version diff.
 	*
-	* @param primaryKey the primary key of this sync d l file version diff
+	* @return the data file entry ID of this sync d l file version diff
 	*/
 	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_syncDLFileVersionDiff.setPrimaryKey(primaryKey);
+	public long getDataFileEntryId() {
+		return _syncDLFileVersionDiff.getDataFileEntryId();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _syncDLFileVersionDiff.getExpandoBridge();
 	}
 
 	/**
-	* Returns the sync d l file version diff ID of this sync d l file version diff.
+	* Returns the expiration date of this sync d l file version diff.
 	*
-	* @return the sync d l file version diff ID of this sync d l file version diff
+	* @return the expiration date of this sync d l file version diff
 	*/
 	@Override
-	public long getSyncDLFileVersionDiffId() {
-		return _syncDLFileVersionDiff.getSyncDLFileVersionDiffId();
-	}
-
-	/**
-	* Sets the sync d l file version diff ID of this sync d l file version diff.
-	*
-	* @param syncDLFileVersionDiffId the sync d l file version diff ID of this sync d l file version diff
-	*/
-	@Override
-	public void setSyncDLFileVersionDiffId(long syncDLFileVersionDiffId) {
-		_syncDLFileVersionDiff.setSyncDLFileVersionDiffId(syncDLFileVersionDiffId);
+	public Date getExpirationDate() {
+		return _syncDLFileVersionDiff.getExpirationDate();
 	}
 
 	/**
@@ -159,73 +163,18 @@ public class SyncDLFileVersionDiffWrapper implements SyncDLFileVersionDiff,
 	}
 
 	/**
-	* Sets the file entry ID of this sync d l file version diff.
+	* Returns the primary key of this sync d l file version diff.
 	*
-	* @param fileEntryId the file entry ID of this sync d l file version diff
+	* @return the primary key of this sync d l file version diff
 	*/
 	@Override
-	public void setFileEntryId(long fileEntryId) {
-		_syncDLFileVersionDiff.setFileEntryId(fileEntryId);
+	public long getPrimaryKey() {
+		return _syncDLFileVersionDiff.getPrimaryKey();
 	}
 
-	/**
-	* Returns the source file version ID of this sync d l file version diff.
-	*
-	* @return the source file version ID of this sync d l file version diff
-	*/
 	@Override
-	public long getSourceFileVersionId() {
-		return _syncDLFileVersionDiff.getSourceFileVersionId();
-	}
-
-	/**
-	* Sets the source file version ID of this sync d l file version diff.
-	*
-	* @param sourceFileVersionId the source file version ID of this sync d l file version diff
-	*/
-	@Override
-	public void setSourceFileVersionId(long sourceFileVersionId) {
-		_syncDLFileVersionDiff.setSourceFileVersionId(sourceFileVersionId);
-	}
-
-	/**
-	* Returns the target file version ID of this sync d l file version diff.
-	*
-	* @return the target file version ID of this sync d l file version diff
-	*/
-	@Override
-	public long getTargetFileVersionId() {
-		return _syncDLFileVersionDiff.getTargetFileVersionId();
-	}
-
-	/**
-	* Sets the target file version ID of this sync d l file version diff.
-	*
-	* @param targetFileVersionId the target file version ID of this sync d l file version diff
-	*/
-	@Override
-	public void setTargetFileVersionId(long targetFileVersionId) {
-		_syncDLFileVersionDiff.setTargetFileVersionId(targetFileVersionId);
-	}
-
-	/**
-	* Returns the data file entry ID of this sync d l file version diff.
-	*
-	* @return the data file entry ID of this sync d l file version diff
-	*/
-	@Override
-	public long getDataFileEntryId() {
-		return _syncDLFileVersionDiff.getDataFileEntryId();
-	}
-
-	/**
-	* Sets the data file entry ID of this sync d l file version diff.
-	*
-	* @param dataFileEntryId the data file entry ID of this sync d l file version diff
-	*/
-	@Override
-	public void setDataFileEntryId(long dataFileEntryId) {
-		_syncDLFileVersionDiff.setDataFileEntryId(dataFileEntryId);
+	public Serializable getPrimaryKeyObj() {
+		return _syncDLFileVersionDiff.getPrimaryKeyObj();
 	}
 
 	/**
@@ -239,6 +188,132 @@ public class SyncDLFileVersionDiffWrapper implements SyncDLFileVersionDiff,
 	}
 
 	/**
+	* Returns the source file version ID of this sync d l file version diff.
+	*
+	* @return the source file version ID of this sync d l file version diff
+	*/
+	@Override
+	public long getSourceFileVersionId() {
+		return _syncDLFileVersionDiff.getSourceFileVersionId();
+	}
+
+	/**
+	* Returns the sync d l file version diff ID of this sync d l file version diff.
+	*
+	* @return the sync d l file version diff ID of this sync d l file version diff
+	*/
+	@Override
+	public long getSyncDLFileVersionDiffId() {
+		return _syncDLFileVersionDiff.getSyncDLFileVersionDiffId();
+	}
+
+	/**
+	* Returns the target file version ID of this sync d l file version diff.
+	*
+	* @return the target file version ID of this sync d l file version diff
+	*/
+	@Override
+	public long getTargetFileVersionId() {
+		return _syncDLFileVersionDiff.getTargetFileVersionId();
+	}
+
+	@Override
+	public int hashCode() {
+		return _syncDLFileVersionDiff.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _syncDLFileVersionDiff.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _syncDLFileVersionDiff.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _syncDLFileVersionDiff.isNew();
+	}
+
+	@Override
+	public void persist() {
+		_syncDLFileVersionDiff.persist();
+	}
+
+	@Override
+	public void setCachedModel(boolean cachedModel) {
+		_syncDLFileVersionDiff.setCachedModel(cachedModel);
+	}
+
+	/**
+	* Sets the data file entry ID of this sync d l file version diff.
+	*
+	* @param dataFileEntryId the data file entry ID of this sync d l file version diff
+	*/
+	@Override
+	public void setDataFileEntryId(long dataFileEntryId) {
+		_syncDLFileVersionDiff.setDataFileEntryId(dataFileEntryId);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_syncDLFileVersionDiff.setExpandoBridgeAttributes(baseModel);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_syncDLFileVersionDiff.setExpandoBridgeAttributes(expandoBridge);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
+		_syncDLFileVersionDiff.setExpandoBridgeAttributes(serviceContext);
+	}
+
+	/**
+	* Sets the expiration date of this sync d l file version diff.
+	*
+	* @param expirationDate the expiration date of this sync d l file version diff
+	*/
+	@Override
+	public void setExpirationDate(Date expirationDate) {
+		_syncDLFileVersionDiff.setExpirationDate(expirationDate);
+	}
+
+	/**
+	* Sets the file entry ID of this sync d l file version diff.
+	*
+	* @param fileEntryId the file entry ID of this sync d l file version diff
+	*/
+	@Override
+	public void setFileEntryId(long fileEntryId) {
+		_syncDLFileVersionDiff.setFileEntryId(fileEntryId);
+	}
+
+	@Override
+	public void setNew(boolean n) {
+		_syncDLFileVersionDiff.setNew(n);
+	}
+
+	/**
+	* Sets the primary key of this sync d l file version diff.
+	*
+	* @param primaryKey the primary key of this sync d l file version diff
+	*/
+	@Override
+	public void setPrimaryKey(long primaryKey) {
+		_syncDLFileVersionDiff.setPrimaryKey(primaryKey);
+	}
+
+	@Override
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
+		_syncDLFileVersionDiff.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	/**
 	* Sets the size of this sync d l file version diff.
 	*
 	* @param size the size of this sync d l file version diff
@@ -249,101 +324,37 @@ public class SyncDLFileVersionDiffWrapper implements SyncDLFileVersionDiff,
 	}
 
 	/**
-	* Returns the expiration date of this sync d l file version diff.
+	* Sets the source file version ID of this sync d l file version diff.
 	*
-	* @return the expiration date of this sync d l file version diff
+	* @param sourceFileVersionId the source file version ID of this sync d l file version diff
 	*/
 	@Override
-	public java.util.Date getExpirationDate() {
-		return _syncDLFileVersionDiff.getExpirationDate();
+	public void setSourceFileVersionId(long sourceFileVersionId) {
+		_syncDLFileVersionDiff.setSourceFileVersionId(sourceFileVersionId);
 	}
 
 	/**
-	* Sets the expiration date of this sync d l file version diff.
+	* Sets the sync d l file version diff ID of this sync d l file version diff.
 	*
-	* @param expirationDate the expiration date of this sync d l file version diff
+	* @param syncDLFileVersionDiffId the sync d l file version diff ID of this sync d l file version diff
 	*/
 	@Override
-	public void setExpirationDate(java.util.Date expirationDate) {
-		_syncDLFileVersionDiff.setExpirationDate(expirationDate);
+	public void setSyncDLFileVersionDiffId(long syncDLFileVersionDiffId) {
+		_syncDLFileVersionDiff.setSyncDLFileVersionDiffId(syncDLFileVersionDiffId);
+	}
+
+	/**
+	* Sets the target file version ID of this sync d l file version diff.
+	*
+	* @param targetFileVersionId the target file version ID of this sync d l file version diff
+	*/
+	@Override
+	public void setTargetFileVersionId(long targetFileVersionId) {
+		_syncDLFileVersionDiff.setTargetFileVersionId(targetFileVersionId);
 	}
 
 	@Override
-	public boolean isNew() {
-		return _syncDLFileVersionDiff.isNew();
-	}
-
-	@Override
-	public void setNew(boolean n) {
-		_syncDLFileVersionDiff.setNew(n);
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _syncDLFileVersionDiff.isCachedModel();
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_syncDLFileVersionDiff.setCachedModel(cachedModel);
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _syncDLFileVersionDiff.isEscapedModel();
-	}
-
-	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _syncDLFileVersionDiff.getPrimaryKeyObj();
-	}
-
-	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
-		_syncDLFileVersionDiff.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _syncDLFileVersionDiff.getExpandoBridge();
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
-		_syncDLFileVersionDiff.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
-		_syncDLFileVersionDiff.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
-		_syncDLFileVersionDiff.setExpandoBridgeAttributes(serviceContext);
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new SyncDLFileVersionDiffWrapper((SyncDLFileVersionDiff)_syncDLFileVersionDiff.clone());
-	}
-
-	@Override
-	public int compareTo(
-		com.liferay.sync.model.SyncDLFileVersionDiff syncDLFileVersionDiff) {
-		return _syncDLFileVersionDiff.compareTo(syncDLFileVersionDiff);
-	}
-
-	@Override
-	public int hashCode() {
-		return _syncDLFileVersionDiff.hashCode();
-	}
-
-	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.sync.model.SyncDLFileVersionDiff> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.sync.model.SyncDLFileVersionDiff> toCacheModel() {
 		return _syncDLFileVersionDiff.toCacheModel();
 	}
 
@@ -353,24 +364,18 @@ public class SyncDLFileVersionDiffWrapper implements SyncDLFileVersionDiff,
 	}
 
 	@Override
-	public com.liferay.sync.model.SyncDLFileVersionDiff toUnescapedModel() {
-		return new SyncDLFileVersionDiffWrapper(_syncDLFileVersionDiff.toUnescapedModel());
-	}
-
-	@Override
 	public java.lang.String toString() {
 		return _syncDLFileVersionDiff.toString();
 	}
 
 	@Override
-	public java.lang.String toXmlString() {
-		return _syncDLFileVersionDiff.toXmlString();
+	public com.liferay.sync.model.SyncDLFileVersionDiff toUnescapedModel() {
+		return new SyncDLFileVersionDiffWrapper(_syncDLFileVersionDiff.toUnescapedModel());
 	}
 
 	@Override
-	public void persist()
-		throws com.liferay.portal.kernel.exception.SystemException {
-		_syncDLFileVersionDiff.persist();
+	public java.lang.String toXmlString() {
+		return _syncDLFileVersionDiff.toXmlString();
 	}
 
 	@Override
@@ -393,14 +398,6 @@ public class SyncDLFileVersionDiffWrapper implements SyncDLFileVersionDiff,
 		return false;
 	}
 
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public SyncDLFileVersionDiff getWrappedSyncDLFileVersionDiff() {
-		return _syncDLFileVersionDiff;
-	}
-
 	@Override
 	public SyncDLFileVersionDiff getWrappedModel() {
 		return _syncDLFileVersionDiff;
@@ -421,5 +418,5 @@ public class SyncDLFileVersionDiffWrapper implements SyncDLFileVersionDiff,
 		_syncDLFileVersionDiff.resetOriginalValues();
 	}
 
-	private SyncDLFileVersionDiff _syncDLFileVersionDiff;
+	private final SyncDLFileVersionDiff _syncDLFileVersionDiff;
 }

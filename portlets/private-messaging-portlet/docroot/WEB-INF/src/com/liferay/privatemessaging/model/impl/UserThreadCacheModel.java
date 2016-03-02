@@ -14,9 +14,12 @@
 
 package com.liferay.privatemessaging.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import com.liferay.privatemessaging.model.UserThread;
 
@@ -34,8 +37,33 @@ import java.util.Date;
  * @see UserThread
  * @generated
  */
+@ProviderType
 public class UserThreadCacheModel implements CacheModel<UserThread>,
 	Externalizable {
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof UserThreadCacheModel)) {
+			return false;
+		}
+
+		UserThreadCacheModel userThreadCacheModel = (UserThreadCacheModel)obj;
+
+		if (userThreadId == userThreadCacheModel.userThreadId) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return HashUtil.hash(0, userThreadId);
+	}
+
 	@Override
 	public String toString() {
 		StringBundler sb = new StringBundler(21);
@@ -107,14 +135,20 @@ public class UserThreadCacheModel implements CacheModel<UserThread>,
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		userThreadId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+
 		mbThreadId = objectInput.readLong();
+
 		topMBMessageId = objectInput.readLong();
+
 		read = objectInput.readBoolean();
+
 		deleted = objectInput.readBoolean();
 	}
 
@@ -122,7 +156,9 @@ public class UserThreadCacheModel implements CacheModel<UserThread>,
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(userThreadId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
@@ -134,9 +170,13 @@ public class UserThreadCacheModel implements CacheModel<UserThread>,
 
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
+
 		objectOutput.writeLong(mbThreadId);
+
 		objectOutput.writeLong(topMBMessageId);
+
 		objectOutput.writeBoolean(read);
+
 		objectOutput.writeBoolean(deleted);
 	}
 

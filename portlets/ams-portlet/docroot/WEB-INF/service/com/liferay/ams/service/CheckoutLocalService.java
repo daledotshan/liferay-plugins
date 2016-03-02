@@ -14,14 +14,30 @@
 
 package com.liferay.ams.service;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.ams.model.Checkout;
+
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.search.Indexable;
+import com.liferay.portal.kernel.search.IndexableType;
+import com.liferay.portal.kernel.service.BaseLocalService;
+import com.liferay.portal.kernel.service.InvokableLocalService;
+import com.liferay.portal.kernel.service.PersistedModelLocalService;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
-import com.liferay.portal.service.BaseLocalService;
-import com.liferay.portal.service.InvokableLocalService;
-import com.liferay.portal.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.util.OrderByComparator;
+
+import java.io.Serializable;
+
+import java.util.List;
 
 /**
  * Provides the local service interface for Checkout. Methods of this
@@ -35,6 +51,7 @@ import com.liferay.portal.service.PersistedModelLocalService;
  * @see com.liferay.ams.service.impl.CheckoutLocalServiceImpl
  * @generated
  */
+@ProviderType
 @Transactional(isolation = Isolation.PORTAL, rollbackFor =  {
 	PortalException.class, SystemException.class})
 public interface CheckoutLocalService extends BaseLocalService,
@@ -50,11 +67,9 @@ public interface CheckoutLocalService extends BaseLocalService,
 	*
 	* @param checkout the checkout
 	* @return the checkout that was added
-	* @throws SystemException if a system exception occurred
 	*/
-	public com.liferay.ams.model.Checkout addCheckout(
-		com.liferay.ams.model.Checkout checkout)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	@Indexable(type = IndexableType.REINDEX)
+	public Checkout addCheckout(Checkout checkout);
 
 	/**
 	* Creates a new checkout with the primary key. Does not add the checkout to the database.
@@ -62,7 +77,16 @@ public interface CheckoutLocalService extends BaseLocalService,
 	* @param checkoutId the primary key for the new checkout
 	* @return the new checkout
 	*/
-	public com.liferay.ams.model.Checkout createCheckout(long checkoutId);
+	public Checkout createCheckout(long checkoutId);
+
+	/**
+	* Deletes the checkout from the database. Also notifies the appropriate model listeners.
+	*
+	* @param checkout the checkout
+	* @return the checkout that was removed
+	*/
+	@Indexable(type = IndexableType.DELETE)
+	public Checkout deleteCheckout(Checkout checkout);
 
 	/**
 	* Deletes the checkout with the primary key from the database. Also notifies the appropriate model listeners.
@@ -70,36 +94,26 @@ public interface CheckoutLocalService extends BaseLocalService,
 	* @param checkoutId the primary key of the checkout
 	* @return the checkout that was removed
 	* @throws PortalException if a checkout with the primary key could not be found
-	* @throws SystemException if a system exception occurred
 	*/
-	public com.liferay.ams.model.Checkout deleteCheckout(long checkoutId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException;
+	@Indexable(type = IndexableType.DELETE)
+	public Checkout deleteCheckout(long checkoutId) throws PortalException;
 
 	/**
-	* Deletes the checkout from the database. Also notifies the appropriate model listeners.
-	*
-	* @param checkout the checkout
-	* @return the checkout that was removed
-	* @throws SystemException if a system exception occurred
+	* @throws PortalException
 	*/
-	public com.liferay.ams.model.Checkout deleteCheckout(
-		com.liferay.ams.model.Checkout checkout)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	@Override
+	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
+		throws PortalException;
 
-	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery();
+	public DynamicQuery dynamicQuery();
 
 	/**
 	* Performs a dynamic query on the database and returns the matching rows.
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
-	* @throws SystemException if a system exception occurred
 	*/
-	@SuppressWarnings("rawtypes")
-	public java.util.List dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery);
 
 	/**
 	* Performs a dynamic query on the database and returns a range of the matching rows.
@@ -112,12 +126,9 @@ public interface CheckoutLocalService extends BaseLocalService,
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
-	* @throws SystemException if a system exception occurred
 	*/
-	@SuppressWarnings("rawtypes")
-	public java.util.List dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) throws com.liferay.portal.kernel.exception.SystemException;
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end);
 
 	/**
 	* Performs a dynamic query on the database and returns an ordered range of the matching rows.
@@ -131,42 +142,33 @@ public interface CheckoutLocalService extends BaseLocalService,
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
-	* @throws SystemException if a system exception occurred
 	*/
-	@SuppressWarnings("rawtypes")
-	public java.util.List dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end,
-		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
+		int end, OrderByComparator<T> orderByComparator);
 
 	/**
-	* Returns the number of rows that match the dynamic query.
+	* Returns the number of rows matching the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
-	* @return the number of rows that match the dynamic query
-	* @throws SystemException if a system exception occurred
+	* @return the number of rows matching the dynamic query
 	*/
-	public long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	public long dynamicQueryCount(DynamicQuery dynamicQuery);
 
 	/**
-	* Returns the number of rows that match the dynamic query.
+	* Returns the number of rows matching the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
-	* @return the number of rows that match the dynamic query
-	* @throws SystemException if a system exception occurred
+	* @return the number of rows matching the dynamic query
 	*/
-	public long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	public long dynamicQueryCount(DynamicQuery dynamicQuery,
+		Projection projection);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.ams.model.Checkout fetchCheckout(long checkoutId)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	public Checkout fetchCheckout(long checkoutId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ActionableDynamicQuery getActionableDynamicQuery();
 
 	/**
 	* Returns the checkout with the primary key.
@@ -174,19 +176,9 @@ public interface CheckoutLocalService extends BaseLocalService,
 	* @param checkoutId the primary key of the checkout
 	* @return the checkout
 	* @throws PortalException if a checkout with the primary key could not be found
-	* @throws SystemException if a system exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.ams.model.Checkout getCheckout(long checkoutId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException;
-
-	@Override
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException;
+	public Checkout getCheckout(long checkoutId) throws PortalException;
 
 	/**
 	* Returns a range of all the checkouts.
@@ -198,50 +190,44 @@ public interface CheckoutLocalService extends BaseLocalService,
 	* @param start the lower bound of the range of checkouts
 	* @param end the upper bound of the range of checkouts (not inclusive)
 	* @return the range of checkouts
-	* @throws SystemException if a system exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.ams.model.Checkout> getCheckouts(
-		int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException;
+	public List<Checkout> getCheckouts(int start, int end);
 
 	/**
 	* Returns the number of checkouts.
 	*
 	* @return the number of checkouts
-	* @throws SystemException if a system exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getCheckoutsCount()
-		throws com.liferay.portal.kernel.exception.SystemException;
+	public int getCheckoutsCount();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
+
+	/**
+	* Returns the OSGi service identifier.
+	*
+	* @return the OSGi service identifier
+	*/
+	public java.lang.String getOSGiServiceIdentifier();
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
+		throws PortalException;
+
+	@Override
+	public java.lang.Object invokeMethod(java.lang.String name,
+		java.lang.String[] parameterTypes, java.lang.Object[] arguments)
+		throws java.lang.Throwable;
 
 	/**
 	* Updates the checkout in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
 	* @param checkout the checkout
 	* @return the checkout that was updated
-	* @throws SystemException if a system exception occurred
 	*/
-	public com.liferay.ams.model.Checkout updateCheckout(
-		com.liferay.ams.model.Checkout checkout)
-		throws com.liferay.portal.kernel.exception.SystemException;
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	public java.lang.String getBeanIdentifier();
-
-	/**
-	* Sets the Spring bean ID for this bean.
-	*
-	* @param beanIdentifier the Spring bean ID for this bean
-	*/
-	public void setBeanIdentifier(java.lang.String beanIdentifier);
-
-	@Override
-	public java.lang.Object invokeMethod(java.lang.String name,
-		java.lang.String[] parameterTypes, java.lang.Object[] arguments)
-		throws java.lang.Throwable;
+	@Indexable(type = IndexableType.REINDEX)
+	public Checkout updateCheckout(Checkout checkout);
 }

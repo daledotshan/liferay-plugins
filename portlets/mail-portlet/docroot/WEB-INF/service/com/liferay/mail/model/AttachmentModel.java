@@ -14,13 +14,15 @@
 
 package com.liferay.mail.model;
 
-import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.service.ServiceContext;
+import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portlet.expando.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ShardedModel;
+import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
 
@@ -37,7 +39,8 @@ import java.io.Serializable;
  * @see com.liferay.mail.model.impl.AttachmentModelImpl
  * @generated
  */
-public interface AttachmentModel extends BaseModel<Attachment> {
+@ProviderType
+public interface AttachmentModel extends BaseModel<Attachment>, ShardedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -77,6 +80,7 @@ public interface AttachmentModel extends BaseModel<Attachment> {
 	 *
 	 * @return the company ID of this attachment
 	 */
+	@Override
 	public long getCompanyId();
 
 	/**
@@ -84,6 +88,7 @@ public interface AttachmentModel extends BaseModel<Attachment> {
 	 *
 	 * @param companyId the company ID of this attachment
 	 */
+	@Override
 	public void setCompanyId(long companyId);
 
 	/**
@@ -104,9 +109,8 @@ public interface AttachmentModel extends BaseModel<Attachment> {
 	 * Returns the user uuid of this attachment.
 	 *
 	 * @return the user uuid of this attachment
-	 * @throws SystemException if a system exception occurred
 	 */
-	public String getUserUuid() throws SystemException;
+	public String getUserUuid();
 
 	/**
 	 * Sets the user uuid of this attachment.
@@ -238,19 +242,19 @@ public interface AttachmentModel extends BaseModel<Attachment> {
 	public Object clone();
 
 	@Override
-	public int compareTo(Attachment attachment);
+	public int compareTo(com.liferay.mail.model.Attachment attachment);
 
 	@Override
 	public int hashCode();
 
 	@Override
-	public CacheModel<Attachment> toCacheModel();
+	public CacheModel<com.liferay.mail.model.Attachment> toCacheModel();
 
 	@Override
-	public Attachment toEscapedModel();
+	public com.liferay.mail.model.Attachment toEscapedModel();
 
 	@Override
-	public Attachment toUnescapedModel();
+	public com.liferay.mail.model.Attachment toUnescapedModel();
 
 	@Override
 	public String toString();

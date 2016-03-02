@@ -14,8 +14,15 @@
 
 package com.liferay.ams.model;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+
+import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +36,7 @@ import java.util.Map;
  * @see Type
  * @generated
  */
+@ProviderType
 public class TypeWrapper implements Type, ModelWrapper<Type> {
 	public TypeWrapper(Type type) {
 		_type = type;
@@ -76,44 +84,19 @@ public class TypeWrapper implements Type, ModelWrapper<Type> {
 		}
 	}
 
-	/**
-	* Returns the primary key of this type.
-	*
-	* @return the primary key of this type
-	*/
 	@Override
-	public long getPrimaryKey() {
-		return _type.getPrimaryKey();
+	public java.lang.Object clone() {
+		return new TypeWrapper((Type)_type.clone());
 	}
 
-	/**
-	* Sets the primary key of this type.
-	*
-	* @param primaryKey the primary key of this type
-	*/
 	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_type.setPrimaryKey(primaryKey);
+	public int compareTo(com.liferay.ams.model.Type type) {
+		return _type.compareTo(type);
 	}
 
-	/**
-	* Returns the type ID of this type.
-	*
-	* @return the type ID of this type
-	*/
 	@Override
-	public long getTypeId() {
-		return _type.getTypeId();
-	}
-
-	/**
-	* Sets the type ID of this type.
-	*
-	* @param typeId the type ID of this type
-	*/
-	@Override
-	public void setTypeId(long typeId) {
-		_type.setTypeId(typeId);
+	public ExpandoBridge getExpandoBridge() {
+		return _type.getExpandoBridge();
 	}
 
 	/**
@@ -127,16 +110,6 @@ public class TypeWrapper implements Type, ModelWrapper<Type> {
 	}
 
 	/**
-	* Sets the group ID of this type.
-	*
-	* @param groupId the group ID of this type
-	*/
-	@Override
-	public void setGroupId(long groupId) {
-		_type.setGroupId(groupId);
-	}
-
-	/**
 	* Returns the name of this type.
 	*
 	* @return the name of this type
@@ -144,6 +117,87 @@ public class TypeWrapper implements Type, ModelWrapper<Type> {
 	@Override
 	public java.lang.String getName() {
 		return _type.getName();
+	}
+
+	/**
+	* Returns the primary key of this type.
+	*
+	* @return the primary key of this type
+	*/
+	@Override
+	public long getPrimaryKey() {
+		return _type.getPrimaryKey();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _type.getPrimaryKeyObj();
+	}
+
+	/**
+	* Returns the type ID of this type.
+	*
+	* @return the type ID of this type
+	*/
+	@Override
+	public long getTypeId() {
+		return _type.getTypeId();
+	}
+
+	@Override
+	public int hashCode() {
+		return _type.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _type.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _type.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _type.isNew();
+	}
+
+	@Override
+	public void persist() {
+		_type.persist();
+	}
+
+	@Override
+	public void setCachedModel(boolean cachedModel) {
+		_type.setCachedModel(cachedModel);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_type.setExpandoBridgeAttributes(baseModel);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_type.setExpandoBridgeAttributes(expandoBridge);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
+		_type.setExpandoBridgeAttributes(serviceContext);
+	}
+
+	/**
+	* Sets the group ID of this type.
+	*
+	* @param groupId the group ID of this type
+	*/
+	@Override
+	public void setGroupId(long groupId) {
+		_type.setGroupId(groupId);
 	}
 
 	/**
@@ -157,80 +211,37 @@ public class TypeWrapper implements Type, ModelWrapper<Type> {
 	}
 
 	@Override
-	public boolean isNew() {
-		return _type.isNew();
-	}
-
-	@Override
 	public void setNew(boolean n) {
 		_type.setNew(n);
 	}
 
+	/**
+	* Sets the primary key of this type.
+	*
+	* @param primaryKey the primary key of this type
+	*/
 	@Override
-	public boolean isCachedModel() {
-		return _type.isCachedModel();
+	public void setPrimaryKey(long primaryKey) {
+		_type.setPrimaryKey(primaryKey);
 	}
 
 	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_type.setCachedModel(cachedModel);
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _type.isEscapedModel();
-	}
-
-	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _type.getPrimaryKeyObj();
-	}
-
-	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_type.setPrimaryKeyObj(primaryKeyObj);
 	}
 
+	/**
+	* Sets the type ID of this type.
+	*
+	* @param typeId the type ID of this type
+	*/
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _type.getExpandoBridge();
+	public void setTypeId(long typeId) {
+		_type.setTypeId(typeId);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
-		_type.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
-		_type.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
-		_type.setExpandoBridgeAttributes(serviceContext);
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new TypeWrapper((Type)_type.clone());
-	}
-
-	@Override
-	public int compareTo(com.liferay.ams.model.Type type) {
-		return _type.compareTo(type);
-	}
-
-	@Override
-	public int hashCode() {
-		return _type.hashCode();
-	}
-
-	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.ams.model.Type> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.ams.model.Type> toCacheModel() {
 		return _type.toCacheModel();
 	}
 
@@ -240,24 +251,18 @@ public class TypeWrapper implements Type, ModelWrapper<Type> {
 	}
 
 	@Override
-	public com.liferay.ams.model.Type toUnescapedModel() {
-		return new TypeWrapper(_type.toUnescapedModel());
-	}
-
-	@Override
 	public java.lang.String toString() {
 		return _type.toString();
 	}
 
 	@Override
-	public java.lang.String toXmlString() {
-		return _type.toXmlString();
+	public com.liferay.ams.model.Type toUnescapedModel() {
+		return new TypeWrapper(_type.toUnescapedModel());
 	}
 
 	@Override
-	public void persist()
-		throws com.liferay.portal.kernel.exception.SystemException {
-		_type.persist();
+	public java.lang.String toXmlString() {
+		return _type.toXmlString();
 	}
 
 	@Override
@@ -277,14 +282,6 @@ public class TypeWrapper implements Type, ModelWrapper<Type> {
 		}
 
 		return false;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public Type getWrappedType() {
-		return _type;
 	}
 
 	@Override
@@ -307,5 +304,5 @@ public class TypeWrapper implements Type, ModelWrapper<Type> {
 		_type.resetOriginalValues();
 	}
 
-	private Type _type;
+	private final Type _type;
 }

@@ -14,11 +14,14 @@
 
 package com.liferay.ams.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.ams.model.Asset;
 
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -34,7 +37,32 @@ import java.util.Date;
  * @see Asset
  * @generated
  */
+@ProviderType
 public class AssetCacheModel implements CacheModel<Asset>, Externalizable {
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof AssetCacheModel)) {
+			return false;
+		}
+
+		AssetCacheModel assetCacheModel = (AssetCacheModel)obj;
+
+		if (assetId == assetCacheModel.assetId) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return HashUtil.hash(0, assetId);
+	}
+
 	@Override
 	public String toString() {
 		StringBundler sb = new StringBundler(21);
@@ -119,14 +147,18 @@ public class AssetCacheModel implements CacheModel<Asset>, Externalizable {
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		assetId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+
 		definitionId = objectInput.readLong();
 		serialNumber = objectInput.readUTF();
 		inactiveDate = objectInput.readLong();
+
 		active = objectInput.readBoolean();
 	}
 
@@ -134,7 +166,9 @@ public class AssetCacheModel implements CacheModel<Asset>, Externalizable {
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(assetId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
@@ -146,6 +180,7 @@ public class AssetCacheModel implements CacheModel<Asset>, Externalizable {
 
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
+
 		objectOutput.writeLong(definitionId);
 
 		if (serialNumber == null) {
@@ -156,6 +191,7 @@ public class AssetCacheModel implements CacheModel<Asset>, Externalizable {
 		}
 
 		objectOutput.writeLong(inactiveDate);
+
 		objectOutput.writeBoolean(active);
 	}
 

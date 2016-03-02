@@ -14,6 +14,8 @@
 
 package com.liferay.privatemessaging.service.http;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
@@ -23,7 +25,7 @@ import java.rmi.RemoteException;
 
 /**
  * Provides the SOAP utility for the
- * {@link com.liferay.privatemessaging.service.UserThreadServiceUtil} service utility. The
+ * {@link UserThreadServiceUtil} service utility. The
  * static methods of this class calls the same methods of the service utility.
  * However, the signatures are different because it is difficult for SOAP to
  * support certain types.
@@ -58,14 +60,15 @@ import java.rmi.RemoteException;
  * @author Brian Wing Shun Chan
  * @see UserThreadServiceHttp
  * @see com.liferay.privatemessaging.model.UserThreadSoap
- * @see com.liferay.privatemessaging.service.UserThreadServiceUtil
+ * @see UserThreadServiceUtil
  * @generated
  */
+@ProviderType
 public class UserThreadServiceSoap {
-	public static com.liferay.portlet.messageboards.model.MBMessage getLastThreadMessage(
+	public static com.liferay.message.boards.kernel.model.MBMessage getLastThreadMessage(
 		long mbThreadId) throws RemoteException {
 		try {
-			com.liferay.portlet.messageboards.model.MBMessage returnValue = UserThreadServiceUtil.getLastThreadMessage(mbThreadId);
+			com.liferay.message.boards.kernel.model.MBMessage returnValue = UserThreadServiceUtil.getLastThreadMessage(mbThreadId);
 
 			return returnValue;
 		}
@@ -76,15 +79,15 @@ public class UserThreadServiceSoap {
 		}
 	}
 
-	public static com.liferay.portlet.messageboards.model.MBMessageSoap[] getThreadMessages(
+	public static com.liferay.message.boards.kernel.model.MBMessageSoap[] getThreadMessages(
 		long mbThreadId, int start, int end, boolean ascending)
 		throws RemoteException {
 		try {
-			java.util.List<com.liferay.portlet.messageboards.model.MBMessage> returnValue =
+			java.util.List<com.liferay.message.boards.kernel.model.MBMessage> returnValue =
 				UserThreadServiceUtil.getThreadMessages(mbThreadId, start, end,
 					ascending);
 
-			return com.liferay.portlet.messageboards.model.MBMessageSoap.toSoapModels(returnValue);
+			return com.liferay.message.boards.kernel.model.MBMessageSoap.toSoapModels(returnValue);
 		}
 		catch (Exception e) {
 			_log.error(e, e);

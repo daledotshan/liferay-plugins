@@ -14,11 +14,14 @@
 
 package com.liferay.mail.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.mail.model.Message;
 
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -34,10 +37,35 @@ import java.util.Date;
  * @see Message
  * @generated
  */
+@ProviderType
 public class MessageCacheModel implements CacheModel<Message>, Externalizable {
 	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof MessageCacheModel)) {
+			return false;
+		}
+
+		MessageCacheModel messageCacheModel = (MessageCacheModel)obj;
+
+		if (messageId == messageCacheModel.messageId) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return HashUtil.hash(0, messageId);
+	}
+
+	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(39);
+		StringBundler sb = new StringBundler(41);
 
 		sb.append("{messageId=");
 		sb.append(messageId);
@@ -77,6 +105,8 @@ public class MessageCacheModel implements CacheModel<Message>, Externalizable {
 		sb.append(size);
 		sb.append(", remoteMessageId=");
 		sb.append(remoteMessageId);
+		sb.append(", contentType=");
+		sb.append(contentType);
 		sb.append("}");
 
 		return sb.toString();
@@ -180,6 +210,13 @@ public class MessageCacheModel implements CacheModel<Message>, Externalizable {
 		messageImpl.setSize(size);
 		messageImpl.setRemoteMessageId(remoteMessageId);
 
+		if (contentType == null) {
+			messageImpl.setContentType(StringPool.BLANK);
+		}
+		else {
+			messageImpl.setContentType(contentType);
+		}
+
 		messageImpl.resetOriginalValues();
 
 		return messageImpl;
@@ -188,12 +225,16 @@ public class MessageCacheModel implements CacheModel<Message>, Externalizable {
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		messageId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+
 		accountId = objectInput.readLong();
+
 		folderId = objectInput.readLong();
 		sender = objectInput.readUTF();
 		to = objectInput.readUTF();
@@ -204,15 +245,20 @@ public class MessageCacheModel implements CacheModel<Message>, Externalizable {
 		preview = objectInput.readUTF();
 		body = objectInput.readUTF();
 		flags = objectInput.readUTF();
+
 		size = objectInput.readLong();
+
 		remoteMessageId = objectInput.readLong();
+		contentType = objectInput.readUTF();
 	}
 
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(messageId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
@@ -224,7 +270,9 @@ public class MessageCacheModel implements CacheModel<Message>, Externalizable {
 
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
+
 		objectOutput.writeLong(accountId);
+
 		objectOutput.writeLong(folderId);
 
 		if (sender == null) {
@@ -286,7 +334,15 @@ public class MessageCacheModel implements CacheModel<Message>, Externalizable {
 		}
 
 		objectOutput.writeLong(size);
+
 		objectOutput.writeLong(remoteMessageId);
+
+		if (contentType == null) {
+			objectOutput.writeUTF(StringPool.BLANK);
+		}
+		else {
+			objectOutput.writeUTF(contentType);
+		}
 	}
 
 	public long messageId;
@@ -308,4 +364,5 @@ public class MessageCacheModel implements CacheModel<Message>, Externalizable {
 	public String flags;
 	public long size;
 	public long remoteMessageId;
+	public String contentType;
 }

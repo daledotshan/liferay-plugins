@@ -16,6 +16,7 @@ package com.liferay.wsrp.util;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portlet.PortletQNameUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -23,7 +24,6 @@ import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.Namespace;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
-import com.liferay.portlet.PortletQNameUtil;
 import com.liferay.wsrp.proxy.ServiceHandler;
 
 import java.net.URL;
@@ -177,7 +177,7 @@ public class WSRPConsumerManager {
 		_serviceDescription = _serviceDescriptionService.getServiceDescription(
 			getServiceDescription);
 
-		_portletDescriptions = new HashMap<String, PortletDescription>();
+		_portletDescriptions = new HashMap<>();
 
 		PortletDescription[] portletDescriptions =
 			_serviceDescription.getOfferedPortlets();
@@ -189,7 +189,7 @@ public class WSRPConsumerManager {
 			}
 		}
 
-		_propertyDescriptions = new HashMap<String, PropertyDescription>();
+		_propertyDescriptions = new HashMap<>();
 
 		PropertyDescription[] propertyDescriptions = getPropertyDescriptions();
 
@@ -203,7 +203,7 @@ public class WSRPConsumerManager {
 			}
 		}
 
-		_events = new HashMap<String, QName>();
+		_events = new HashMap<>();
 
 		EventDescription[] eventDescriptions =
 			_serviceDescription.getEventDescriptions();

@@ -14,14 +14,16 @@
 
 package com.liferay.mail.model;
 
-import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.model.AuditedModel;
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.service.ServiceContext;
+import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portlet.expando.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.model.AuditedModel;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ShardedModel;
+import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
 
@@ -40,7 +42,9 @@ import java.util.Date;
  * @see com.liferay.mail.model.impl.FolderModelImpl
  * @generated
  */
-public interface FolderModel extends AuditedModel, BaseModel<Folder> {
+@ProviderType
+public interface FolderModel extends AuditedModel, BaseModel<Folder>,
+	ShardedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -111,10 +115,9 @@ public interface FolderModel extends AuditedModel, BaseModel<Folder> {
 	 * Returns the user uuid of this folder.
 	 *
 	 * @return the user uuid of this folder
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid() throws SystemException;
+	public String getUserUuid();
 
 	/**
 	 * Sets the user uuid of this folder.
@@ -268,19 +271,19 @@ public interface FolderModel extends AuditedModel, BaseModel<Folder> {
 	public Object clone();
 
 	@Override
-	public int compareTo(Folder folder);
+	public int compareTo(com.liferay.mail.model.Folder folder);
 
 	@Override
 	public int hashCode();
 
 	@Override
-	public CacheModel<Folder> toCacheModel();
+	public CacheModel<com.liferay.mail.model.Folder> toCacheModel();
 
 	@Override
-	public Folder toEscapedModel();
+	public com.liferay.mail.model.Folder toEscapedModel();
 
 	@Override
-	public Folder toUnescapedModel();
+	public com.liferay.mail.model.Folder toUnescapedModel();
 
 	@Override
 	public String toString();

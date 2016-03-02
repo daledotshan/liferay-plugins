@@ -14,14 +14,16 @@
 
 package com.liferay.ams.model;
 
-import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.GroupedModel;
-import com.liferay.portal.service.ServiceContext;
+import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portlet.expando.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.GroupedModel;
+import com.liferay.portal.kernel.model.ShardedModel;
+import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
 
@@ -40,7 +42,9 @@ import java.util.Date;
  * @see com.liferay.ams.model.impl.DefinitionModelImpl
  * @generated
  */
-public interface DefinitionModel extends BaseModel<Definition>, GroupedModel {
+@ProviderType
+public interface DefinitionModel extends BaseModel<Definition>, GroupedModel,
+	ShardedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -127,10 +131,9 @@ public interface DefinitionModel extends BaseModel<Definition>, GroupedModel {
 	 * Returns the user uuid of this definition.
 	 *
 	 * @return the user uuid of this definition
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid() throws SystemException;
+	public String getUserUuid();
 
 	/**
 	 * Sets the user uuid of this definition.
@@ -312,19 +315,19 @@ public interface DefinitionModel extends BaseModel<Definition>, GroupedModel {
 	public Object clone();
 
 	@Override
-	public int compareTo(Definition definition);
+	public int compareTo(com.liferay.ams.model.Definition definition);
 
 	@Override
 	public int hashCode();
 
 	@Override
-	public CacheModel<Definition> toCacheModel();
+	public CacheModel<com.liferay.ams.model.Definition> toCacheModel();
 
 	@Override
-	public Definition toEscapedModel();
+	public com.liferay.ams.model.Definition toEscapedModel();
 
 	@Override
-	public Definition toUnescapedModel();
+	public com.liferay.ams.model.Definition toUnescapedModel();
 
 	@Override
 	public String toString();

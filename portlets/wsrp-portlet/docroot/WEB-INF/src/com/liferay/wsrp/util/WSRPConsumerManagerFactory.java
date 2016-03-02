@@ -14,10 +14,10 @@
 
 package com.liferay.wsrp.util;
 
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.AutoResetThreadLocal;
 import com.liferay.portal.kernel.util.TransientValue;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.wsrp.model.WSRPConsumer;
 
 import java.util.Map;
@@ -143,10 +143,8 @@ public class WSRPConsumerManagerFactory {
 	}
 
 	private static AutoResetThreadLocal<HttpSession> _session =
-		new AutoResetThreadLocal<HttpSession>(
-			HttpSession.class + "._session", null);
+		new AutoResetThreadLocal<>(HttpSession.class + "._session", null);
 	private static Map<String, WSRPConsumerManager>
-		_wsrpConsumerManagers =
-			new ConcurrentHashMap<String, WSRPConsumerManager>();
+		_wsrpConsumerManagers = new ConcurrentHashMap<>();
 
 }

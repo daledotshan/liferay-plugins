@@ -14,11 +14,13 @@
 
 package com.liferay.sync.model;
 
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.service.ServiceContext;
+import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portlet.expando.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
 
@@ -37,6 +39,7 @@ import java.util.Date;
  * @see com.liferay.sync.model.impl.SyncDLFileVersionDiffModelImpl
  * @generated
  */
+@ProviderType
 public interface SyncDLFileVersionDiffModel extends BaseModel<SyncDLFileVersionDiff> {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -193,19 +196,20 @@ public interface SyncDLFileVersionDiffModel extends BaseModel<SyncDLFileVersionD
 	public Object clone();
 
 	@Override
-	public int compareTo(SyncDLFileVersionDiff syncDLFileVersionDiff);
+	public int compareTo(
+		com.liferay.sync.model.SyncDLFileVersionDiff syncDLFileVersionDiff);
 
 	@Override
 	public int hashCode();
 
 	@Override
-	public CacheModel<SyncDLFileVersionDiff> toCacheModel();
+	public CacheModel<com.liferay.sync.model.SyncDLFileVersionDiff> toCacheModel();
 
 	@Override
-	public SyncDLFileVersionDiff toEscapedModel();
+	public com.liferay.sync.model.SyncDLFileVersionDiff toEscapedModel();
 
 	@Override
-	public SyncDLFileVersionDiff toUnescapedModel();
+	public com.liferay.sync.model.SyncDLFileVersionDiff toUnescapedModel();
 
 	@Override
 	public String toString();

@@ -63,7 +63,7 @@ to = sb.toString() + to;
 
 <div class="message-container" id="<portlet:namespace />messageContainer"></div>
 
-<aui:layout cssClass="message-body-container">
+<div class="message-body-container">
 	<aui:form enctype="multipart/form-data" method="post" name="fm" onSubmit="event.preventDefault();">
 		<aui:input name="userId" type="hidden" value="<%= user.getUserId() %>" />
 		<aui:input name="mbThreadId" type="hidden" value="<%= mbThreadId %>" />
@@ -97,7 +97,7 @@ to = sb.toString() + to;
 		<aui:field-wrapper>
 			<c:if test="<%= fileMaxSize != 0 %>">
 				<div class="portlet-msg-info">
-					<%= LanguageUtil.format(pageContext, "upload-documents-no-larger-than-x-k", String.valueOf(fileMaxSize), false) %>
+					<%= LanguageUtil.format(request, "upload-documents-no-larger-than-x-k", String.valueOf(fileMaxSize), false) %>
 				</div>
 			</c:if>
 		</aui:field-wrapper>
@@ -112,7 +112,7 @@ to = sb.toString() + to;
 			<aui:button primary="<%= true %>" type="submit" value="send" />
 		</aui:button-row>
 	</aui:form>
-</aui:layout>
+</div>
 
 <aui:script use="aui-io-request-deprecated,aui-loading-mask-deprecated,autocomplete,io-upload-iframe,json-parse">
 	var form = A.one('#<portlet:namespace />fm');
@@ -142,7 +142,7 @@ to = sb.toString() + to;
 
 			var loadingMask = new A.LoadingMask(
 				{
-					'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "sending-message") %>',
+					'strings.loading': '<%= UnicodeLanguageUtil.get(request, "sending-message") %>',
 					target: A.one('.private-messaging-portlet .message-body-container')
 				}
 			);
@@ -150,9 +150,9 @@ to = sb.toString() + to;
 			loadingMask.show();
 
 			A.io.request(
-				'<liferay-portlet:resourceURL id="sendMessage"></liferay-portlet:resourceURL>',
+				'<liferay-portlet:actionURL name="sendMessage"></liferay-portlet:actionURL>',
 				{
-					dataType: 'json',
+					dataType: 'JSON',
 					form: {
 						id: form,
 						upload: true
@@ -161,7 +161,7 @@ to = sb.toString() + to;
 						complete: function(event, id, obj) {
 							var responseText = obj.responseText;
 
-							var responseData = A.JSON.parse(responseText);
+							var responseData = JSON.parse(responseText);
 
 							if (responseData.success) {
 								Liferay.Util.getWindow('<portlet:namespace />Dialog').hide();

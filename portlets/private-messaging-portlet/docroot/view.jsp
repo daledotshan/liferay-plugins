@@ -37,14 +37,14 @@ LayoutSet layoutSet = themeDisplay.getLayoutSet();
 					<liferay-ui:message key="please-sign-in-to-use-the-private-messaging-portlet" />
 				</c:when>
 				<c:when test="<%= (mbThreadId != 0) && PrivateMessagingUtil.isUserPartOfThread(user.getUserId(), mbThreadId) %>">
-					<aui:layout cssClass="thread">
+					<div class="thread">
 						<%@ include file="/view_thread.jspf" %>
-					</aui:layout>
+					</div>
 				</c:when>
 				<c:otherwise>
-					<aui:layout cssClass="messages">
+					<div class="messages">
 						<%@ include file="/view_messages.jspf" %>
-					</aui:layout>
+					</div>
 				</c:otherwise>
 			</c:choose>
 		</div>
@@ -61,8 +61,8 @@ LayoutSet layoutSet = themeDisplay.getLayoutSet();
 		</aui:script>
 	</c:when>
 	<c:otherwise>
-		<div class="alert alert-error">
-			<liferay-ui:message key="this-application-will-only-function-when-placed-on-a-user's-private-page" />
+		<div class="alert alert-danger">
+			<liferay-ui:message key="this-application-only-functions-when-placed-on-a-user's-private-page" />
 		</div>
 	</c:otherwise>
 </c:choose>

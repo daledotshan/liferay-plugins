@@ -14,7 +14,11 @@
 
 package com.liferay.privatemessaging.model;
 
-import com.liferay.portal.model.PersistedModel;
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
+import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.util.Accessor;
 
 /**
  * The extended model interface for the UserThread service. Represents a row in the &quot;PM_UserThread&quot; database table, with each column mapped to a property of this class.
@@ -25,10 +29,28 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.privatemessaging.model.impl.UserThreadModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.privatemessaging.model.impl.UserThreadImpl")
+@ProviderType
 public interface UserThread extends UserThreadModel, PersistedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never modify this interface directly. Add methods to {@link com.liferay.privatemessaging.model.impl.UserThreadImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public static final Accessor<UserThread, Long> USER_THREAD_ID_ACCESSOR = new Accessor<UserThread, Long>() {
+			@Override
+			public Long get(UserThread userThread) {
+				return userThread.getUserThreadId();
+			}
+
+			@Override
+			public Class<Long> getAttributeClass() {
+				return Long.class;
+			}
+
+			@Override
+			public Class<UserThread> getTypeClass() {
+				return UserThread.class;
+			}
+		};
 }

@@ -17,23 +17,33 @@
 
 package com.liferay.privatemessaging.portlet;
 
-import com.liferay.portal.NoSuchUserException;
-import com.liferay.portal.UserScreenNameException;
+import com.liferay.document.library.kernel.exception.FileExtensionException;
+import com.liferay.document.library.kernel.exception.FileNameException;
+import com.liferay.document.library.kernel.exception.FileSizeException;
+import com.liferay.message.boards.kernel.model.MBMessage;
+import com.liferay.message.boards.kernel.service.MBMessageLocalServiceUtil;
+import com.liferay.portal.kernel.exception.NoSuchUserException;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.exception.UserScreenNameException;
 import com.liferay.portal.kernel.io.ByteArrayFileInputStream;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletResponseUtil;
+import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StreamUtil;
@@ -42,20 +52,9 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.portletfilerepository.PortletFileRepositoryUtil;
-import com.liferay.portal.security.auth.PrincipalException;
-import com.liferay.portal.service.UserLocalServiceUtil;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.documentlibrary.FileExtensionException;
-import com.liferay.portlet.documentlibrary.FileNameException;
-import com.liferay.portlet.documentlibrary.FileSizeException;
-import com.liferay.portlet.messageboards.model.MBMessage;
-import com.liferay.portlet.messageboards.service.MBMessageLocalServiceUtil;
 import com.liferay.privatemessaging.service.UserThreadLocalServiceUtil;
 import com.liferay.privatemessaging.util.PortletPropsValues;
 import com.liferay.privatemessaging.util.PrivateMessagingUtil;
-import com.liferay.util.bridges.mvc.MVCPortlet;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,7 +79,7 @@ public class PrivateMessagingPortlet extends MVCPortlet {
 
 	public void deleteMessages(
 			ActionRequest actionRequest, ActionResponse actionResponse)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -123,7 +122,7 @@ public class PrivateMessagingPortlet extends MVCPortlet {
 
 	public void markMessagesAsRead(
 			ActionRequest actionRequest, ActionResponse actionResponse)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -139,7 +138,7 @@ public class PrivateMessagingPortlet extends MVCPortlet {
 
 	public void markMessagesAsUnread(
 			ActionRequest actionRequest, ActionResponse actionResponse)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -153,14 +152,42 @@ public class PrivateMessagingPortlet extends MVCPortlet {
 		}
 	}
 
+	@Override
+	public void processAction(
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws PortletException {
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		if (!themeDisplay.isSignedIn()) {
+			return;
+		}
+
+		try {
+			String actionName = ParamUtil.getString(
+				actionRequest, ActionRequest.ACTION_NAME);
+
+			if (actionName.equals("sendMessage")) {
+				sendMessage(actionRequest, actionResponse);
+			}
+			else {
+				super.processAction(actionRequest, actionResponse);
+			}
+		}
+		catch (Exception e) {
+			throw new PortletException(e);
+		}
+	}
+
 	public void sendMessage(
-			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
+			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
 		UploadPortletRequest uploadPortletRequest =
-			PortalUtil.getUploadPortletRequest(resourceRequest);
+			PortalUtil.getUploadPortletRequest(actionRequest);
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)resourceRequest.getAttribute(
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
 		long userId = ParamUtil.getLong(uploadPortletRequest, "userId");
@@ -169,7 +196,7 @@ public class PrivateMessagingPortlet extends MVCPortlet {
 		String subject = ParamUtil.getString(uploadPortletRequest, "subject");
 		String body = ParamUtil.getString(uploadPortletRequest, "body");
 		List<ObjectValuePair<String, InputStream>> inputStreamOVPs =
-			new ArrayList<ObjectValuePair<String, InputStream>>();
+			new ArrayList<>();
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
@@ -188,15 +215,15 @@ public class PrivateMessagingPortlet extends MVCPortlet {
 
 				try {
 					ObjectValuePair<String, InputStream> inputStreamOVP =
-						new ObjectValuePair<String, InputStream>(
-							fileName, inputStream);
+						new ObjectValuePair<>(fileName, inputStream);
 
 					inputStreamOVPs.add(inputStreamOVP);
 				}
 				catch (Exception e) {
 					_log.error(
-						translate(resourceRequest, "unable to attach file ") +
-							fileName, e);
+						translate(actionRequest, "unable to attach file ") +
+							fileName,
+						e);
 				}
 			}
 
@@ -207,7 +234,7 @@ public class PrivateMessagingPortlet extends MVCPortlet {
 			jsonObject.put("success", Boolean.TRUE);
 		}
 		catch (Exception e) {
-			jsonObject.put("message", getMessage(resourceRequest, e));
+			jsonObject.put("message", getMessage(actionRequest, e));
 
 			jsonObject.put("success", Boolean.FALSE);
 		}
@@ -221,7 +248,7 @@ public class PrivateMessagingPortlet extends MVCPortlet {
 			}
 		}
 
-		writeJSON(resourceRequest, resourceResponse, jsonObject);
+		writeJSON(actionRequest, actionResponse, jsonObject);
 	}
 
 	@Override
@@ -238,9 +265,6 @@ public class PrivateMessagingPortlet extends MVCPortlet {
 			}
 			else if (resourceID.equals("getUsers")) {
 				getUsers(resourceRequest, resourceResponse);
-			}
-			else if (resourceID.equals("sendMessage")) {
-				sendMessage(resourceRequest, resourceResponse);
 			}
 			else {
 				super.serveResource(resourceRequest, resourceResponse);
@@ -324,20 +348,11 @@ public class PrivateMessagingPortlet extends MVCPortlet {
 	}
 
 	protected boolean isValidName(String name) {
-		if ((name == null) ||
-			name.contains("\\") ||
-			name.contains("\\\\") ||
-			name.contains("//") ||
-			name.contains(":") ||
-			name.contains("*") ||
-			name.contains("?") ||
-			name.contains("\"") ||
-			name.contains("<") ||
-			name.contains(">") ||
-			name.contains("|") ||
-			name.contains("[") ||
-			name.contains("]") ||
-			name.contains("../") ||
+		if ((name == null) || name.contains("\\") || name.contains("\\\\") ||
+			name.contains("//") || name.contains(":") || name.contains("*") ||
+			name.contains("?") || name.contains("\"") || name.contains("<") ||
+			name.contains(">") || name.contains("|") || name.contains("[") ||
+			name.contains("]") || name.contains("../") ||
 			name.contains("/..")) {
 
 			return false;
@@ -358,7 +373,7 @@ public class PrivateMessagingPortlet extends MVCPortlet {
 			if ((PrefsPropsUtil.getLong(PropsKeys.DL_FILE_MAX_SIZE) > 0) &&
 				((file == null) ||
 				 (file.length() >
-				  PrefsPropsUtil.getLong(PropsKeys.DL_FILE_MAX_SIZE)))) {
+					 PrefsPropsUtil.getLong(PropsKeys.DL_FILE_MAX_SIZE)))) {
 
 				throw new FileSizeException(fileName);
 			}
@@ -397,7 +412,7 @@ public class PrivateMessagingPortlet extends MVCPortlet {
 
 		String[] recipients = StringUtil.split(to);
 
-		List<String> failedRecipients = new ArrayList<String>();
+		List<String> failedRecipients = new ArrayList<>();
 
 		for (String recipient : recipients) {
 			recipient = recipient.trim();

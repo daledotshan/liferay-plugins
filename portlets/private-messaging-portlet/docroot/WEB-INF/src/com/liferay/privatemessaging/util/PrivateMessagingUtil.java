@@ -17,32 +17,39 @@
 
 package com.liferay.privatemessaging.util;
 
-import com.liferay.portal.NoSuchRoleException;
+import com.liferay.message.boards.kernel.model.MBMessage;
+import com.liferay.message.boards.kernel.service.MBMessageLocalServiceUtil;
+import com.liferay.message.boards.kernel.util.comparator.MessageCreateDateComparator;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.NoSuchRoleException;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.search.BaseModelSearchResult;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.SortFactoryUtil;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.comparator.UserFirstNameComparator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Role;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.GroupLocalServiceUtil;
-import com.liferay.portal.service.RoleLocalServiceUtil;
-import com.liferay.portal.service.UserLocalServiceUtil;
-import com.liferay.portal.util.comparator.UserFirstNameComparator;
-import com.liferay.portlet.messageboards.model.MBMessage;
-import com.liferay.portlet.messageboards.service.MBMessageLocalServiceUtil;
-import com.liferay.portlet.messageboards.util.comparator.MessageCreateDateComparator;
-import com.liferay.portlet.sites.util.SitesUtil;
-import com.liferay.portlet.social.model.SocialRelationConstants;
-import com.liferay.privatemessaging.NoSuchUserThreadException;
+import com.liferay.privatemessaging.exception.NoSuchUserThreadException;
 import com.liferay.privatemessaging.model.UserThread;
 import com.liferay.privatemessaging.service.UserThreadLocalServiceUtil;
 import com.liferay.privatemessaging.service.UserThreadServiceUtil;
+import com.liferay.sites.kernel.util.SitesUtil;
+import com.liferay.social.kernel.model.SocialRelationConstants;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -56,20 +63,18 @@ public class PrivateMessagingUtil {
 
 	public static JSONObject getJSONRecipients(
 			long userId, String type, String keywords, int start, int end)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
 		User user = UserLocalServiceUtil.getUser(userId);
 
-		LinkedHashMap<String, Object> params =
-			new LinkedHashMap<String, Object>();
+		LinkedHashMap<String, Object> params = new LinkedHashMap<>();
 
 		if (type.equals("site")) {
 			params.put("inherit", Boolean.TRUE);
 
-			LinkedHashMap<String, Object> groupParams =
-				new LinkedHashMap<String, Object>();
+			LinkedHashMap<String, Object> groupParams = new LinkedHashMap<>();
 
 			groupParams.put("inherit", Boolean.FALSE);
 			groupParams.put("site", Boolean.TRUE);
@@ -89,7 +94,8 @@ public class PrivateMessagingUtil {
 			params.put(
 				"socialRelationType",
 				new Long[] {
-					userId, new Long(SocialRelationConstants.TYPE_BI_CONNECTION)
+					userId,
+					Long.valueOf(SocialRelationConstants.TYPE_BI_CONNECTION)
 				});
 		}
 
@@ -99,21 +105,41 @@ public class PrivateMessagingUtil {
 
 			if (role != null) {
 				params.put("inherit", Boolean.TRUE);
-				params.put("usersRoles", new Long(role.getRoleId()));
+				params.put("usersRoles", Long.valueOf(role.getRoleId()));
 			}
 		}
 		catch (NoSuchRoleException nsre) {
 		}
 
-		int total = UserLocalServiceUtil.searchCount(
-			user.getCompanyId(), keywords, WorkflowConstants.STATUS_APPROVED,
-			params);
+		List<User> users = new ArrayList<>();
 
-		jsonObject.put("total", total);
+		Indexer<?> indexer = IndexerRegistryUtil.nullSafeGetIndexer(User.class);
 
-		List<User> users = UserLocalServiceUtil.search(
-			user.getCompanyId(), keywords, WorkflowConstants.STATUS_APPROVED,
-			params, start, end, new UserFirstNameComparator(true));
+		if (indexer.isIndexerEnabled() && _USERS_SEARCH_WITH_INDEX) {
+			Sort sort = SortFactoryUtil.getSort(User.class, "firstName", "asc");
+
+			BaseModelSearchResult<User> baseModelSearchResult =
+				UserLocalServiceUtil.searchUsers(
+					user.getCompanyId(), keywords, keywords, keywords, keywords,
+					keywords, WorkflowConstants.STATUS_APPROVED, params, false,
+					start, end, sort);
+
+			jsonObject.put("total", baseModelSearchResult.getLength());
+
+			users = baseModelSearchResult.getBaseModels();
+		}
+		else {
+			int total = UserLocalServiceUtil.searchCount(
+				user.getCompanyId(), keywords,
+				WorkflowConstants.STATUS_APPROVED, params);
+
+			jsonObject.put("total", total);
+
+			users = UserLocalServiceUtil.search(
+				user.getCompanyId(), keywords,
+				WorkflowConstants.STATUS_APPROVED, params, start, end,
+				new UserFirstNameComparator(true));
+		}
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
@@ -144,8 +170,7 @@ public class PrivateMessagingUtil {
 	 * only person to have posted on the thread, then he will the represenative.
 	 */
 	public static long getThreadRepresentativeUserId(
-			long userId, long mbThreadId)
-		throws SystemException {
+		long userId, long mbThreadId) {
 
 		List<MBMessage> mbMessages =
 			MBMessageLocalServiceUtil.getThreadMessages(
@@ -170,9 +195,7 @@ public class PrivateMessagingUtil {
 		return userId;
 	}
 
-	public static String getThreadSubject(long mbThreadId)
-		throws SystemException {
-
+	public static String getThreadSubject(long mbThreadId) {
 		List<MBMessage> mbMessages =
 			MBMessageLocalServiceUtil.getThreadMessages(
 				mbThreadId, WorkflowConstants.STATUS_ANY, 0, 1);
@@ -181,9 +204,9 @@ public class PrivateMessagingUtil {
 	}
 
 	public static List<User> getThreadUsers(long userId, long mbThreadId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
-		List<User> users = new ArrayList<User>();
+		List<User> users = new ArrayList<>();
 
 		// Users who have contributed to the thread
 
@@ -237,7 +260,7 @@ public class PrivateMessagingUtil {
 	}
 
 	public static boolean isUserPartOfThread(long userId, long mbThreadId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		try {
 			UserThreadLocalServiceUtil.getUserThread(userId, mbThreadId);
@@ -248,5 +271,8 @@ public class PrivateMessagingUtil {
 			return false;
 		}
 	}
+
+	private static final boolean _USERS_SEARCH_WITH_INDEX =
+		GetterUtil.getBoolean(PropsUtil.get(PropsKeys.USERS_SEARCH_WITH_INDEX));
 
 }

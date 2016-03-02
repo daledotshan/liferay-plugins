@@ -14,16 +14,17 @@
 
 package com.liferay.ams.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.ams.service.ClpSerializer;
 import com.liferay.ams.service.TypeLocalServiceUtil;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.model.impl.BaseModelImpl;
 
 import java.io.Serializable;
 
@@ -33,8 +34,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Brian Wing Shun Chan
+ * @generated
  */
+@ProviderType
 public class TypeClp extends BaseModelImpl<Type> implements Type {
 	public TypeClp() {
 	}
@@ -226,7 +228,7 @@ public class TypeClp extends BaseModelImpl<Type> implements Type {
 	}
 
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			TypeLocalServiceUtil.addType(this);
 		}
@@ -285,6 +287,10 @@ public class TypeClp extends BaseModelImpl<Type> implements Type {
 		else {
 			return false;
 		}
+	}
+
+	public Class<?> getClpSerializerClass() {
+		return _clpSerializerClass;
 	}
 
 	@Override
@@ -347,6 +353,7 @@ public class TypeClp extends BaseModelImpl<Type> implements Type {
 	private long _groupId;
 	private String _name;
 	private BaseModel<?> _typeRemoteModel;
+	private Class<?> _clpSerializerClass = com.liferay.ams.service.ClpSerializer.class;
 	private boolean _entityCacheEnabled;
 	private boolean _finderCacheEnabled;
 }

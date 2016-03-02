@@ -14,11 +14,14 @@
 
 package com.liferay.ams.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.ams.model.Type;
 
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -32,7 +35,32 @@ import java.io.ObjectOutput;
  * @see Type
  * @generated
  */
+@ProviderType
 public class TypeCacheModel implements CacheModel<Type>, Externalizable {
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof TypeCacheModel)) {
+			return false;
+		}
+
+		TypeCacheModel typeCacheModel = (TypeCacheModel)obj;
+
+		if (typeId == typeCacheModel.typeId) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return HashUtil.hash(0, typeId);
+	}
+
 	@Override
 	public String toString() {
 		StringBundler sb = new StringBundler(7);
@@ -70,6 +98,7 @@ public class TypeCacheModel implements CacheModel<Type>, Externalizable {
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		typeId = objectInput.readLong();
+
 		groupId = objectInput.readLong();
 		name = objectInput.readUTF();
 	}
@@ -78,6 +107,7 @@ public class TypeCacheModel implements CacheModel<Type>, Externalizable {
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(typeId);
+
 		objectOutput.writeLong(groupId);
 
 		if (name == null) {

@@ -14,11 +14,14 @@
 
 package com.liferay.knowledgebase.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.knowledgebase.model.KBComment;
 
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -34,11 +37,36 @@ import java.util.Date;
  * @see KBComment
  * @generated
  */
+@ProviderType
 public class KBCommentCacheModel implements CacheModel<KBComment>,
 	Externalizable {
 	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof KBCommentCacheModel)) {
+			return false;
+		}
+
+		KBCommentCacheModel kbCommentCacheModel = (KBCommentCacheModel)obj;
+
+		if (kbCommentId == kbCommentCacheModel.kbCommentId) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return HashUtil.hash(0, kbCommentId);
+	}
+
+	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(29);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -62,8 +90,12 @@ public class KBCommentCacheModel implements CacheModel<KBComment>,
 		sb.append(classPK);
 		sb.append(", content=");
 		sb.append(content);
-		sb.append(", helpful=");
-		sb.append(helpful);
+		sb.append(", userRating=");
+		sb.append(userRating);
+		sb.append(", lastPublishDate=");
+		sb.append(lastPublishDate);
+		sb.append(", status=");
+		sb.append(status);
 		sb.append("}");
 
 		return sb.toString();
@@ -116,7 +148,16 @@ public class KBCommentCacheModel implements CacheModel<KBComment>,
 			kbCommentImpl.setContent(content);
 		}
 
-		kbCommentImpl.setHelpful(helpful);
+		kbCommentImpl.setUserRating(userRating);
+
+		if (lastPublishDate == Long.MIN_VALUE) {
+			kbCommentImpl.setLastPublishDate(null);
+		}
+		else {
+			kbCommentImpl.setLastPublishDate(new Date(lastPublishDate));
+		}
+
+		kbCommentImpl.setStatus(status);
 
 		kbCommentImpl.resetOriginalValues();
 
@@ -126,17 +167,27 @@ public class KBCommentCacheModel implements CacheModel<KBComment>,
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		uuid = objectInput.readUTF();
+
 		kbCommentId = objectInput.readLong();
+
 		groupId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+
 		classNameId = objectInput.readLong();
+
 		classPK = objectInput.readLong();
 		content = objectInput.readUTF();
-		helpful = objectInput.readBoolean();
+
+		userRating = objectInput.readInt();
+		lastPublishDate = objectInput.readLong();
+
+		status = objectInput.readInt();
 	}
 
 	@Override
@@ -150,8 +201,11 @@ public class KBCommentCacheModel implements CacheModel<KBComment>,
 		}
 
 		objectOutput.writeLong(kbCommentId);
+
 		objectOutput.writeLong(groupId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
 
 		if (userName == null) {
@@ -163,7 +217,9 @@ public class KBCommentCacheModel implements CacheModel<KBComment>,
 
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
+
 		objectOutput.writeLong(classNameId);
+
 		objectOutput.writeLong(classPK);
 
 		if (content == null) {
@@ -173,7 +229,10 @@ public class KBCommentCacheModel implements CacheModel<KBComment>,
 			objectOutput.writeUTF(content);
 		}
 
-		objectOutput.writeBoolean(helpful);
+		objectOutput.writeInt(userRating);
+		objectOutput.writeLong(lastPublishDate);
+
+		objectOutput.writeInt(status);
 	}
 
 	public String uuid;
@@ -187,5 +246,7 @@ public class KBCommentCacheModel implements CacheModel<KBComment>,
 	public long classNameId;
 	public long classPK;
 	public String content;
-	public boolean helpful;
+	public int userRating;
+	public long lastPublishDate;
+	public int status;
 }

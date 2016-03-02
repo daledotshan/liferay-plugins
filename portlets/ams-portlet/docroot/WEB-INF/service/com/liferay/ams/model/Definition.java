@@ -14,7 +14,11 @@
 
 package com.liferay.ams.model;
 
-import com.liferay.portal.model.PersistedModel;
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
+import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.util.Accessor;
 
 /**
  * The extended model interface for the Definition service. Represents a row in the &quot;AMS_Definition&quot; database table, with each column mapped to a property of this class.
@@ -25,10 +29,28 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.ams.model.impl.DefinitionModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.ams.model.impl.DefinitionImpl")
+@ProviderType
 public interface Definition extends DefinitionModel, PersistedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never modify this interface directly. Add methods to {@link com.liferay.ams.model.impl.DefinitionImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public static final Accessor<Definition, Long> DEFINITION_ID_ACCESSOR = new Accessor<Definition, Long>() {
+			@Override
+			public Long get(Definition definition) {
+				return definition.getDefinitionId();
+			}
+
+			@Override
+			public Class<Long> getAttributeClass() {
+				return Long.class;
+			}
+
+			@Override
+			public Class<Definition> getTypeClass() {
+				return Definition.class;
+			}
+		};
 }

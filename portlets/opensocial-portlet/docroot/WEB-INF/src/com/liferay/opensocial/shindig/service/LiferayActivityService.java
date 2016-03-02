@@ -21,20 +21,20 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.model.Company;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.CompanyLocalServiceUtil;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.ServiceContextFactory;
-import com.liferay.portal.service.UserLocalServiceUtil;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portlet.social.model.SocialActivity;
-import com.liferay.portlet.social.model.SocialActivityFeedEntry;
-import com.liferay.portlet.social.service.SocialActivityInterpreterLocalServiceUtil;
-import com.liferay.portlet.social.service.SocialActivityLocalServiceUtil;
+import com.liferay.social.kernel.model.SocialActivity;
+import com.liferay.social.kernel.model.SocialActivityFeedEntry;
+import com.liferay.social.kernel.service.SocialActivityInterpreterLocalServiceUtil;
+import com.liferay.social.kernel.service.SocialActivityLocalServiceUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -149,7 +149,7 @@ public class LiferayActivityService implements ActivityService {
 
 		ThemeDisplay themeDisplay = getThemeDisplay(securityToken);
 
-		List<Activity> activities = new ArrayList<Activity>();
+		List<Activity> activities = new ArrayList<>();
 
 		for (UserId userId : userIds) {
 			long userIdLong = GetterUtil.getLong(
@@ -272,7 +272,7 @@ public class LiferayActivityService implements ActivityService {
 			ThemeDisplay themeDisplay, long userId)
 		throws Exception {
 
-		List<Activity> activities = new ArrayList<Activity>();
+		List<Activity> activities = new ArrayList<>();
 
 		List<SocialActivity> socialActivities =
 			SocialActivityLocalServiceUtil.getUserActivities(userId, 0, 20);
@@ -346,7 +346,7 @@ public class LiferayActivityService implements ActivityService {
 			return null;
 		}
 
-		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
+		List<MediaItem> mediaItems = new ArrayList<>();
 
 		for (int i = 0; i < mediaItemsJSONArray.length(); i++) {
 			JSONObject mediaItemsJsonObject = mediaItemsJSONArray.getJSONObject(
@@ -392,7 +392,7 @@ public class LiferayActivityService implements ActivityService {
 			return null;
 		}
 
-		Map<String, String> templateParams = new HashMap<String, String>();
+		Map<String, String> templateParams = new HashMap<>();
 
 		for (int i = 0; i < templateParamsJSONArray.length(); i++) {
 			JSONObject templateParamJSONObject =

@@ -14,14 +14,16 @@
 
 package com.liferay.privatemessaging.model;
 
-import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.model.AuditedModel;
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.service.ServiceContext;
+import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portlet.expando.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.model.AuditedModel;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ShardedModel;
+import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
 
@@ -40,7 +42,9 @@ import java.util.Date;
  * @see com.liferay.privatemessaging.model.impl.UserThreadModelImpl
  * @generated
  */
-public interface UserThreadModel extends AuditedModel, BaseModel<UserThread> {
+@ProviderType
+public interface UserThreadModel extends AuditedModel, BaseModel<UserThread>,
+	ShardedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -111,10 +115,9 @@ public interface UserThreadModel extends AuditedModel, BaseModel<UserThread> {
 	 * Returns the user uuid of this user thread.
 	 *
 	 * @return the user uuid of this user thread
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid() throws SystemException;
+	public String getUserUuid();
 
 	/**
 	 * Sets the user uuid of this user thread.
@@ -280,19 +283,20 @@ public interface UserThreadModel extends AuditedModel, BaseModel<UserThread> {
 	public Object clone();
 
 	@Override
-	public int compareTo(UserThread userThread);
+	public int compareTo(
+		com.liferay.privatemessaging.model.UserThread userThread);
 
 	@Override
 	public int hashCode();
 
 	@Override
-	public CacheModel<UserThread> toCacheModel();
+	public CacheModel<com.liferay.privatemessaging.model.UserThread> toCacheModel();
 
 	@Override
-	public UserThread toEscapedModel();
+	public com.liferay.privatemessaging.model.UserThread toEscapedModel();
 
 	@Override
-	public UserThread toUnescapedModel();
+	public com.liferay.privatemessaging.model.UserThread toUnescapedModel();
 
 	@Override
 	public String toString();

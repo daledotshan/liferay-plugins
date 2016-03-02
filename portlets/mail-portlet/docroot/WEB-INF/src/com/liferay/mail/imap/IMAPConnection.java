@@ -14,7 +14,7 @@
 
 package com.liferay.mail.imap;
 
-import com.liferay.mail.MailException;
+import com.liferay.mail.exception.MailException;
 import com.liferay.mail.model.Account;
 import com.liferay.mail.util.PortletPropsValues;
 import com.liferay.portal.kernel.log.Log;
@@ -46,9 +46,9 @@ public class IMAPConnection {
 	}
 
 	public IMAPConnection(
-			String incomingHostName, int incomingPort, boolean incomingSecure,
-			String outgoingHostName, int outgoingPort, boolean outgoingSecure,
-			String login, String password) {
+		String incomingHostName, int incomingPort, boolean incomingSecure,
+		String outgoingHostName, int outgoingPort, boolean outgoingSecure,
+		String login, String password) {
 
 		_incomingHostName = incomingHostName;
 		_incomingPort = incomingPort;
@@ -260,7 +260,7 @@ public class IMAPConnection {
 	private static Log _log = LogFactoryUtil.getLog(IMAPConnection.class);
 
 	private static ConcurrentHashMap<String, Store> _allStores =
-		new ConcurrentHashMap<String, Store>();
+		new ConcurrentHashMap<>();
 
 	private String _incomingHostName;
 	private int _incomingPort;

@@ -14,10 +14,10 @@
 
 package com.liferay.knowledgebase.hook.upgrade.v1_1_0;
 
+import com.liferay.portal.kernel.model.PortletConstants;
+import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.upgrade.CamelCaseUpgradePortletPreferences;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.model.PortletConstants;
-import com.liferay.portlet.PortletPreferencesFactoryUtil;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -128,7 +128,7 @@ public class UpgradePortletPreferences
 	private static Map<String, String> _oldDisplayPreferenceNamesMap;
 
 	static {
-		_adminDefaultPreferencesMap = new HashMap<String, String>();
+		_adminDefaultPreferencesMap = new HashMap<>();
 
 		_adminDefaultPreferencesMap.put("kbArticlesOrderByCol", "priority");
 		_adminDefaultPreferencesMap.put("kbArticlesOrderByType", "desc");
@@ -147,7 +147,7 @@ public class UpgradePortletPreferences
 		_adminDefaultPreferencesMap.put("enableKBTemplateKBComments", "true");
 		_adminDefaultPreferencesMap.put("showKBTemplateKBComments", "true");
 
-		_articleDefaultPreferencesMap = new HashMap<String, String>();
+		_articleDefaultPreferencesMap = new HashMap<>();
 
 		_articleDefaultPreferencesMap.put("resourcePrimKey", "0");
 		_articleDefaultPreferencesMap.put(
@@ -165,7 +165,7 @@ public class UpgradePortletPreferences
 		_articleDefaultPreferencesMap.put("rssDisplayStyle", "full-content");
 		_articleDefaultPreferencesMap.put("rssFormat", "atom10");
 
-		_displayDefaultPreferencesMap = new HashMap<String, String>();
+		_displayDefaultPreferencesMap = new HashMap<>();
 
 		_displayDefaultPreferencesMap.put("kbArticlesOrderByCol", "priority");
 		_displayDefaultPreferencesMap.put("kbArticlesOrderByType", "desc");
@@ -195,7 +195,7 @@ public class UpgradePortletPreferences
 		_displayDefaultPreferencesMap.put("rssDisplayStyle", "full-content");
 		_displayDefaultPreferencesMap.put("rssFormat", "atom10");
 
-		_oldAdminPreferenceNamesMap = new HashMap<String, String>();
+		_oldAdminPreferenceNamesMap = new HashMap<>();
 
 		_oldAdminPreferenceNamesMap.put(
 			"articlesOrderByCol", "kbArticlesOrderByCol");
@@ -221,7 +221,7 @@ public class UpgradePortletPreferences
 		_oldAdminPreferenceNamesMap.put(
 			"showTemplateComments", "showKBTemplateKBComments");
 
-		_oldArticlePreferenceNamesMap = new HashMap<String, String>();
+		_oldArticlePreferenceNamesMap = new HashMap<>();
 
 		_oldArticlePreferenceNamesMap.put(
 			"enableArticleDescription", "enableKBArticleDescription");
@@ -239,7 +239,7 @@ public class UpgradePortletPreferences
 			"enableArticleViewCountIncrement",
 			"enableKBArticleViewCountIncrement");
 
-		_oldDisplayPreferenceNamesMap = new HashMap<String, String>();
+		_oldDisplayPreferenceNamesMap = new HashMap<>();
 
 		_oldDisplayPreferenceNamesMap.put(
 			"articlesOrderByCol", "kbArticlesOrderByCol");

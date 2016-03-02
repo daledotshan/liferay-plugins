@@ -14,12 +14,14 @@
 
 package com.liferay.ams.model;
 
-import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.service.ServiceContext;
+import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portlet.expando.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
 
@@ -36,6 +38,7 @@ import java.io.Serializable;
  * @see com.liferay.ams.model.impl.TypeModelImpl
  * @generated
  */
+@ProviderType
 public interface TypeModel extends BaseModel<Type> {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -137,19 +140,19 @@ public interface TypeModel extends BaseModel<Type> {
 	public Object clone();
 
 	@Override
-	public int compareTo(Type type);
+	public int compareTo(com.liferay.ams.model.Type type);
 
 	@Override
 	public int hashCode();
 
 	@Override
-	public CacheModel<Type> toCacheModel();
+	public CacheModel<com.liferay.ams.model.Type> toCacheModel();
 
 	@Override
-	public Type toEscapedModel();
+	public com.liferay.ams.model.Type toEscapedModel();
 
 	@Override
-	public Type toUnescapedModel();
+	public com.liferay.ams.model.Type toUnescapedModel();
 
 	@Override
 	public String toString();

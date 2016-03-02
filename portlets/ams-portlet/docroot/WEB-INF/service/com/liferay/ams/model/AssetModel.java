@@ -14,14 +14,16 @@
 
 package com.liferay.ams.model;
 
-import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.model.AuditedModel;
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.service.ServiceContext;
+import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portlet.expando.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.model.AuditedModel;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ShardedModel;
+import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
 
@@ -40,7 +42,8 @@ import java.util.Date;
  * @see com.liferay.ams.model.impl.AssetModelImpl
  * @generated
  */
-public interface AssetModel extends AuditedModel, BaseModel<Asset> {
+@ProviderType
+public interface AssetModel extends AuditedModel, BaseModel<Asset>, ShardedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -111,10 +114,9 @@ public interface AssetModel extends AuditedModel, BaseModel<Asset> {
 	 * Returns the user uuid of this asset.
 	 *
 	 * @return the user uuid of this asset
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid() throws SystemException;
+	public String getUserUuid();
 
 	/**
 	 * Sets the user uuid of this asset.
@@ -274,19 +276,19 @@ public interface AssetModel extends AuditedModel, BaseModel<Asset> {
 	public Object clone();
 
 	@Override
-	public int compareTo(Asset asset);
+	public int compareTo(com.liferay.ams.model.Asset asset);
 
 	@Override
 	public int hashCode();
 
 	@Override
-	public CacheModel<Asset> toCacheModel();
+	public CacheModel<com.liferay.ams.model.Asset> toCacheModel();
 
 	@Override
-	public Asset toEscapedModel();
+	public com.liferay.ams.model.Asset toEscapedModel();
 
 	@Override
-	public Asset toUnescapedModel();
+	public com.liferay.ams.model.Asset toUnescapedModel();
 
 	@Override
 	public String toString();
