@@ -50,7 +50,7 @@
 		/>
 
 		<%
-		String producerURL = producer.getURL(themeDisplay.getPortalURL());
+		String producerURL = producer.getURL(themeDisplay.getPortalURL() + application.getContextPath());
 		%>
 
 		<liferay-ui:search-container-column-text
@@ -65,6 +65,7 @@
 
 		<liferay-ui:search-container-column-jsp
 			align="right"
+			cssClass="entry-action"
 			path="/admin/producer_action.jsp"
 			valign="top"
 		/>
@@ -74,5 +75,5 @@
 </liferay-ui:search-container>
 
 <%
-PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(pageContext, "producers"), currentURL);
+PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "producers"), currentURL);
 %>

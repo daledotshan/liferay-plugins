@@ -17,21 +17,19 @@
 
 package com.liferay.so.hook.upgrade.v2_0_3;
 
+import com.liferay.bookmarks.model.BookmarksFolder;
+import com.liferay.bookmarks.service.BookmarksFolderLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.LayoutSet;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutSetLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.LayoutSet;
-import com.liferay.portal.service.GroupLocalServiceUtil;
-import com.liferay.portal.service.LayoutSetLocalServiceUtil;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.bookmarks.model.BookmarksFolder;
-import com.liferay.portlet.bookmarks.service.BookmarksFolderLocalServiceUtil;
-import com.liferay.portlet.bookmarks.service.persistence.BookmarksFolderActionableDynamicQuery;
 
 /**
  * @author Evan Thibodeau
@@ -41,44 +39,53 @@ public class UpgradeBookmarks extends UpgradeProcess {
 	@Override
 	protected void doUpgrade() throws Exception {
 		ActionableDynamicQuery actionableDynamicQuery =
-			new BookmarksFolderActionableDynamicQuery() {
+			BookmarksFolderLocalServiceUtil.getActionableDynamicQuery();
 
-			@Override
-			protected void addCriteria(DynamicQuery dynamicQuery) {
-				Property property = PropertyFactoryUtil.forName("name");
+		actionableDynamicQuery.setAddCriteriaMethod(
+			new ActionableDynamicQuery.AddCriteriaMethod() {
 
-				dynamicQuery.add(property.eq("Bookmarks"));
-			}
+				@Override
+				public void addCriteria(DynamicQuery dynamicQuery) {
+					Property property = PropertyFactoryUtil.forName("name");
 
-			@Override
-			protected void performAction(Object object)
-				throws PortalException, SystemException {
-
-				BookmarksFolder bookmarksFolder = (BookmarksFolder)object;
-
-				Group group = GroupLocalServiceUtil.fetchGroup(
-					bookmarksFolder.getGroupId());
-
-				if (group == null) {
-					return;
+					dynamicQuery.add(property.eq("Bookmarks"));
 				}
 
-				LayoutSet layoutSet = LayoutSetLocalServiceUtil.getLayoutSet(
-					group.getGroupId(), group.hasPrivateLayouts());
+			});
+		actionableDynamicQuery.setPerformActionMethod(
+			new ActionableDynamicQuery.PerformActionMethod<BookmarksFolder>() {
 
-				String themeId = layoutSet.getThemeId();
+				@Override
+				public void performAction(BookmarksFolder bookmarksFolder)
+					throws PortalException {
 
-				if (!themeId.equals("so_WAR_sotheme")) {
-					return;
+					Group group = GroupLocalServiceUtil.fetchGroup(
+						bookmarksFolder.getGroupId());
+
+					if (group == null) {
+						return;
+					}
+
+					LayoutSet layoutSet =
+						LayoutSetLocalServiceUtil.getLayoutSet(
+							group.getGroupId(), group.hasPrivateLayouts());
+
+					String themeId = layoutSet.getThemeId();
+
+					if (!themeId.equals("so_WAR_sotheme")) {
+						return;
+					}
+
+					BookmarksFolderLocalServiceUtil.updateFolder(
+						bookmarksFolder.getUserId(),
+						bookmarksFolder.getFolderId(),
+						bookmarksFolder.getParentFolderId(),
+						bookmarksFolder.getName(),
+						bookmarksFolder.getDescription(), true,
+						new ServiceContext());
 				}
 
-				BookmarksFolderLocalServiceUtil.updateFolder(
-					bookmarksFolder.getUserId(), bookmarksFolder.getFolderId(),
-					bookmarksFolder.getParentFolderId(),
-					bookmarksFolder.getName(), bookmarksFolder.getDescription(),
-					true, new ServiceContext());
-			}
-		};
+			});
 
 		actionableDynamicQuery.performActions();
 	}

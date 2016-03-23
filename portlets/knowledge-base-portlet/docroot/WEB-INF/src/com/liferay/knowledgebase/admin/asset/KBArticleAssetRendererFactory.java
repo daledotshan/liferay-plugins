@@ -14,7 +14,10 @@
 
 package com.liferay.knowledgebase.admin.asset;
 
-import com.liferay.knowledgebase.NoSuchArticleException;
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetRenderer;
+import com.liferay.asset.kernel.model.BaseAssetRendererFactory;
+import com.liferay.knowledgebase.exception.NoSuchArticleException;
 import com.liferay.knowledgebase.model.KBArticle;
 import com.liferay.knowledgebase.service.KBArticleLocalServiceUtil;
 import com.liferay.knowledgebase.service.permission.AdminPermission;
@@ -23,15 +26,12 @@ import com.liferay.knowledgebase.util.ActionKeys;
 import com.liferay.knowledgebase.util.PortletKeys;
 import com.liferay.knowledgebase.util.WebKeys;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.security.permission.PermissionChecker;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portlet.PortletURLFactoryUtil;
-import com.liferay.portlet.asset.model.AssetRenderer;
-import com.liferay.portlet.asset.model.BaseAssetRendererFactory;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
@@ -39,28 +39,38 @@ import javax.portlet.PortletURL;
 /**
  * @author Peter Shin
  */
-public class KBArticleAssetRendererFactory extends BaseAssetRendererFactory {
+public class KBArticleAssetRendererFactory
+	extends BaseAssetRendererFactory<KBArticle> {
 
 	public static final String TYPE = "article";
 
+	public KBArticleAssetRendererFactory() {
+		setLinkable(true);
+		setSearchable(true);
+	}
+
 	@Override
-	public AssetRenderer getAssetRenderer(long classPK, int type)
-		throws PortalException, SystemException {
+	public AssetEntry getAssetEntry(String className, long classPK)
+		throws PortalException {
+
+		KBArticle kbArticle = getKBArticle(
+			classPK, WorkflowConstants.STATUS_ANY);
+
+		return super.getAssetEntry(className, kbArticle.getKbArticleId());
+	}
+
+	@Override
+	public AssetRenderer<KBArticle> getAssetRenderer(long classPK, int type)
+		throws PortalException {
 
 		KBArticle kbArticle = null;
 
 		if (type == TYPE_LATEST_APPROVED) {
-			kbArticle = KBArticleLocalServiceUtil.getLatestKBArticle(
+			kbArticle = getKBArticle(
 				classPK, WorkflowConstants.STATUS_APPROVED);
 		}
 		else {
-			try {
-				kbArticle = KBArticleLocalServiceUtil.getKBArticle(classPK);
-			}
-			catch (NoSuchArticleException nsae) {
-				kbArticle = KBArticleLocalServiceUtil.getLatestKBArticle(
-					classPK, WorkflowConstants.STATUS_ANY);
-			}
+			kbArticle = getKBArticle(classPK, WorkflowConstants.STATUS_ANY);
 		}
 
 		KBArticleAssetRenderer kbArticleAssetRenderer =
@@ -77,6 +87,11 @@ public class KBArticleAssetRendererFactory extends BaseAssetRendererFactory {
 	}
 
 	@Override
+	public String getIconCssClass() {
+		return "icon-file";
+	}
+
+	@Override
 	public String getPortletId() {
 		return PortletKeys.KNOWLEDGE_BASE_DISPLAY;
 	}
@@ -90,7 +105,7 @@ public class KBArticleAssetRendererFactory extends BaseAssetRendererFactory {
 	public PortletURL getURLAdd(
 			LiferayPortletRequest liferayPortletRequest,
 			LiferayPortletResponse liferayPortletResponse)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay)liferayPortletRequest.getAttribute(
@@ -123,9 +138,20 @@ public class KBArticleAssetRendererFactory extends BaseAssetRendererFactory {
 			permissionChecker, classPK, actionId);
 	}
 
-	@Override
-	protected String getIconPath(ThemeDisplay themeDisplay) {
-		return themeDisplay.getPathThemeImages() + "/trees/page.png";
+	protected KBArticle getKBArticle(long classPK, int status)
+		throws PortalException {
+
+		KBArticle kbArticle = null;
+
+		try {
+			kbArticle = KBArticleLocalServiceUtil.getKBArticle(classPK);
+		}
+		catch (NoSuchArticleException nsae) {
+			kbArticle = KBArticleLocalServiceUtil.getLatestKBArticle(
+				classPK, status);
+		}
+
+		return kbArticle;
 	}
 
 }

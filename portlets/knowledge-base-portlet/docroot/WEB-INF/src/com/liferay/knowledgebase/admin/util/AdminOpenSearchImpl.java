@@ -22,9 +22,9 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.HitsOpenSearchImpl;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.theme.ThemeDisplay;
 
 import javax.portlet.PortletURL;
 import javax.portlet.WindowState;
@@ -40,13 +40,8 @@ public class AdminOpenSearchImpl extends HitsOpenSearchImpl {
 	public static final String TITLE = "Liferay Knowledge Base Search: ";
 
 	@Override
-	public Indexer getIndexer() {
+	public Indexer<KBArticle> getIndexer() {
 		return IndexerRegistryUtil.getIndexer(KBArticle.class);
-	}
-
-	@Override
-	public String getPortletId() {
-		return AdminIndexer.PORTLET_ID;
 	}
 
 	@Override

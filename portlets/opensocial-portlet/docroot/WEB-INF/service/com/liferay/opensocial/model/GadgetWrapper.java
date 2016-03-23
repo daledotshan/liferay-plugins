@@ -14,9 +14,17 @@
 
 package com.liferay.opensocial.model;
 
-import com.liferay.portal.kernel.lar.StagedModelType;
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.exportimport.kernel.lar.StagedModelType;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -31,6 +39,7 @@ import java.util.Map;
  * @see Gadget
  * @generated
  */
+@ProviderType
 public class GadgetWrapper implements Gadget, ModelWrapper<Gadget> {
 	public GadgetWrapper(Gadget gadget) {
 		_gadget = gadget;
@@ -58,6 +67,7 @@ public class GadgetWrapper implements Gadget, ModelWrapper<Gadget> {
 		attributes.put("name", getName());
 		attributes.put("url", getUrl());
 		attributes.put("portletCategoryNames", getPortletCategoryNames());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
 	}
@@ -112,66 +122,22 @@ public class GadgetWrapper implements Gadget, ModelWrapper<Gadget> {
 		if (portletCategoryNames != null) {
 			setPortletCategoryNames(portletCategoryNames);
 		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
+		}
 	}
 
-	/**
-	* Returns the primary key of this gadget.
-	*
-	* @return the primary key of this gadget
-	*/
 	@Override
-	public long getPrimaryKey() {
-		return _gadget.getPrimaryKey();
+	public java.lang.Object clone() {
+		return new GadgetWrapper((Gadget)_gadget.clone());
 	}
 
-	/**
-	* Sets the primary key of this gadget.
-	*
-	* @param primaryKey the primary key of this gadget
-	*/
 	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_gadget.setPrimaryKey(primaryKey);
-	}
-
-	/**
-	* Returns the uuid of this gadget.
-	*
-	* @return the uuid of this gadget
-	*/
-	@Override
-	public java.lang.String getUuid() {
-		return _gadget.getUuid();
-	}
-
-	/**
-	* Sets the uuid of this gadget.
-	*
-	* @param uuid the uuid of this gadget
-	*/
-	@Override
-	public void setUuid(java.lang.String uuid) {
-		_gadget.setUuid(uuid);
-	}
-
-	/**
-	* Returns the gadget ID of this gadget.
-	*
-	* @return the gadget ID of this gadget
-	*/
-	@Override
-	public long getGadgetId() {
-		return _gadget.getGadgetId();
-	}
-
-	/**
-	* Sets the gadget ID of this gadget.
-	*
-	* @param gadgetId the gadget ID of this gadget
-	*/
-	@Override
-	public void setGadgetId(long gadgetId) {
-		_gadget.setGadgetId(gadgetId);
+	public int compareTo(com.liferay.opensocial.model.Gadget gadget) {
+		return _gadget.compareTo(gadget);
 	}
 
 	/**
@@ -185,33 +151,38 @@ public class GadgetWrapper implements Gadget, ModelWrapper<Gadget> {
 	}
 
 	/**
-	* Sets the company ID of this gadget.
-	*
-	* @param companyId the company ID of this gadget
-	*/
-	@Override
-	public void setCompanyId(long companyId) {
-		_gadget.setCompanyId(companyId);
-	}
-
-	/**
 	* Returns the create date of this gadget.
 	*
 	* @return the create date of this gadget
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _gadget.getCreateDate();
 	}
 
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _gadget.getExpandoBridge();
+	}
+
 	/**
-	* Sets the create date of this gadget.
+	* Returns the gadget ID of this gadget.
 	*
-	* @param createDate the create date of this gadget
+	* @return the gadget ID of this gadget
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
-		_gadget.setCreateDate(createDate);
+	public long getGadgetId() {
+		return _gadget.getGadgetId();
+	}
+
+	/**
+	* Returns the last publish date of this gadget.
+	*
+	* @return the last publish date of this gadget
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _gadget.getLastPublishDate();
 	}
 
 	/**
@@ -220,18 +191,8 @@ public class GadgetWrapper implements Gadget, ModelWrapper<Gadget> {
 	* @return the modified date of this gadget
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
+	public Date getModifiedDate() {
 		return _gadget.getModifiedDate();
-	}
-
-	/**
-	* Sets the modified date of this gadget.
-	*
-	* @param modifiedDate the modified date of this gadget
-	*/
-	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
-		_gadget.setModifiedDate(modifiedDate);
 	}
 
 	/**
@@ -245,13 +206,28 @@ public class GadgetWrapper implements Gadget, ModelWrapper<Gadget> {
 	}
 
 	/**
-	* Sets the name of this gadget.
+	* Returns the portlet category names of this gadget.
 	*
-	* @param name the name of this gadget
+	* @return the portlet category names of this gadget
 	*/
 	@Override
-	public void setName(java.lang.String name) {
-		_gadget.setName(name);
+	public java.lang.String getPortletCategoryNames() {
+		return _gadget.getPortletCategoryNames();
+	}
+
+	/**
+	* Returns the primary key of this gadget.
+	*
+	* @return the primary key of this gadget
+	*/
+	@Override
+	public long getPrimaryKey() {
+		return _gadget.getPrimaryKey();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _gadget.getPrimaryKeyObj();
 	}
 
 	/**
@@ -265,23 +241,124 @@ public class GadgetWrapper implements Gadget, ModelWrapper<Gadget> {
 	}
 
 	/**
-	* Sets the url of this gadget.
+	* Returns the uuid of this gadget.
 	*
-	* @param url the url of this gadget
+	* @return the uuid of this gadget
 	*/
 	@Override
-	public void setUrl(java.lang.String url) {
-		_gadget.setUrl(url);
+	public java.lang.String getUuid() {
+		return _gadget.getUuid();
+	}
+
+	@Override
+	public int hashCode() {
+		return _gadget.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _gadget.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _gadget.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _gadget.isNew();
+	}
+
+	@Override
+	public void persist() {
+		_gadget.persist();
+	}
+
+	@Override
+	public void setCachedModel(boolean cachedModel) {
+		_gadget.setCachedModel(cachedModel);
 	}
 
 	/**
-	* Returns the portlet category names of this gadget.
+	* Sets the company ID of this gadget.
 	*
-	* @return the portlet category names of this gadget
+	* @param companyId the company ID of this gadget
 	*/
 	@Override
-	public java.lang.String getPortletCategoryNames() {
-		return _gadget.getPortletCategoryNames();
+	public void setCompanyId(long companyId) {
+		_gadget.setCompanyId(companyId);
+	}
+
+	/**
+	* Sets the create date of this gadget.
+	*
+	* @param createDate the create date of this gadget
+	*/
+	@Override
+	public void setCreateDate(Date createDate) {
+		_gadget.setCreateDate(createDate);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_gadget.setExpandoBridgeAttributes(baseModel);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_gadget.setExpandoBridgeAttributes(expandoBridge);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
+		_gadget.setExpandoBridgeAttributes(serviceContext);
+	}
+
+	/**
+	* Sets the gadget ID of this gadget.
+	*
+	* @param gadgetId the gadget ID of this gadget
+	*/
+	@Override
+	public void setGadgetId(long gadgetId) {
+		_gadget.setGadgetId(gadgetId);
+	}
+
+	/**
+	* Sets the last publish date of this gadget.
+	*
+	* @param lastPublishDate the last publish date of this gadget
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_gadget.setLastPublishDate(lastPublishDate);
+	}
+
+	/**
+	* Sets the modified date of this gadget.
+	*
+	* @param modifiedDate the modified date of this gadget
+	*/
+	@Override
+	public void setModifiedDate(Date modifiedDate) {
+		_gadget.setModifiedDate(modifiedDate);
+	}
+
+	/**
+	* Sets the name of this gadget.
+	*
+	* @param name the name of this gadget
+	*/
+	@Override
+	public void setName(java.lang.String name) {
+		_gadget.setName(name);
+	}
+
+	@Override
+	public void setNew(boolean n) {
+		_gadget.setNew(n);
 	}
 
 	/**
@@ -294,81 +371,43 @@ public class GadgetWrapper implements Gadget, ModelWrapper<Gadget> {
 		_gadget.setPortletCategoryNames(portletCategoryNames);
 	}
 
+	/**
+	* Sets the primary key of this gadget.
+	*
+	* @param primaryKey the primary key of this gadget
+	*/
 	@Override
-	public boolean isNew() {
-		return _gadget.isNew();
+	public void setPrimaryKey(long primaryKey) {
+		_gadget.setPrimaryKey(primaryKey);
 	}
 
 	@Override
-	public void setNew(boolean n) {
-		_gadget.setNew(n);
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _gadget.isCachedModel();
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_gadget.setCachedModel(cachedModel);
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _gadget.isEscapedModel();
-	}
-
-	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _gadget.getPrimaryKeyObj();
-	}
-
-	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_gadget.setPrimaryKeyObj(primaryKeyObj);
 	}
 
+	/**
+	* Sets the url of this gadget.
+	*
+	* @param url the url of this gadget
+	*/
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _gadget.getExpandoBridge();
+	public void setUrl(java.lang.String url) {
+		_gadget.setUrl(url);
+	}
+
+	/**
+	* Sets the uuid of this gadget.
+	*
+	* @param uuid the uuid of this gadget
+	*/
+	@Override
+	public void setUuid(java.lang.String uuid) {
+		_gadget.setUuid(uuid);
 	}
 
 	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
-		_gadget.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
-		_gadget.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
-		_gadget.setExpandoBridgeAttributes(serviceContext);
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new GadgetWrapper((Gadget)_gadget.clone());
-	}
-
-	@Override
-	public int compareTo(com.liferay.opensocial.model.Gadget gadget) {
-		return _gadget.compareTo(gadget);
-	}
-
-	@Override
-	public int hashCode() {
-		return _gadget.hashCode();
-	}
-
-	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.opensocial.model.Gadget> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.opensocial.model.Gadget> toCacheModel() {
 		return _gadget.toCacheModel();
 	}
 
@@ -378,24 +417,18 @@ public class GadgetWrapper implements Gadget, ModelWrapper<Gadget> {
 	}
 
 	@Override
-	public com.liferay.opensocial.model.Gadget toUnescapedModel() {
-		return new GadgetWrapper(_gadget.toUnescapedModel());
-	}
-
-	@Override
 	public java.lang.String toString() {
 		return _gadget.toString();
 	}
 
 	@Override
-	public java.lang.String toXmlString() {
-		return _gadget.toXmlString();
+	public com.liferay.opensocial.model.Gadget toUnescapedModel() {
+		return new GadgetWrapper(_gadget.toUnescapedModel());
 	}
 
 	@Override
-	public void persist()
-		throws com.liferay.portal.kernel.exception.SystemException {
-		_gadget.persist();
+	public java.lang.String toXmlString() {
+		return _gadget.toXmlString();
 	}
 
 	@Override
@@ -422,14 +455,6 @@ public class GadgetWrapper implements Gadget, ModelWrapper<Gadget> {
 		return _gadget.getStagedModelType();
 	}
 
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public Gadget getWrappedGadget() {
-		return _gadget;
-	}
-
 	@Override
 	public Gadget getWrappedModel() {
 		return _gadget;
@@ -450,5 +475,5 @@ public class GadgetWrapper implements Gadget, ModelWrapper<Gadget> {
 		_gadget.resetOriginalValues();
 	}
 
-	private Gadget _gadget;
+	private final Gadget _gadget;
 }

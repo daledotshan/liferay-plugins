@@ -19,9 +19,8 @@ import aQute.bnd.annotation.component.Reference;
 
 import com.liferay.gogo.commands.user.internal.AbstractCommand;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.UserLocalService;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.UserLocalService;
 
 /**
  * @author Miguel Pastor
@@ -31,7 +30,8 @@ import com.liferay.portal.service.UserLocalService;
 		AbstractCommand.OSGI_COMMAND_FUNCTION + "=user",
 		AbstractCommand.OSGI_COMMAND_SCOPE + "=liferay"
 	},
-	provide = Object.class)
+	provide = Object.class
+)
 public class UserCommand extends AbstractCommand {
 
 	@Override
@@ -41,7 +41,7 @@ public class UserCommand extends AbstractCommand {
 	}
 
 	public void user(long companyId, String emailAddress)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		User user = userLocalService.fetchUserByEmailAddress(
 			companyId, emailAddress);

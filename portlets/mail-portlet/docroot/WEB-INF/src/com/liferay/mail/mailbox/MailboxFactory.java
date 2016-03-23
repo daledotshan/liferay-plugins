@@ -16,8 +16,7 @@ package com.liferay.mail.mailbox;
 
 import com.liferay.mail.model.Account;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.model.User;
+import com.liferay.portal.kernel.model.User;
 
 /**
  * @author Scott Lee
@@ -28,6 +27,6 @@ public interface MailboxFactory {
 
 	public Mailbox getMailbox(User user, String protocol);
 
-	public void initialize() throws PortalException, SystemException;
+	public void initialize() throws PortalException;
 
 }

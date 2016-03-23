@@ -18,10 +18,10 @@
 
 <liferay-portlet:actionURL portletConfiguration="true" var="configurationActionURL" />
 
-<aui:form action="<%= configurationActionURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveMessage();" %>' >
+<aui:form action="<%= configurationActionURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveMessage();" %>'>
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
 
-	<liferay-ui:input-editor />
+	<liferay-ui:input-editor contents="<%= message %>" />
 
 	<aui:input name="preferences--message--" type="hidden" />
 
@@ -29,10 +29,6 @@
 </aui:form>
 
 <aui:script>
-	function <portlet:namespace />initEditor() {
-		return "<%= UnicodeFormatter.toString(message) %>";
-	}
-
 	function <portlet:namespace />saveMessage() {
 		var message = window.<portlet:namespace />editor.getHTML();
 

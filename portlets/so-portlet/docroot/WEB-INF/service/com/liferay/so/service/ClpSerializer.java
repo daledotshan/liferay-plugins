@@ -14,14 +14,16 @@
 
 package com.liferay.so.service;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.util.ClassLoaderObjectInputStream;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.BaseModel;
 
 import com.liferay.so.model.FavoriteSiteClp;
 import com.liferay.so.model.MemberRequestClp;
@@ -38,6 +40,7 @@ import java.util.List;
 /**
  * @author Brian Wing Shun Chan
  */
+@ProviderType
 public class ClpSerializer {
 	public static String getServletContextName() {
 		if (Validator.isNotNull(_servletContextName)) {
@@ -180,15 +183,111 @@ public class ClpSerializer {
 					"com.liferay.so.model.impl.FavoriteSiteImpl")) {
 			return translateOutputFavoriteSite(oldModel);
 		}
+		else if (oldModelClassName.endsWith("Clp")) {
+			try {
+				ClassLoader classLoader = ClpSerializer.class.getClassLoader();
+
+				Method getClpSerializerClassMethod = oldModelClass.getMethod(
+						"getClpSerializerClass");
+
+				Class<?> oldClpSerializerClass = (Class<?>)getClpSerializerClassMethod.invoke(oldModel);
+
+				Class<?> newClpSerializerClass = classLoader.loadClass(oldClpSerializerClass.getName());
+
+				Method translateOutputMethod = newClpSerializerClass.getMethod("translateOutput",
+						BaseModel.class);
+
+				Class<?> oldModelModelClass = oldModel.getModelClass();
+
+				Method getRemoteModelMethod = oldModelClass.getMethod("get" +
+						oldModelModelClass.getSimpleName() + "RemoteModel");
+
+				Object oldRemoteModel = getRemoteModelMethod.invoke(oldModel);
+
+				BaseModel<?> newModel = (BaseModel<?>)translateOutputMethod.invoke(null,
+						oldRemoteModel);
+
+				return newModel;
+			}
+			catch (Throwable t) {
+				if (_log.isInfoEnabled()) {
+					_log.info("Unable to translate " + oldModelClassName, t);
+				}
+			}
+		}
 
 		if (oldModelClassName.equals(
 					"com.liferay.so.model.impl.MemberRequestImpl")) {
 			return translateOutputMemberRequest(oldModel);
 		}
+		else if (oldModelClassName.endsWith("Clp")) {
+			try {
+				ClassLoader classLoader = ClpSerializer.class.getClassLoader();
+
+				Method getClpSerializerClassMethod = oldModelClass.getMethod(
+						"getClpSerializerClass");
+
+				Class<?> oldClpSerializerClass = (Class<?>)getClpSerializerClassMethod.invoke(oldModel);
+
+				Class<?> newClpSerializerClass = classLoader.loadClass(oldClpSerializerClass.getName());
+
+				Method translateOutputMethod = newClpSerializerClass.getMethod("translateOutput",
+						BaseModel.class);
+
+				Class<?> oldModelModelClass = oldModel.getModelClass();
+
+				Method getRemoteModelMethod = oldModelClass.getMethod("get" +
+						oldModelModelClass.getSimpleName() + "RemoteModel");
+
+				Object oldRemoteModel = getRemoteModelMethod.invoke(oldModel);
+
+				BaseModel<?> newModel = (BaseModel<?>)translateOutputMethod.invoke(null,
+						oldRemoteModel);
+
+				return newModel;
+			}
+			catch (Throwable t) {
+				if (_log.isInfoEnabled()) {
+					_log.info("Unable to translate " + oldModelClassName, t);
+				}
+			}
+		}
 
 		if (oldModelClassName.equals(
 					"com.liferay.so.model.impl.ProjectsEntryImpl")) {
 			return translateOutputProjectsEntry(oldModel);
+		}
+		else if (oldModelClassName.endsWith("Clp")) {
+			try {
+				ClassLoader classLoader = ClpSerializer.class.getClassLoader();
+
+				Method getClpSerializerClassMethod = oldModelClass.getMethod(
+						"getClpSerializerClass");
+
+				Class<?> oldClpSerializerClass = (Class<?>)getClpSerializerClassMethod.invoke(oldModel);
+
+				Class<?> newClpSerializerClass = classLoader.loadClass(oldClpSerializerClass.getName());
+
+				Method translateOutputMethod = newClpSerializerClass.getMethod("translateOutput",
+						BaseModel.class);
+
+				Class<?> oldModelModelClass = oldModel.getModelClass();
+
+				Method getRemoteModelMethod = oldModelClass.getMethod("get" +
+						oldModelModelClass.getSimpleName() + "RemoteModel");
+
+				Object oldRemoteModel = getRemoteModelMethod.invoke(oldModel);
+
+				BaseModel<?> newModel = (BaseModel<?>)translateOutputMethod.invoke(null,
+						oldRemoteModel);
+
+				return newModel;
+			}
+			catch (Throwable t) {
+				if (_log.isInfoEnabled()) {
+					_log.info("Unable to translate " + oldModelClassName, t);
+				}
+			}
 		}
 
 		return oldModel;
@@ -270,38 +369,45 @@ public class ClpSerializer {
 
 		String className = clazz.getName();
 
-		if (className.equals("com.liferay.so.MemberRequestAlreadyUsedException")) {
-			return new com.liferay.so.MemberRequestAlreadyUsedException(throwable.getMessage(),
+		if (className.equals(
+					"com.liferay.so.exception.MemberRequestAlreadyUsedException")) {
+			return new com.liferay.so.exception.MemberRequestAlreadyUsedException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
-		if (className.equals("com.liferay.so.MemberRequestInvalidUserException")) {
-			return new com.liferay.so.MemberRequestInvalidUserException(throwable.getMessage(),
+		if (className.equals(
+					"com.liferay.so.exception.MemberRequestInvalidUserException")) {
+			return new com.liferay.so.exception.MemberRequestInvalidUserException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
-		if (className.equals("com.liferay.so.ProjectsEntryEndDateException")) {
-			return new com.liferay.so.ProjectsEntryEndDateException(throwable.getMessage(),
+		if (className.equals(
+					"com.liferay.so.exception.ProjectsEntryEndDateException")) {
+			return new com.liferay.so.exception.ProjectsEntryEndDateException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
-		if (className.equals("com.liferay.so.ProjectsEntryStartDateException")) {
-			return new com.liferay.so.ProjectsEntryStartDateException(throwable.getMessage(),
+		if (className.equals(
+					"com.liferay.so.exception.ProjectsEntryStartDateException")) {
+			return new com.liferay.so.exception.ProjectsEntryStartDateException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
-		if (className.equals("com.liferay.so.NoSuchFavoriteSiteException")) {
-			return new com.liferay.so.NoSuchFavoriteSiteException(throwable.getMessage(),
+		if (className.equals(
+					"com.liferay.so.exception.NoSuchFavoriteSiteException")) {
+			return new com.liferay.so.exception.NoSuchFavoriteSiteException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
-		if (className.equals("com.liferay.so.NoSuchMemberRequestException")) {
-			return new com.liferay.so.NoSuchMemberRequestException(throwable.getMessage(),
+		if (className.equals(
+					"com.liferay.so.exception.NoSuchMemberRequestException")) {
+			return new com.liferay.so.exception.NoSuchMemberRequestException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
-		if (className.equals("com.liferay.so.NoSuchProjectsEntryException")) {
-			return new com.liferay.so.NoSuchProjectsEntryException(throwable.getMessage(),
+		if (className.equals(
+					"com.liferay.so.exception.NoSuchProjectsEntryException")) {
+			return new com.liferay.so.exception.NoSuchProjectsEntryException(throwable.getMessage(),
 				throwable.getCause());
 		}
 

@@ -17,34 +17,32 @@
 
 package com.liferay.so.service.impl;
 
-import com.liferay.mail.service.MailServiceUtil;
-import com.liferay.portal.NoSuchUserException;
-import com.liferay.portal.NoSuchWorkflowDefinitionLinkException;
+import com.liferay.mail.kernel.model.MailMessage;
+import com.liferay.mail.kernel.service.MailServiceUtil;
+import com.liferay.portal.kernel.exception.NoSuchUserException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.mail.MailMessage;
-import com.liferay.portal.kernel.notifications.NotificationEvent;
-import com.liferay.portal.kernel.notifications.NotificationEventFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.MembershipRequestConstants;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserNotificationDeliveryConstants;
 import com.liferay.portal.kernel.notifications.UserNotificationManagerUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserNotificationEventLocalServiceUtil;
+import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalServiceUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.MembershipRequestConstants;
-import com.liferay.portal.model.User;
-import com.liferay.portal.model.UserNotificationDeliveryConstants;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserNotificationEventLocalServiceUtil;
-import com.liferay.portal.service.WorkflowDefinitionLinkLocalServiceUtil;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.so.MemberRequestAlreadyUsedException;
-import com.liferay.so.MemberRequestInvalidUserException;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.so.exception.MemberRequestAlreadyUsedException;
+import com.liferay.so.exception.MemberRequestInvalidUserException;
 import com.liferay.so.invitemembers.util.InviteMembersConstants;
 import com.liferay.so.model.MemberRequest;
 import com.liferay.so.service.base.MemberRequestLocalServiceBaseImpl;
@@ -66,7 +64,7 @@ public class MemberRequestLocalServiceImpl
 			long userId, long groupId, long receiverUserId,
 			String receiverEmailAddress, long invitedRoleId, long invitedTeamId,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		// Member request
 
@@ -124,7 +122,7 @@ public class MemberRequestLocalServiceImpl
 			long userId, long groupId, long[] receiverUserIds,
 			long invitedRoleId, long invitedTeamId,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		for (long receiverUserId : receiverUserIds) {
 			if (hasPendingMemberRequest(groupId, receiverUserId)) {
@@ -145,7 +143,7 @@ public class MemberRequestLocalServiceImpl
 			long userId, long groupId, String[] emailAddresses,
 			long invitedRoleId, long invitedTeamId,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		for (String emailAddress : emailAddresses) {
 			if (!Validator.isEmailAddress(emailAddress)) {
@@ -160,43 +158,36 @@ public class MemberRequestLocalServiceImpl
 
 	public MemberRequest getMemberRequest(
 			long groupId, long receiverUserId, int status)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		return memberRequestPersistence.findByG_R_S(
 			groupId, receiverUserId, status);
 	}
 
 	public List<MemberRequest> getReceiverMemberRequest(
-			long receiverUserId, int start, int end)
-		throws SystemException {
+		long receiverUserId, int start, int end) {
 
 		return memberRequestPersistence.findByReceiverUserId(receiverUserId);
 	}
 
-	public int getReceiverMemberRequestCount(long receiverUserId)
-		throws SystemException {
-
+	public int getReceiverMemberRequestCount(long receiverUserId) {
 		return memberRequestPersistence.countByReceiverUserId(receiverUserId);
 	}
 
 	public List<MemberRequest> getReceiverStatusMemberRequest(
-			long receiverUserId, int status, int start, int end)
-		throws SystemException {
+		long receiverUserId, int status, int start, int end) {
 
 		return memberRequestPersistence.findByR_S(
 			receiverUserId, status, start, end);
 	}
 
 	public int getReceiverStatusMemberRequestCount(
-			long receiverUserId, int status)
-		throws SystemException {
+		long receiverUserId, int status) {
 
 		return memberRequestPersistence.countByR_S(receiverUserId, status);
 	}
 
-	public boolean hasPendingMemberRequest(long groupId, long receiverUserId)
-		throws SystemException {
-
+	public boolean hasPendingMemberRequest(long groupId, long receiverUserId) {
 		MemberRequest memberRequest = memberRequestPersistence.fetchByG_R_S(
 			groupId, receiverUserId, InviteMembersConstants.STATUS_PENDING);
 
@@ -245,7 +236,7 @@ public class MemberRequestLocalServiceImpl
 	}
 
 	public MemberRequest updateMemberRequest(String key, long receiverUserId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		MemberRequest memberRequest = memberRequestPersistence.findByKey(key);
 
@@ -277,7 +268,7 @@ public class MemberRequestLocalServiceImpl
 
 	protected String getCreateAccountURL(
 			MemberRequest memberRequest, ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		String createAccountURL = (String)serviceContext.getAttribute(
 			"createAccountURL");
@@ -286,12 +277,10 @@ public class MemberRequestLocalServiceImpl
 			createAccountURL = serviceContext.getPortalURL();
 		}
 
-		try {
-			WorkflowDefinitionLinkLocalServiceUtil.
-				getDefaultWorkflowDefinitionLink(
-					memberRequest.getCompanyId(), User.class.getName(), 0, 0);
-		}
-		catch (NoSuchWorkflowDefinitionLinkException nswdle) {
+		if (!WorkflowDefinitionLinkLocalServiceUtil.hasWorkflowDefinitionLink(
+				memberRequest.getCompanyId(),
+				WorkflowConstants.DEFAULT_GROUP_ID, User.class.getName(), 0)) {
+
 			String redirectURL = getRedirectURL(serviceContext);
 
 			redirectURL = addParameterWithPortletNamespace(
@@ -416,7 +405,7 @@ public class MemberRequestLocalServiceImpl
 	}
 
 	protected void sendNotificationEvent(MemberRequest memberRequest)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		if (UserNotificationManagerUtil.isDeliver(
 				memberRequest.getReceiverUserId(),
@@ -432,15 +421,11 @@ public class MemberRequestLocalServiceImpl
 			notificationEventJSONObject.put(
 				"userId", memberRequest.getUserId());
 
-			NotificationEvent notificationEvent =
-				NotificationEventFactoryUtil.createNotificationEvent(
-					System.currentTimeMillis(), PortletKeys.SO_INVITE_MEMBERS,
-					notificationEventJSONObject);
-
-			notificationEvent.setDeliveryRequired(0);
-
-			UserNotificationEventLocalServiceUtil.addUserNotificationEvent(
-				memberRequest.getReceiverUserId(), notificationEvent);
+			UserNotificationEventLocalServiceUtil.sendUserNotificationEvents(
+				memberRequest.getReceiverUserId(),
+				PortletKeys.SO_INVITE_MEMBERS,
+				UserNotificationDeliveryConstants.TYPE_WEBSITE, true,
+				notificationEventJSONObject);
 		}
 	}
 

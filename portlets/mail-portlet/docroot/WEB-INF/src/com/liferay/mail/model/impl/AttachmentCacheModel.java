@@ -14,11 +14,14 @@
 
 package com.liferay.mail.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.mail.model.Attachment;
 
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.util.HashUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CacheModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -32,8 +35,33 @@ import java.io.ObjectOutput;
  * @see Attachment
  * @generated
  */
+@ProviderType
 public class AttachmentCacheModel implements CacheModel<Attachment>,
 	Externalizable {
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof AttachmentCacheModel)) {
+			return false;
+		}
+
+		AttachmentCacheModel attachmentCacheModel = (AttachmentCacheModel)obj;
+
+		if (attachmentId == attachmentCacheModel.attachmentId) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return HashUtil.hash(0, attachmentId);
+	}
+
 	@Override
 	public String toString() {
 		StringBundler sb = new StringBundler(19);
@@ -96,13 +124,19 @@ public class AttachmentCacheModel implements CacheModel<Attachment>,
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		attachmentId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
+
 		userId = objectInput.readLong();
+
 		accountId = objectInput.readLong();
+
 		folderId = objectInput.readLong();
+
 		messageId = objectInput.readLong();
 		contentPath = objectInput.readUTF();
 		fileName = objectInput.readUTF();
+
 		size = objectInput.readLong();
 	}
 
@@ -110,10 +144,15 @@ public class AttachmentCacheModel implements CacheModel<Attachment>,
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
 		objectOutput.writeLong(attachmentId);
+
 		objectOutput.writeLong(companyId);
+
 		objectOutput.writeLong(userId);
+
 		objectOutput.writeLong(accountId);
+
 		objectOutput.writeLong(folderId);
+
 		objectOutput.writeLong(messageId);
 
 		if (contentPath == null) {

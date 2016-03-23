@@ -14,16 +14,17 @@
 
 package com.liferay.opensocial.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.opensocial.service.ClpSerializer;
 import com.liferay.opensocial.service.OAuthConsumerLocalServiceUtil;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.model.impl.BaseModelImpl;
 
 import java.io.Serializable;
 
@@ -34,8 +35,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Brian Wing Shun Chan
+ * @generated
  */
+@ProviderType
 public class OAuthConsumerClp extends BaseModelImpl<OAuthConsumer>
 	implements OAuthConsumer {
 	public OAuthConsumerClp() {
@@ -445,7 +447,7 @@ public class OAuthConsumerClp extends BaseModelImpl<OAuthConsumer>
 	}
 
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			OAuthConsumerLocalServiceUtil.addOAuthConsumer(this);
 		}
@@ -510,6 +512,10 @@ public class OAuthConsumerClp extends BaseModelImpl<OAuthConsumer>
 		else {
 			return false;
 		}
+	}
+
+	public Class<?> getClpSerializerClass() {
+		return _clpSerializerClass;
 	}
 
 	@Override
@@ -614,6 +620,7 @@ public class OAuthConsumerClp extends BaseModelImpl<OAuthConsumer>
 	private String _consumerSecret;
 	private String _keyType;
 	private BaseModel<?> _oAuthConsumerRemoteModel;
+	private Class<?> _clpSerializerClass = com.liferay.opensocial.service.ClpSerializer.class;
 	private boolean _entityCacheEnabled;
 	private boolean _finderCacheEnabled;
 }

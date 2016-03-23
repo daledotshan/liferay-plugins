@@ -14,6 +14,9 @@
 
 package com.liferay.mail.service.impl;
 
+import com.liferay.document.library.kernel.exception.DuplicateDirectoryException;
+import com.liferay.document.library.kernel.exception.DuplicateFileException;
+import com.liferay.document.library.kernel.store.DLStoreUtil;
 import com.liferay.mail.model.Attachment;
 import com.liferay.mail.model.Message;
 import com.liferay.mail.service.base.AttachmentLocalServiceBaseImpl;
@@ -21,15 +24,10 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.CompanyConstants;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.CompanyConstants;
-import com.liferay.portal.model.User;
-import com.liferay.portlet.documentlibrary.DuplicateDirectoryException;
-import com.liferay.portlet.documentlibrary.DuplicateFileException;
-import com.liferay.portlet.documentlibrary.NoSuchDirectoryException;
-import com.liferay.portlet.documentlibrary.NoSuchFileException;
-import com.liferay.portlet.documentlibrary.store.DLStoreUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,7 +44,7 @@ public class AttachmentLocalServiceImpl extends AttachmentLocalServiceBaseImpl {
 	public Attachment addAttachment(
 			long userId, long messageId, String contentPath, String fileName,
 			long size, File file)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		// Attachment
 
@@ -81,7 +79,7 @@ public class AttachmentLocalServiceImpl extends AttachmentLocalServiceBaseImpl {
 				DLStoreUtil.addDirectory(
 					attachment.getCompanyId(), _REPOSITORY_ID, directoryPath);
 			}
-				catch (DuplicateDirectoryException dde) {
+			catch (DuplicateDirectoryException dde) {
 			}
 
 			String filePath = getFilePath(attachment.getMessageId(), fileName);
@@ -102,7 +100,7 @@ public class AttachmentLocalServiceImpl extends AttachmentLocalServiceBaseImpl {
 
 	@Override
 	public Attachment deleteAttachment(long attachmentId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		// Attachment
 
@@ -116,26 +114,14 @@ public class AttachmentLocalServiceImpl extends AttachmentLocalServiceBaseImpl {
 		String filePath = getFilePath(
 			attachment.getMessageId(), attachment.getFileName());
 
-		try {
-			DLStoreUtil.deleteFile(
-				attachment.getCompanyId(), _REPOSITORY_ID, filePath);
-		}
-		catch (NoSuchDirectoryException nsde) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(nsde, nsde);
-			}
-		}
-		catch (NoSuchFileException nsfe) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(nsfe, nsfe);
-			}
-		}
+		DLStoreUtil.deleteFile(
+			attachment.getCompanyId(), _REPOSITORY_ID, filePath);
 
 		return attachment;
 	}
 
 	public void deleteAttachments(long companyId, long messageId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		// Attachments
 
@@ -150,26 +136,14 @@ public class AttachmentLocalServiceImpl extends AttachmentLocalServiceBaseImpl {
 
 		String directoryPath = getDirectoryPath(messageId);
 
-		try {
-			DLStoreUtil.deleteDirectory(
-				companyId, _REPOSITORY_ID, directoryPath);
-		}
-		catch (NoSuchDirectoryException nsde) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(nsde.getMessage());
-			}
-		}
+		DLStoreUtil.deleteDirectory(companyId, _REPOSITORY_ID, directoryPath);
 	}
 
-	public List<Attachment> getAttachments(long messageId)
-		throws SystemException {
-
+	public List<Attachment> getAttachments(long messageId) {
 		return attachmentPersistence.findByMessageId(messageId);
 	}
 
-	public File getFile(long attachmentId)
-		throws PortalException, SystemException {
-
+	public File getFile(long attachmentId) throws PortalException {
 		try {
 			File file = FileUtil.createTempFile();
 
@@ -183,7 +157,7 @@ public class AttachmentLocalServiceImpl extends AttachmentLocalServiceBaseImpl {
 	}
 
 	public InputStream getInputStream(long attachmentId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		Attachment attachment = attachmentPersistence.findByPrimaryKey(
 			attachmentId);

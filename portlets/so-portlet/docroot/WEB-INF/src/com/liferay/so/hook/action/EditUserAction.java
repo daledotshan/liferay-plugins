@@ -20,25 +20,27 @@ package com.liferay.so.hook.action;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.model.LayoutSetPrototype;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.DynamicActionRequest;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.ServletResponseUtil;
 import com.liferay.portal.kernel.struts.BaseStrutsPortletAction;
 import com.liferay.portal.kernel.struts.StrutsPortletAction;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.model.LayoutSetPrototype;
-import com.liferay.portal.model.Role;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.RoleLocalServiceUtil;
-import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.so.model.ProjectsEntry;
 import com.liferay.so.service.ProjectsEntryLocalServiceUtil;
 import com.liferay.so.util.LayoutSetPrototypeUtil;
@@ -164,7 +166,7 @@ public class EditUserAction extends BaseStrutsPortletAction {
 			return;
 		}
 
-		Set<Long> projectsEntryIds = new HashSet<Long>();
+		Set<Long> projectsEntryIds = new HashSet<>();
 
 		int[] projectsEntriesIndexes = StringUtil.split(
 			projectsEntriesIndexesString, 0);
@@ -234,6 +236,10 @@ public class EditUserAction extends BaseStrutsPortletAction {
 					projectsEntry.getProjectsEntryId());
 			}
 		}
+
+		Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(User.class);
+
+		indexer.reindex(user);
 	}
 
 	protected void updateUser(
@@ -258,8 +264,15 @@ public class EditUserAction extends BaseStrutsPortletAction {
 
 		User user = PortalUtil.getSelectedUser(actionRequest);
 
-		Role role = RoleLocalServiceUtil.getRole(
+		Role role = RoleLocalServiceUtil.fetchRole(
 			user.getCompanyId(), RoleConstants.SOCIAL_OFFICE_USER);
+
+		if (role == null) {
+			originalStrutsPortletAction.processAction(
+				portletConfig, dynamicActionRequest, actionResponse);
+
+			return;
+		}
 
 		long[] roleIds = getLongArray(
 			actionRequest, "rolesSearchContainerPrimaryKeys");

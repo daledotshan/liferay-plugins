@@ -14,18 +14,21 @@
 
 package com.liferay.knowledgebase.service;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.knowledgebase.model.KBArticleClp;
 import com.liferay.knowledgebase.model.KBCommentClp;
+import com.liferay.knowledgebase.model.KBFolderClp;
 import com.liferay.knowledgebase.model.KBTemplateClp;
 
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.util.ClassLoaderObjectInputStream;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.BaseModel;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -38,6 +41,7 @@ import java.util.List;
 /**
  * @author Brian Wing Shun Chan
  */
+@ProviderType
 public class ClpSerializer {
 	public static String getServletContextName() {
 		if (Validator.isNotNull(_servletContextName)) {
@@ -110,6 +114,10 @@ public class ClpSerializer {
 			return translateInputKBComment(oldModel);
 		}
 
+		if (oldModelClassName.equals(KBFolderClp.class.getName())) {
+			return translateInputKBFolder(oldModel);
+		}
+
 		if (oldModelClassName.equals(KBTemplateClp.class.getName())) {
 			return translateInputKBTemplate(oldModel);
 		}
@@ -149,6 +157,16 @@ public class ClpSerializer {
 		return newModel;
 	}
 
+	public static Object translateInputKBFolder(BaseModel<?> oldModel) {
+		KBFolderClp oldClpModel = (KBFolderClp)oldModel;
+
+		BaseModel<?> newModel = oldClpModel.getKBFolderRemoteModel();
+
+		newModel.setModelAttributes(oldClpModel.getModelAttributes());
+
+		return newModel;
+	}
+
 	public static Object translateInputKBTemplate(BaseModel<?> oldModel) {
 		KBTemplateClp oldClpModel = (KBTemplateClp)oldModel;
 
@@ -180,15 +198,148 @@ public class ClpSerializer {
 					"com.liferay.knowledgebase.model.impl.KBArticleImpl")) {
 			return translateOutputKBArticle(oldModel);
 		}
+		else if (oldModelClassName.endsWith("Clp")) {
+			try {
+				ClassLoader classLoader = ClpSerializer.class.getClassLoader();
+
+				Method getClpSerializerClassMethod = oldModelClass.getMethod(
+						"getClpSerializerClass");
+
+				Class<?> oldClpSerializerClass = (Class<?>)getClpSerializerClassMethod.invoke(oldModel);
+
+				Class<?> newClpSerializerClass = classLoader.loadClass(oldClpSerializerClass.getName());
+
+				Method translateOutputMethod = newClpSerializerClass.getMethod("translateOutput",
+						BaseModel.class);
+
+				Class<?> oldModelModelClass = oldModel.getModelClass();
+
+				Method getRemoteModelMethod = oldModelClass.getMethod("get" +
+						oldModelModelClass.getSimpleName() + "RemoteModel");
+
+				Object oldRemoteModel = getRemoteModelMethod.invoke(oldModel);
+
+				BaseModel<?> newModel = (BaseModel<?>)translateOutputMethod.invoke(null,
+						oldRemoteModel);
+
+				return newModel;
+			}
+			catch (Throwable t) {
+				if (_log.isInfoEnabled()) {
+					_log.info("Unable to translate " + oldModelClassName, t);
+				}
+			}
+		}
 
 		if (oldModelClassName.equals(
 					"com.liferay.knowledgebase.model.impl.KBCommentImpl")) {
 			return translateOutputKBComment(oldModel);
 		}
+		else if (oldModelClassName.endsWith("Clp")) {
+			try {
+				ClassLoader classLoader = ClpSerializer.class.getClassLoader();
+
+				Method getClpSerializerClassMethod = oldModelClass.getMethod(
+						"getClpSerializerClass");
+
+				Class<?> oldClpSerializerClass = (Class<?>)getClpSerializerClassMethod.invoke(oldModel);
+
+				Class<?> newClpSerializerClass = classLoader.loadClass(oldClpSerializerClass.getName());
+
+				Method translateOutputMethod = newClpSerializerClass.getMethod("translateOutput",
+						BaseModel.class);
+
+				Class<?> oldModelModelClass = oldModel.getModelClass();
+
+				Method getRemoteModelMethod = oldModelClass.getMethod("get" +
+						oldModelModelClass.getSimpleName() + "RemoteModel");
+
+				Object oldRemoteModel = getRemoteModelMethod.invoke(oldModel);
+
+				BaseModel<?> newModel = (BaseModel<?>)translateOutputMethod.invoke(null,
+						oldRemoteModel);
+
+				return newModel;
+			}
+			catch (Throwable t) {
+				if (_log.isInfoEnabled()) {
+					_log.info("Unable to translate " + oldModelClassName, t);
+				}
+			}
+		}
+
+		if (oldModelClassName.equals(
+					"com.liferay.knowledgebase.model.impl.KBFolderImpl")) {
+			return translateOutputKBFolder(oldModel);
+		}
+		else if (oldModelClassName.endsWith("Clp")) {
+			try {
+				ClassLoader classLoader = ClpSerializer.class.getClassLoader();
+
+				Method getClpSerializerClassMethod = oldModelClass.getMethod(
+						"getClpSerializerClass");
+
+				Class<?> oldClpSerializerClass = (Class<?>)getClpSerializerClassMethod.invoke(oldModel);
+
+				Class<?> newClpSerializerClass = classLoader.loadClass(oldClpSerializerClass.getName());
+
+				Method translateOutputMethod = newClpSerializerClass.getMethod("translateOutput",
+						BaseModel.class);
+
+				Class<?> oldModelModelClass = oldModel.getModelClass();
+
+				Method getRemoteModelMethod = oldModelClass.getMethod("get" +
+						oldModelModelClass.getSimpleName() + "RemoteModel");
+
+				Object oldRemoteModel = getRemoteModelMethod.invoke(oldModel);
+
+				BaseModel<?> newModel = (BaseModel<?>)translateOutputMethod.invoke(null,
+						oldRemoteModel);
+
+				return newModel;
+			}
+			catch (Throwable t) {
+				if (_log.isInfoEnabled()) {
+					_log.info("Unable to translate " + oldModelClassName, t);
+				}
+			}
+		}
 
 		if (oldModelClassName.equals(
 					"com.liferay.knowledgebase.model.impl.KBTemplateImpl")) {
 			return translateOutputKBTemplate(oldModel);
+		}
+		else if (oldModelClassName.endsWith("Clp")) {
+			try {
+				ClassLoader classLoader = ClpSerializer.class.getClassLoader();
+
+				Method getClpSerializerClassMethod = oldModelClass.getMethod(
+						"getClpSerializerClass");
+
+				Class<?> oldClpSerializerClass = (Class<?>)getClpSerializerClassMethod.invoke(oldModel);
+
+				Class<?> newClpSerializerClass = classLoader.loadClass(oldClpSerializerClass.getName());
+
+				Method translateOutputMethod = newClpSerializerClass.getMethod("translateOutput",
+						BaseModel.class);
+
+				Class<?> oldModelModelClass = oldModel.getModelClass();
+
+				Method getRemoteModelMethod = oldModelClass.getMethod("get" +
+						oldModelModelClass.getSimpleName() + "RemoteModel");
+
+				Object oldRemoteModel = getRemoteModelMethod.invoke(oldModel);
+
+				BaseModel<?> newModel = (BaseModel<?>)translateOutputMethod.invoke(null,
+						oldRemoteModel);
+
+				return newModel;
+			}
+			catch (Throwable t) {
+				if (_log.isInfoEnabled()) {
+					_log.info("Unable to translate " + oldModelClassName, t);
+				}
+			}
 		}
 
 		return oldModel;
@@ -271,54 +422,104 @@ public class ClpSerializer {
 		String className = clazz.getName();
 
 		if (className.equals(
-					"com.liferay.knowledgebase.KBArticleContentException")) {
-			return new com.liferay.knowledgebase.KBArticleContentException(throwable.getMessage(),
+					"com.liferay.knowledgebase.exception.DuplicateKBFolderNameException")) {
+			return new com.liferay.knowledgebase.exception.DuplicateKBFolderNameException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
 		if (className.equals(
-					"com.liferay.knowledgebase.KBArticlePriorityException")) {
-			return new com.liferay.knowledgebase.KBArticlePriorityException(throwable.getMessage(),
+					"com.liferay.knowledgebase.exception.InvalidKBFolderNameException")) {
+			return new com.liferay.knowledgebase.exception.InvalidKBFolderNameException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
 		if (className.equals(
-					"com.liferay.knowledgebase.KBArticleTitleException")) {
-			return new com.liferay.knowledgebase.KBArticleTitleException(throwable.getMessage(),
+					"com.liferay.knowledgebase.exception.KBArticleContentException")) {
+			return new com.liferay.knowledgebase.exception.KBArticleContentException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
 		if (className.equals(
-					"com.liferay.knowledgebase.KBCommentContentException")) {
-			return new com.liferay.knowledgebase.KBCommentContentException(throwable.getMessage(),
+					"com.liferay.knowledgebase.exception.KBArticleImportException")) {
+			return new com.liferay.knowledgebase.exception.KBArticleImportException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
 		if (className.equals(
-					"com.liferay.knowledgebase.KBTemplateContentException")) {
-			return new com.liferay.knowledgebase.KBTemplateContentException(throwable.getMessage(),
+					"com.liferay.knowledgebase.exception.KBArticleParentException")) {
+			return new com.liferay.knowledgebase.exception.KBArticleParentException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
 		if (className.equals(
-					"com.liferay.knowledgebase.KBTemplateTitleException")) {
-			return new com.liferay.knowledgebase.KBTemplateTitleException(throwable.getMessage(),
-				throwable.getCause());
-		}
-
-		if (className.equals("com.liferay.knowledgebase.NoSuchArticleException")) {
-			return new com.liferay.knowledgebase.NoSuchArticleException(throwable.getMessage(),
-				throwable.getCause());
-		}
-
-		if (className.equals("com.liferay.knowledgebase.NoSuchCommentException")) {
-			return new com.liferay.knowledgebase.NoSuchCommentException(throwable.getMessage(),
+					"com.liferay.knowledgebase.exception.KBArticlePriorityException")) {
+			return new com.liferay.knowledgebase.exception.KBArticlePriorityException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
 		if (className.equals(
-					"com.liferay.knowledgebase.NoSuchTemplateException")) {
-			return new com.liferay.knowledgebase.NoSuchTemplateException(throwable.getMessage(),
+					"com.liferay.knowledgebase.exception.KBArticleSourceURLException")) {
+			return new com.liferay.knowledgebase.exception.KBArticleSourceURLException(throwable.getMessage(),
+				throwable.getCause());
+		}
+
+		if (className.equals(
+					"com.liferay.knowledgebase.exception.KBArticleTitleException")) {
+			return new com.liferay.knowledgebase.exception.KBArticleTitleException(throwable.getMessage(),
+				throwable.getCause());
+		}
+
+		if (className.equals(
+					"com.liferay.knowledgebase.exception.KBArticleUrlTitleException")) {
+			return new com.liferay.knowledgebase.exception.KBArticleUrlTitleException(throwable.getMessage(),
+				throwable.getCause());
+		}
+
+		if (className.equals(
+					"com.liferay.knowledgebase.exception.KBCommentContentException")) {
+			return new com.liferay.knowledgebase.exception.KBCommentContentException(throwable.getMessage(),
+				throwable.getCause());
+		}
+
+		if (className.equals(
+					"com.liferay.knowledgebase.exception.KBTemplateContentException")) {
+			return new com.liferay.knowledgebase.exception.KBTemplateContentException(throwable.getMessage(),
+				throwable.getCause());
+		}
+
+		if (className.equals(
+					"com.liferay.knowledgebase.exception.KBTemplateTitleException")) {
+			return new com.liferay.knowledgebase.exception.KBTemplateTitleException(throwable.getMessage(),
+				throwable.getCause());
+		}
+
+		if (className.equals(
+					"com.liferay.knowledgebase.exception.NoSuchKBArticleSelectorException")) {
+			return new com.liferay.knowledgebase.exception.NoSuchKBArticleSelectorException(throwable.getMessage(),
+				throwable.getCause());
+		}
+
+		if (className.equals(
+					"com.liferay.knowledgebase.exception.NoSuchArticleException")) {
+			return new com.liferay.knowledgebase.exception.NoSuchArticleException(throwable.getMessage(),
+				throwable.getCause());
+		}
+
+		if (className.equals(
+					"com.liferay.knowledgebase.exception.NoSuchCommentException")) {
+			return new com.liferay.knowledgebase.exception.NoSuchCommentException(throwable.getMessage(),
+				throwable.getCause());
+		}
+
+		if (className.equals(
+					"com.liferay.knowledgebase.exception.NoSuchFolderException")) {
+			return new com.liferay.knowledgebase.exception.NoSuchFolderException(throwable.getMessage(),
+				throwable.getCause());
+		}
+
+		if (className.equals(
+					"com.liferay.knowledgebase.exception.NoSuchTemplateException")) {
+			return new com.liferay.knowledgebase.exception.NoSuchTemplateException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
@@ -341,6 +542,16 @@ public class ClpSerializer {
 		newModel.setModelAttributes(oldModel.getModelAttributes());
 
 		newModel.setKBCommentRemoteModel(oldModel);
+
+		return newModel;
+	}
+
+	public static Object translateOutputKBFolder(BaseModel<?> oldModel) {
+		KBFolderClp newModel = new KBFolderClp();
+
+		newModel.setModelAttributes(oldModel.getModelAttributes());
+
+		newModel.setKBFolderRemoteModel(oldModel);
 
 		return newModel;
 	}

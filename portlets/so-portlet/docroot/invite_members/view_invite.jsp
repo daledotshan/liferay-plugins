@@ -40,6 +40,13 @@ Group group = GroupLocalServiceUtil.getGroup(scopeGroupId);
 		<div class="search">
 			<div class="list"></div>
 		</div>
+
+		<liferay-ui:icon
+			cssClass="footnote"
+			image="check"
+			label="<%= true %>"
+			message="previous-invitation-was-sent"
+		/>
 	</div>
 
 	<div class="invited-users-wrapper">
@@ -160,7 +167,7 @@ Group group = GroupLocalServiceUtil.getGroup(scopeGroupId);
 		return new A.DataSource.IO(
 			{
 				ioConfig: {
-					method: "post"
+					method: 'POST'
 				},
 				on: {
 					request: function(event) {
@@ -170,13 +177,13 @@ Group group = GroupLocalServiceUtil.getGroup(scopeGroupId);
 							<portlet:namespace />end: data.<portlet:namespace />end || pageDelta,
 							<portlet:namespace />keywords: data.<portlet:namespace />keywords || '',
 							<portlet:namespace />start: data.<portlet:namespace />start || 0
-						}
+						};
 					}
 				},
 				source: url
 			}
 		);
-	}
+	};
 
 	var inviteMembersList = new Liferay.SO.InviteMembersList(
 		{
@@ -188,7 +195,7 @@ Group group = GroupLocalServiceUtil.getGroup(scopeGroupId);
 					<portlet:namespace />end: pageDelta,
 					<portlet:namespace />keywords: query,
 					<portlet:namespace />start: 0
-				}
+				};
 			},
 			resultTextLocator: function(response) {
 				var result = '';
@@ -222,21 +229,20 @@ Group group = GroupLocalServiceUtil.getGroup(scopeGroupId);
 		}
 		else {
 			buffer.push(
-				A.Array.map(
-					results,
+				results.map(
 					function(result) {
-						var userTemplate =
-							'<div class="{cssClass}" data-userId="{userId}">' +
-								'<span class="name">{userFullName}</span>'+
+						var userTemplate = '<div class="{cssClass}" data-userId="{userId}">' +
+								'<span class="name">{userFullName}</span>' +
 								'<span class="email">{userEmailAddress}</span>' +
 							'</div>';
 
 						var invited = invitedMembersList.one('[data-userId="' + result.userId + '"]');
+						var invitedUser = invited ? 'invited user' : 'user';
 
 						return A.Lang.sub(
 							userTemplate,
 							{
-								cssClass: invited ? "invited user" : "user",
+								cssClass: result.hasPendingMemberRequest ? 'pending-member-request user' : invitedUser,
 								userEmailAddress: result.userEmailAddress,
 								userFullName: result.userFullName,
 								userId: result.userId
@@ -249,14 +255,14 @@ Group group = GroupLocalServiceUtil.getGroup(scopeGroupId);
 			if (count > results.length) {
 				buffer.push(
 					'<div class="more-results">' +
-						'<a href="javascript:;" data-end="' + options.end + '"><liferay-ui:message key="view-more" unicode="<%= true %>" /></a>' +
+						'<a data-end="' + options.end + '" href="javascript:;"><liferay-ui:message key="view-more" unicode="<%= true %>" /></a>' +
 					'</div>'
 				);
 			}
 		}
 
 		return buffer;
-	}
+	};
 
 	var showMoreResults = function(responseData) {
 		var moreResults = searchList.one('.more-results');
@@ -264,13 +270,13 @@ Group group = GroupLocalServiceUtil.getGroup(scopeGroupId);
 		moreResults.remove();
 
 		searchList.append(renderResults(responseData).join(''));
-	}
+	};
 
 	var updateInviteMembersList = function(event) {
-		var responseData = A.JSON.parse(event.data.responseText);
+		var responseData = JSON.parse(event.data.responseText);
 
 		searchList.html(renderResults(responseData).join(''));
-	}
+	};
 
 	inviteMembersList.on('results', updateInviteMembersList);
 
@@ -296,11 +302,11 @@ Group group = GroupLocalServiceUtil.getGroup(scopeGroupId);
 						}
 					},
 					data: {
-						<portlet:namespace />end: <portlet:namespace />end,
+						<portlet:namespace />end: end,
 						<portlet:namespace />keywords: inviteUserSearch.get('value'),
-						<portlet:namespace />start: <portlet:namespace />start
+						<portlet:namespace />start: start
 					},
-					dataType: 'json'
+					dataType: 'JSON'
 				}
 			);
 		},

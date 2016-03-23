@@ -14,14 +14,16 @@
 
 package com.liferay.mail.model;
 
-import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.model.AuditedModel;
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.service.ServiceContext;
+import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portlet.expando.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.model.AuditedModel;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ShardedModel;
+import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
 
@@ -40,7 +42,9 @@ import java.util.Date;
  * @see com.liferay.mail.model.impl.MessageModelImpl
  * @generated
  */
-public interface MessageModel extends AuditedModel, BaseModel<Message> {
+@ProviderType
+public interface MessageModel extends AuditedModel, BaseModel<Message>,
+	ShardedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -111,10 +115,9 @@ public interface MessageModel extends AuditedModel, BaseModel<Message> {
 	 * Returns the user uuid of this message.
 	 *
 	 * @return the user uuid of this message
-	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid() throws SystemException;
+	public String getUserUuid();
 
 	/**
 	 * Sets the user uuid of this message.
@@ -363,6 +366,21 @@ public interface MessageModel extends AuditedModel, BaseModel<Message> {
 	 */
 	public void setRemoteMessageId(long remoteMessageId);
 
+	/**
+	 * Returns the content type of this message.
+	 *
+	 * @return the content type of this message
+	 */
+	@AutoEscape
+	public String getContentType();
+
+	/**
+	 * Sets the content type of this message.
+	 *
+	 * @param contentType the content type of this message
+	 */
+	public void setContentType(String contentType);
+
 	@Override
 	public boolean isNew();
 
@@ -400,19 +418,19 @@ public interface MessageModel extends AuditedModel, BaseModel<Message> {
 	public Object clone();
 
 	@Override
-	public int compareTo(Message message);
+	public int compareTo(com.liferay.mail.model.Message message);
 
 	@Override
 	public int hashCode();
 
 	@Override
-	public CacheModel<Message> toCacheModel();
+	public CacheModel<com.liferay.mail.model.Message> toCacheModel();
 
 	@Override
-	public Message toEscapedModel();
+	public com.liferay.mail.model.Message toEscapedModel();
 
 	@Override
-	public Message toUnescapedModel();
+	public com.liferay.mail.model.Message toUnescapedModel();
 
 	@Override
 	public String toString();

@@ -14,13 +14,20 @@
 
 package com.liferay.opensocial.shindig.service;
 
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
+import com.liferay.document.library.kernel.service.DLAppServiceUtil;
 import com.liferay.opensocial.shindig.util.SerializerUtil;
 import com.liferay.opensocial.shindig.util.ShindigUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -28,14 +35,7 @@ import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.model.DLFileEntry;
-import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.service.DLAppServiceUtil;
-import com.liferay.portlet.social.model.SocialRelationConstants;
+import com.liferay.social.kernel.model.SocialRelationConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -258,7 +258,7 @@ public class LiferayMediaItemService implements MediaItemService {
 			SecurityToken securityToken)
 		throws Exception {
 
-		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
+		List<MediaItem> mediaItems = new ArrayList<>();
 
 		for (UserId userId : userIds) {
 			long userIdLong = GetterUtil.getLong(
@@ -270,7 +270,7 @@ public class LiferayMediaItemService implements MediaItemService {
 				continue;
 			}
 
-			List<FileEntry> fileEntries = new ArrayList<FileEntry>();
+			List<FileEntry> fileEntries = new ArrayList<>();
 
 			GroupId.Type groupIdType = groupId.getType();
 
@@ -331,7 +331,7 @@ public class LiferayMediaItemService implements MediaItemService {
 
 		User user = UserLocalServiceUtil.getUserById(userIdLong);
 
-		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
+		List<MediaItem> mediaItems = new ArrayList<>();
 
 		if (!ShindigUtil.isValidUser(user)) {
 			return new RestfulCollection<MediaItem>(
@@ -376,7 +376,7 @@ public class LiferayMediaItemService implements MediaItemService {
 
 		User user = UserLocalServiceUtil.getUserById(userIdLong);
 
-		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
+		List<MediaItem> mediaItems = new ArrayList<>();
 
 		if (!ShindigUtil.isValidUser(user)) {
 			return new RestfulCollection<MediaItem>(

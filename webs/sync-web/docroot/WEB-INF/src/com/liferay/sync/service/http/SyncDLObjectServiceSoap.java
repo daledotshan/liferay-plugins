@@ -14,6 +14,8 @@
 
 package com.liferay.sync.service.http;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
@@ -23,7 +25,7 @@ import java.rmi.RemoteException;
 
 /**
  * Provides the SOAP utility for the
- * {@link com.liferay.sync.service.SyncDLObjectServiceUtil} service utility. The
+ * {@link SyncDLObjectServiceUtil} service utility. The
  * static methods of this class calls the same methods of the service utility.
  * However, the signatures are different because it is difficult for SOAP to
  * support certain types.
@@ -58,14 +60,15 @@ import java.rmi.RemoteException;
  * @author Brian Wing Shun Chan
  * @see SyncDLObjectServiceHttp
  * @see com.liferay.sync.model.SyncDLObjectSoap
- * @see com.liferay.sync.service.SyncDLObjectServiceUtil
+ * @see SyncDLObjectServiceUtil
  * @generated
  */
+@ProviderType
 public class SyncDLObjectServiceSoap {
 	public static com.liferay.sync.model.SyncDLObjectSoap addFolder(
 		long repositoryId, long parentFolderId, java.lang.String name,
 		java.lang.String description,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.sync.model.SyncDLObject returnValue = SyncDLObjectServiceUtil.addFolder(repositoryId,
@@ -96,7 +99,7 @@ public class SyncDLObjectServiceSoap {
 
 	public static com.liferay.sync.model.SyncDLObjectSoap checkInFileEntry(
 		long fileEntryId, boolean majorVersion, java.lang.String changeLog,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.sync.model.SyncDLObject returnValue = SyncDLObjectServiceUtil.checkInFileEntry(fileEntryId,
@@ -113,7 +116,7 @@ public class SyncDLObjectServiceSoap {
 
 	public static com.liferay.sync.model.SyncDLObjectSoap checkOutFileEntry(
 		long fileEntryId,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.sync.model.SyncDLObject returnValue = SyncDLObjectServiceUtil.checkOutFileEntry(fileEntryId,
@@ -130,7 +133,7 @@ public class SyncDLObjectServiceSoap {
 
 	public static com.liferay.sync.model.SyncDLObjectSoap checkOutFileEntry(
 		long fileEntryId, java.lang.String owner, long expirationTime,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.sync.model.SyncDLObject returnValue = SyncDLObjectServiceUtil.checkOutFileEntry(fileEntryId,
@@ -145,11 +148,44 @@ public class SyncDLObjectServiceSoap {
 		}
 	}
 
-	public static com.liferay.sync.model.SyncDLObjectSoap getFileEntrySyncDLObject(
-		long groupId, long folderId, java.lang.String title)
+	public static com.liferay.sync.model.SyncDLObjectSoap copyFileEntry(
+		long sourceFileEntryId, long repositoryId, long folderId,
+		java.lang.String sourceFileName, java.lang.String title,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
-			com.liferay.sync.model.SyncDLObject returnValue = SyncDLObjectServiceUtil.getFileEntrySyncDLObject(groupId,
+			com.liferay.sync.model.SyncDLObject returnValue = SyncDLObjectServiceUtil.copyFileEntry(sourceFileEntryId,
+					repositoryId, folderId, sourceFileName, title,
+					serviceContext);
+
+			return com.liferay.sync.model.SyncDLObjectSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.liferay.sync.model.SyncDLObjectSoap[] getAllFolderSyncDLObjects(
+		long repositoryId) throws RemoteException {
+		try {
+			java.util.List<com.liferay.sync.model.SyncDLObject> returnValue = SyncDLObjectServiceUtil.getAllFolderSyncDLObjects(repositoryId);
+
+			return com.liferay.sync.model.SyncDLObjectSoap.toSoapModels(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.liferay.sync.model.SyncDLObjectSoap getFileEntrySyncDLObject(
+		long repositoryId, long folderId, java.lang.String title)
+		throws RemoteException {
+		try {
+			com.liferay.sync.model.SyncDLObject returnValue = SyncDLObjectServiceUtil.getFileEntrySyncDLObject(repositoryId,
 					folderId, title);
 
 			return com.liferay.sync.model.SyncDLObjectSoap.toSoapModel(returnValue);
@@ -190,6 +226,22 @@ public class SyncDLObjectServiceSoap {
 		}
 	}
 
+	public static com.liferay.sync.model.SyncDLObjectSoap getFolderSyncDLObject(
+		long repositoryId, long parentFolderId, java.lang.String name)
+		throws RemoteException {
+		try {
+			com.liferay.sync.model.SyncDLObject returnValue = SyncDLObjectServiceUtil.getFolderSyncDLObject(repositoryId,
+					parentFolderId, name);
+
+			return com.liferay.sync.model.SyncDLObjectSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static com.liferay.sync.model.SyncDLObjectSoap[] getFolderSyncDLObjects(
 		long repositoryId, long parentFolderId) throws RemoteException {
 		try {
@@ -205,10 +257,10 @@ public class SyncDLObjectServiceSoap {
 		}
 	}
 
-	public static com.liferay.portal.model.Group getGroup(long groupId)
+	public static com.liferay.portal.kernel.model.Group getGroup(long groupId)
 		throws RemoteException {
 		try {
-			com.liferay.portal.model.Group returnValue = SyncDLObjectServiceUtil.getGroup(groupId);
+			com.liferay.portal.kernel.model.Group returnValue = SyncDLObjectServiceUtil.getGroup(groupId);
 
 			return returnValue;
 		}
@@ -232,10 +284,9 @@ public class SyncDLObjectServiceSoap {
 		}
 	}
 
-	public static com.liferay.sync.model.SyncContext getSyncContext(
-		java.lang.String uuid) throws RemoteException {
+	public static java.lang.Object getSyncContext() throws RemoteException {
 		try {
-			com.liferay.sync.model.SyncContext returnValue = SyncDLObjectServiceUtil.getSyncContext(uuid);
+			java.lang.Object returnValue = SyncDLObjectServiceUtil.getSyncContext();
 
 			return returnValue;
 		}
@@ -246,12 +297,11 @@ public class SyncDLObjectServiceSoap {
 		}
 	}
 
-	public static com.liferay.sync.model.SyncDLObjectUpdate getSyncDLObjectUpdate(
-		long companyId, long repositoryId, long lastAccessTime)
-		throws RemoteException {
+	public static java.lang.String getSyncDLObjectUpdate(long repositoryId,
+		long lastAccessTime, int max) throws RemoteException {
 		try {
-			com.liferay.sync.model.SyncDLObjectUpdate returnValue = SyncDLObjectServiceUtil.getSyncDLObjectUpdate(companyId,
-					repositoryId, lastAccessTime);
+			java.lang.String returnValue = SyncDLObjectServiceUtil.getSyncDLObjectUpdate(repositoryId,
+					lastAccessTime, max);
 
 			return returnValue;
 		}
@@ -262,12 +312,43 @@ public class SyncDLObjectServiceSoap {
 		}
 	}
 
-	public static com.liferay.portal.model.GroupSoap[] getUserSitesGroups()
+	public static java.lang.String getSyncDLObjectUpdate(long repositoryId,
+		long lastAccessTime, int max, boolean retrieveFromCache)
 		throws RemoteException {
 		try {
-			java.util.List<com.liferay.portal.model.Group> returnValue = SyncDLObjectServiceUtil.getUserSitesGroups();
+			java.lang.String returnValue = SyncDLObjectServiceUtil.getSyncDLObjectUpdate(repositoryId,
+					lastAccessTime, max, retrieveFromCache);
 
-			return com.liferay.portal.model.GroupSoap.toSoapModels(returnValue);
+			return returnValue;
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static java.lang.String getSyncDLObjectUpdate(long repositoryId,
+		long parentFolderId, long lastAccessTime) throws RemoteException {
+		try {
+			java.lang.String returnValue = SyncDLObjectServiceUtil.getSyncDLObjectUpdate(repositoryId,
+					parentFolderId, lastAccessTime);
+
+			return returnValue;
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.liferay.portal.kernel.model.GroupSoap[] getUserSitesGroups()
+		throws RemoteException {
+		try {
+			java.util.List<com.liferay.portal.kernel.model.Group> returnValue = SyncDLObjectServiceUtil.getUserSitesGroups();
+
+			return com.liferay.portal.kernel.model.GroupSoap.toSoapModels(returnValue);
 		}
 		catch (Exception e) {
 			_log.error(e, e);
@@ -278,7 +359,7 @@ public class SyncDLObjectServiceSoap {
 
 	public static com.liferay.sync.model.SyncDLObjectSoap moveFileEntry(
 		long fileEntryId, long newFolderId,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.sync.model.SyncDLObject returnValue = SyncDLObjectServiceUtil.moveFileEntry(fileEntryId,
@@ -309,7 +390,7 @@ public class SyncDLObjectServiceSoap {
 
 	public static com.liferay.sync.model.SyncDLObjectSoap moveFolder(
 		long folderId, long parentFolderId,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.sync.model.SyncDLObject returnValue = SyncDLObjectServiceUtil.moveFolder(folderId,
@@ -368,7 +449,7 @@ public class SyncDLObjectServiceSoap {
 
 	public static com.liferay.sync.model.SyncDLObjectSoap updateFolder(
 		long folderId, java.lang.String name, java.lang.String description,
-		com.liferay.portal.service.ServiceContext serviceContext)
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.sync.model.SyncDLObject returnValue = SyncDLObjectServiceUtil.updateFolder(folderId,
