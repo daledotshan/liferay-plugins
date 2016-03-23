@@ -24,7 +24,7 @@ MailManager mailManager = MailManager.getInstance(request);
 Account mailAccount = AccountLocalServiceUtil.getAccount(accountId);
 %>
 
-<aui:layout cssClass="mail-status" />
+<div class="mail-status"></div>
 
 <aui:form name="dialogFm" onSubmit="event.preventDefault();">
 	<aui:fieldset column="<%= true %>" cssClass="span6" label="general">
@@ -103,7 +103,7 @@ Account mailAccount = AccountLocalServiceUtil.getAccount(accountId);
 			A.io.request(
 				themeDisplay.getLayoutURL() + '/-/mail/update_account',
 				{
-					dataType: 'json',
+					dataType: 'JSON',
 					form: {
 						id: form.getDOMNode()
 					},
@@ -140,7 +140,7 @@ Account mailAccount = AccountLocalServiceUtil.getAccount(accountId);
 							accountId: <%= accountId %>
 						}
 					),
-					dataType: 'json',
+					dataType: 'JSON',
 					method: 'POST',
 					on: {
 						failure: function(event, id, obj) {
@@ -173,15 +173,13 @@ Account mailAccount = AccountLocalServiceUtil.getAccount(accountId);
 							accountId: <%= accountId %>
 						}
 					),
-					dataType: 'json',
+					dataType: 'JSON',
 					method: 'POST',
 					on: {
 						failure: function(event, id, obj) {
 							Liferay.Mail.setStatus('error', '<liferay-ui:message key="unable-to-connect-with-mail-server" />');
 						},
 						success: function(event, id, obj) {
-							var responseData = this.get('responseData');
-
 							Liferay.Mail.setStatus('success', '<liferay-ui:message key="synchronizing-messages-in-the-background" />');
 						}
 					}

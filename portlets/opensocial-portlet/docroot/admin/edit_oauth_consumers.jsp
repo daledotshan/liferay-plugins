@@ -99,7 +99,7 @@ int oAuthServiceCount = 0;
 
 			<aui:input name="consumerKey" />
 
-			<div id='<%= "consumerSecretField" + oAuthServiceCount %>' >
+			<div id='<%= "consumerSecretField" + oAuthServiceCount %>'>
 				<aui:input name="consumerSecret" />
 			</div>
 		</aui:fieldset>
@@ -162,5 +162,5 @@ int oAuthServiceCount = 0;
 </aui:script>
 
 <%
-PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(pageContext, "manage-oauth"), currentURL);
+PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "manage-oauth"), currentURL);
 %>

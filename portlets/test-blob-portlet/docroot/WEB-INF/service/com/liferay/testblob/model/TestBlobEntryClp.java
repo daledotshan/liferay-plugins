@@ -14,13 +14,14 @@
 
 package com.liferay.testblob.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.model.impl.BaseModelImpl;
 
 import com.liferay.testblob.service.ClpSerializer;
 import com.liferay.testblob.service.TestBlobEntryLocalServiceUtil;
@@ -35,8 +36,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Brian Wing Shun Chan
+ * @generated
  */
+@ProviderType
 public class TestBlobEntryClp extends BaseModelImpl<TestBlobEntry>
 	implements TestBlobEntry {
 	public TestBlobEntryClp() {
@@ -230,7 +232,7 @@ public class TestBlobEntryClp extends BaseModelImpl<TestBlobEntry>
 	}
 
 	@Override
-	public void persist() throws SystemException {
+	public void persist() {
 		if (this.isNew()) {
 			TestBlobEntryLocalServiceUtil.addTestBlobEntry(this);
 		}
@@ -293,6 +295,10 @@ public class TestBlobEntryClp extends BaseModelImpl<TestBlobEntry>
 		}
 	}
 
+	public Class<?> getClpSerializerClass() {
+		return _clpSerializerClass;
+	}
+
 	@Override
 	public int hashCode() {
 		return (int)getPrimaryKey();
@@ -353,6 +359,7 @@ public class TestBlobEntryClp extends BaseModelImpl<TestBlobEntry>
 	private long _testBlobEntryId;
 	private Blob _blobField;
 	private BaseModel<?> _testBlobEntryRemoteModel;
+	private Class<?> _clpSerializerClass = com.liferay.testblob.service.ClpSerializer.class;
 	private boolean _entityCacheEnabled;
 	private boolean _finderCacheEnabled;
 }

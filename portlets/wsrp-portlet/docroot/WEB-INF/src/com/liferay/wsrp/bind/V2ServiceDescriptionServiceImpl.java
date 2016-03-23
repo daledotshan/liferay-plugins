@@ -16,17 +16,17 @@ package com.liferay.wsrp.bind;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Portlet;
+import com.liferay.portal.kernel.model.PortletConstants;
+import com.liferay.portal.kernel.model.PortletInfo;
+import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.model.Portlet;
-import com.liferay.portal.model.PortletConstants;
-import com.liferay.portal.model.PortletInfo;
-import com.liferay.portal.service.PortletLocalServiceUtil;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.util.axis.ServletUtil;
-import com.liferay.wsrp.NoSuchProducerException;
+import com.liferay.wsrp.exception.NoSuchProducerException;
 import com.liferay.wsrp.model.WSRPProducer;
 import com.liferay.wsrp.util.ExtensionHelperUtil;
 
@@ -106,12 +106,12 @@ public class V2ServiceDescriptionServiceImpl
 		Map<String, Set<String>> portletModes = portlet.getPortletModes();
 		Map<String, Set<String>> windowStates = portlet.getWindowStates();
 
-		Set<String> mimeTypes = new HashSet<String>();
+		Set<String> mimeTypes = new HashSet<>();
 
 		mimeTypes.addAll(portletModes.keySet());
 		mimeTypes.addAll(windowStates.keySet());
 
-		List<MarkupType> markupTypes = new ArrayList<MarkupType>();
+		List<MarkupType> markupTypes = new ArrayList<>();
 
 		for (String mimeType : mimeTypes) {
 			Set<String> mimeTypePortletModes = portletModes.get(mimeType);
@@ -186,8 +186,7 @@ public class V2ServiceDescriptionServiceImpl
 
 		String[] portletIds = StringUtil.split(wsrpProducer.getPortletIds());
 
-		List<PortletDescription> portletDescriptions =
-			new ArrayList<PortletDescription>();
+		List<PortletDescription> portletDescriptions = new ArrayList<>();
 
 		for (String portletId : portletIds) {
 			String rootPortletId = PortletConstants.getRootPortletId(portletId);
@@ -224,7 +223,7 @@ public class V2ServiceDescriptionServiceImpl
 	protected void setExtensions(
 		PortletDescription portletDescription, Portlet portlet) {
 
-		List<MessageElement> messageElements = new ArrayList<MessageElement>();
+		List<MessageElement> messageElements = new ArrayList<>();
 
 		ExtensionHelperUtil.addMessageElement(
 			messageElements, "css-class-wrapper", portlet.getCssClassWrapper());

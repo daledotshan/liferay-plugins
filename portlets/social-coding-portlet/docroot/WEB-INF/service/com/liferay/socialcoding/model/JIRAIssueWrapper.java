@@ -14,8 +14,15 @@
 
 package com.liferay.socialcoding.model;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +37,7 @@ import java.util.Map;
  * @see JIRAIssue
  * @generated
  */
+@ProviderType
 public class JIRAIssueWrapper implements JIRAIssue, ModelWrapper<JIRAIssue> {
 	public JIRAIssueWrapper(JIRAIssue jiraIssue) {
 		_jiraIssue = jiraIssue;
@@ -53,7 +61,7 @@ public class JIRAIssueWrapper implements JIRAIssue, ModelWrapper<JIRAIssue> {
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("projectId", getProjectId());
-		attributes.put("key", getKey());
+		attributes.put("issueNumber", getIssueNumber());
 		attributes.put("summary", getSummary());
 		attributes.put("description", getDescription());
 		attributes.put("reporterJiraUserId", getReporterJiraUserId());
@@ -90,10 +98,10 @@ public class JIRAIssueWrapper implements JIRAIssue, ModelWrapper<JIRAIssue> {
 			setProjectId(projectId);
 		}
 
-		String key = (String)attributes.get("key");
+		Long issueNumber = (Long)attributes.get("issueNumber");
 
-		if (key != null) {
-			setKey(key);
+		if (issueNumber != null) {
+			setIssueNumber(issueNumber);
 		}
 
 		String summary = (String)attributes.get("summary");
@@ -133,184 +141,14 @@ public class JIRAIssueWrapper implements JIRAIssue, ModelWrapper<JIRAIssue> {
 		}
 	}
 
-	/**
-	* Returns the primary key of this j i r a issue.
-	*
-	* @return the primary key of this j i r a issue
-	*/
 	@Override
-	public long getPrimaryKey() {
-		return _jiraIssue.getPrimaryKey();
+	public java.lang.Object clone() {
+		return new JIRAIssueWrapper((JIRAIssue)_jiraIssue.clone());
 	}
 
-	/**
-	* Sets the primary key of this j i r a issue.
-	*
-	* @param primaryKey the primary key of this j i r a issue
-	*/
 	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_jiraIssue.setPrimaryKey(primaryKey);
-	}
-
-	/**
-	* Returns the jira issue ID of this j i r a issue.
-	*
-	* @return the jira issue ID of this j i r a issue
-	*/
-	@Override
-	public long getJiraIssueId() {
-		return _jiraIssue.getJiraIssueId();
-	}
-
-	/**
-	* Sets the jira issue ID of this j i r a issue.
-	*
-	* @param jiraIssueId the jira issue ID of this j i r a issue
-	*/
-	@Override
-	public void setJiraIssueId(long jiraIssueId) {
-		_jiraIssue.setJiraIssueId(jiraIssueId);
-	}
-
-	/**
-	* Returns the create date of this j i r a issue.
-	*
-	* @return the create date of this j i r a issue
-	*/
-	@Override
-	public java.util.Date getCreateDate() {
-		return _jiraIssue.getCreateDate();
-	}
-
-	/**
-	* Sets the create date of this j i r a issue.
-	*
-	* @param createDate the create date of this j i r a issue
-	*/
-	@Override
-	public void setCreateDate(java.util.Date createDate) {
-		_jiraIssue.setCreateDate(createDate);
-	}
-
-	/**
-	* Returns the modified date of this j i r a issue.
-	*
-	* @return the modified date of this j i r a issue
-	*/
-	@Override
-	public java.util.Date getModifiedDate() {
-		return _jiraIssue.getModifiedDate();
-	}
-
-	/**
-	* Sets the modified date of this j i r a issue.
-	*
-	* @param modifiedDate the modified date of this j i r a issue
-	*/
-	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
-		_jiraIssue.setModifiedDate(modifiedDate);
-	}
-
-	/**
-	* Returns the project ID of this j i r a issue.
-	*
-	* @return the project ID of this j i r a issue
-	*/
-	@Override
-	public long getProjectId() {
-		return _jiraIssue.getProjectId();
-	}
-
-	/**
-	* Sets the project ID of this j i r a issue.
-	*
-	* @param projectId the project ID of this j i r a issue
-	*/
-	@Override
-	public void setProjectId(long projectId) {
-		_jiraIssue.setProjectId(projectId);
-	}
-
-	/**
-	* Returns the key of this j i r a issue.
-	*
-	* @return the key of this j i r a issue
-	*/
-	@Override
-	public java.lang.String getKey() {
-		return _jiraIssue.getKey();
-	}
-
-	/**
-	* Sets the key of this j i r a issue.
-	*
-	* @param key the key of this j i r a issue
-	*/
-	@Override
-	public void setKey(java.lang.String key) {
-		_jiraIssue.setKey(key);
-	}
-
-	/**
-	* Returns the summary of this j i r a issue.
-	*
-	* @return the summary of this j i r a issue
-	*/
-	@Override
-	public java.lang.String getSummary() {
-		return _jiraIssue.getSummary();
-	}
-
-	/**
-	* Sets the summary of this j i r a issue.
-	*
-	* @param summary the summary of this j i r a issue
-	*/
-	@Override
-	public void setSummary(java.lang.String summary) {
-		_jiraIssue.setSummary(summary);
-	}
-
-	/**
-	* Returns the description of this j i r a issue.
-	*
-	* @return the description of this j i r a issue
-	*/
-	@Override
-	public java.lang.String getDescription() {
-		return _jiraIssue.getDescription();
-	}
-
-	/**
-	* Sets the description of this j i r a issue.
-	*
-	* @param description the description of this j i r a issue
-	*/
-	@Override
-	public void setDescription(java.lang.String description) {
-		_jiraIssue.setDescription(description);
-	}
-
-	/**
-	* Returns the reporter jira user ID of this j i r a issue.
-	*
-	* @return the reporter jira user ID of this j i r a issue
-	*/
-	@Override
-	public java.lang.String getReporterJiraUserId() {
-		return _jiraIssue.getReporterJiraUserId();
-	}
-
-	/**
-	* Sets the reporter jira user ID of this j i r a issue.
-	*
-	* @param reporterJiraUserId the reporter jira user ID of this j i r a issue
-	*/
-	@Override
-	public void setReporterJiraUserId(java.lang.String reporterJiraUserId) {
-		_jiraIssue.setReporterJiraUserId(reporterJiraUserId);
+	public int compareTo(com.liferay.socialcoding.model.JIRAIssue jiraIssue) {
+		return _jiraIssue.compareTo(jiraIssue);
 	}
 
 	/**
@@ -324,13 +162,98 @@ public class JIRAIssueWrapper implements JIRAIssue, ModelWrapper<JIRAIssue> {
 	}
 
 	/**
-	* Sets the assignee jira user ID of this j i r a issue.
+	* Returns the create date of this j i r a issue.
 	*
-	* @param assigneeJiraUserId the assignee jira user ID of this j i r a issue
+	* @return the create date of this j i r a issue
 	*/
 	@Override
-	public void setAssigneeJiraUserId(java.lang.String assigneeJiraUserId) {
-		_jiraIssue.setAssigneeJiraUserId(assigneeJiraUserId);
+	public Date getCreateDate() {
+		return _jiraIssue.getCreateDate();
+	}
+
+	/**
+	* Returns the description of this j i r a issue.
+	*
+	* @return the description of this j i r a issue
+	*/
+	@Override
+	public java.lang.String getDescription() {
+		return _jiraIssue.getDescription();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _jiraIssue.getExpandoBridge();
+	}
+
+	/**
+	* Returns the issue number of this j i r a issue.
+	*
+	* @return the issue number of this j i r a issue
+	*/
+	@Override
+	public long getIssueNumber() {
+		return _jiraIssue.getIssueNumber();
+	}
+
+	/**
+	* Returns the jira issue ID of this j i r a issue.
+	*
+	* @return the jira issue ID of this j i r a issue
+	*/
+	@Override
+	public long getJiraIssueId() {
+		return _jiraIssue.getJiraIssueId();
+	}
+
+	@Override
+	public java.lang.String getKey() {
+		return _jiraIssue.getKey();
+	}
+
+	/**
+	* Returns the modified date of this j i r a issue.
+	*
+	* @return the modified date of this j i r a issue
+	*/
+	@Override
+	public Date getModifiedDate() {
+		return _jiraIssue.getModifiedDate();
+	}
+
+	/**
+	* Returns the primary key of this j i r a issue.
+	*
+	* @return the primary key of this j i r a issue
+	*/
+	@Override
+	public long getPrimaryKey() {
+		return _jiraIssue.getPrimaryKey();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _jiraIssue.getPrimaryKeyObj();
+	}
+
+	/**
+	* Returns the project ID of this j i r a issue.
+	*
+	* @return the project ID of this j i r a issue
+	*/
+	@Override
+	public long getProjectId() {
+		return _jiraIssue.getProjectId();
+	}
+
+	/**
+	* Returns the reporter jira user ID of this j i r a issue.
+	*
+	* @return the reporter jira user ID of this j i r a issue
+	*/
+	@Override
+	public java.lang.String getReporterJiraUserId() {
+		return _jiraIssue.getReporterJiraUserId();
 	}
 
 	/**
@@ -344,16 +267,6 @@ public class JIRAIssueWrapper implements JIRAIssue, ModelWrapper<JIRAIssue> {
 	}
 
 	/**
-	* Sets the resolution of this j i r a issue.
-	*
-	* @param resolution the resolution of this j i r a issue
-	*/
-	@Override
-	public void setResolution(java.lang.String resolution) {
-		_jiraIssue.setResolution(resolution);
-	}
-
-	/**
 	* Returns the status of this j i r a issue.
 	*
 	* @return the status of this j i r a issue
@@ -361,6 +274,172 @@ public class JIRAIssueWrapper implements JIRAIssue, ModelWrapper<JIRAIssue> {
 	@Override
 	public java.lang.String getStatus() {
 		return _jiraIssue.getStatus();
+	}
+
+	/**
+	* Returns the summary of this j i r a issue.
+	*
+	* @return the summary of this j i r a issue
+	*/
+	@Override
+	public java.lang.String getSummary() {
+		return _jiraIssue.getSummary();
+	}
+
+	@Override
+	public int hashCode() {
+		return _jiraIssue.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _jiraIssue.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _jiraIssue.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _jiraIssue.isNew();
+	}
+
+	@Override
+	public void persist() {
+		_jiraIssue.persist();
+	}
+
+	/**
+	* Sets the assignee jira user ID of this j i r a issue.
+	*
+	* @param assigneeJiraUserId the assignee jira user ID of this j i r a issue
+	*/
+	@Override
+	public void setAssigneeJiraUserId(java.lang.String assigneeJiraUserId) {
+		_jiraIssue.setAssigneeJiraUserId(assigneeJiraUserId);
+	}
+
+	@Override
+	public void setCachedModel(boolean cachedModel) {
+		_jiraIssue.setCachedModel(cachedModel);
+	}
+
+	/**
+	* Sets the create date of this j i r a issue.
+	*
+	* @param createDate the create date of this j i r a issue
+	*/
+	@Override
+	public void setCreateDate(Date createDate) {
+		_jiraIssue.setCreateDate(createDate);
+	}
+
+	/**
+	* Sets the description of this j i r a issue.
+	*
+	* @param description the description of this j i r a issue
+	*/
+	@Override
+	public void setDescription(java.lang.String description) {
+		_jiraIssue.setDescription(description);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_jiraIssue.setExpandoBridgeAttributes(baseModel);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_jiraIssue.setExpandoBridgeAttributes(expandoBridge);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
+		_jiraIssue.setExpandoBridgeAttributes(serviceContext);
+	}
+
+	/**
+	* Sets the issue number of this j i r a issue.
+	*
+	* @param issueNumber the issue number of this j i r a issue
+	*/
+	@Override
+	public void setIssueNumber(long issueNumber) {
+		_jiraIssue.setIssueNumber(issueNumber);
+	}
+
+	/**
+	* Sets the jira issue ID of this j i r a issue.
+	*
+	* @param jiraIssueId the jira issue ID of this j i r a issue
+	*/
+	@Override
+	public void setJiraIssueId(long jiraIssueId) {
+		_jiraIssue.setJiraIssueId(jiraIssueId);
+	}
+
+	/**
+	* Sets the modified date of this j i r a issue.
+	*
+	* @param modifiedDate the modified date of this j i r a issue
+	*/
+	@Override
+	public void setModifiedDate(Date modifiedDate) {
+		_jiraIssue.setModifiedDate(modifiedDate);
+	}
+
+	@Override
+	public void setNew(boolean n) {
+		_jiraIssue.setNew(n);
+	}
+
+	/**
+	* Sets the primary key of this j i r a issue.
+	*
+	* @param primaryKey the primary key of this j i r a issue
+	*/
+	@Override
+	public void setPrimaryKey(long primaryKey) {
+		_jiraIssue.setPrimaryKey(primaryKey);
+	}
+
+	@Override
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
+		_jiraIssue.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	/**
+	* Sets the project ID of this j i r a issue.
+	*
+	* @param projectId the project ID of this j i r a issue
+	*/
+	@Override
+	public void setProjectId(long projectId) {
+		_jiraIssue.setProjectId(projectId);
+	}
+
+	/**
+	* Sets the reporter jira user ID of this j i r a issue.
+	*
+	* @param reporterJiraUserId the reporter jira user ID of this j i r a issue
+	*/
+	@Override
+	public void setReporterJiraUserId(java.lang.String reporterJiraUserId) {
+		_jiraIssue.setReporterJiraUserId(reporterJiraUserId);
+	}
+
+	/**
+	* Sets the resolution of this j i r a issue.
+	*
+	* @param resolution the resolution of this j i r a issue
+	*/
+	@Override
+	public void setResolution(java.lang.String resolution) {
+		_jiraIssue.setResolution(resolution);
 	}
 
 	/**
@@ -373,81 +452,18 @@ public class JIRAIssueWrapper implements JIRAIssue, ModelWrapper<JIRAIssue> {
 		_jiraIssue.setStatus(status);
 	}
 
+	/**
+	* Sets the summary of this j i r a issue.
+	*
+	* @param summary the summary of this j i r a issue
+	*/
 	@Override
-	public boolean isNew() {
-		return _jiraIssue.isNew();
+	public void setSummary(java.lang.String summary) {
+		_jiraIssue.setSummary(summary);
 	}
 
 	@Override
-	public void setNew(boolean n) {
-		_jiraIssue.setNew(n);
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _jiraIssue.isCachedModel();
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_jiraIssue.setCachedModel(cachedModel);
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _jiraIssue.isEscapedModel();
-	}
-
-	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _jiraIssue.getPrimaryKeyObj();
-	}
-
-	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
-		_jiraIssue.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _jiraIssue.getExpandoBridge();
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
-		_jiraIssue.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
-		_jiraIssue.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
-		_jiraIssue.setExpandoBridgeAttributes(serviceContext);
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new JIRAIssueWrapper((JIRAIssue)_jiraIssue.clone());
-	}
-
-	@Override
-	public int compareTo(com.liferay.socialcoding.model.JIRAIssue jiraIssue) {
-		return _jiraIssue.compareTo(jiraIssue);
-	}
-
-	@Override
-	public int hashCode() {
-		return _jiraIssue.hashCode();
-	}
-
-	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.socialcoding.model.JIRAIssue> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.socialcoding.model.JIRAIssue> toCacheModel() {
 		return _jiraIssue.toCacheModel();
 	}
 
@@ -457,24 +473,18 @@ public class JIRAIssueWrapper implements JIRAIssue, ModelWrapper<JIRAIssue> {
 	}
 
 	@Override
-	public com.liferay.socialcoding.model.JIRAIssue toUnescapedModel() {
-		return new JIRAIssueWrapper(_jiraIssue.toUnescapedModel());
-	}
-
-	@Override
 	public java.lang.String toString() {
 		return _jiraIssue.toString();
 	}
 
 	@Override
-	public java.lang.String toXmlString() {
-		return _jiraIssue.toXmlString();
+	public com.liferay.socialcoding.model.JIRAIssue toUnescapedModel() {
+		return new JIRAIssueWrapper(_jiraIssue.toUnescapedModel());
 	}
 
 	@Override
-	public void persist()
-		throws com.liferay.portal.kernel.exception.SystemException {
-		_jiraIssue.persist();
+	public java.lang.String toXmlString() {
+		return _jiraIssue.toXmlString();
 	}
 
 	@Override
@@ -494,14 +504,6 @@ public class JIRAIssueWrapper implements JIRAIssue, ModelWrapper<JIRAIssue> {
 		}
 
 		return false;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public JIRAIssue getWrappedJIRAIssue() {
-		return _jiraIssue;
 	}
 
 	@Override
@@ -524,5 +526,5 @@ public class JIRAIssueWrapper implements JIRAIssue, ModelWrapper<JIRAIssue> {
 		_jiraIssue.resetOriginalValues();
 	}
 
-	private JIRAIssue _jiraIssue;
+	private final JIRAIssue _jiraIssue;
 }

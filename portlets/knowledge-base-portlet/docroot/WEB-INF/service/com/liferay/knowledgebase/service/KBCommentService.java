@@ -14,14 +14,22 @@
 
 package com.liferay.knowledgebase.service;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.knowledgebase.model.KBComment;
+
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
+import com.liferay.portal.kernel.security.access.control.AccessControlled;
+import com.liferay.portal.kernel.service.BaseService;
+import com.liferay.portal.kernel.service.InvokableService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
+import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
-import com.liferay.portal.security.ac.AccessControlled;
-import com.liferay.portal.service.BaseService;
-import com.liferay.portal.service.InvokableService;
+
+import java.util.List;
 
 /**
  * Provides the remote service interface for KBComment. Methods of this
@@ -36,6 +44,7 @@ import com.liferay.portal.service.InvokableService;
  */
 @AccessControlled
 @JSONWebService
+@ProviderType
 @Transactional(isolation = Isolation.PORTAL, rollbackFor =  {
 	PortalException.class, SystemException.class})
 public interface KBCommentService extends BaseService, InvokableService {
@@ -44,40 +53,52 @@ public interface KBCommentService extends BaseService, InvokableService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link KBCommentServiceUtil} to access the k b comment remote service. Add custom service methods to {@link com.liferay.knowledgebase.service.impl.KBCommentServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public KBComment deleteKBComment(KBComment kbComment)
+		throws PortalException;
+
+	public KBComment deleteKBComment(long kbCommentId)
+		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public KBComment getKBComment(long kbCommentId) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<KBComment> getKBComments(long groupId,
+		java.lang.String className, long classPK, int status, int start, int end)
+		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<KBComment> getKBComments(long groupId, int status, int start,
+		int end) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getKBCommentsCount(long groupId, java.lang.String className,
+		long classPK, int status) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getKBCommentsCount(long groupId, int status)
+		throws PortalException;
 
 	/**
-	* Returns the Spring bean ID for this bean.
+	* Returns the OSGi service identifier.
 	*
-	* @return the Spring bean ID for this bean
+	* @return the OSGi service identifier
 	*/
-	public java.lang.String getBeanIdentifier();
-
-	/**
-	* Sets the Spring bean ID for this bean.
-	*
-	* @param beanIdentifier the Spring bean ID for this bean
-	*/
-	public void setBeanIdentifier(java.lang.String beanIdentifier);
+	public java.lang.String getOSGiServiceIdentifier();
 
 	@Override
 	public java.lang.Object invokeMethod(java.lang.String name,
 		java.lang.String[] parameterTypes, java.lang.Object[] arguments)
 		throws java.lang.Throwable;
 
-	public com.liferay.knowledgebase.model.KBComment deleteKBComment(
-		com.liferay.knowledgebase.model.KBComment kbComment)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException;
+	public KBComment updateKBComment(long kbCommentId, long classNameId,
+		long classPK, java.lang.String content, ServiceContext serviceContext)
+		throws PortalException;
 
-	public com.liferay.knowledgebase.model.KBComment deleteKBComment(
-		long kbCommentId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException;
+	public KBComment updateKBComment(long kbCommentId, long classNameId,
+		long classPK, java.lang.String content, int status,
+		ServiceContext serviceContext) throws PortalException;
 
-	public com.liferay.knowledgebase.model.KBComment updateKBComment(
-		long kbCommentId, long classNameId, long classPK,
-		java.lang.String content, boolean helpful,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException;
+	public KBComment updateStatus(long kbCommentId, int status,
+		ServiceContext serviceContext) throws PortalException;
 }

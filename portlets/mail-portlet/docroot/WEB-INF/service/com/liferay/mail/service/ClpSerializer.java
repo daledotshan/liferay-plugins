@@ -14,6 +14,8 @@
 
 package com.liferay.mail.service;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.mail.model.AccountClp;
 import com.liferay.mail.model.AttachmentClp;
 import com.liferay.mail.model.FolderClp;
@@ -23,10 +25,10 @@ import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.util.ClassLoaderObjectInputStream;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.BaseModel;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -39,6 +41,7 @@ import java.util.List;
 /**
  * @author Brian Wing Shun Chan
  */
+@ProviderType
 public class ClpSerializer {
 	public static String getServletContextName() {
 		if (Validator.isNotNull(_servletContextName)) {
@@ -194,18 +197,146 @@ public class ClpSerializer {
 		if (oldModelClassName.equals("com.liferay.mail.model.impl.AccountImpl")) {
 			return translateOutputAccount(oldModel);
 		}
+		else if (oldModelClassName.endsWith("Clp")) {
+			try {
+				ClassLoader classLoader = ClpSerializer.class.getClassLoader();
+
+				Method getClpSerializerClassMethod = oldModelClass.getMethod(
+						"getClpSerializerClass");
+
+				Class<?> oldClpSerializerClass = (Class<?>)getClpSerializerClassMethod.invoke(oldModel);
+
+				Class<?> newClpSerializerClass = classLoader.loadClass(oldClpSerializerClass.getName());
+
+				Method translateOutputMethod = newClpSerializerClass.getMethod("translateOutput",
+						BaseModel.class);
+
+				Class<?> oldModelModelClass = oldModel.getModelClass();
+
+				Method getRemoteModelMethod = oldModelClass.getMethod("get" +
+						oldModelModelClass.getSimpleName() + "RemoteModel");
+
+				Object oldRemoteModel = getRemoteModelMethod.invoke(oldModel);
+
+				BaseModel<?> newModel = (BaseModel<?>)translateOutputMethod.invoke(null,
+						oldRemoteModel);
+
+				return newModel;
+			}
+			catch (Throwable t) {
+				if (_log.isInfoEnabled()) {
+					_log.info("Unable to translate " + oldModelClassName, t);
+				}
+			}
+		}
 
 		if (oldModelClassName.equals(
 					"com.liferay.mail.model.impl.AttachmentImpl")) {
 			return translateOutputAttachment(oldModel);
 		}
+		else if (oldModelClassName.endsWith("Clp")) {
+			try {
+				ClassLoader classLoader = ClpSerializer.class.getClassLoader();
+
+				Method getClpSerializerClassMethod = oldModelClass.getMethod(
+						"getClpSerializerClass");
+
+				Class<?> oldClpSerializerClass = (Class<?>)getClpSerializerClassMethod.invoke(oldModel);
+
+				Class<?> newClpSerializerClass = classLoader.loadClass(oldClpSerializerClass.getName());
+
+				Method translateOutputMethod = newClpSerializerClass.getMethod("translateOutput",
+						BaseModel.class);
+
+				Class<?> oldModelModelClass = oldModel.getModelClass();
+
+				Method getRemoteModelMethod = oldModelClass.getMethod("get" +
+						oldModelModelClass.getSimpleName() + "RemoteModel");
+
+				Object oldRemoteModel = getRemoteModelMethod.invoke(oldModel);
+
+				BaseModel<?> newModel = (BaseModel<?>)translateOutputMethod.invoke(null,
+						oldRemoteModel);
+
+				return newModel;
+			}
+			catch (Throwable t) {
+				if (_log.isInfoEnabled()) {
+					_log.info("Unable to translate " + oldModelClassName, t);
+				}
+			}
+		}
 
 		if (oldModelClassName.equals("com.liferay.mail.model.impl.FolderImpl")) {
 			return translateOutputFolder(oldModel);
 		}
+		else if (oldModelClassName.endsWith("Clp")) {
+			try {
+				ClassLoader classLoader = ClpSerializer.class.getClassLoader();
+
+				Method getClpSerializerClassMethod = oldModelClass.getMethod(
+						"getClpSerializerClass");
+
+				Class<?> oldClpSerializerClass = (Class<?>)getClpSerializerClassMethod.invoke(oldModel);
+
+				Class<?> newClpSerializerClass = classLoader.loadClass(oldClpSerializerClass.getName());
+
+				Method translateOutputMethod = newClpSerializerClass.getMethod("translateOutput",
+						BaseModel.class);
+
+				Class<?> oldModelModelClass = oldModel.getModelClass();
+
+				Method getRemoteModelMethod = oldModelClass.getMethod("get" +
+						oldModelModelClass.getSimpleName() + "RemoteModel");
+
+				Object oldRemoteModel = getRemoteModelMethod.invoke(oldModel);
+
+				BaseModel<?> newModel = (BaseModel<?>)translateOutputMethod.invoke(null,
+						oldRemoteModel);
+
+				return newModel;
+			}
+			catch (Throwable t) {
+				if (_log.isInfoEnabled()) {
+					_log.info("Unable to translate " + oldModelClassName, t);
+				}
+			}
+		}
 
 		if (oldModelClassName.equals("com.liferay.mail.model.impl.MessageImpl")) {
 			return translateOutputMessage(oldModel);
+		}
+		else if (oldModelClassName.endsWith("Clp")) {
+			try {
+				ClassLoader classLoader = ClpSerializer.class.getClassLoader();
+
+				Method getClpSerializerClassMethod = oldModelClass.getMethod(
+						"getClpSerializerClass");
+
+				Class<?> oldClpSerializerClass = (Class<?>)getClpSerializerClassMethod.invoke(oldModel);
+
+				Class<?> newClpSerializerClass = classLoader.loadClass(oldClpSerializerClass.getName());
+
+				Method translateOutputMethod = newClpSerializerClass.getMethod("translateOutput",
+						BaseModel.class);
+
+				Class<?> oldModelModelClass = oldModel.getModelClass();
+
+				Method getRemoteModelMethod = oldModelClass.getMethod("get" +
+						oldModelModelClass.getSimpleName() + "RemoteModel");
+
+				Object oldRemoteModel = getRemoteModelMethod.invoke(oldModel);
+
+				BaseModel<?> newModel = (BaseModel<?>)translateOutputMethod.invoke(null,
+						oldRemoteModel);
+
+				return newModel;
+			}
+			catch (Throwable t) {
+				if (_log.isInfoEnabled()) {
+					_log.info("Unable to translate " + oldModelClassName, t);
+				}
+			}
 		}
 
 		return oldModel;
@@ -287,28 +418,31 @@ public class ClpSerializer {
 
 		String className = clazz.getName();
 
-		if (className.equals("com.liferay.mail.MailException")) {
-			return new com.liferay.mail.MailException(throwable.getMessage(),
+		if (className.equals("com.liferay.mail.exception.MailException")) {
+			return new com.liferay.mail.exception.MailException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
-		if (className.equals("com.liferay.mail.NoSuchAccountException")) {
-			return new com.liferay.mail.NoSuchAccountException(throwable.getMessage(),
+		if (className.equals(
+					"com.liferay.mail.exception.NoSuchAccountException")) {
+			return new com.liferay.mail.exception.NoSuchAccountException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
-		if (className.equals("com.liferay.mail.NoSuchAttachmentException")) {
-			return new com.liferay.mail.NoSuchAttachmentException(throwable.getMessage(),
+		if (className.equals(
+					"com.liferay.mail.exception.NoSuchAttachmentException")) {
+			return new com.liferay.mail.exception.NoSuchAttachmentException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
-		if (className.equals("com.liferay.mail.NoSuchFolderException")) {
-			return new com.liferay.mail.NoSuchFolderException(throwable.getMessage(),
+		if (className.equals("com.liferay.mail.exception.NoSuchFolderException")) {
+			return new com.liferay.mail.exception.NoSuchFolderException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
-		if (className.equals("com.liferay.mail.NoSuchMessageException")) {
-			return new com.liferay.mail.NoSuchMessageException(throwable.getMessage(),
+		if (className.equals(
+					"com.liferay.mail.exception.NoSuchMessageException")) {
+			return new com.liferay.mail.exception.NoSuchMessageException(throwable.getMessage(),
 				throwable.getCause());
 		}
 

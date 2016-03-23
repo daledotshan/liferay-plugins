@@ -18,12 +18,12 @@ import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.ServiceComponent;
 import com.liferay.portal.kernel.upgrade.util.BaseUpgradeTableListener;
 import com.liferay.portal.kernel.upgrade.util.UpgradeTable;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.model.ServiceComponent;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -66,6 +66,14 @@ public class SyncDLObjectUpgradeTableListener extends BaseUpgradeTableListener {
 			return;
 		}
 
+		if (isUpdated()) {
+			if (_log.isWarnEnabled()) {
+				_log.warn("SyncDLObject table was already updated");
+			}
+
+			return;
+		}
+
 		String createSQL = upgradeTable.getCreateSQL();
 
 		createSQL = StringUtil.replace(
@@ -76,8 +84,8 @@ public class SyncDLObjectUpgradeTableListener extends BaseUpgradeTableListener {
 		_syncDLObjectIds = getSyncDLObjectIds();
 	}
 
-	protected Map<Long, Long> getSyncDLObjectIds() throws SystemException {
-		Map<Long, Long> syncDLObjectIds = new HashMap<Long, Long>();
+	protected Map<Long, Long> getSyncDLObjectIds() {
+		Map<Long, Long> syncDLObjectIds = new HashMap<>();
 
 		Connection con = null;
 		PreparedStatement ps = null;
@@ -116,6 +124,29 @@ public class SyncDLObjectUpgradeTableListener extends BaseUpgradeTableListener {
 		}
 
 		return syncDLObjectIds;
+	}
+
+	protected boolean isUpdated() {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			ps = con.prepareStatement(
+				"select * from SyncDLObject where objectId = 0");
+
+			rs = ps.executeQuery();
+		}
+		catch (Exception e) {
+			return true;
+		}
+		finally {
+			DataAccess.cleanUp(con, ps, rs);
+		}
+
+		return false;
 	}
 
 	protected void updateSyncDLObjectIds(Map<Long, Long> keyValueMap)

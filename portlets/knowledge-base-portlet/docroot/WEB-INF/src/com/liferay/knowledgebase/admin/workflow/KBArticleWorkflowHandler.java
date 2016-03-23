@@ -17,13 +17,11 @@ package com.liferay.knowledgebase.admin.workflow;
 import com.liferay.knowledgebase.model.KBArticle;
 import com.liferay.knowledgebase.service.KBArticleLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.workflow.BaseWorkflowHandler;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.security.permission.ResourceActionsUtil;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.theme.ThemeDisplay;
 
 import java.io.Serializable;
 
@@ -33,7 +31,7 @@ import java.util.Map;
 /**
  * @author Peter Shin
  */
-public class KBArticleWorkflowHandler extends BaseWorkflowHandler {
+public class KBArticleWorkflowHandler extends BaseWorkflowHandler<KBArticle> {
 
 	@Override
 	public String getClassName() {
@@ -48,7 +46,7 @@ public class KBArticleWorkflowHandler extends BaseWorkflowHandler {
 	@Override
 	public KBArticle updateStatus(
 			int status, Map<String, Serializable> workflowContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		long userId = GetterUtil.getLong(
 			(String)workflowContext.get(WorkflowConstants.CONTEXT_USER_ID));
@@ -61,11 +59,6 @@ public class KBArticleWorkflowHandler extends BaseWorkflowHandler {
 
 		return KBArticleLocalServiceUtil.updateStatus(
 			userId, resourcePrimKey, status, serviceContext);
-	}
-
-	@Override
-	protected String getIconPath(ThemeDisplay themeDisplay) {
-		return themeDisplay.getPathThemeImages() + "/trees/page.png";
 	}
 
 }

@@ -14,6 +14,8 @@
 
 package com.liferay.opensocial.service;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.opensocial.model.GadgetClp;
 import com.liferay.opensocial.model.OAuthConsumerClp;
 import com.liferay.opensocial.model.OAuthTokenClp;
@@ -22,10 +24,10 @@ import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.util.ClassLoaderObjectInputStream;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.BaseModel;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -38,6 +40,7 @@ import java.util.List;
 /**
  * @author Brian Wing Shun Chan
  */
+@ProviderType
 public class ClpSerializer {
 	public static String getServletContextName() {
 		if (Validator.isNotNull(_servletContextName)) {
@@ -180,15 +183,111 @@ public class ClpSerializer {
 					"com.liferay.opensocial.model.impl.GadgetImpl")) {
 			return translateOutputGadget(oldModel);
 		}
+		else if (oldModelClassName.endsWith("Clp")) {
+			try {
+				ClassLoader classLoader = ClpSerializer.class.getClassLoader();
+
+				Method getClpSerializerClassMethod = oldModelClass.getMethod(
+						"getClpSerializerClass");
+
+				Class<?> oldClpSerializerClass = (Class<?>)getClpSerializerClassMethod.invoke(oldModel);
+
+				Class<?> newClpSerializerClass = classLoader.loadClass(oldClpSerializerClass.getName());
+
+				Method translateOutputMethod = newClpSerializerClass.getMethod("translateOutput",
+						BaseModel.class);
+
+				Class<?> oldModelModelClass = oldModel.getModelClass();
+
+				Method getRemoteModelMethod = oldModelClass.getMethod("get" +
+						oldModelModelClass.getSimpleName() + "RemoteModel");
+
+				Object oldRemoteModel = getRemoteModelMethod.invoke(oldModel);
+
+				BaseModel<?> newModel = (BaseModel<?>)translateOutputMethod.invoke(null,
+						oldRemoteModel);
+
+				return newModel;
+			}
+			catch (Throwable t) {
+				if (_log.isInfoEnabled()) {
+					_log.info("Unable to translate " + oldModelClassName, t);
+				}
+			}
+		}
 
 		if (oldModelClassName.equals(
 					"com.liferay.opensocial.model.impl.OAuthConsumerImpl")) {
 			return translateOutputOAuthConsumer(oldModel);
 		}
+		else if (oldModelClassName.endsWith("Clp")) {
+			try {
+				ClassLoader classLoader = ClpSerializer.class.getClassLoader();
+
+				Method getClpSerializerClassMethod = oldModelClass.getMethod(
+						"getClpSerializerClass");
+
+				Class<?> oldClpSerializerClass = (Class<?>)getClpSerializerClassMethod.invoke(oldModel);
+
+				Class<?> newClpSerializerClass = classLoader.loadClass(oldClpSerializerClass.getName());
+
+				Method translateOutputMethod = newClpSerializerClass.getMethod("translateOutput",
+						BaseModel.class);
+
+				Class<?> oldModelModelClass = oldModel.getModelClass();
+
+				Method getRemoteModelMethod = oldModelClass.getMethod("get" +
+						oldModelModelClass.getSimpleName() + "RemoteModel");
+
+				Object oldRemoteModel = getRemoteModelMethod.invoke(oldModel);
+
+				BaseModel<?> newModel = (BaseModel<?>)translateOutputMethod.invoke(null,
+						oldRemoteModel);
+
+				return newModel;
+			}
+			catch (Throwable t) {
+				if (_log.isInfoEnabled()) {
+					_log.info("Unable to translate " + oldModelClassName, t);
+				}
+			}
+		}
 
 		if (oldModelClassName.equals(
 					"com.liferay.opensocial.model.impl.OAuthTokenImpl")) {
 			return translateOutputOAuthToken(oldModel);
+		}
+		else if (oldModelClassName.endsWith("Clp")) {
+			try {
+				ClassLoader classLoader = ClpSerializer.class.getClassLoader();
+
+				Method getClpSerializerClassMethod = oldModelClass.getMethod(
+						"getClpSerializerClass");
+
+				Class<?> oldClpSerializerClass = (Class<?>)getClpSerializerClassMethod.invoke(oldModel);
+
+				Class<?> newClpSerializerClass = classLoader.loadClass(oldClpSerializerClass.getName());
+
+				Method translateOutputMethod = newClpSerializerClass.getMethod("translateOutput",
+						BaseModel.class);
+
+				Class<?> oldModelModelClass = oldModel.getModelClass();
+
+				Method getRemoteModelMethod = oldModelClass.getMethod("get" +
+						oldModelModelClass.getSimpleName() + "RemoteModel");
+
+				Object oldRemoteModel = getRemoteModelMethod.invoke(oldModel);
+
+				BaseModel<?> newModel = (BaseModel<?>)translateOutputMethod.invoke(null,
+						oldRemoteModel);
+
+				return newModel;
+			}
+			catch (Throwable t) {
+				if (_log.isInfoEnabled()) {
+					_log.info("Unable to translate " + oldModelClassName, t);
+				}
+			}
 		}
 
 		return oldModel;
@@ -271,35 +370,38 @@ public class ClpSerializer {
 		String className = clazz.getName();
 
 		if (className.equals(
-					"com.liferay.opensocial.DuplicateGadgetURLException")) {
-			return new com.liferay.opensocial.DuplicateGadgetURLException(throwable.getMessage(),
+					"com.liferay.opensocial.exception.DuplicateGadgetURLException")) {
+			return new com.liferay.opensocial.exception.DuplicateGadgetURLException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
 		if (className.equals(
-					"com.liferay.opensocial.GadgetPortletCategoryNamesException")) {
-			return new com.liferay.opensocial.GadgetPortletCategoryNamesException(throwable.getMessage(),
-				throwable.getCause());
-		}
-
-		if (className.equals("com.liferay.opensocial.GadgetURLException")) {
-			return new com.liferay.opensocial.GadgetURLException(throwable.getMessage(),
-				throwable.getCause());
-		}
-
-		if (className.equals("com.liferay.opensocial.NoSuchGadgetException")) {
-			return new com.liferay.opensocial.NoSuchGadgetException(throwable.getMessage(),
+					"com.liferay.opensocial.exception.GadgetPortletCategoryNamesException")) {
+			return new com.liferay.opensocial.exception.GadgetPortletCategoryNamesException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
 		if (className.equals(
-					"com.liferay.opensocial.NoSuchOAuthConsumerException")) {
-			return new com.liferay.opensocial.NoSuchOAuthConsumerException(throwable.getMessage(),
+					"com.liferay.opensocial.exception.GadgetURLException")) {
+			return new com.liferay.opensocial.exception.GadgetURLException(throwable.getMessage(),
 				throwable.getCause());
 		}
 
-		if (className.equals("com.liferay.opensocial.NoSuchOAuthTokenException")) {
-			return new com.liferay.opensocial.NoSuchOAuthTokenException(throwable.getMessage(),
+		if (className.equals(
+					"com.liferay.opensocial.exception.NoSuchGadgetException")) {
+			return new com.liferay.opensocial.exception.NoSuchGadgetException(throwable.getMessage(),
+				throwable.getCause());
+		}
+
+		if (className.equals(
+					"com.liferay.opensocial.exception.NoSuchOAuthConsumerException")) {
+			return new com.liferay.opensocial.exception.NoSuchOAuthConsumerException(throwable.getMessage(),
+				throwable.getCause());
+		}
+
+		if (className.equals(
+					"com.liferay.opensocial.exception.NoSuchOAuthTokenException")) {
+			return new com.liferay.opensocial.exception.NoSuchOAuthTokenException(throwable.getMessage(),
 				throwable.getCause());
 		}
 

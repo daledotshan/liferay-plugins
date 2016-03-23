@@ -20,7 +20,7 @@
 <%@ include file="/init.jsp" %>
 
 <%
-String tabs1 = ParamUtil.getString(request, "tabs1", "organizations");
+String tabs2 = ParamUtil.getString(request, "tabs2", "organizations");
 
 String keywords = ParamUtil.getString(request, "keywords");
 String searchFilter = ParamUtil.getString(request, "searchFilter");
@@ -31,7 +31,7 @@ RowChecker organizationRoleChecker = (RowChecker)InstanceFactory.newInstance(Por
 %>
 
 <liferay-portlet:renderURL varImpl="portletURL">
-	<portlet:param name="tabs1" value="<%= tabs1 %>" />
+	<portlet:param name="tabs2" value="<%= tabs2 %>" />
 	<portlet:param name="searchFilter" value="<%= searchFilter %>" />
 </liferay-portlet:renderURL>
 
@@ -65,7 +65,7 @@ RowChecker organizationRoleChecker = (RowChecker)InstanceFactory.newInstance(Por
 	%>
 
 	<liferay-ui:search-container-row
-		className="com.liferay.portal.model.Organization"
+		className="com.liferay.portal.kernel.model.Organization"
 		escapedModel="<%= true %>"
 		keyProperty="group.groupId"
 		modelVar="organization"
@@ -86,7 +86,7 @@ RowChecker organizationRoleChecker = (RowChecker)InstanceFactory.newInstance(Por
 		<liferay-ui:search-container-column-text
 			name="type"
 			orderable="<%= true %>"
-			value="<%= LanguageUtil.get(pageContext, organization.getType()) %>"
+			value="<%= LanguageUtil.get(request, organization.getType()) %>"
 		/>
 	</liferay-ui:search-container-row>
 

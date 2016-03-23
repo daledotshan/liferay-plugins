@@ -14,26 +14,29 @@
 
 package com.liferay.knowledgebase.service.base;
 
+import com.liferay.asset.kernel.service.persistence.AssetEntryPersistence;
+
 import com.liferay.knowledgebase.model.KBTemplate;
 import com.liferay.knowledgebase.service.KBTemplateService;
+import com.liferay.knowledgebase.service.persistence.KBArticleFinder;
 import com.liferay.knowledgebase.service.persistence.KBArticlePersistence;
 import com.liferay.knowledgebase.service.persistence.KBCommentPersistence;
+import com.liferay.knowledgebase.service.persistence.KBFolderPersistence;
 import com.liferay.knowledgebase.service.persistence.KBTemplatePersistence;
 
 import com.liferay.portal.kernel.bean.BeanReference;
-import com.liferay.portal.kernel.bean.IdentifiableBean;
 import com.liferay.portal.kernel.dao.db.DB;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
+import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.service.BaseServiceImpl;
-import com.liferay.portal.service.persistence.ClassNamePersistence;
-import com.liferay.portal.service.persistence.UserPersistence;
-import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiService;
+import com.liferay.portal.kernel.service.BaseServiceImpl;
+import com.liferay.portal.kernel.service.persistence.ClassNamePersistence;
+import com.liferay.portal.kernel.service.persistence.UserPersistence;
+import com.liferay.portal.kernel.util.PortalUtil;
 
-import com.liferay.portlet.asset.service.persistence.AssetEntryPersistence;
-import com.liferay.portlet.social.service.persistence.SocialActivityPersistence;
+import com.liferay.social.kernel.service.persistence.SocialActivityPersistence;
 
 import javax.sql.DataSource;
 
@@ -50,7 +53,7 @@ import javax.sql.DataSource;
  * @generated
  */
 public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
-	implements KBTemplateService, IdentifiableBean {
+	implements KBTemplateService, IdentifiableOSGiService {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -115,6 +118,24 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	}
 
 	/**
+	 * Returns the k b article finder.
+	 *
+	 * @return the k b article finder
+	 */
+	public KBArticleFinder getKBArticleFinder() {
+		return kbArticleFinder;
+	}
+
+	/**
+	 * Sets the k b article finder.
+	 *
+	 * @param kbArticleFinder the k b article finder
+	 */
+	public void setKBArticleFinder(KBArticleFinder kbArticleFinder) {
+		this.kbArticleFinder = kbArticleFinder;
+	}
+
+	/**
 	 * Returns the k b comment local service.
 	 *
 	 * @return the k b comment local service
@@ -172,6 +193,62 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	}
 
 	/**
+	 * Returns the k b folder local service.
+	 *
+	 * @return the k b folder local service
+	 */
+	public com.liferay.knowledgebase.service.KBFolderLocalService getKBFolderLocalService() {
+		return kbFolderLocalService;
+	}
+
+	/**
+	 * Sets the k b folder local service.
+	 *
+	 * @param kbFolderLocalService the k b folder local service
+	 */
+	public void setKBFolderLocalService(
+		com.liferay.knowledgebase.service.KBFolderLocalService kbFolderLocalService) {
+		this.kbFolderLocalService = kbFolderLocalService;
+	}
+
+	/**
+	 * Returns the k b folder remote service.
+	 *
+	 * @return the k b folder remote service
+	 */
+	public com.liferay.knowledgebase.service.KBFolderService getKBFolderService() {
+		return kbFolderService;
+	}
+
+	/**
+	 * Sets the k b folder remote service.
+	 *
+	 * @param kbFolderService the k b folder remote service
+	 */
+	public void setKBFolderService(
+		com.liferay.knowledgebase.service.KBFolderService kbFolderService) {
+		this.kbFolderService = kbFolderService;
+	}
+
+	/**
+	 * Returns the k b folder persistence.
+	 *
+	 * @return the k b folder persistence
+	 */
+	public KBFolderPersistence getKBFolderPersistence() {
+		return kbFolderPersistence;
+	}
+
+	/**
+	 * Sets the k b folder persistence.
+	 *
+	 * @param kbFolderPersistence the k b folder persistence
+	 */
+	public void setKBFolderPersistence(KBFolderPersistence kbFolderPersistence) {
+		this.kbFolderPersistence = kbFolderPersistence;
+	}
+
+	/**
 	 * Returns the k b template local service.
 	 *
 	 * @return the k b template local service
@@ -195,7 +272,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 *
 	 * @return the k b template remote service
 	 */
-	public com.liferay.knowledgebase.service.KBTemplateService getKBTemplateService() {
+	public KBTemplateService getKBTemplateService() {
 		return kbTemplateService;
 	}
 
@@ -204,8 +281,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 *
 	 * @param kbTemplateService the k b template remote service
 	 */
-	public void setKBTemplateService(
-		com.liferay.knowledgebase.service.KBTemplateService kbTemplateService) {
+	public void setKBTemplateService(KBTemplateService kbTemplateService) {
 		this.kbTemplateService = kbTemplateService;
 	}
 
@@ -233,7 +309,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 *
 	 * @return the counter local service
 	 */
-	public com.liferay.counter.service.CounterLocalService getCounterLocalService() {
+	public com.liferay.counter.kernel.service.CounterLocalService getCounterLocalService() {
 		return counterLocalService;
 	}
 
@@ -243,7 +319,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 * @param counterLocalService the counter local service
 	 */
 	public void setCounterLocalService(
-		com.liferay.counter.service.CounterLocalService counterLocalService) {
+		com.liferay.counter.kernel.service.CounterLocalService counterLocalService) {
 		this.counterLocalService = counterLocalService;
 	}
 
@@ -252,7 +328,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 *
 	 * @return the class name local service
 	 */
-	public com.liferay.portal.service.ClassNameLocalService getClassNameLocalService() {
+	public com.liferay.portal.kernel.service.ClassNameLocalService getClassNameLocalService() {
 		return classNameLocalService;
 	}
 
@@ -262,7 +338,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 * @param classNameLocalService the class name local service
 	 */
 	public void setClassNameLocalService(
-		com.liferay.portal.service.ClassNameLocalService classNameLocalService) {
+		com.liferay.portal.kernel.service.ClassNameLocalService classNameLocalService) {
 		this.classNameLocalService = classNameLocalService;
 	}
 
@@ -271,7 +347,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 *
 	 * @return the class name remote service
 	 */
-	public com.liferay.portal.service.ClassNameService getClassNameService() {
+	public com.liferay.portal.kernel.service.ClassNameService getClassNameService() {
 		return classNameService;
 	}
 
@@ -281,7 +357,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 * @param classNameService the class name remote service
 	 */
 	public void setClassNameService(
-		com.liferay.portal.service.ClassNameService classNameService) {
+		com.liferay.portal.kernel.service.ClassNameService classNameService) {
 		this.classNameService = classNameService;
 	}
 
@@ -309,7 +385,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 *
 	 * @return the resource local service
 	 */
-	public com.liferay.portal.service.ResourceLocalService getResourceLocalService() {
+	public com.liferay.portal.kernel.service.ResourceLocalService getResourceLocalService() {
 		return resourceLocalService;
 	}
 
@@ -319,7 +395,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 * @param resourceLocalService the resource local service
 	 */
 	public void setResourceLocalService(
-		com.liferay.portal.service.ResourceLocalService resourceLocalService) {
+		com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService) {
 		this.resourceLocalService = resourceLocalService;
 	}
 
@@ -328,7 +404,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 *
 	 * @return the user local service
 	 */
-	public com.liferay.portal.service.UserLocalService getUserLocalService() {
+	public com.liferay.portal.kernel.service.UserLocalService getUserLocalService() {
 		return userLocalService;
 	}
 
@@ -338,7 +414,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 * @param userLocalService the user local service
 	 */
 	public void setUserLocalService(
-		com.liferay.portal.service.UserLocalService userLocalService) {
+		com.liferay.portal.kernel.service.UserLocalService userLocalService) {
 		this.userLocalService = userLocalService;
 	}
 
@@ -347,7 +423,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 *
 	 * @return the user remote service
 	 */
-	public com.liferay.portal.service.UserService getUserService() {
+	public com.liferay.portal.kernel.service.UserService getUserService() {
 		return userService;
 	}
 
@@ -357,7 +433,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 * @param userService the user remote service
 	 */
 	public void setUserService(
-		com.liferay.portal.service.UserService userService) {
+		com.liferay.portal.kernel.service.UserService userService) {
 		this.userService = userService;
 	}
 
@@ -384,7 +460,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 *
 	 * @return the asset entry local service
 	 */
-	public com.liferay.portlet.asset.service.AssetEntryLocalService getAssetEntryLocalService() {
+	public com.liferay.asset.kernel.service.AssetEntryLocalService getAssetEntryLocalService() {
 		return assetEntryLocalService;
 	}
 
@@ -394,7 +470,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 * @param assetEntryLocalService the asset entry local service
 	 */
 	public void setAssetEntryLocalService(
-		com.liferay.portlet.asset.service.AssetEntryLocalService assetEntryLocalService) {
+		com.liferay.asset.kernel.service.AssetEntryLocalService assetEntryLocalService) {
 		this.assetEntryLocalService = assetEntryLocalService;
 	}
 
@@ -403,7 +479,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 *
 	 * @return the asset entry remote service
 	 */
-	public com.liferay.portlet.asset.service.AssetEntryService getAssetEntryService() {
+	public com.liferay.asset.kernel.service.AssetEntryService getAssetEntryService() {
 		return assetEntryService;
 	}
 
@@ -413,7 +489,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 * @param assetEntryService the asset entry remote service
 	 */
 	public void setAssetEntryService(
-		com.liferay.portlet.asset.service.AssetEntryService assetEntryService) {
+		com.liferay.asset.kernel.service.AssetEntryService assetEntryService) {
 		this.assetEntryService = assetEntryService;
 	}
 
@@ -441,7 +517,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 *
 	 * @return the social activity local service
 	 */
-	public com.liferay.portlet.social.service.SocialActivityLocalService getSocialActivityLocalService() {
+	public com.liferay.social.kernel.service.SocialActivityLocalService getSocialActivityLocalService() {
 		return socialActivityLocalService;
 	}
 
@@ -451,7 +527,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 * @param socialActivityLocalService the social activity local service
 	 */
 	public void setSocialActivityLocalService(
-		com.liferay.portlet.social.service.SocialActivityLocalService socialActivityLocalService) {
+		com.liferay.social.kernel.service.SocialActivityLocalService socialActivityLocalService) {
 		this.socialActivityLocalService = socialActivityLocalService;
 	}
 
@@ -460,7 +536,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 *
 	 * @return the social activity remote service
 	 */
-	public com.liferay.portlet.social.service.SocialActivityService getSocialActivityService() {
+	public com.liferay.social.kernel.service.SocialActivityService getSocialActivityService() {
 		return socialActivityService;
 	}
 
@@ -470,7 +546,7 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 * @param socialActivityService the social activity remote service
 	 */
 	public void setSocialActivityService(
-		com.liferay.portlet.social.service.SocialActivityService socialActivityService) {
+		com.liferay.social.kernel.service.SocialActivityService socialActivityService) {
 		this.socialActivityService = socialActivityService;
 	}
 
@@ -503,23 +579,13 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	}
 
 	/**
-	 * Returns the Spring bean ID for this bean.
+	 * Returns the OSGi service identifier.
 	 *
-	 * @return the Spring bean ID for this bean
+	 * @return the OSGi service identifier
 	 */
 	@Override
-	public String getBeanIdentifier() {
-		return _beanIdentifier;
-	}
-
-	/**
-	 * Sets the Spring bean ID for this bean.
-	 *
-	 * @param beanIdentifier the Spring bean ID for this bean
-	 */
-	@Override
-	public void setBeanIdentifier(String beanIdentifier) {
-		_beanIdentifier = beanIdentifier;
+	public String getOSGiServiceIdentifier() {
+		return KBTemplateService.class.getName();
 	}
 
 	@Override
@@ -556,17 +622,17 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) throws SystemException {
+	protected void runSQL(String sql) {
 		try {
 			DataSource dataSource = kbTemplatePersistence.getDataSource();
 
-			DB db = DBFactoryUtil.getDB();
+			DB db = DBManagerUtil.getDB();
 
 			sql = db.buildSQL(sql);
 			sql = PortalUtil.transformSQL(sql);
 
 			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(dataSource,
-					sql, new int[0]);
+					sql);
 
 			sqlUpdate.update();
 		}
@@ -581,47 +647,54 @@ public abstract class KBTemplateServiceBaseImpl extends BaseServiceImpl
 	protected com.liferay.knowledgebase.service.KBArticleService kbArticleService;
 	@BeanReference(type = KBArticlePersistence.class)
 	protected KBArticlePersistence kbArticlePersistence;
+	@BeanReference(type = KBArticleFinder.class)
+	protected KBArticleFinder kbArticleFinder;
 	@BeanReference(type = com.liferay.knowledgebase.service.KBCommentLocalService.class)
 	protected com.liferay.knowledgebase.service.KBCommentLocalService kbCommentLocalService;
 	@BeanReference(type = com.liferay.knowledgebase.service.KBCommentService.class)
 	protected com.liferay.knowledgebase.service.KBCommentService kbCommentService;
 	@BeanReference(type = KBCommentPersistence.class)
 	protected KBCommentPersistence kbCommentPersistence;
+	@BeanReference(type = com.liferay.knowledgebase.service.KBFolderLocalService.class)
+	protected com.liferay.knowledgebase.service.KBFolderLocalService kbFolderLocalService;
+	@BeanReference(type = com.liferay.knowledgebase.service.KBFolderService.class)
+	protected com.liferay.knowledgebase.service.KBFolderService kbFolderService;
+	@BeanReference(type = KBFolderPersistence.class)
+	protected KBFolderPersistence kbFolderPersistence;
 	@BeanReference(type = com.liferay.knowledgebase.service.KBTemplateLocalService.class)
 	protected com.liferay.knowledgebase.service.KBTemplateLocalService kbTemplateLocalService;
 	@BeanReference(type = com.liferay.knowledgebase.service.KBTemplateService.class)
-	protected com.liferay.knowledgebase.service.KBTemplateService kbTemplateService;
+	protected KBTemplateService kbTemplateService;
 	@BeanReference(type = KBTemplatePersistence.class)
 	protected KBTemplatePersistence kbTemplatePersistence;
-	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)
-	protected com.liferay.counter.service.CounterLocalService counterLocalService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameLocalService.class)
-	protected com.liferay.portal.service.ClassNameLocalService classNameLocalService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameService.class)
-	protected com.liferay.portal.service.ClassNameService classNameService;
+	@BeanReference(type = com.liferay.counter.kernel.service.CounterLocalService.class)
+	protected com.liferay.counter.kernel.service.CounterLocalService counterLocalService;
+	@BeanReference(type = com.liferay.portal.kernel.service.ClassNameLocalService.class)
+	protected com.liferay.portal.kernel.service.ClassNameLocalService classNameLocalService;
+	@BeanReference(type = com.liferay.portal.kernel.service.ClassNameService.class)
+	protected com.liferay.portal.kernel.service.ClassNameService classNameService;
 	@BeanReference(type = ClassNamePersistence.class)
 	protected ClassNamePersistence classNamePersistence;
-	@BeanReference(type = com.liferay.portal.service.ResourceLocalService.class)
-	protected com.liferay.portal.service.ResourceLocalService resourceLocalService;
-	@BeanReference(type = com.liferay.portal.service.UserLocalService.class)
-	protected com.liferay.portal.service.UserLocalService userLocalService;
-	@BeanReference(type = com.liferay.portal.service.UserService.class)
-	protected com.liferay.portal.service.UserService userService;
+	@BeanReference(type = com.liferay.portal.kernel.service.ResourceLocalService.class)
+	protected com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService;
+	@BeanReference(type = com.liferay.portal.kernel.service.UserLocalService.class)
+	protected com.liferay.portal.kernel.service.UserLocalService userLocalService;
+	@BeanReference(type = com.liferay.portal.kernel.service.UserService.class)
+	protected com.liferay.portal.kernel.service.UserService userService;
 	@BeanReference(type = UserPersistence.class)
 	protected UserPersistence userPersistence;
-	@BeanReference(type = com.liferay.portlet.asset.service.AssetEntryLocalService.class)
-	protected com.liferay.portlet.asset.service.AssetEntryLocalService assetEntryLocalService;
-	@BeanReference(type = com.liferay.portlet.asset.service.AssetEntryService.class)
-	protected com.liferay.portlet.asset.service.AssetEntryService assetEntryService;
+	@BeanReference(type = com.liferay.asset.kernel.service.AssetEntryLocalService.class)
+	protected com.liferay.asset.kernel.service.AssetEntryLocalService assetEntryLocalService;
+	@BeanReference(type = com.liferay.asset.kernel.service.AssetEntryService.class)
+	protected com.liferay.asset.kernel.service.AssetEntryService assetEntryService;
 	@BeanReference(type = AssetEntryPersistence.class)
 	protected AssetEntryPersistence assetEntryPersistence;
-	@BeanReference(type = com.liferay.portlet.social.service.SocialActivityLocalService.class)
-	protected com.liferay.portlet.social.service.SocialActivityLocalService socialActivityLocalService;
-	@BeanReference(type = com.liferay.portlet.social.service.SocialActivityService.class)
-	protected com.liferay.portlet.social.service.SocialActivityService socialActivityService;
+	@BeanReference(type = com.liferay.social.kernel.service.SocialActivityLocalService.class)
+	protected com.liferay.social.kernel.service.SocialActivityLocalService socialActivityLocalService;
+	@BeanReference(type = com.liferay.social.kernel.service.SocialActivityService.class)
+	protected com.liferay.social.kernel.service.SocialActivityService socialActivityService;
 	@BeanReference(type = SocialActivityPersistence.class)
 	protected SocialActivityPersistence socialActivityPersistence;
-	private String _beanIdentifier;
 	private ClassLoader _classLoader;
 	private KBTemplateServiceClpInvoker _clpInvoker = new KBTemplateServiceClpInvoker();
 }

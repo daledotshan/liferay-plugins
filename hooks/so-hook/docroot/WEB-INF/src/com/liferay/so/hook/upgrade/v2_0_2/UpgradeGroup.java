@@ -17,27 +17,30 @@
 
 package com.liferay.so.hook.upgrade.v2_0_2;
 
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Property;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.LayoutSet;
+import com.liferay.portal.kernel.model.LayoutTypePortlet;
+import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutSetLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.ClassResolverUtil;
 import com.liferay.portal.kernel.util.MethodKey;
 import com.liferay.portal.kernel.util.PortalClassInvoker;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutConstants;
-import com.liferay.portal.model.LayoutSet;
-import com.liferay.portal.model.LayoutTypePortlet;
-import com.liferay.portal.service.GroupLocalServiceUtil;
-import com.liferay.portal.service.LayoutLocalServiceUtil;
-import com.liferay.portal.service.LayoutSetLocalServiceUtil;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.so.util.LayoutSetPrototypeUtil;
 import com.liferay.so.util.SocialOfficeConstants;
 import com.liferay.so.util.SocialOfficeUtil;
-
-import java.util.List;
 
 import javax.portlet.PortletPreferences;
 
@@ -49,46 +52,78 @@ public class UpgradeGroup extends UpgradeProcess {
 
 	@Override
 	protected void doUpgrade() throws Exception {
-		List<Group> groups = GroupLocalServiceUtil.getGroups(
-			QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+		ActionableDynamicQuery actionableDynamicQuery =
+			GroupLocalServiceUtil.getActionableDynamicQuery();
 
-		for (Group group : groups) {
-			if (!group.isRegularSite() || group.isGuest()) {
-				continue;
-			}
+		actionableDynamicQuery.setAddCriteriaMethod(
+			new ActionableDynamicQuery.AddCriteriaMethod() {
 
-			boolean privateLayout = group.hasPrivateLayouts();
+				@Override
+				public void addCriteria(DynamicQuery dynamicQuery) {
+					Property classNameIdProperty = PropertyFactoryUtil.forName(
+						"classNameId");
 
-			LayoutSet layoutSet = LayoutSetLocalServiceUtil.getLayoutSet(
-				group.getGroupId(), privateLayout);
+					long classNameId = PortalUtil.getClassNameId(Group.class);
 
-			String themeId = layoutSet.getThemeId();
+					dynamicQuery.add(classNameIdProperty.eq(classNameId));
+				}
 
-			if (!themeId.equals("so_WAR_sotheme")) {
-				continue;
-			}
+			});
+		actionableDynamicQuery.setPerformActionMethod(
+			new ActionableDynamicQuery.PerformActionMethod<Group>() {
 
-			PortletPreferences portletPreferences = getPortletPreferences(
-				group.getGroupId(), privateLayout);
+				@Override
+				public void performAction(Group group) throws PortalException {
+					if (group.isGuest()) {
+						return;
+					}
 
-			LayoutLocalServiceUtil.deleteLayouts(
-				group.getGroupId(), privateLayout, new ServiceContext());
+					boolean privateLayout = group.hasPrivateLayouts();
 
-			LayoutSetPrototypeUtil.updateLayoutSetPrototype(
-				group, privateLayout,
-				SocialOfficeConstants.LAYOUT_SET_PROTOTYPE_KEY_SITE);
+					LayoutSet layoutSet =
+						LayoutSetLocalServiceUtil.getLayoutSet(
+							group.getGroupId(), privateLayout);
 
-			layoutSet = LayoutSetLocalServiceUtil.getLayoutSet(
-				group.getGroupId(), privateLayout);
+					String themeId = layoutSet.getThemeId();
 
-			PortalClassInvoker.invoke(
-				_mergeLayoutSetPrototypeLayoutsMethodKey, group, layoutSet);
+					if (!themeId.equals("so_WAR_sotheme")) {
+						return;
+					}
 
-			updatePortletPreferences(
-				group.getGroupId(), privateLayout, portletPreferences);
+					try {
+						PortletPreferences portletPreferences =
+							getPortletPreferences(
+								group.getGroupId(), privateLayout);
 
-			SocialOfficeUtil.enableSocialOffice(group);
-		}
+						LayoutLocalServiceUtil.deleteLayouts(
+							group.getGroupId(), privateLayout,
+							new ServiceContext());
+
+						LayoutSetPrototypeUtil.updateLayoutSetPrototype(
+							group, privateLayout,
+							SocialOfficeConstants.
+								LAYOUT_SET_PROTOTYPE_KEY_SITE);
+
+						layoutSet = LayoutSetLocalServiceUtil.getLayoutSet(
+							group.getGroupId(), privateLayout);
+
+						PortalClassInvoker.invoke(
+							_mergeLayoutSetPrototypeLayoutsMethodKey, group,
+							layoutSet);
+
+						updatePortletPreferences(
+							group.getGroupId(), privateLayout,
+							portletPreferences);
+
+						SocialOfficeUtil.enableSocialOffice(group);
+					}
+					catch (Exception e) {
+					}
+				}
+
+			});
+
+		actionableDynamicQuery.performActions();
 	}
 
 	protected PortletPreferences getPortletPreferences(
@@ -142,7 +177,7 @@ public class UpgradeGroup extends UpgradeProcess {
 	private static MethodKey _mergeLayoutSetPrototypeLayoutsMethodKey =
 		new MethodKey(
 			ClassResolverUtil.resolveByPortalClassLoader(
-				"com.liferay.portlet.sites.util.SitesUtil"),
+				"com.liferay.sites.kernel.util.SitesUtil"),
 			"mergeLayoutSetPrototypeLayouts", Group.class, LayoutSet.class);
 
 }

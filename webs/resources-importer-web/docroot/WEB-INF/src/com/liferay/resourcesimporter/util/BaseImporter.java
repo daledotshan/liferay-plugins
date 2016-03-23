@@ -15,23 +15,22 @@
 package com.liferay.resourcesimporter.util;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.LayoutPrototype;
+import com.liferay.portal.kernel.model.LayoutSetPrototype;
+import com.liferay.portal.kernel.model.LayoutTypePortlet;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutPrototypeLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutSetPrototypeLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.model.Group;
-import com.liferay.portal.model.GroupConstants;
-import com.liferay.portal.model.Layout;
-import com.liferay.portal.model.LayoutConstants;
-import com.liferay.portal.model.LayoutPrototype;
-import com.liferay.portal.model.LayoutSetPrototype;
-import com.liferay.portal.model.LayoutTypePortlet;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.GroupLocalServiceUtil;
-import com.liferay.portal.service.LayoutLocalServiceUtil;
-import com.liferay.portal.service.LayoutPrototypeLocalServiceUtil;
-import com.liferay.portal.service.LayoutSetPrototypeLocalServiceUtil;
-import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +68,8 @@ public abstract class BaseImporter implements Importer {
 				layoutSetPrototype =
 					LayoutSetPrototypeLocalServiceUtil.addLayoutSetPrototype(
 						userId, companyId, getTargetValueMap(),
-						StringPool.BLANK, true, true, new ServiceContext());
+						new HashMap<Locale, String>(), true, true,
+						new ServiceContext());
 			}
 
 			group = layoutSetPrototype.getGroup();
@@ -142,12 +142,17 @@ public abstract class BaseImporter implements Importer {
 	}
 
 	@Override
+	public String getTargetClassName() {
+		return targetClassName;
+	}
+
+	@Override
 	public long getTargetClassPK() {
 		return targetClassPK;
 	}
 
 	public Map<Locale, String> getTargetValueMap() {
-		Map<Locale, String> targetValueMap = new HashMap<Locale, String>();
+		Map<Locale, String> targetValueMap = new HashMap<>();
 
 		Locale locale = LocaleUtil.getDefault();
 
@@ -168,8 +173,18 @@ public abstract class BaseImporter implements Importer {
 	}
 
 	@Override
+	public boolean isDeveloperModeEnabled() {
+		return developerModeEnabled;
+	}
+
+	@Override
 	public boolean isExisting() {
 		return existing;
+	}
+
+	@Override
+	public void setAppendVersion(boolean appendVersion) {
+		this.appendVersion = appendVersion;
 	}
 
 	@Override
@@ -213,13 +228,16 @@ public abstract class BaseImporter implements Importer {
 	}
 
 	@Override
+	public void setUpdateModeEnabled(boolean updateModeEnabled) {
+		this.updateModeEnabled = updateModeEnabled;
+	}
+
+	@Override
 	public void setVersion(String version) {
 		this.version = version;
 	}
 
-	protected LayoutPrototype getLayoutPrototype(long companyId, String name)
-		throws SystemException {
-
+	protected LayoutPrototype getLayoutPrototype(long companyId, String name) {
 		Locale locale = LocaleUtil.getDefault();
 
 		List<LayoutPrototype> layoutPrototypes =
@@ -254,6 +272,7 @@ public abstract class BaseImporter implements Importer {
 		return null;
 	}
 
+	protected boolean appendVersion;
 	protected long companyId;
 	protected boolean developerModeEnabled;
 	protected boolean existing;
@@ -264,6 +283,7 @@ public abstract class BaseImporter implements Importer {
 	protected String targetClassName;
 	protected long targetClassPK;
 	protected String targetValue;
+	protected boolean updateModeEnabled;
 	protected long userId;
 	protected String version;
 

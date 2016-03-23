@@ -14,7 +14,11 @@
 
 package com.liferay.knowledgebase.model;
 
-import com.liferay.portal.model.PersistedModel;
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.annotation.ImplementationClassName;
+import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.util.Accessor;
 
 /**
  * The extended model interface for the KBArticle service. Represents a row in the &quot;KBArticle&quot; database table, with each column mapped to a property of this class.
@@ -25,27 +29,49 @@ import com.liferay.portal.model.PersistedModel;
  * @see com.liferay.knowledgebase.model.impl.KBArticleModelImpl
  * @generated
  */
+@ImplementationClassName("com.liferay.knowledgebase.model.impl.KBArticleImpl")
+@ProviderType
 public interface KBArticle extends KBArticleModel, PersistedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never modify this interface directly. Add methods to {@link com.liferay.knowledgebase.model.impl.KBArticleImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public java.lang.String getAttachmentsDirName();
+	public static final Accessor<KBArticle, Long> KB_ARTICLE_ID_ACCESSOR = new Accessor<KBArticle, Long>() {
+			@Override
+			public Long get(KBArticle kbArticle) {
+				return kbArticle.getKbArticleId();
+			}
+
+			@Override
+			public Class<Long> getAttributeClass() {
+				return Long.class;
+			}
+
+			@Override
+			public Class<KBArticle> getTypeClass() {
+				return KBArticle.class;
+			}
+		};
+
+	public java.util.List<java.lang.Long> getAncestorResourcePrimaryKeys()
+		throws com.liferay.portal.kernel.exception.PortalException;
 
 	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getAttachmentsFileEntries()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException;
-
-	public java.lang.String[] getAttachmentsFileNames()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException;
+		throws com.liferay.portal.kernel.exception.PortalException;
 
 	public long getAttachmentsFolderId()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException;
+		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public long getClassNameId();
 
 	public long getClassPK();
+
+	public com.liferay.knowledgebase.model.KBArticle getParentKBArticle()
+		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public java.lang.String getParentTitle(java.util.Locale locale, int status)
+		throws com.liferay.portal.kernel.exception.PortalException;
 
 	public boolean isFirstVersion();
 

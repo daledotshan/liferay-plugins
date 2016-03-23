@@ -14,8 +14,15 @@
 
 package com.liferay.so.model;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +37,7 @@ import java.util.Map;
  * @see MemberRequest
  * @generated
  */
+@ProviderType
 public class MemberRequestWrapper implements MemberRequest,
 	ModelWrapper<MemberRequest> {
 	public MemberRequestWrapper(MemberRequest memberRequest) {
@@ -141,64 +149,14 @@ public class MemberRequestWrapper implements MemberRequest,
 		}
 	}
 
-	/**
-	* Returns the primary key of this member request.
-	*
-	* @return the primary key of this member request
-	*/
 	@Override
-	public long getPrimaryKey() {
-		return _memberRequest.getPrimaryKey();
+	public java.lang.Object clone() {
+		return new MemberRequestWrapper((MemberRequest)_memberRequest.clone());
 	}
 
-	/**
-	* Sets the primary key of this member request.
-	*
-	* @param primaryKey the primary key of this member request
-	*/
 	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_memberRequest.setPrimaryKey(primaryKey);
-	}
-
-	/**
-	* Returns the member request ID of this member request.
-	*
-	* @return the member request ID of this member request
-	*/
-	@Override
-	public long getMemberRequestId() {
-		return _memberRequest.getMemberRequestId();
-	}
-
-	/**
-	* Sets the member request ID of this member request.
-	*
-	* @param memberRequestId the member request ID of this member request
-	*/
-	@Override
-	public void setMemberRequestId(long memberRequestId) {
-		_memberRequest.setMemberRequestId(memberRequestId);
-	}
-
-	/**
-	* Returns the group ID of this member request.
-	*
-	* @return the group ID of this member request
-	*/
-	@Override
-	public long getGroupId() {
-		return _memberRequest.getGroupId();
-	}
-
-	/**
-	* Sets the group ID of this member request.
-	*
-	* @param groupId the group ID of this member request
-	*/
-	@Override
-	public void setGroupId(long groupId) {
-		_memberRequest.setGroupId(groupId);
+	public int compareTo(com.liferay.so.model.MemberRequest memberRequest) {
+		return _memberRequest.compareTo(memberRequest);
 	}
 
 	/**
@@ -212,177 +170,28 @@ public class MemberRequestWrapper implements MemberRequest,
 	}
 
 	/**
-	* Sets the company ID of this member request.
-	*
-	* @param companyId the company ID of this member request
-	*/
-	@Override
-	public void setCompanyId(long companyId) {
-		_memberRequest.setCompanyId(companyId);
-	}
-
-	/**
-	* Returns the user ID of this member request.
-	*
-	* @return the user ID of this member request
-	*/
-	@Override
-	public long getUserId() {
-		return _memberRequest.getUserId();
-	}
-
-	/**
-	* Sets the user ID of this member request.
-	*
-	* @param userId the user ID of this member request
-	*/
-	@Override
-	public void setUserId(long userId) {
-		_memberRequest.setUserId(userId);
-	}
-
-	/**
-	* Returns the user uuid of this member request.
-	*
-	* @return the user uuid of this member request
-	* @throws SystemException if a system exception occurred
-	*/
-	@Override
-	public java.lang.String getUserUuid()
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return _memberRequest.getUserUuid();
-	}
-
-	/**
-	* Sets the user uuid of this member request.
-	*
-	* @param userUuid the user uuid of this member request
-	*/
-	@Override
-	public void setUserUuid(java.lang.String userUuid) {
-		_memberRequest.setUserUuid(userUuid);
-	}
-
-	/**
-	* Returns the user name of this member request.
-	*
-	* @return the user name of this member request
-	*/
-	@Override
-	public java.lang.String getUserName() {
-		return _memberRequest.getUserName();
-	}
-
-	/**
-	* Sets the user name of this member request.
-	*
-	* @param userName the user name of this member request
-	*/
-	@Override
-	public void setUserName(java.lang.String userName) {
-		_memberRequest.setUserName(userName);
-	}
-
-	/**
 	* Returns the create date of this member request.
 	*
 	* @return the create date of this member request
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
+	public Date getCreateDate() {
 		return _memberRequest.getCreateDate();
 	}
 
-	/**
-	* Sets the create date of this member request.
-	*
-	* @param createDate the create date of this member request
-	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
-		_memberRequest.setCreateDate(createDate);
+	public ExpandoBridge getExpandoBridge() {
+		return _memberRequest.getExpandoBridge();
 	}
 
 	/**
-	* Returns the modified date of this member request.
+	* Returns the group ID of this member request.
 	*
-	* @return the modified date of this member request
+	* @return the group ID of this member request
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
-		return _memberRequest.getModifiedDate();
-	}
-
-	/**
-	* Sets the modified date of this member request.
-	*
-	* @param modifiedDate the modified date of this member request
-	*/
-	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
-		_memberRequest.setModifiedDate(modifiedDate);
-	}
-
-	/**
-	* Returns the key of this member request.
-	*
-	* @return the key of this member request
-	*/
-	@Override
-	public java.lang.String getKey() {
-		return _memberRequest.getKey();
-	}
-
-	/**
-	* Sets the key of this member request.
-	*
-	* @param key the key of this member request
-	*/
-	@Override
-	public void setKey(java.lang.String key) {
-		_memberRequest.setKey(key);
-	}
-
-	/**
-	* Returns the receiver user ID of this member request.
-	*
-	* @return the receiver user ID of this member request
-	*/
-	@Override
-	public long getReceiverUserId() {
-		return _memberRequest.getReceiverUserId();
-	}
-
-	/**
-	* Sets the receiver user ID of this member request.
-	*
-	* @param receiverUserId the receiver user ID of this member request
-	*/
-	@Override
-	public void setReceiverUserId(long receiverUserId) {
-		_memberRequest.setReceiverUserId(receiverUserId);
-	}
-
-	/**
-	* Returns the receiver user uuid of this member request.
-	*
-	* @return the receiver user uuid of this member request
-	* @throws SystemException if a system exception occurred
-	*/
-	@Override
-	public java.lang.String getReceiverUserUuid()
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return _memberRequest.getReceiverUserUuid();
-	}
-
-	/**
-	* Sets the receiver user uuid of this member request.
-	*
-	* @param receiverUserUuid the receiver user uuid of this member request
-	*/
-	@Override
-	public void setReceiverUserUuid(java.lang.String receiverUserUuid) {
-		_memberRequest.setReceiverUserUuid(receiverUserUuid);
+	public long getGroupId() {
+		return _memberRequest.getGroupId();
 	}
 
 	/**
@@ -396,16 +205,6 @@ public class MemberRequestWrapper implements MemberRequest,
 	}
 
 	/**
-	* Sets the invited role ID of this member request.
-	*
-	* @param invitedRoleId the invited role ID of this member request
-	*/
-	@Override
-	public void setInvitedRoleId(long invitedRoleId) {
-		_memberRequest.setInvitedRoleId(invitedRoleId);
-	}
-
-	/**
 	* Returns the invited team ID of this member request.
 	*
 	* @return the invited team ID of this member request
@@ -416,13 +215,68 @@ public class MemberRequestWrapper implements MemberRequest,
 	}
 
 	/**
-	* Sets the invited team ID of this member request.
+	* Returns the key of this member request.
 	*
-	* @param invitedTeamId the invited team ID of this member request
+	* @return the key of this member request
 	*/
 	@Override
-	public void setInvitedTeamId(long invitedTeamId) {
-		_memberRequest.setInvitedTeamId(invitedTeamId);
+	public java.lang.String getKey() {
+		return _memberRequest.getKey();
+	}
+
+	/**
+	* Returns the member request ID of this member request.
+	*
+	* @return the member request ID of this member request
+	*/
+	@Override
+	public long getMemberRequestId() {
+		return _memberRequest.getMemberRequestId();
+	}
+
+	/**
+	* Returns the modified date of this member request.
+	*
+	* @return the modified date of this member request
+	*/
+	@Override
+	public Date getModifiedDate() {
+		return _memberRequest.getModifiedDate();
+	}
+
+	/**
+	* Returns the primary key of this member request.
+	*
+	* @return the primary key of this member request
+	*/
+	@Override
+	public long getPrimaryKey() {
+		return _memberRequest.getPrimaryKey();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _memberRequest.getPrimaryKeyObj();
+	}
+
+	/**
+	* Returns the receiver user ID of this member request.
+	*
+	* @return the receiver user ID of this member request
+	*/
+	@Override
+	public long getReceiverUserId() {
+		return _memberRequest.getReceiverUserId();
+	}
+
+	/**
+	* Returns the receiver user uuid of this member request.
+	*
+	* @return the receiver user uuid of this member request
+	*/
+	@Override
+	public java.lang.String getReceiverUserUuid() {
+		return _memberRequest.getReceiverUserUuid();
 	}
 
 	/**
@@ -436,6 +290,202 @@ public class MemberRequestWrapper implements MemberRequest,
 	}
 
 	/**
+	* Returns the user ID of this member request.
+	*
+	* @return the user ID of this member request
+	*/
+	@Override
+	public long getUserId() {
+		return _memberRequest.getUserId();
+	}
+
+	/**
+	* Returns the user name of this member request.
+	*
+	* @return the user name of this member request
+	*/
+	@Override
+	public java.lang.String getUserName() {
+		return _memberRequest.getUserName();
+	}
+
+	/**
+	* Returns the user uuid of this member request.
+	*
+	* @return the user uuid of this member request
+	*/
+	@Override
+	public java.lang.String getUserUuid() {
+		return _memberRequest.getUserUuid();
+	}
+
+	@Override
+	public int hashCode() {
+		return _memberRequest.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _memberRequest.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _memberRequest.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _memberRequest.isNew();
+	}
+
+	@Override
+	public void persist() {
+		_memberRequest.persist();
+	}
+
+	@Override
+	public void setCachedModel(boolean cachedModel) {
+		_memberRequest.setCachedModel(cachedModel);
+	}
+
+	/**
+	* Sets the company ID of this member request.
+	*
+	* @param companyId the company ID of this member request
+	*/
+	@Override
+	public void setCompanyId(long companyId) {
+		_memberRequest.setCompanyId(companyId);
+	}
+
+	/**
+	* Sets the create date of this member request.
+	*
+	* @param createDate the create date of this member request
+	*/
+	@Override
+	public void setCreateDate(Date createDate) {
+		_memberRequest.setCreateDate(createDate);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_memberRequest.setExpandoBridgeAttributes(baseModel);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_memberRequest.setExpandoBridgeAttributes(expandoBridge);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
+		_memberRequest.setExpandoBridgeAttributes(serviceContext);
+	}
+
+	/**
+	* Sets the group ID of this member request.
+	*
+	* @param groupId the group ID of this member request
+	*/
+	@Override
+	public void setGroupId(long groupId) {
+		_memberRequest.setGroupId(groupId);
+	}
+
+	/**
+	* Sets the invited role ID of this member request.
+	*
+	* @param invitedRoleId the invited role ID of this member request
+	*/
+	@Override
+	public void setInvitedRoleId(long invitedRoleId) {
+		_memberRequest.setInvitedRoleId(invitedRoleId);
+	}
+
+	/**
+	* Sets the invited team ID of this member request.
+	*
+	* @param invitedTeamId the invited team ID of this member request
+	*/
+	@Override
+	public void setInvitedTeamId(long invitedTeamId) {
+		_memberRequest.setInvitedTeamId(invitedTeamId);
+	}
+
+	/**
+	* Sets the key of this member request.
+	*
+	* @param key the key of this member request
+	*/
+	@Override
+	public void setKey(java.lang.String key) {
+		_memberRequest.setKey(key);
+	}
+
+	/**
+	* Sets the member request ID of this member request.
+	*
+	* @param memberRequestId the member request ID of this member request
+	*/
+	@Override
+	public void setMemberRequestId(long memberRequestId) {
+		_memberRequest.setMemberRequestId(memberRequestId);
+	}
+
+	/**
+	* Sets the modified date of this member request.
+	*
+	* @param modifiedDate the modified date of this member request
+	*/
+	@Override
+	public void setModifiedDate(Date modifiedDate) {
+		_memberRequest.setModifiedDate(modifiedDate);
+	}
+
+	@Override
+	public void setNew(boolean n) {
+		_memberRequest.setNew(n);
+	}
+
+	/**
+	* Sets the primary key of this member request.
+	*
+	* @param primaryKey the primary key of this member request
+	*/
+	@Override
+	public void setPrimaryKey(long primaryKey) {
+		_memberRequest.setPrimaryKey(primaryKey);
+	}
+
+	@Override
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
+		_memberRequest.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	/**
+	* Sets the receiver user ID of this member request.
+	*
+	* @param receiverUserId the receiver user ID of this member request
+	*/
+	@Override
+	public void setReceiverUserId(long receiverUserId) {
+		_memberRequest.setReceiverUserId(receiverUserId);
+	}
+
+	/**
+	* Sets the receiver user uuid of this member request.
+	*
+	* @param receiverUserUuid the receiver user uuid of this member request
+	*/
+	@Override
+	public void setReceiverUserUuid(java.lang.String receiverUserUuid) {
+		_memberRequest.setReceiverUserUuid(receiverUserUuid);
+	}
+
+	/**
 	* Sets the status of this member request.
 	*
 	* @param status the status of this member request
@@ -445,81 +495,38 @@ public class MemberRequestWrapper implements MemberRequest,
 		_memberRequest.setStatus(status);
 	}
 
+	/**
+	* Sets the user ID of this member request.
+	*
+	* @param userId the user ID of this member request
+	*/
 	@Override
-	public boolean isNew() {
-		return _memberRequest.isNew();
+	public void setUserId(long userId) {
+		_memberRequest.setUserId(userId);
+	}
+
+	/**
+	* Sets the user name of this member request.
+	*
+	* @param userName the user name of this member request
+	*/
+	@Override
+	public void setUserName(java.lang.String userName) {
+		_memberRequest.setUserName(userName);
+	}
+
+	/**
+	* Sets the user uuid of this member request.
+	*
+	* @param userUuid the user uuid of this member request
+	*/
+	@Override
+	public void setUserUuid(java.lang.String userUuid) {
+		_memberRequest.setUserUuid(userUuid);
 	}
 
 	@Override
-	public void setNew(boolean n) {
-		_memberRequest.setNew(n);
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _memberRequest.isCachedModel();
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_memberRequest.setCachedModel(cachedModel);
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _memberRequest.isEscapedModel();
-	}
-
-	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _memberRequest.getPrimaryKeyObj();
-	}
-
-	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
-		_memberRequest.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _memberRequest.getExpandoBridge();
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
-		_memberRequest.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
-		_memberRequest.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
-		_memberRequest.setExpandoBridgeAttributes(serviceContext);
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new MemberRequestWrapper((MemberRequest)_memberRequest.clone());
-	}
-
-	@Override
-	public int compareTo(com.liferay.so.model.MemberRequest memberRequest) {
-		return _memberRequest.compareTo(memberRequest);
-	}
-
-	@Override
-	public int hashCode() {
-		return _memberRequest.hashCode();
-	}
-
-	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.so.model.MemberRequest> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.so.model.MemberRequest> toCacheModel() {
 		return _memberRequest.toCacheModel();
 	}
 
@@ -529,24 +536,18 @@ public class MemberRequestWrapper implements MemberRequest,
 	}
 
 	@Override
-	public com.liferay.so.model.MemberRequest toUnescapedModel() {
-		return new MemberRequestWrapper(_memberRequest.toUnescapedModel());
-	}
-
-	@Override
 	public java.lang.String toString() {
 		return _memberRequest.toString();
 	}
 
 	@Override
-	public java.lang.String toXmlString() {
-		return _memberRequest.toXmlString();
+	public com.liferay.so.model.MemberRequest toUnescapedModel() {
+		return new MemberRequestWrapper(_memberRequest.toUnescapedModel());
 	}
 
 	@Override
-	public void persist()
-		throws com.liferay.portal.kernel.exception.SystemException {
-		_memberRequest.persist();
+	public java.lang.String toXmlString() {
+		return _memberRequest.toXmlString();
 	}
 
 	@Override
@@ -566,14 +567,6 @@ public class MemberRequestWrapper implements MemberRequest,
 		}
 
 		return false;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public MemberRequest getWrappedMemberRequest() {
-		return _memberRequest;
 	}
 
 	@Override
@@ -596,5 +589,5 @@ public class MemberRequestWrapper implements MemberRequest,
 		_memberRequest.resetOriginalValues();
 	}
 
-	private MemberRequest _memberRequest;
+	private final MemberRequest _memberRequest;
 }

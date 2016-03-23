@@ -14,10 +14,10 @@
 
 package com.liferay.knowledgebase.service.impl;
 
-import com.liferay.knowledgebase.KBTemplateContentException;
-import com.liferay.knowledgebase.KBTemplateTitleException;
-import com.liferay.knowledgebase.NoSuchTemplateException;
 import com.liferay.knowledgebase.admin.social.AdminActivityKeys;
+import com.liferay.knowledgebase.exception.KBTemplateContentException;
+import com.liferay.knowledgebase.exception.KBTemplateTitleException;
+import com.liferay.knowledgebase.exception.NoSuchTemplateException;
 import com.liferay.knowledgebase.model.KBTemplate;
 import com.liferay.knowledgebase.service.base.KBTemplateLocalServiceBaseImpl;
 import com.liferay.knowledgebase.util.KnowledgeBaseUtil;
@@ -31,18 +31,17 @@ import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.SystemEventConstants;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ResourceConstants;
-import com.liferay.portal.model.SystemEventConstants;
-import com.liferay.portal.model.User;
-import com.liferay.portal.service.ServiceContext;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -55,10 +54,11 @@ import java.util.Map;
  */
 public class KBTemplateLocalServiceImpl extends KBTemplateLocalServiceBaseImpl {
 
+	@Override
 	public KBTemplate addKBTemplate(
 			long userId, String title, String content,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		// KB template
 
@@ -102,9 +102,8 @@ public class KBTemplateLocalServiceImpl extends KBTemplateLocalServiceBaseImpl {
 		return kbTemplate;
 	}
 
-	public void deleteGroupKBTemplates(long groupId)
-		throws PortalException, SystemException {
-
+	@Override
+	public void deleteGroupKBTemplates(long groupId) throws PortalException {
 		List<KBTemplate> kbTemplates = kbTemplatePersistence.findByGroupId(
 			groupId);
 
@@ -116,9 +115,10 @@ public class KBTemplateLocalServiceImpl extends KBTemplateLocalServiceBaseImpl {
 	@Override
 	@SystemEvent(
 		action = SystemEventConstants.ACTION_SKIP,
-		type = SystemEventConstants.TYPE_DELETE)
+		type = SystemEventConstants.TYPE_DELETE
+	)
 	public KBTemplate deleteKBTemplate(KBTemplate kbTemplate)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		// KB template
 
@@ -145,7 +145,7 @@ public class KBTemplateLocalServiceImpl extends KBTemplateLocalServiceBaseImpl {
 
 	@Override
 	public KBTemplate deleteKBTemplate(long kbTemplateId)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		KBTemplate kbTemplate = kbTemplatePersistence.findByPrimaryKey(
 			kbTemplateId);
@@ -153,9 +153,8 @@ public class KBTemplateLocalServiceImpl extends KBTemplateLocalServiceBaseImpl {
 		return kbTemplateLocalService.deleteKBTemplate(kbTemplate);
 	}
 
-	public void deleteKBTemplates(long[] kbTemplateIds)
-		throws PortalException, SystemException {
-
+	@Override
+	public void deleteKBTemplates(long[] kbTemplateIds) throws PortalException {
 		for (long kbTemplateId : kbTemplateIds) {
 			KBTemplate kbTemplate = null;
 
@@ -171,24 +170,25 @@ public class KBTemplateLocalServiceImpl extends KBTemplateLocalServiceBaseImpl {
 		}
 	}
 
+	@Override
 	public List<KBTemplate> getGroupKBTemplates(
-			long groupId, int start, int end,
-			OrderByComparator orderByComparator)
-		throws SystemException {
+		long groupId, int start, int end,
+		OrderByComparator<KBTemplate> orderByComparator) {
 
 		return kbTemplatePersistence.findByGroupId(
 			groupId, start, end, orderByComparator);
 	}
 
-	public int getGroupKBTemplatesCount(long groupId) throws SystemException {
+	@Override
+	public int getGroupKBTemplatesCount(long groupId) {
 		return kbTemplatePersistence.countByGroupId(groupId);
 	}
 
+	@Override
 	public List<KBTemplate> search(
-			long groupId, String title, String content, Date startDate,
-			Date endDate, boolean andOperator, int start, int end,
-			OrderByComparator orderByComparator)
-		throws SystemException {
+		long groupId, String title, String content, Date startDate,
+		Date endDate, boolean andOperator, int start, int end,
+		OrderByComparator<KBTemplate> orderByComparator) {
 
 		DynamicQuery dynamicQuery = buildDynamicQuery(
 			groupId, title, content, startDate, endDate, andOperator);
@@ -196,10 +196,11 @@ public class KBTemplateLocalServiceImpl extends KBTemplateLocalServiceBaseImpl {
 		return dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
 
+	@Override
 	public KBTemplate updateKBTemplate(
 			long kbTemplateId, String title, String content,
 			ServiceContext serviceContext)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		// KB template
 
@@ -239,10 +240,11 @@ public class KBTemplateLocalServiceImpl extends KBTemplateLocalServiceBaseImpl {
 		return kbTemplate;
 	}
 
+	@Override
 	public void updateKBTemplateResources(
 			KBTemplate kbTemplate, String[] groupPermissions,
 			String[] guestPermissions)
-		throws PortalException, SystemException {
+		throws PortalException {
 
 		resourceLocalService.updateResources(
 			kbTemplate.getCompanyId(), kbTemplate.getGroupId(),
@@ -263,7 +265,7 @@ public class KBTemplateLocalServiceImpl extends KBTemplateLocalServiceBaseImpl {
 			junction = RestrictionsFactoryUtil.disjunction();
 		}
 
-		Map<String, String> terms = new HashMap<String, String>();
+		Map<String, String> terms = new HashMap<>();
 
 		if (Validator.isNotNull(title)) {
 			terms.put("title", title);
@@ -279,7 +281,7 @@ public class KBTemplateLocalServiceImpl extends KBTemplateLocalServiceBaseImpl {
 
 			Disjunction disjunction = RestrictionsFactoryUtil.disjunction();
 
-			for (String keyword : KnowledgeBaseUtil.parseKeywords(value)) {
+			for (String keyword : KnowledgeBaseUtil.splitKeywords(value)) {
 				Criterion criterion = RestrictionsFactoryUtil.ilike(
 					key, StringUtil.quote(keyword, StringPool.PERCENT));
 

@@ -14,8 +14,15 @@
 
 package com.liferay.socialcoding.model;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +37,7 @@ import java.util.Map;
  * @see JIRAChangeGroup
  * @generated
  */
+@ProviderType
 public class JIRAChangeGroupWrapper implements JIRAChangeGroup,
 	ModelWrapper<JIRAChangeGroup> {
 	public JIRAChangeGroupWrapper(JIRAChangeGroup jiraChangeGroup) {
@@ -85,24 +93,30 @@ public class JIRAChangeGroupWrapper implements JIRAChangeGroup,
 		}
 	}
 
-	/**
-	* Returns the primary key of this j i r a change group.
-	*
-	* @return the primary key of this j i r a change group
-	*/
 	@Override
-	public long getPrimaryKey() {
-		return _jiraChangeGroup.getPrimaryKey();
+	public java.lang.Object clone() {
+		return new JIRAChangeGroupWrapper((JIRAChangeGroup)_jiraChangeGroup.clone());
+	}
+
+	@Override
+	public int compareTo(
+		com.liferay.socialcoding.model.JIRAChangeGroup jiraChangeGroup) {
+		return _jiraChangeGroup.compareTo(jiraChangeGroup);
 	}
 
 	/**
-	* Sets the primary key of this j i r a change group.
+	* Returns the create date of this j i r a change group.
 	*
-	* @param primaryKey the primary key of this j i r a change group
+	* @return the create date of this j i r a change group
 	*/
 	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_jiraChangeGroup.setPrimaryKey(primaryKey);
+	public Date getCreateDate() {
+		return _jiraChangeGroup.getCreateDate();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _jiraChangeGroup.getExpandoBridge();
 	}
 
 	/**
@@ -116,13 +130,13 @@ public class JIRAChangeGroupWrapper implements JIRAChangeGroup,
 	}
 
 	/**
-	* Sets the jira change group ID of this j i r a change group.
+	* Returns the jira issue ID of this j i r a change group.
 	*
-	* @param jiraChangeGroupId the jira change group ID of this j i r a change group
+	* @return the jira issue ID of this j i r a change group
 	*/
 	@Override
-	public void setJiraChangeGroupId(long jiraChangeGroupId) {
-		_jiraChangeGroup.setJiraChangeGroupId(jiraChangeGroupId);
+	public long getJiraIssueId() {
+		return _jiraChangeGroup.getJiraIssueId();
 	}
 
 	/**
@@ -136,23 +150,48 @@ public class JIRAChangeGroupWrapper implements JIRAChangeGroup,
 	}
 
 	/**
-	* Sets the jira user ID of this j i r a change group.
+	* Returns the primary key of this j i r a change group.
 	*
-	* @param jiraUserId the jira user ID of this j i r a change group
+	* @return the primary key of this j i r a change group
 	*/
 	@Override
-	public void setJiraUserId(java.lang.String jiraUserId) {
-		_jiraChangeGroup.setJiraUserId(jiraUserId);
+	public long getPrimaryKey() {
+		return _jiraChangeGroup.getPrimaryKey();
 	}
 
-	/**
-	* Returns the create date of this j i r a change group.
-	*
-	* @return the create date of this j i r a change group
-	*/
 	@Override
-	public java.util.Date getCreateDate() {
-		return _jiraChangeGroup.getCreateDate();
+	public Serializable getPrimaryKeyObj() {
+		return _jiraChangeGroup.getPrimaryKeyObj();
+	}
+
+	@Override
+	public int hashCode() {
+		return _jiraChangeGroup.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _jiraChangeGroup.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _jiraChangeGroup.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _jiraChangeGroup.isNew();
+	}
+
+	@Override
+	public void persist() {
+		_jiraChangeGroup.persist();
+	}
+
+	@Override
+	public void setCachedModel(boolean cachedModel) {
+		_jiraChangeGroup.setCachedModel(cachedModel);
 	}
 
 	/**
@@ -161,18 +200,34 @@ public class JIRAChangeGroupWrapper implements JIRAChangeGroup,
 	* @param createDate the create date of this j i r a change group
 	*/
 	@Override
-	public void setCreateDate(java.util.Date createDate) {
+	public void setCreateDate(Date createDate) {
 		_jiraChangeGroup.setCreateDate(createDate);
 	}
 
+	@Override
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_jiraChangeGroup.setExpandoBridgeAttributes(baseModel);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_jiraChangeGroup.setExpandoBridgeAttributes(expandoBridge);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
+		_jiraChangeGroup.setExpandoBridgeAttributes(serviceContext);
+	}
+
 	/**
-	* Returns the jira issue ID of this j i r a change group.
+	* Sets the jira change group ID of this j i r a change group.
 	*
-	* @return the jira issue ID of this j i r a change group
+	* @param jiraChangeGroupId the jira change group ID of this j i r a change group
 	*/
 	@Override
-	public long getJiraIssueId() {
-		return _jiraChangeGroup.getJiraIssueId();
+	public void setJiraChangeGroupId(long jiraChangeGroupId) {
+		_jiraChangeGroup.setJiraChangeGroupId(jiraChangeGroupId);
 	}
 
 	/**
@@ -185,9 +240,14 @@ public class JIRAChangeGroupWrapper implements JIRAChangeGroup,
 		_jiraChangeGroup.setJiraIssueId(jiraIssueId);
 	}
 
+	/**
+	* Sets the jira user ID of this j i r a change group.
+	*
+	* @param jiraUserId the jira user ID of this j i r a change group
+	*/
 	@Override
-	public boolean isNew() {
-		return _jiraChangeGroup.isNew();
+	public void setJiraUserId(java.lang.String jiraUserId) {
+		_jiraChangeGroup.setJiraUserId(jiraUserId);
 	}
 
 	@Override
@@ -195,72 +255,23 @@ public class JIRAChangeGroupWrapper implements JIRAChangeGroup,
 		_jiraChangeGroup.setNew(n);
 	}
 
+	/**
+	* Sets the primary key of this j i r a change group.
+	*
+	* @param primaryKey the primary key of this j i r a change group
+	*/
 	@Override
-	public boolean isCachedModel() {
-		return _jiraChangeGroup.isCachedModel();
+	public void setPrimaryKey(long primaryKey) {
+		_jiraChangeGroup.setPrimaryKey(primaryKey);
 	}
 
 	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_jiraChangeGroup.setCachedModel(cachedModel);
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _jiraChangeGroup.isEscapedModel();
-	}
-
-	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _jiraChangeGroup.getPrimaryKeyObj();
-	}
-
-	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_jiraChangeGroup.setPrimaryKeyObj(primaryKeyObj);
 	}
 
 	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _jiraChangeGroup.getExpandoBridge();
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
-		_jiraChangeGroup.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
-		_jiraChangeGroup.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
-		_jiraChangeGroup.setExpandoBridgeAttributes(serviceContext);
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new JIRAChangeGroupWrapper((JIRAChangeGroup)_jiraChangeGroup.clone());
-	}
-
-	@Override
-	public int compareTo(
-		com.liferay.socialcoding.model.JIRAChangeGroup jiraChangeGroup) {
-		return _jiraChangeGroup.compareTo(jiraChangeGroup);
-	}
-
-	@Override
-	public int hashCode() {
-		return _jiraChangeGroup.hashCode();
-	}
-
-	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.socialcoding.model.JIRAChangeGroup> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.socialcoding.model.JIRAChangeGroup> toCacheModel() {
 		return _jiraChangeGroup.toCacheModel();
 	}
 
@@ -270,24 +281,18 @@ public class JIRAChangeGroupWrapper implements JIRAChangeGroup,
 	}
 
 	@Override
-	public com.liferay.socialcoding.model.JIRAChangeGroup toUnescapedModel() {
-		return new JIRAChangeGroupWrapper(_jiraChangeGroup.toUnescapedModel());
-	}
-
-	@Override
 	public java.lang.String toString() {
 		return _jiraChangeGroup.toString();
 	}
 
 	@Override
-	public java.lang.String toXmlString() {
-		return _jiraChangeGroup.toXmlString();
+	public com.liferay.socialcoding.model.JIRAChangeGroup toUnescapedModel() {
+		return new JIRAChangeGroupWrapper(_jiraChangeGroup.toUnescapedModel());
 	}
 
 	@Override
-	public void persist()
-		throws com.liferay.portal.kernel.exception.SystemException {
-		_jiraChangeGroup.persist();
+	public java.lang.String toXmlString() {
+		return _jiraChangeGroup.toXmlString();
 	}
 
 	@Override
@@ -310,14 +315,6 @@ public class JIRAChangeGroupWrapper implements JIRAChangeGroup,
 		return false;
 	}
 
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public JIRAChangeGroup getWrappedJIRAChangeGroup() {
-		return _jiraChangeGroup;
-	}
-
 	@Override
 	public JIRAChangeGroup getWrappedModel() {
 		return _jiraChangeGroup;
@@ -338,5 +335,5 @@ public class JIRAChangeGroupWrapper implements JIRAChangeGroup,
 		_jiraChangeGroup.resetOriginalValues();
 	}
 
-	private JIRAChangeGroup _jiraChangeGroup;
+	private final JIRAChangeGroup _jiraChangeGroup;
 }

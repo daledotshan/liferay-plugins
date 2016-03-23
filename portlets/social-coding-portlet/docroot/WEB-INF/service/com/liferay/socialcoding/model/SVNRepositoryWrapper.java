@@ -14,8 +14,15 @@
 
 package com.liferay.socialcoding.model;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+
+import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +36,7 @@ import java.util.Map;
  * @see SVNRepository
  * @generated
  */
+@ProviderType
 public class SVNRepositoryWrapper implements SVNRepository,
 	ModelWrapper<SVNRepository> {
 	public SVNRepositoryWrapper(SVNRepository svnRepository) {
@@ -77,6 +85,27 @@ public class SVNRepositoryWrapper implements SVNRepository,
 		}
 	}
 
+	@Override
+	public java.lang.Object clone() {
+		return new SVNRepositoryWrapper((SVNRepository)_svnRepository.clone());
+	}
+
+	@Override
+	public int compareTo(
+		com.liferay.socialcoding.model.SVNRepository svnRepository) {
+		return _svnRepository.compareTo(svnRepository);
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _svnRepository.getExpandoBridge();
+	}
+
+	@Override
+	public java.lang.String getName() {
+		return _svnRepository.getName();
+	}
+
 	/**
 	* Returns the primary key of this s v n repository.
 	*
@@ -87,14 +116,24 @@ public class SVNRepositoryWrapper implements SVNRepository,
 		return _svnRepository.getPrimaryKey();
 	}
 
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _svnRepository.getPrimaryKeyObj();
+	}
+
 	/**
-	* Sets the primary key of this s v n repository.
+	* Returns the revision number of this s v n repository.
 	*
-	* @param primaryKey the primary key of this s v n repository
+	* @return the revision number of this s v n repository
 	*/
 	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_svnRepository.setPrimaryKey(primaryKey);
+	public long getRevisionNumber() {
+		return _svnRepository.getRevisionNumber();
+	}
+
+	@Override
+	public java.lang.String getShortURL() {
+		return _svnRepository.getShortURL();
 	}
 
 	/**
@@ -108,16 +147,6 @@ public class SVNRepositoryWrapper implements SVNRepository,
 	}
 
 	/**
-	* Sets the svn repository ID of this s v n repository.
-	*
-	* @param svnRepositoryId the svn repository ID of this s v n repository
-	*/
-	@Override
-	public void setSvnRepositoryId(long svnRepositoryId) {
-		_svnRepository.setSvnRepositoryId(svnRepositoryId);
-	}
-
-	/**
 	* Returns the url of this s v n repository.
 	*
 	* @return the url of this s v n repository
@@ -127,24 +156,70 @@ public class SVNRepositoryWrapper implements SVNRepository,
 		return _svnRepository.getUrl();
 	}
 
-	/**
-	* Sets the url of this s v n repository.
-	*
-	* @param url the url of this s v n repository
-	*/
 	@Override
-	public void setUrl(java.lang.String url) {
-		_svnRepository.setUrl(url);
+	public int hashCode() {
+		return _svnRepository.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _svnRepository.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _svnRepository.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _svnRepository.isNew();
+	}
+
+	@Override
+	public void persist() {
+		_svnRepository.persist();
+	}
+
+	@Override
+	public void setCachedModel(boolean cachedModel) {
+		_svnRepository.setCachedModel(cachedModel);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_svnRepository.setExpandoBridgeAttributes(baseModel);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_svnRepository.setExpandoBridgeAttributes(expandoBridge);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
+		_svnRepository.setExpandoBridgeAttributes(serviceContext);
+	}
+
+	@Override
+	public void setNew(boolean n) {
+		_svnRepository.setNew(n);
 	}
 
 	/**
-	* Returns the revision number of this s v n repository.
+	* Sets the primary key of this s v n repository.
 	*
-	* @return the revision number of this s v n repository
+	* @param primaryKey the primary key of this s v n repository
 	*/
 	@Override
-	public long getRevisionNumber() {
-		return _svnRepository.getRevisionNumber();
+	public void setPrimaryKey(long primaryKey) {
+		_svnRepository.setPrimaryKey(primaryKey);
+	}
+
+	@Override
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
+		_svnRepository.setPrimaryKeyObj(primaryKeyObj);
 	}
 
 	/**
@@ -157,82 +232,28 @@ public class SVNRepositoryWrapper implements SVNRepository,
 		_svnRepository.setRevisionNumber(revisionNumber);
 	}
 
+	/**
+	* Sets the svn repository ID of this s v n repository.
+	*
+	* @param svnRepositoryId the svn repository ID of this s v n repository
+	*/
 	@Override
-	public boolean isNew() {
-		return _svnRepository.isNew();
+	public void setSvnRepositoryId(long svnRepositoryId) {
+		_svnRepository.setSvnRepositoryId(svnRepositoryId);
+	}
+
+	/**
+	* Sets the url of this s v n repository.
+	*
+	* @param url the url of this s v n repository
+	*/
+	@Override
+	public void setUrl(java.lang.String url) {
+		_svnRepository.setUrl(url);
 	}
 
 	@Override
-	public void setNew(boolean n) {
-		_svnRepository.setNew(n);
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _svnRepository.isCachedModel();
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_svnRepository.setCachedModel(cachedModel);
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _svnRepository.isEscapedModel();
-	}
-
-	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _svnRepository.getPrimaryKeyObj();
-	}
-
-	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
-		_svnRepository.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _svnRepository.getExpandoBridge();
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
-		_svnRepository.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
-		_svnRepository.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
-		_svnRepository.setExpandoBridgeAttributes(serviceContext);
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new SVNRepositoryWrapper((SVNRepository)_svnRepository.clone());
-	}
-
-	@Override
-	public int compareTo(
-		com.liferay.socialcoding.model.SVNRepository svnRepository) {
-		return _svnRepository.compareTo(svnRepository);
-	}
-
-	@Override
-	public int hashCode() {
-		return _svnRepository.hashCode();
-	}
-
-	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.socialcoding.model.SVNRepository> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.socialcoding.model.SVNRepository> toCacheModel() {
 		return _svnRepository.toCacheModel();
 	}
 
@@ -242,34 +263,18 @@ public class SVNRepositoryWrapper implements SVNRepository,
 	}
 
 	@Override
-	public com.liferay.socialcoding.model.SVNRepository toUnescapedModel() {
-		return new SVNRepositoryWrapper(_svnRepository.toUnescapedModel());
-	}
-
-	@Override
 	public java.lang.String toString() {
 		return _svnRepository.toString();
 	}
 
 	@Override
+	public com.liferay.socialcoding.model.SVNRepository toUnescapedModel() {
+		return new SVNRepositoryWrapper(_svnRepository.toUnescapedModel());
+	}
+
+	@Override
 	public java.lang.String toXmlString() {
 		return _svnRepository.toXmlString();
-	}
-
-	@Override
-	public void persist()
-		throws com.liferay.portal.kernel.exception.SystemException {
-		_svnRepository.persist();
-	}
-
-	@Override
-	public java.lang.String getName() {
-		return _svnRepository.getName();
-	}
-
-	@Override
-	public java.lang.String getShortURL() {
-		return _svnRepository.getShortURL();
 	}
 
 	@Override
@@ -289,14 +294,6 @@ public class SVNRepositoryWrapper implements SVNRepository,
 		}
 
 		return false;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public SVNRepository getWrappedSVNRepository() {
-		return _svnRepository;
 	}
 
 	@Override
@@ -319,5 +316,5 @@ public class SVNRepositoryWrapper implements SVNRepository,
 		_svnRepository.resetOriginalValues();
 	}
 
-	private SVNRepository _svnRepository;
+	private final SVNRepository _svnRepository;
 }

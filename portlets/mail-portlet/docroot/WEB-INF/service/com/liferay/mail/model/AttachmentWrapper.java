@@ -14,8 +14,15 @@
 
 package com.liferay.mail.model;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.expando.kernel.model.ExpandoBridge;
+
+import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.ModelWrapper;
+
+import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +36,7 @@ import java.util.Map;
  * @see Attachment
  * @generated
  */
+@ProviderType
 public class AttachmentWrapper implements Attachment, ModelWrapper<Attachment> {
 	public AttachmentWrapper(Attachment attachment) {
 		_attachment = attachment;
@@ -118,106 +126,14 @@ public class AttachmentWrapper implements Attachment, ModelWrapper<Attachment> {
 		}
 	}
 
-	/**
-	* Returns the primary key of this attachment.
-	*
-	* @return the primary key of this attachment
-	*/
 	@Override
-	public long getPrimaryKey() {
-		return _attachment.getPrimaryKey();
+	public java.lang.Object clone() {
+		return new AttachmentWrapper((Attachment)_attachment.clone());
 	}
 
-	/**
-	* Sets the primary key of this attachment.
-	*
-	* @param primaryKey the primary key of this attachment
-	*/
 	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_attachment.setPrimaryKey(primaryKey);
-	}
-
-	/**
-	* Returns the attachment ID of this attachment.
-	*
-	* @return the attachment ID of this attachment
-	*/
-	@Override
-	public long getAttachmentId() {
-		return _attachment.getAttachmentId();
-	}
-
-	/**
-	* Sets the attachment ID of this attachment.
-	*
-	* @param attachmentId the attachment ID of this attachment
-	*/
-	@Override
-	public void setAttachmentId(long attachmentId) {
-		_attachment.setAttachmentId(attachmentId);
-	}
-
-	/**
-	* Returns the company ID of this attachment.
-	*
-	* @return the company ID of this attachment
-	*/
-	@Override
-	public long getCompanyId() {
-		return _attachment.getCompanyId();
-	}
-
-	/**
-	* Sets the company ID of this attachment.
-	*
-	* @param companyId the company ID of this attachment
-	*/
-	@Override
-	public void setCompanyId(long companyId) {
-		_attachment.setCompanyId(companyId);
-	}
-
-	/**
-	* Returns the user ID of this attachment.
-	*
-	* @return the user ID of this attachment
-	*/
-	@Override
-	public long getUserId() {
-		return _attachment.getUserId();
-	}
-
-	/**
-	* Sets the user ID of this attachment.
-	*
-	* @param userId the user ID of this attachment
-	*/
-	@Override
-	public void setUserId(long userId) {
-		_attachment.setUserId(userId);
-	}
-
-	/**
-	* Returns the user uuid of this attachment.
-	*
-	* @return the user uuid of this attachment
-	* @throws SystemException if a system exception occurred
-	*/
-	@Override
-	public java.lang.String getUserUuid()
-		throws com.liferay.portal.kernel.exception.SystemException {
-		return _attachment.getUserUuid();
-	}
-
-	/**
-	* Sets the user uuid of this attachment.
-	*
-	* @param userUuid the user uuid of this attachment
-	*/
-	@Override
-	public void setUserUuid(java.lang.String userUuid) {
-		_attachment.setUserUuid(userUuid);
+	public int compareTo(com.liferay.mail.model.Attachment attachment) {
+		return _attachment.compareTo(attachment);
 	}
 
 	/**
@@ -231,53 +147,23 @@ public class AttachmentWrapper implements Attachment, ModelWrapper<Attachment> {
 	}
 
 	/**
-	* Sets the account ID of this attachment.
+	* Returns the attachment ID of this attachment.
 	*
-	* @param accountId the account ID of this attachment
+	* @return the attachment ID of this attachment
 	*/
 	@Override
-	public void setAccountId(long accountId) {
-		_attachment.setAccountId(accountId);
+	public long getAttachmentId() {
+		return _attachment.getAttachmentId();
 	}
 
 	/**
-	* Returns the folder ID of this attachment.
+	* Returns the company ID of this attachment.
 	*
-	* @return the folder ID of this attachment
+	* @return the company ID of this attachment
 	*/
 	@Override
-	public long getFolderId() {
-		return _attachment.getFolderId();
-	}
-
-	/**
-	* Sets the folder ID of this attachment.
-	*
-	* @param folderId the folder ID of this attachment
-	*/
-	@Override
-	public void setFolderId(long folderId) {
-		_attachment.setFolderId(folderId);
-	}
-
-	/**
-	* Returns the message ID of this attachment.
-	*
-	* @return the message ID of this attachment
-	*/
-	@Override
-	public long getMessageId() {
-		return _attachment.getMessageId();
-	}
-
-	/**
-	* Sets the message ID of this attachment.
-	*
-	* @param messageId the message ID of this attachment
-	*/
-	@Override
-	public void setMessageId(long messageId) {
-		_attachment.setMessageId(messageId);
+	public long getCompanyId() {
+		return _attachment.getCompanyId();
 	}
 
 	/**
@@ -290,14 +176,9 @@ public class AttachmentWrapper implements Attachment, ModelWrapper<Attachment> {
 		return _attachment.getContentPath();
 	}
 
-	/**
-	* Sets the content path of this attachment.
-	*
-	* @param contentPath the content path of this attachment
-	*/
 	@Override
-	public void setContentPath(java.lang.String contentPath) {
-		_attachment.setContentPath(contentPath);
+	public ExpandoBridge getExpandoBridge() {
+		return _attachment.getExpandoBridge();
 	}
 
 	/**
@@ -311,13 +192,38 @@ public class AttachmentWrapper implements Attachment, ModelWrapper<Attachment> {
 	}
 
 	/**
-	* Sets the file name of this attachment.
+	* Returns the folder ID of this attachment.
 	*
-	* @param fileName the file name of this attachment
+	* @return the folder ID of this attachment
 	*/
 	@Override
-	public void setFileName(java.lang.String fileName) {
-		_attachment.setFileName(fileName);
+	public long getFolderId() {
+		return _attachment.getFolderId();
+	}
+
+	/**
+	* Returns the message ID of this attachment.
+	*
+	* @return the message ID of this attachment
+	*/
+	@Override
+	public long getMessageId() {
+		return _attachment.getMessageId();
+	}
+
+	/**
+	* Returns the primary key of this attachment.
+	*
+	* @return the primary key of this attachment
+	*/
+	@Override
+	public long getPrimaryKey() {
+		return _attachment.getPrimaryKey();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _attachment.getPrimaryKeyObj();
 	}
 
 	/**
@@ -331,6 +237,162 @@ public class AttachmentWrapper implements Attachment, ModelWrapper<Attachment> {
 	}
 
 	/**
+	* Returns the user ID of this attachment.
+	*
+	* @return the user ID of this attachment
+	*/
+	@Override
+	public long getUserId() {
+		return _attachment.getUserId();
+	}
+
+	/**
+	* Returns the user uuid of this attachment.
+	*
+	* @return the user uuid of this attachment
+	*/
+	@Override
+	public java.lang.String getUserUuid() {
+		return _attachment.getUserUuid();
+	}
+
+	@Override
+	public int hashCode() {
+		return _attachment.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _attachment.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _attachment.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _attachment.isNew();
+	}
+
+	@Override
+	public void persist() {
+		_attachment.persist();
+	}
+
+	/**
+	* Sets the account ID of this attachment.
+	*
+	* @param accountId the account ID of this attachment
+	*/
+	@Override
+	public void setAccountId(long accountId) {
+		_attachment.setAccountId(accountId);
+	}
+
+	/**
+	* Sets the attachment ID of this attachment.
+	*
+	* @param attachmentId the attachment ID of this attachment
+	*/
+	@Override
+	public void setAttachmentId(long attachmentId) {
+		_attachment.setAttachmentId(attachmentId);
+	}
+
+	@Override
+	public void setCachedModel(boolean cachedModel) {
+		_attachment.setCachedModel(cachedModel);
+	}
+
+	/**
+	* Sets the company ID of this attachment.
+	*
+	* @param companyId the company ID of this attachment
+	*/
+	@Override
+	public void setCompanyId(long companyId) {
+		_attachment.setCompanyId(companyId);
+	}
+
+	/**
+	* Sets the content path of this attachment.
+	*
+	* @param contentPath the content path of this attachment
+	*/
+	@Override
+	public void setContentPath(java.lang.String contentPath) {
+		_attachment.setContentPath(contentPath);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+		_attachment.setExpandoBridgeAttributes(baseModel);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_attachment.setExpandoBridgeAttributes(expandoBridge);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
+		_attachment.setExpandoBridgeAttributes(serviceContext);
+	}
+
+	/**
+	* Sets the file name of this attachment.
+	*
+	* @param fileName the file name of this attachment
+	*/
+	@Override
+	public void setFileName(java.lang.String fileName) {
+		_attachment.setFileName(fileName);
+	}
+
+	/**
+	* Sets the folder ID of this attachment.
+	*
+	* @param folderId the folder ID of this attachment
+	*/
+	@Override
+	public void setFolderId(long folderId) {
+		_attachment.setFolderId(folderId);
+	}
+
+	/**
+	* Sets the message ID of this attachment.
+	*
+	* @param messageId the message ID of this attachment
+	*/
+	@Override
+	public void setMessageId(long messageId) {
+		_attachment.setMessageId(messageId);
+	}
+
+	@Override
+	public void setNew(boolean n) {
+		_attachment.setNew(n);
+	}
+
+	/**
+	* Sets the primary key of this attachment.
+	*
+	* @param primaryKey the primary key of this attachment
+	*/
+	@Override
+	public void setPrimaryKey(long primaryKey) {
+		_attachment.setPrimaryKey(primaryKey);
+	}
+
+	@Override
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
+		_attachment.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	/**
 	* Sets the size of this attachment.
 	*
 	* @param size the size of this attachment
@@ -340,81 +402,28 @@ public class AttachmentWrapper implements Attachment, ModelWrapper<Attachment> {
 		_attachment.setSize(size);
 	}
 
+	/**
+	* Sets the user ID of this attachment.
+	*
+	* @param userId the user ID of this attachment
+	*/
 	@Override
-	public boolean isNew() {
-		return _attachment.isNew();
+	public void setUserId(long userId) {
+		_attachment.setUserId(userId);
+	}
+
+	/**
+	* Sets the user uuid of this attachment.
+	*
+	* @param userUuid the user uuid of this attachment
+	*/
+	@Override
+	public void setUserUuid(java.lang.String userUuid) {
+		_attachment.setUserUuid(userUuid);
 	}
 
 	@Override
-	public void setNew(boolean n) {
-		_attachment.setNew(n);
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _attachment.isCachedModel();
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_attachment.setCachedModel(cachedModel);
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _attachment.isEscapedModel();
-	}
-
-	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _attachment.getPrimaryKeyObj();
-	}
-
-	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
-		_attachment.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _attachment.getExpandoBridge();
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.model.BaseModel<?> baseModel) {
-		_attachment.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portlet.expando.model.ExpandoBridge expandoBridge) {
-		_attachment.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.service.ServiceContext serviceContext) {
-		_attachment.setExpandoBridgeAttributes(serviceContext);
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new AttachmentWrapper((Attachment)_attachment.clone());
-	}
-
-	@Override
-	public int compareTo(com.liferay.mail.model.Attachment attachment) {
-		return _attachment.compareTo(attachment);
-	}
-
-	@Override
-	public int hashCode() {
-		return _attachment.hashCode();
-	}
-
-	@Override
-	public com.liferay.portal.model.CacheModel<com.liferay.mail.model.Attachment> toCacheModel() {
+	public com.liferay.portal.kernel.model.CacheModel<com.liferay.mail.model.Attachment> toCacheModel() {
 		return _attachment.toCacheModel();
 	}
 
@@ -424,24 +433,18 @@ public class AttachmentWrapper implements Attachment, ModelWrapper<Attachment> {
 	}
 
 	@Override
-	public com.liferay.mail.model.Attachment toUnescapedModel() {
-		return new AttachmentWrapper(_attachment.toUnescapedModel());
-	}
-
-	@Override
 	public java.lang.String toString() {
 		return _attachment.toString();
 	}
 
 	@Override
-	public java.lang.String toXmlString() {
-		return _attachment.toXmlString();
+	public com.liferay.mail.model.Attachment toUnescapedModel() {
+		return new AttachmentWrapper(_attachment.toUnescapedModel());
 	}
 
 	@Override
-	public void persist()
-		throws com.liferay.portal.kernel.exception.SystemException {
-		_attachment.persist();
+	public java.lang.String toXmlString() {
+		return _attachment.toXmlString();
 	}
 
 	@Override
@@ -461,14 +464,6 @@ public class AttachmentWrapper implements Attachment, ModelWrapper<Attachment> {
 		}
 
 		return false;
-	}
-
-	/**
-	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
-	 */
-	@Deprecated
-	public Attachment getWrappedAttachment() {
-		return _attachment;
 	}
 
 	@Override
@@ -491,5 +486,5 @@ public class AttachmentWrapper implements Attachment, ModelWrapper<Attachment> {
 		_attachment.resetOriginalValues();
 	}
 
-	private Attachment _attachment;
+	private final Attachment _attachment;
 }

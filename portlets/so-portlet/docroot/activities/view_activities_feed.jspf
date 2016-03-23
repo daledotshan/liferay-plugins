@@ -18,12 +18,18 @@
 --%>
 
 <%
-Date now = new Date();
-
 int daysBetween = -1;
+Date now = new Date();
+ServiceContext serviceContext = ServiceContextFactory.getInstance(themeDisplay.getRequest());
 
 for (SocialActivity activity : results) {
-	SocialActivityFeedEntry activityFeedEntry = SocialActivityInterpreterLocalServiceUtil.interpret(activity, themeDisplay);
+	if (count >= _DELTA) {
+		break;
+	}
+
+	SocialActivityFeedEntry activityFeedEntry = SocialActivityInterpreterLocalServiceUtil.interpret(StringPool.BLANK, activity, serviceContext);
+
+	start++;
 
 	if (activityFeedEntry == null) {
 		continue;
@@ -54,7 +60,7 @@ for (SocialActivity activity : results) {
 		<h3><liferay-ui:message key="<%= message %>" /></h3>
 	</c:if>
 
-	<div class="activity-item">
+	<div class="activity-item clearfix">
 
 		<%
 		User curUser = null;
@@ -68,7 +74,7 @@ for (SocialActivity activity : results) {
 
 		<div class="user-portrait">
 			<span class="avatar">
-				<img alt="<%= HtmlUtil.escape(curUser.getFullName()) %>" src="<%= curUser.getPortraitURL(themeDisplay) %>" />
+				<img alt="<%= HtmlUtil.escapeAttribute(curUser.getFullName()) %>" src="<%= curUser.getPortraitURL(themeDisplay) %>" />
 			</span>
 
 			<span class="icon">
@@ -76,11 +82,11 @@ for (SocialActivity activity : results) {
 			</span>
 		</div>
 
-		<div class="activity-data">
-			<div class="activity-title">
-				<%= activityFeedEntry.getTitle() %>
-			</div>
+		<div class="activity-title">
+			<%= activityFeedEntry.getTitle() %>
+		</div>
 
+		<div class="activity-block">
 			<div class="activity-body">
 				<span class="time">
 					<%= timeFormatDate.format(activity.getCreateDate()) %>
@@ -92,5 +98,6 @@ for (SocialActivity activity : results) {
 	</div>
 
 <%
+	count++;
 }
 %>
